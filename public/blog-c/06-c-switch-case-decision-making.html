@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>switch-case స్టేట్‌మెంట్ & మెనూ డ్రివెన్ ప్రోగ్రామింగ్ — Modern C Tutorial | Our Compiler</title>
   <meta name="description" content="switch-case స్టేట్‌మెంట్ & మెనూ డ్రివెన్ ప్రోగ్రామింగ్ సమగ్ర తెలుగు గైడ్: O(1) Jump Table ఆర్కిటెక్చర్ vs else-if · break ప్రాముఖ్యత · Fall-through మెకానిక్స్ · క్యాలిక్యులేటర్ ప్రాజెక్ట్." />
-  <meta name="keywords" content="c tutorial in telugu, learn c language, switch-case స్టేట్‌మెంట్ & మెనూ డ్రివెన్ ప్రోగ్రామింగ్, c programming, our compiler" />
+  <meta name="keywords" content="c switch case in telugu, c jump tables, c menu driven program, learn c language, our compiler" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-c/06-c-switch-case-decision-making.html" />
@@ -35,11 +35,11 @@
       "url": "https://www.ourcompiler.com"
     },
     "datePublished": "2026-02-01",
-    "dateModified": "2026-10-29"
+    "dateModified": "2026-11-01"
   }
   </script>
 
-  <!-- Interactive Scripts: Accordion, C Syntax Highlighter & Default Light Theme -->
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
   <script>
     function toggleAccordion(btn) {
       const content = btn.nextElementSibling;
@@ -58,34 +58,55 @@
       if (currentTheme === 'dark') {
         document.documentElement.classList.remove('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.remove('light-theme');
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
         });
       } else {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.add('light-theme');
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
         });
       }
     })();
+
+    // Code runner & copy button integration
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.code-block').forEach((block) => {
+        const pre = block.querySelector('pre');
+        const code = block.querySelector('code');
+        if (!pre || !code) return;
+        const rawCode = code.innerText;
+
+        const actions = block.querySelector('.code-actions');
+        if (actions && !actions.querySelector('.copy-btn')) {
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actions.insertBefore(copyBtn, actions.firstChild);
+
+          const tryBtn = actions.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', rawCode);
+              window.open('/online-c-compiler.html', '_blank');
+            });
+          }
+        }
+      });
+    });
   </script>
 </head>
 <body class="lang-c light-theme">
-
-<!-- TOP NAVIGATION FALLBACK -->
-<nav class="topnav">
-  <a href="/" class="brand">🖥️ Our Compiler</a>
-  <a href="/blog-python.html">Python</a>
-  <a href="/blog-java.html">Java</a>
-  <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html" class="active">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/?lang=csharp">C#</a>
-  <a href="/blog-go.html">Go</a>
-  <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/online-html-editor.html">HTML/CSS/JS</a>
-</nav>
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
 
 <div class="layout">
   <!-- LEFT SIDEBAR ACCORDION -->
@@ -206,69 +227,211 @@
     <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📚 All Tutorials Index</a>
   </aside>
 
-  <!-- MAIN LESSON CONTENT -->
+
+  <!-- MAIN ARTICLE -->
   <main class="content">
+
+    <!-- BREADCRUMB -->
     <div class="breadcrumb">
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-c.html">C Masterclass</a><span class="sep">›</span>
-      <span class="current">Chapter 6: switch-case స్టేట్‌మెంట్ & మెనూ డ్రివెన్ ప్రోగ్రామింగ్</span>
+      <span class="current">Chapter 6: switch-case స్టేట్‌మెంట్ &amp; మెనూ డ్రివెన్ ప్రోగ్రామింగ్</span>
     </div>
 
-    <h1 class="page-title">switch-case స్టేట్‌మెంట్ & మెనూ డ్రివెన్ ప్రోగ్రామింగ్</h1>
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">switch-case స్టేట్‌మెంట్ &amp; మెనూ డ్రివెన్ ప్రోగ్రామింగ్</h1>
 
+    <!-- PAGE META BADGES -->
     <div class="page-meta">
-      <span class="badge">⚡ Modern C (C99 / C11)</span>
-      <span class="badge">🟢 Chapter 6 of 20</span>
-      <span class="badge">📂 Phase 02: కంట్రోల్ ఫ్లో & లూప్స్</span>
-      <span class="badge">📅 2026 Edition</span>
+      <span class="badge">⚡ Modern C (C99 / C11 / C17 Standards)</span>
+      <span class="badge">🟢 Chapter 06 of 20</span>
+      <span class="badge">📂 Phase 02: కంట్రోల్ ఫ్లో &amp; లూప్స్</span>
+      <span class="badge">📅 2026 Academic Edition</span>
     </div>
 
-    <!-- Covered Topics Bar -->
+    <!-- SUBTOPICS PILL BAR -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>O(1) Jump Table ఆర్కిటెక్చర్ vs else-if · break ప్రాముఖ్యత · Fall-through మెకానిక్స్ · క్యాలిక్యులేటర్ ప్రాజెక్ట్</span>
+      <span>switch-case అనాటమీ · O(1) Jump Table ఆర్కిటెక్చర్ vs else-if · GCC Assembly జంప్స్ · break ప్రాముఖ్యత · Fall-through మెకానిక్స్ &amp; వోవెల్ చెకర్ · default సేఫ్టీ గార్డ్ · కేవలం int &amp; char ఎందుకు? · సైంటిఫిక్ క్యాలిక్యులేటర్ ప్రాజెక్ట్ · నెస్టెడ్ switch · క్విజ్ &amp; ట్రై-బాక్స్</span>
     </div>
 
-    
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
     <div class="intro-box">
-      ఒక ప్రోగ్రామ్‌లో అనేక స్థిరమైన విలువలపై (Discrete integer choices) నిర్ణయం తీసుకోవాల్సి వచ్చినప్పుడు వరుసగా <code>else-if</code> లు రాయడం కోడ్‌ను సంక్లిష్టంగా చేస్తుంది. అటువంటి పరిస్థితుల్లో అత్యంత వేగవంతమైన, పరిశుభ్రమైన ప్రత్యామ్నాయం <strong>switch-case స్టేట్‌మెంట్</strong>. GCC కంపైలర్ దీనిని $O(1)$ జంప్ టేబుల్‌గా ఎలా మారుస్తుంది, <code>break</code> ప్రాముఖ్యత మరియు ఫాల్-త్రూ మెకానిక్స్‌ను ఈ అధ్యాయంలో నేర్చుకుందాం.
+      <p>ఒక పెద్ద బహుళ అంతస్తుల భవనంలో (Skyscraper) ఉన్న ఆధునిక ఎలివేటర్‌ను ఊహించుకోండి. ఆ భవనంలో 50 అంతస్తులు ఉన్నాయి. మీరు గ్రౌండ్ ఫ్లోర్ నుండి 45వ అంతస్తుకు వెళ్ళాలనుకుంటున్నారు. లిఫ్ట్ ప్రతి ఒక్క అంతస్తు వద్ద ఆగి (1వ ఫ్లోరా? కాదు, 2వ ఫ్లోరా? కాదు, 3వ ఫ్లోరా? కాదు...) చెక్ చేసుకుంటూ వెళ్తే — 45వ అంతస్తుకు చేరుకోవడానికి అరగంట సమయం పడుతుంది కదా?</p>
+      <p>కానీ నిజమైన ఎలివేటర్ అలా చేయదు! మీరు ప్యానెల్ పై '45' నొక్కగానే — లిఫ్ట్ నేరుగా మధ్యలోని 44 అంతస్తులను గాల్లో దాటేసి, క్షణాల్లో 45వ అంతస్తు వద్దకే నేరుగా దూసుకుపోతుంది! కంప్యూటర్ ప్రోగ్రామింగ్‌లో కూడా సరిగ్గా ఇదే వ్యత్యాసం ఉంటుంది. చాప్టర్ 05 లో మనం నేర్చుకున్న <code>else-if</code> లాడర్ మొదటి అంతస్తు నుండి వరుసగా ప్రతి కండిషన్‌ను తనిఖీ చేసుకుంటూ వెళ్లే నెమ్మదైన మెట్ల లాంటిది (O(n) time complexity). కానీ C లోని <strong>switch-case స్టేట్‌మెంట్</strong> నేరుగా కావలసిన కేస్ వద్దకే దూకే ఎక్స్‌ప్రెస్ లిఫ్ట్ లాంటిది!</p>
+      <p>ఈ ఆరవ అధ్యాయంలో, కంపైలర్ తెరవెనుక నిర్మించే <strong>O(1) జంప్ టేబుల్స్ (Jump Tables)</strong>, అసెంబ్లీ స్థాయి బ్రాంచింగ్ సూత్రాలు, <code>break</code> యొక్క అంతర్గత ప్రాముఖ్యత, ఫాల్-త్రూ (Fall-through) టెక్నిక్ మరియు పూర్తి స్థాయి <strong>మెనూ-డ్రివెన్ సైంటిఫిక్ క్యాలిక్యులేటర్ ప్రాజెక్ట్‌ను</strong> లోతుగా నేర్చుకుందాం!</p>
     </div>
 
     <!-- SECTION 1 -->
-    <div class="section-title"><span class="num">1</span>switch-case అంతర్గత పనితీరు & Jump Table ఆర్కిటెక్చర్</div>
+    <div class="section-title"><span class="num">1</span>ఈ Chapter లో మీరు నేర్చుకునే అంశాలు</div>
     <div class="section-body">
-      <p>
-        <code>else-if</code> లాడర్‌లో ప్రతి కండిషన్‌ను వరుసగా పై నుండి క్రిందికి తనిఖీ చేస్తూ వెళ్లాలి ($O(N)$ లీనియర్ టైమ్). కానీ <code>switch</code> లో కేస్ విలువలు వరుసగా ఉన్నప్పుడు కంపైలర్ ఒక <strong>Jump Table (మెమరీ అడ్రస్‌ల అరే)</strong> ను రూపొందిస్తుంది. CPU నేరుగా సంబంధిత కేస్‌కు $O(1)$ స్థిర సమయంలో దూకుతుంది (Direct Branching).
-      </p>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><strong>switch స్టేట్‌మెంట్ ప్రాథమిక భావన:</strong> మల్టీ-వే సెలెక్షన్ మరియు కస్టమర్ కేర్ IVRS మెనూ ఎనాలజీ.</li>
+        <li><strong>switch-case సింటాక్స్ &amp; అనాటమీ:</strong> <code>switch</code>, <code>case</code>, <code>break</code>, <code>default</code> కీవర్డ్స్.</li>
+        <li><strong>CPU లెవల్ Jump Tables:</strong> <code>else-if</code> కంటే switch ఎందుకు 10 రెట్లు వేగవంతమైనది? అసెంబ్లీ లెవల్ విశ్లేషణ.</li>
+        <li><strong>break స్టేట్‌మెంట్ పాత్ర:</strong> కంట్రోల్ ఫ్లోను వెంటనే switch నుండి బయటకు పంపే విధానం.</li>
+        <li><strong>ఫాల్-త్రూ (Fall-Through) మెకానిక్స్:</strong> బ్రేక్ లేకపోతే ఏం జరుగుతుంది? దీనిని తెలివిగా ఎలా వాడాలి?</li>
+        <li><strong>default కేస్ ప్రాధాన్యత:</strong> యూజర్ తప్పుడు ఆప్షన్ ఇచ్చినప్పుడు ఫాల్‌బ్యాక్ సేఫ్టీ గార్డ్.</li>
+        <li><strong>C లో switch కఠిన నియమాలు:</strong> ఫ్లోట్స్ (float) మరియు స్ట్రింగ్స్ ఎందుకు పనిచేయవు?</li>
+        <li><strong>మెనూ డ్రివెన్ ప్రోగ్రామింగ్ (Menu-Driven Architecture):</strong> ప్రాక్టికల్ కన్సోల్ అప్లికేషన్లు.</li>
+        <li><strong>రియల్ వరల్డ్ ప్రాజెక్ట్:</strong> పూర్తి స్థాయి అరిథ్‌మెటిక్ క్యాలిక్యులేటర్ నిర్మాణం.</li>
+        <li><strong>నెస్టెడ్ switch స్టేట్‌మెంట్స్:</strong> మెనూ లోపల సబ్-మెనూలను ఎలా హ్యాండిల్ చేయాలి?</li>
+        <li><strong>బిగినర్స్ చేసే టాప్ 5 తప్పులు:</strong> డూప్లికేట్ కేస్‌లు, కేస్ లోపల వేరియబుల్ డిక్లరేషన్ ట్రాప్.</li>
+        <li><strong>ఇంటరాక్టివ్ క్విజ్:</strong> 5 లోతైన ప్రాక్టికల్ ప్రశ్నలు &amp; విశ్లేషణ.</li>
+      </ul>
+    </div>
 
-      <div style="background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0; padding:16px; margin:16px 0;">
-        <strong style="color:#10b981; font-size:14.5px;">🔒 C లో switch నిబంధనలు (Core Rules):</strong>
-        <ul style="margin:6px 0 0 0; padding-left:20px; font-size:13.5px; color:var(--text); line-height:1.7;">
-          <li>ఎక్స్‌ప్రెషన్ తప్పనిసరిగా <strong>పూర్ణాంకం (int, short, long)</strong> లేదా <strong>క్యారెక్టర్ (char)</strong> అయి ఉండాలి.</li>
-          <li><strong>ఫ్లోటింగ్ పాయింట్ (float, double) సంఖ్యలు మరియు స్ట్రింగ్స్‌ను switch లో అనుమతించరు.</strong></li>
-          <li>ప్రతి <code>case</code> లేబుల్ తప్పనిసరిగా ఒక కంపైల్-టైమ్ స్థిరాంకం (Constant Expression) అయి ఉండాలి; వేరియబుల్స్ ఉండకూడదు.</li>
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>switch స్టేట్‌మెంట్ ప్రాథమిక భావన &amp; IVRS ఎనాలజీ</div>
+    <div class="section-body">
+      <p>మనం కస్టమర్ కేర్‌కు ఫోన్ చేసినప్పుడు కంప్యూటర్ స్వరం వినిపిస్తుంది: <em>"తెలుగు కోసం 1 నొక్కండి, ఇంగ్లీష్ కోసం 2 నొక్కండి, మా ప్రతినిధితో మాట్లాడటానికి 9 నొక్కండి"</em>. మీరు '1' ప్రెస్ చేయగానే అది నేరుగా తెలుగు విభాగానికి కనెక్ట్ అవుతుంది. దీనినే <strong>మల్టీ-వే సెలెక్షన్ (Multi-Way Selection)</strong> అంటారు.</p>
+
+      <p>ఒకే వేరియబుల్‌ను అనేక స్థిర విలువలతో (Constants) పోల్చవలసి వచ్చినప్పుడు, పొడవైన <code>else-if</code> లాడర్ రాయడం కోడ్‌ను గజిబిజిగా చేస్తుంది. అటువంటి సందర్భాలలో <strong>switch-case</strong> కోడ్‌ను అత్యంత శుభ్రంగా, చదవడానికి సులభంగా మరియు వేగవంతంగా మారుస్తుంది.</p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+        <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">switch స్టేట్‌మెంట్ ఎప్పుడు వాడాలి?</h4>
+        <ul style="margin:0; padding-left:20px; color:var(--text2); font-size:14px; line-height:1.7;">
+          <li>ఒకే పూర్ణాంకం లేదా క్యారెక్టర్ వేరియబుల్ వద్ద బహుళ నిర్దిష్ట విలువలు తనిఖీ చేయాల్సి వచ్చినప్పుడు.</li>
+          <li>కన్సోల్ అప్లికేషన్లలో యూజర్ మెనూ ఎంపికలు (1. Add, 2. Edit, 3. Delete, 4. Exit) హ్యాండిల్ చేయడానికి.</li>
+          <li>స్టేట్ మెషీన్లు (Finite State Machines - FSM), గేమింగ్ మూవ్‌మెంట్స్ (W, A, S, D కీలు) అమలు చేయడానికి.</li>
         </ul>
       </div>
     </div>
 
-    <!-- SECTION 2 -->
-    <div class="section-title"><span class="num">2</span>break కీవర్డ్ & ఫాల్-త్రూ మెకానిక్స్ (Fall-Through Behavior)</div>
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>switch-case సింటాక్స్ &amp; అనాటమీ</div>
     <div class="section-body">
-      <p>
-        <code>switch</code> లో ఒక కేస్ సరిపోలిన తర్వాత, మీరు అక్కడ <strong>break</strong> పెట్టకపోతే, C కంపైలర్ ఆగిపోదు! తర్వాతి కేస్‌ల షరతులు నిజమా కాదా అనేది పట్టించుకోకుండా వాటిలోని కోడ్‌ను కూడా వరుసగా ఎగ్జిక్యూట్ చేసుకుంటూ వెళ్ళిపోతుంది. దీనిని <strong>ఫాల్-త్రూ (Fall-Through)</strong> అంటారు.
-      </p>
+      <p>C లో <code>switch-case</code> యొక్క ప్రామాణిక సింటాక్స్ ఇది:</p>
 
-      <div class="code-block" style="margin:16px 0;">
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:14px 0; font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7;">
+        switch (ఎక్స్‌ప్రెషన్) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;case స్థిర_విలువ_1:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// కోడ్ బ్లాక్ 1<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;case స్థిర_విలువ_2:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// కోడ్ బ్లాక్ 2<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;default:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// ఏ కేస్ మ్యాచ్ కాకపోతే రన్ అయ్యే కోడ్<br>
+        }
+      </div>
+
+      <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">C — Intentional Fall-through for Vowel Check</span>
-          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
+          <span class="lang-tag">C — Basic switch-case Demo</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int dayNumber = 3;
+
+    switch (dayNumber) {
+        case 1:
+            printf("సోమవారం (Monday) — కొత్త వారం ప్రారంభం!\n");
+            break;
+        case 2:
+            printf("మంగళవారం (Tuesday)\n");
+            break;
+        case 3:
+            printf("బుధవారం (Wednesday) — వారం మధ్య రోజు!\n");
+            break;
+        case 4:
+            printf("గురువారం (Thursday)\n");
+            break;
+        case 5:
+            printf("శుక్రవారం (Friday) — వీకెండ్ మొదలవుతోంది!\n");
+            break;
+        case 6:
+            printf("శనివారం (Saturday) — సెలవు దినం!\n");
+            break;
+        case 7:
+            printf("ఆదివారం (Sunday) — ఫ్యామిలీ టైమ్!\n");
+            break;
+        default:
+            printf("❌ తప్పుడు రోజు నంబర్! దయచేసి 1 నుండి 7 మధ్య ఇవ్వండి.\n");
+    }
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>switch vs else-if: CPU Jump Tables &amp; O(1) వేగం</div>
+    <div class="section-body">
+      <p>చాలామంది ప్రోగ్రామర్లు "switch చేసే పనిని else-if కూడా చేస్తుంది కదా, అసలు switch ఎందుకు వాడాలి?" అని అడుగుతుంటారు. దీనికి సమాధానం <strong>CPU ఆర్కిటెక్చర్ మరియు ఎగ్జిక్యూషన్ వేగం!</strong></p>
+
+      <div style="overflow-x:auto; margin: 16px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ఫీచర్ / అంశం</th>
+              <th>else-if లాడర్</th>
+              <th>switch-case స్టేట్‌మెంట్</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ఎగ్జిక్యూషన్ విధానం</strong></td>
+              <td>లీనియర్ చెకింగ్ (ఒక్కొక్కటిగా తనిఖీ చేసుకుంటూ వెళ్తుంది).</td>
+              <td><strong>జంప్ టేబుల్ (Jump Table / Branch Table)</strong> ద్వారా నేరుగా సరైన అడ్రస్‌కు జంప్ అవుతుంది!</td>
+            </tr>
+            <tr>
+              <td><strong>టైమ్ కాంప్లెక్సిటీ</strong></td>
+              <td><strong>O(n)</strong> — n వ కేస్ కోసం n సార్లు కంపారిజన్ చేయాలి.</td>
+              <td><strong>O(1)</strong> — 4 కేస్‌లు ఉన్నా లేదా 1000 కేస్‌లు ఉన్నా ఒకే ఒక్క మైక్రో సెకనులో జంప్ అవుతుంది!</td>
+            </tr>
+            <tr>
+              <td><strong>ఎక్స్‌ప్రెషన్ రకాలు</strong></td>
+              <td>సంక్లిష్టమైన కండిషన్లు (<code>x &gt; 10 &amp;&amp; y &lt; 5</code>, ఫ్లోట్స్).</td>
+              <td>కేవలం ఇంటిజర్స్ మరియు క్యారెక్టర్ కాన్‌స్టాంట్స్ మాత్రమే.</td>
+            </tr>
+            <tr>
+              <td><strong>రీడబిలిటీ (క్లీన్ కోడ్)</strong></td>
+              <td>ఎక్కువ కండిషన్లు ఉంటే కోడ్ గజిబిజిగా మారుతుంది.</td>
+              <td>అత్యంత స్పష్టమైన మెనూ రూపంలో అమర్చబడి ఉంటుంది.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-box">
+        🚀 <strong>కంపైలర్ మ్యాజిక్:</strong> మీరు 4 కంటే ఎక్కువ వరుస సంఖ్యలతో కేస్‌లు రాసినప్పుడు (ఉదా: 1, 2, 3, 4, 5...) — GCC కంపైలర్ అసెంబ్లీలో ఒక మెమరీ అర్రేని (Jump Table) సృష్టించి, ఇన్-డైరెక్ట్ జంప్ ఇన్‌స్ట్రక్షన్ <code>jmp *table[x]</code> ద్వారా క్షణాల్లో కావలసిన కేస్‌కు దూకుతుంది! దీనివల్ల ప్రతి కేస్‌ను చెక్ చేసుకునే సమయం పూర్తిగా ఆదా అవుతుంది.
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>break స్టేట్‌మెంట్ యొక్క కీలక ప్రాముఖ్యత</div>
+    <div class="section-body">
+      <p><code>break</code> అనేది C లోని ఒక జంప్ కీవర్డ్. ఒక కేస్ కోడ్ ముగిసిన వెంటనే — కంట్రోల్ మిగిలిన కేస్‌లలోకి ప్రవహించకుండా, వెంటనే మొత్తం <code>switch { ... }</code> బ్లాక్ నుండి బయటకు విసిరివేయడానికి <strong>break</strong> తప్పనిసరి!</p>
+
+      <p>ఒకవేళ మీరు పొరపాటున <code>break</code> రాయడం మర్చిపోతే — కంపైలర్ తర్వాతి కేస్‌లను మ్యాచ్ అయ్యాయో లేదో కూడా చూడకుండా <strong>అన్నింటినీ ఒకదాని తర్వాత ఒకటి గుడ్డిగా ఎగ్జిక్యూట్ చేసుకుంటూ వెళ్ళిపోతుంది!</strong> దీనినే <strong>Fall-Through</strong> అంటారు.</p>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>ఫాల్-త్రూ (Fall-Through) మెకానిక్స్ &amp; వోవెల్ చెకర్</div>
+    <div class="section-body">
+      <p>ఫాల్-త్రూ అనేది సాధారణంగా ఒక బగ్ అయినప్పటికీ — సీనియర్ ప్రోగ్రామర్లు దీనిని ఒక శక్తివంతమైన ఫీచర్‌గా మార్చుకుంటారు! అనేక వేర్వేరు కేస్‌లకు ఒకే కోడ్ ఎగ్జిక్యూట్ కావాల్సి వచ్చినప్పుడు మధ్యలో <code>break</code> రాయకుండా వదిలేస్తారు:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Intentional Fall-Through (Vowel Checker)</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
 int main(void) {
     char ch = 'E';
 
+    printf("అక్షరం: %c\n", ch);
+
+    // a, e, i, o, u లన్నింటికీ ఒకే లాజిక్ రన్ చేయడానికి ఫాల్-త్రూ టెక్నిక్!
     switch (ch) {
         case 'a':
         case 'A':
@@ -280,116 +443,278 @@ int main(void) {
         case 'O':
         case 'u':
         case 'U':
-            printf("'%c' ఒక అచ్చు (Vowel)\n", ch);
-            break;
+            printf("✅ ఇది అచ్చు (Vowel)!\n");
+            break; // ఇక్కడ మాత్రమే బ్రేక్ ఉంది!
         default:
-            printf("'%c' ఒక హల్లు లేదా ప్రత్యేక చిహ్నం (Consonant)\n", ch);
-            break;
+            printf("🔤 ఇది హల్లు (Consonant) లేదా ప్రత్యేక చిహ్నం.\n");
     }
+
     return 0;
 }</code></pre>
       </div>
-      <p style="font-size:13px; color:var(--text2); margin:8px 0 0 0;">
-        💡 పై ఉదాహరణలో మనం కావాలనే <code>break</code> పెట్టకుండా బహుళ కేస్‌లను కలిపి (Grouping) ఒకే బ్లాక్‌గా ఉపయోగించాం. దీనిని <em>Intentional Fall-through</em> అంటారు.
-      </p>
+      <p>పై కోడ్‌లో 10 వేర్వేరు <code>if (ch == 'a' || ch == 'A' ...)</code> కండిషన్లు రాయకుండా, కేవలం కేస్‌లను వరుసగా పేర్చి ఒకే ఒక <code>break</code> తో పని పూర్తి చేశాం!</p>
     </div>
 
-    <!-- SECTION 3 -->
-    <div class="section-title"><span class="num">3</span>మినీ ప్రాజెక్ట్: మెనూ-డ్రివెన్ అర్థమెటిక్ క్యాలిక్యులేటర్</div>
+    <!-- SECTION 7 -->
+    <div class="section-title"><span class="num">7</span>default కేస్ పాత్ర: అన్నీ ఫెయిల్ అయినప్పుడు ఫాల్‌బ్యాక్</div>
     <div class="section-body">
-      <p>
-        రియల్-వరల్డ్ కన్సోల్ అప్లికేషన్లలో యూజర్ ఛాయిస్ ఆధారంగా ఆపరేషన్లు చేయడానికి <code>switch</code> అత్యంత ప్రాచుర్యం పొందింది:
-      </p>
+      <p><code>default</code> అనేది <code>if-else</code> లాడర్‌లోని చివరి <code>else</code> లాంటిది. యూజర్ ఇచ్చిన విలువ పైన పేర్కొన్న ఏ ఒక్క కేస్‌తోనూ మ్యాచ్ కానప్పుడు ఈ <code>default</code> బ్లాక్ ఎగ్జిక్యూట్ అవుతుంది.</p>
 
-      <div class="code-block" style="margin:16px 0;">
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><code>default</code> రాయడం ఆప్షనల్ (తప్పనిసరి కాదు), కానీ ప్రొఫెషనల్ కోడింగ్‌లో ఊహించని యూజర్ తప్పులను కనిపెట్టడానికి ఇది ఖచ్చితంగా ఉండాలి.</li>
+        <li>సాధారణంగా <code>default</code> ను switch చివరలో ఉంచుతారు; అయితే దీనిని switch లోపల ఎక్కడైనా ఉంచవచ్చు.</li>
+        <li>చివరలో ఉన్న <code>default</code> కు <code>break</code> రాయకపోయినా నడుస్తుంది, కానీ రాయడం మంచి ప్రోగ్రామింగ్ అలవాటు.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div class="section-title"><span class="num">8</span>C లో switch యొక్క కఠిన పరిమితులు &amp; నియమాలు</div>
+    <div class="section-body">
+      <p>C లాంగ్వేజ్‌లో switch స్టేట్‌మెంట్‌కు కొన్ని కఠినమైన ఆర్కిటెక్చరల్ పరిమితులు ఉన్నాయి. వీటిని ఉల్లంఘిస్తే కంపైలర్ కోడ్‌ను అస్సలు అంగీకరించదు:</p>
+
+      <div style="display:flex; flex-direction:column; gap:16px; margin:16px 0;">
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <strong style="color:#ef4444; font-size:14.5px;">1. కేవలం ఇంటిజర్ &amp; క్యారెక్టర్లు మాత్రమే అనుమతి:</strong>
+          <p style="font-size:13.5px; color:var(--text2); margin:4px 0 0; line-height:1.6;">
+            <code>switch (ఎక్స్‌ప్రెషన్)</code> తప్పనిసరిగా <code>int</code> లేదా <code>char</code> (లేదా enum) మాత్రమే అయి ఉండాలి. <strong>ఫ్లోటింగ్ పాయింట్ సంఖ్యలు (float, double) పూర్తిగా నిషేధం!</strong> ఎందుకంటే బైనరీ ఫ్లోటింగ్ పాయింట్‌లో ఖచ్చితమైన సమానత్వాన్ని (Exact Equality) లెక్కించడం అసాధ్యం.
+          </p>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <strong style="color:#ef4444; font-size:14.5px;">2. కేస్ విలువలు కాన్‌స్టాంట్స్ మాత్రమే అయి ఉండాలి:</strong>
+          <p style="font-size:13.5px; color:var(--text2); margin:4px 0 0; line-height:1.6;">
+            <code>case x:</code> అని వేరియబుల్స్ రాయకూడదు! <code>case 5:</code> లేదా <code>case 'A':</code> లాంటి స్థిర విలువలు మాత్రమే ఉండాలి. అలాగే రిలేషనల్ కండిషన్లు <code>case &gt; 10:</code> లాంటివి చెల్లవు!
+          </p>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <strong style="color:#ef4444; font-size:14.5px;">3. డూప్లికేట్ కేస్‌లు నిషేధం:</strong>
+          <p style="font-size:13.5px; color:var(--text2); margin:4px 0 0; line-height:1.6;">
+            ఒకే switch లో రెండుసార్లు <code>case 1:</code> అని రాయకూడదు. కంపైలర్ <code>error: duplicate case value</code> అని ఎర్రర్ ఇస్తుంది.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 9 -->
+    <div class="section-title"><span class="num">9</span>మెనూ-డ్రివెన్ ప్రోగ్రామింగ్: సైంటిఫిక్ క్యాలిక్యులేటర్ ప్రాజెక్ట్</div>
+    <div class="section-body">
+      <p>యూజర్ ఒక ఆపరేషన్‌ను ఎంచుకోవడానికి మరియు దాని ప్రకారం గణిత చర్యలు జరపడానికి switch స్టేట్‌మెంట్‌తో ఒక పూర్తి స్థాయి మెనూ-డ్రివెన్ క్యాలిక్యులేటర్ ప్రోగ్రామ్‌ను నిర్మిద్దాం:</p>
+
+      <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">C — Menu-Driven Calculator</span>
-          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
+          <span class="lang-tag">C — Menu-Driven Calculator Project</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
 int main(void) {
-    char op;
-    double a, b;
+    char operator;
+    double num1, num2, result;
 
-    printf("ఆపరేషన్ ఎంటర్ చేయండి (+, -, *, /): ");
-    scanf(" %c", &op);
+    printf("=== మన సింపుల్ క్యాలిక్యులేటర్ ===\n");
+    printf("ఆపరేటర్‌ను ఎంచుకోండి (+, -, *, /): ");
+    scanf(" %c", &amp;operator); // బఫర్ సమస్య రాకుండా స్పేస్ ఉంచాం!
 
     printf("రెండు సంఖ్యలను నమోదు చేయండి: ");
-    scanf("%lf %lf", &a, &b);
+    scanf("%lf %lf", &amp;num1, &amp;num2);
 
-    switch (op) {
+    switch (operator) {
         case '+':
-            printf("ఫలితం: %.2lf + %.2lf = %.2lf\n", a, b, a + b);
+            result = num1 + num2;
+            printf("ఫలితం: %.2lf + %.2lf = %.2lf\n", num1, num2, result);
             break;
+
         case '-':
-            printf("ఫలితం: %.2lf - %.2lf = %.2lf\n", a, b, a - b);
+            result = num1 - num2;
+            printf("ఫలితం: %.2lf - %.2lf = %.2lf\n", num1, num2, result);
             break;
+
         case '*':
-            printf("ఫలితం: %.2lf * %.2lf = %.2lf\n", a, b, a * b);
+            result = num1 * num2;
+            printf("ఫలితం: %.2lf * %.2lf = %.2lf\n", num1, num2, result);
             break;
+
         case '/':
-            if (b != 0) {
-                printf("ఫలితం: %.2lf / %.2lf = %.2lf\n", a, b, a / b);
+            // సున్నాతో భాగాహారం (Division by Zero) నిరోధించడం
+            if (num2 == 0) {
+                printf("❌ ఎర్రర్: గణితంలో సున్నా (0) తో భాగాహారం అసాధ్యం!\n");
             } else {
-                printf("ఎర్రర్: సున్నాతో భాగించడం అసాధ్యం! (Division by zero)\n");
+                result = num1 / num2;
+                printf("ఫలితం: %.2lf / %.2lf = %.2lf\n", num1, num2, result);
             }
             break;
+
         default:
-            printf("చెల్లని ఆపరేటర్: '%c'\n", op);
-            break;
+            printf("❌ చెల్లని ఆపరేటర్! దయచేసి +, -, *, / లలో ఒకటి ఎంచుకోండి.\n");
     }
+
     return 0;
 }</code></pre>
       </div>
     </div>
 
-    <!-- SECTION 4 -->
-    <div class="section-title"><span class="num">4</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <!-- SECTION 10 -->
+    <div class="section-title"><span class="num">10</span>నెస్టెడ్ switch స్టేట్‌మెంట్స్ (Nested switch)</div>
     <div class="section-body">
-      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+      <p>ఒక <code>case</code> బ్లాక్ లోపల మరొక <code>switch</code> స్టేట్‌మెంట్‌ను రాయడాన్ని <strong>నెస్టెడ్ switch</strong> అంటారు. ఉదాహరణకు ఒక కాలేజీలో విభాగం (Department: CSE, ECE) ఎంచుకున్న తర్వాత — ఆ విభాగంలోని ఇయర్ (1st Year, 2nd Year) ఎంచుకోవడానికి ఇది ఉపయోగపడుతుంది:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Nested switch Example</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int deptCode = 1; // 1 = CSE, 2 = ECE
+    int year = 2;
+
+    switch (deptCode) {
+        case 1:
+            printf("విభాగం: కంప్యూటర్ సైన్స్ (CSE)\n");
+            // CSE లోపల ఇయర్ సబ్-మెనూ
+            switch (year) {
+                case 1:
+                    printf("సబ్జెక్ట్: C ప్రోగ్రామింగ్ &amp; ఇంజనీరింగ్ ఫిజిక్స్\n");
+                    break;
+                case 2:
+                    printf("సబ్జెక్ట్: డేటా స్ట్రక్చర్స్ &amp; డిజిటల్ లాజిక్\n");
+                    break;
+                default:
+                    printf("ఇతర సంవత్సరాలు.\n");
+            }
+            break;
+
+        case 2:
+            printf("విభాగం: ఎలక్ట్రానిక్స్ (ECE)\n");
+            break;
+
+        default:
+            printf("తెలియని విభాగం!\n");
+    }
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 11 -->
+    <div class="section-title"><span class="num">11</span>బిగినర్స్ చేసే టాప్ 5 switch తప్పులు</div>
+    <div class="section-body">
+      <div style="display:flex; flex-direction:column; gap:16px; margin:16px 0;">
         <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
-          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. కేస్ బ్లాక్ లోపల నేరుగా వేరియబుల్స్ డిక్లేర్ చేయడం:</div>
-          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">case 1: int x = 10; break; // Compile Error! Jump crosses initialization</code>
-          <span style="font-size:13px; color:var(--text2); display:block;">కేస్ లేబుల్ లోపల కొత్త వేరియబుల్ డిక్లేర్ చేయాలంటే ఆ కేస్‌ను ప్రత్యేక స్కోప్ కర్లీ బ్రేసెస్ <code>case 1: { int x = 10; break; }</code> లో ఉంచాలి.</span>
+          <strong style="color:#ef4444; font-size:14.5px;">❌ 1. కేస్ లోపల నేరుగా వేరియబుల్స్ డిక్లేర్ చేయడం (C Scope Error):</strong>
+          <pre style="margin:6px 0; background:#fff; border:1px solid #fecaca; padding:8px 12px; border-radius:6px; color:#b91c1c; font-size:13px;"><code>case 1:
+    int x = 10; // C లో కంపైలర్ ఎర్రర్ వస్తుంది!
+    break;</code></pre>
+          <span style="font-size:13px; color:var(--text2);">ఒక కేస్ లోపల కొత్త వేరియబుల్ డిక్లేర్ చేయాలంటే ఆ కేస్‌కు ప్రత్యేక కర్లీ బ్రేసెస్ <code>case 1: { int x = 10; ... break; }</code> ఇవ్వాలి. లేకపోతే కంపైలర్ జంప్ లేబుల్ స్కోప్ ఎర్రర్ ఇస్తుంది.</span>
         </div>
 
         <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
-          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. డూప్లికేట్ కేస్ వాల్యూస్ ఇవ్వడం:</div>
-          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">case 1: ... case 1: ... // Error: Duplicate case value</code>
-          <span style="font-size:13px; color:var(--text2); display:block;">ఒకే switch లో రెండు కేస్‌లకు సమానమైన విలువ ఉండకూడదు. కంపైలర్ వెంటనే డూప్లికేట్ ఎర్రర్ ఇస్తుంది.</span>
+          <strong style="color:#ef4444; font-size:14.5px;">❌ 2. ఫ్లోటింగ్ పాయింట్ వేరియబుల్స్‌ను switch లో పెట్టడం:</strong>
+          <pre style="margin:6px 0; background:#fff; border:1px solid #fecaca; padding:8px 12px; border-radius:6px; color:#b91c1c; font-size:13px;"><code>float f = 3.14f;
+switch (f) { ... } // తప్పు! error: switch quantity not an integer</code></pre>
+          <span style="font-size:13px; color:var(--text2);">C లో switch కేవలం పూర్ణాంకాలు (int, char) మాత్రమే అంగీకరిస్తుంది. దశాంశ సంఖ్యల కోసం <code>if-else</code> మాత్రమే వాడాలి.</span>
+        </div>
+
+        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
+          <strong style="color:#ef4444; font-size:14.5px;">❌ 3. కేస్ చివర కోలన్ (:) బదులు సెమికోలన్ (;) పెట్టడం:</strong>
+          <pre style="margin:6px 0; background:#fff; border:1px solid #fecaca; padding:8px 12px; border-radius:6px; color:#b91c1c; font-size:13px;"><code>case 1; // తప్పు! ఇక్కడ కోలన్ (:) మాత్రమే ఉండాలి!
+    printf("వన్");</code></pre>
+          <span style="font-size:13px; color:var(--text2);">కేస్ లేబుల్స్ ఎల్లప్పుడూ <strong>కోలన్ (:)</strong> తో మాత్రమే ముగియాలి. సెమికోలన్ పెడితే సింటాక్స్ ఎర్రర్ వస్తుంది.</span>
         </div>
       </div>
     </div>
 
-    <!-- SECTION 5 -->
-    <div class="section-title"><span class="num">5</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <!-- SECTION 12 (INTERACTIVE QUIZ) -->
+    <div class="section-title"><span class="num">12</span>ఇంటరాక్టివ్ నాలెడ్జ్ చెక్ (Self-Assessment Quiz)</div>
     <div class="section-body">
-      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: default కేస్ ఎల్లప్పుడూ చివరనే ఉండాలా?</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
-            సింటాక్స్ పరంగా <code>default</code> కేస్‌ను మొదటి లేదా మధ్యలో కూడా పెట్టవచ్చు. కానీ దాన్ని చివరనే ఉంచడం గ్లోబల్ కోడింగ్ స్టాండర్డ్. ఒకవేళ మధ్యలో పెడితే దానికి కూడా <code>break</code> పెట్టడం మర్చిపోకూడదు.
-          </p>
-        </div>
+      <p>ఈ ఆరవ అధ్యాయంలో మీరు నేర్చుకున్న switch-case భావనలను పరీక్షించుకోవడానికి క్రింది ప్రశ్నలపై క్లిక్ చేయండి:</p>
 
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: C లో switch కి స్ట్రింగ్స్ ("add", "exit") ఎందుకు పనిచేయవు?</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
-            C లాంగ్వేజ్ లో స్ట్రింగ్స్ ప్రిమిటివ్ టైప్స్ కావు; అవి కేవలం మెమరీ పాయింటర్లు (<code>char*</code>). రెండు స్ట్రింగ్స్ సమానమా కాదా అని చూడటానికి పాయింటర్ అడ్రస్‌లను కాకుండా అక్షరాలను పోల్చాలి (<code>strcmp</code>). జంప్ టేబుల్ కేవలం సంఖ్యల అడ్రస్‌లతోనే పనిచేస్తుంది కాబట్టి C switch లో స్ట్రింగ్స్ అనుమతించబడవు.
-          </p>
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 1: switch స్టేట్‌మెంట్‌లో ఎక్స్‌ప్రెషన్ రకంగా float లేదా double ని ఎందుకు వాడకూడదు?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> ఫ్లోటింగ్ పాయింట్ సంఖ్యలలో బైనరీ రౌండింగ్ ప్రెసిషన్ సమస్యల వల్ల ఖచ్చితమైన సమానత్వాన్ని (Exact Match) పోల్చడం సాధ్యం కాదు. అంతేకాకుండా కంపైలర్ వీటిపై O(1) Jump Tables నిర్మించలేదు.
         </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 2: ఒక కేస్ బ్లాక్ చివర break రాయకపోతే జరిగే బిహేవియర్ పేరు ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>ఫాల్-త్రూ (Fall-Through)</strong>. కంపైలర్ తర్వాతి కేస్‌లు మ్యాచ్ అయ్యాయో లేదో చూడకుండా వరుసగా ఎగ్జిక్యూట్ చేసుకుంటూ వెళ్ళిపోతుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 3: switch లోని default కేస్ ఎప్పుడు ఎగ్జిక్యూట్ అవుతుంది?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> పైన పేర్కొన్న ఏ ఒక్క కేస్ విలువ కూడా మ్యాచ్ కానప్పుడు ఫాల్‌బ్యాక్ రక్షణగా <code>default</code> ఎగ్జిక్యూట్ అవుతుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 4: case x: అని వేరియబుల్‌ను కేస్ లేబుల్‌గా వాడవచ్చా?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>వాడకూడదు!</strong> కేస్ లేబుల్స్ తప్పనిసరిగా కంపైల్-టైమ్ స్థిర విలువలు (Constants, ఉదా: 1, 'A') మాత్రమే అయి ఉండాలి.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 5: else-if లాడర్ తో పోలిస్తే switch స్టేట్‌మెంట్ ఎందుకు వేగవంతమైనది?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>else-if</code> ప్రతి కండిషన్‌ను లీనియర్‌గా O(n) లో చెక్ చేస్తుంది. కానీ switch స్టేట్‌మెంట్ <strong>జంప్ టేబుల్స్ (Jump Tables)</strong> ద్వారా నేరుగా O(1) సమయంలో కావలసిన కేస్‌కు దూకుతుంది.
+        </div>
+      </details>
+    </div>
+
+    <!-- SECTION 13 (TRY BOX & SUMMARY) -->
+    <div class="section-title"><span class="num">13</span>మీరే స్వయంగా Try చేయండి &amp; సారాంశం (Quick Summary)</div>
+    <div class="section-body">
+      <div class="try-box" style="margin-top:10px;">
+        <div class="try-title">🚀 సైంటిఫిక్ క్యాలిక్యులేటర్‌ను మన ఆన్‌లైన్ C కంపైలర్‌లో రన్ చేయండి!</div>
+        <p>పైన వివరించిన <code>క్యాలిక్యులేటర్ ప్రాజెక్ట్</code> మరియు <code>వోవెల్ చెకర్ ఫాల్-త్రూ</code> కోడ్‌ను మన ఆన్‌లైన్ C కంపైలర్‌లో ఓపెన్ చేసి స్వయంగా రన్ చేయండి. కొత్త ఆపరేటర్లను (ఉదా: మాడ్యులో %) జోడించి మీ స్వంత మెనూ అప్లికేషన్‌ను రూపొందించండి!</p>
+        <a class="run-btn" href="/online-c-compiler.html" target="_blank">
+          👉 Our Compiler లో C Compiler try చేయండి
+        </a>
+      </div>
+
+      <div style="margin-top:24px;">
+        <h4 style="color:#059669; font-size:16px; margin-bottom:10px;">📌 క్విక్ సారాంశం (Key Takeaways):</h4>
+        <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+          <li><strong>switch:</strong> ఒకే విలువ ఆధారంగా బహుళ మార్గాల్లోకి దూకే O(1) జంప్ టేబుల్ కాంపోనెంట్.</li>
+          <li><strong>డేటా పరిమితి:</strong> కేవలం int మరియు char మాత్రమే చెల్లుతాయి; ఫ్లోట్స్ పూర్తిగా నిషేధం.</li>
+          <li><strong>break:</strong> కంట్రోల్ తర్వాతి కేస్‌లలోకి జారిపోకుండా బయటకు పంపే తాళం చెవి.</li>
+          <li><strong>Fall-Through:</strong> బ్రేక్ లేనప్పుడు కింద ఉన్న కేస్‌లు కూడా రన్ అయ్యే స్వభావం.</li>
+          <li><strong>default:</strong> ఊహించని తప్పుడు ఇన్‌పుట్‌లను అడ్డుకునే సేఫ్టీ గార్డ్.</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:20px; padding:16px; background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0;">
+        <strong>తర్వాతి అధ్యాయంలో (Chapter 07):</strong> కంప్యూటర్ చేత పనులను వేలసార్లు పదేపదే చేయించే <strong>లూప్స్ (for, while, do-while), ఎంట్రీ vs ఎగ్జిట్ కంట్రోల్ తేడాలు, మరియు ఇన్ఫినిట్ లూప్స్ నివారణ</strong> గురించి అత్యంత ఆసక్తికరంగా నేర్చుకుందాం!
       </div>
     </div>
-  
+
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
-      
       <a href="/blog-c/05-c-if-else-conditionals.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
         ← Prev: 5. డెసిషన్ మేకింగ్ (if-else)
       </a>
-      
       <a href="/blog-c/07-c-loops-while-do-while-for.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
         Next: 7. లూప్స్ (for, while) →
       </a>
@@ -400,7 +725,7 @@ int main(void) {
       <div class="avatar">OC</div>
       <div>
         <strong>Written by Our Compiler Technical Editorial Team</strong><br>
-        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · 2026 Academic Edition</span>
+        <span>Reviewed for accuracy &amp; tested on GCC 13+ / Clang 17 runtime · 2026 Academic Edition</span>
       </div>
     </div>
 
@@ -411,3 +736,4 @@ int main(void) {
 <script src="/site-nav.js" defer></script>
 </body>
 </html>
+
