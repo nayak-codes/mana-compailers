@@ -1,0 +1,861 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./cpp_curriculum_data.js');
+
+const currentLesson = LESSONS[17]; // Chapter 18 (0-indexed 17)
+const sidebarHtml = buildSidebar(18);
+
+const chapter18Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ టెంప్లేట్లు & Generic Programming సమగ్ర మాస్టర్‌క్లాస్ తెలుగులో: Function Templates, Class Templates, Non-type Template Parameters (NTTP), Template Specialization, Variadic Templates, C++17 Fold Expressions, C++20 Concepts & Constraints, మరియు Enterprise Generic Ring Buffer ప్రాజెక్ట్." />
+  <meta name="keywords" content="c++ templates telugu, generic programming c++, concepts c++20, fold expressions c++17, variadic templates c++, non-type template parameters, template specialization, learn c++ in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Mastering C++ Templates, Generic Programming & C++20 Concepts in Telugu)",
+    "description": "C++ టెంప్లేట్లు & Generic Programming పూర్తి గైడ్: Function & Class Templates, Specialization, Variadic Templates, C++20 Concepts, మరియు Generic Ring Buffer Engine.",
+    "articleSection": "Phase 5: Advanced C++, STL & Real-World Projects",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-18",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, C++ Syntax Highlighter & Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side C++ Syntax Highlighter
+    function highlightCppCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___CPP_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(#[a-zA-Z_]+(?:\\s*<[^>]+>|\\s*"[^"]+")?)/g, m => pushToken('pp', m));
+      code = code.replace(/("[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'int','double','float','char','bool','void','auto','long','short','unsigned','signed',
+        'return','using','namespace','class','struct','public','private','protected',
+        'virtual','override','final','template','typename','concept','requires','const',
+        'constexpr','consteval','constinit','if','else','for','while','do','switch','case',
+        'break','continue','default','new','delete','try','catch','throw','nullptr','true',
+        'false','static','inline','sizeof','typedef','enum','explicit','friend','operator',
+        'typeid','decltype','noexcept'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'std','cout','cin','endl','cerr','clog','string','vector','array','integral',
+        'floating_point','main','printf','fixed','setprecision','is_copy_constructible_v'
+      ];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?(?:f|u|l|ll)?|0x[0-9a-fA-F]+)\\b/gi, m => pushToken('nu', m));
+      code = code.replace(/___CPP_TOK_(\\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code').forEach(el => {
+        el.innerHTML = highlightCppCode(el.textContent);
+      });
+    });
+
+    function copyCode(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (codeEl) {
+        navigator.clipboard.writeText(codeEl.textContent).then(() => {
+          const orig = btn.innerHTML;
+          btn.innerHTML = '✅ Copied!';
+          setTimeout(() => { btn.innerHTML = orig; }, 2000);
+        });
+      }
+    }
+
+    function runCodeInCompiler(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (codeEl) {
+        const rawCode = codeEl.textContent;
+        try {
+          localStorage.setItem('code_cpp17', rawCode);
+          localStorage.setItem('code_cpp', rawCode);
+        } catch (e) {
+          console.warn('LocalStorage error:', e);
+        }
+        window.open('/online-cpp-compiler.html', '_blank');
+      }
+    }
+  </script>
+</head>
+<body>
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE CONTENT -->
+  <main class="content">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 18: ${currentLesson.title}</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">${currentLesson.title}</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge">🌐 Modern C++ (C++20/C++17)</span>
+      <span class="badge">🟢 Chapter 18 of 20</span>
+      <span class="badge">📂 ${currentLesson.phaseTag}: ${currentLesson.phaseTitle}</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>${currentLesson.subtopics}</span>
+    </div>
+
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
+    <div class="intro-box">
+      <p>ఆధునిక సాఫ్ట్‌వేర్ అభివృద్ధిలో ఒకే లాజిక్‌ను పూర్ణాంకాలు (int), దశాంశాలు (double), అక్షరాలు (char) లేదా కస్టమ్ ఆబ్జెక్టుల కోసం వేర్వేరుగా పదే పదే రాయడం అనేది సమయం మరియు మానవ శ్రమను వృధా చేయడమే. ఈ సమస్యకు C++ అందించిన అద్భుతమైన మరియు అసమానమైన పరిష్కారమే <strong>టెంప్లేట్లు (Templates) &amp; జెనరిక్ ప్రోగ్రామింగ్ (Generic Programming)</strong>.</p>
+      <p>ఇతర ప్రోగ్రామింగ్ భాషల్లో (Java Generics లేదా C# వంటివి) జెనరిక్స్ రన్‌టైమ్‌లో బాక్సింగ్/అన్‌బాక్సింగ్ మరియు టైప్-ఎరేజర్ (Type Erasure) ద్వారా పనిచేసి పనితీరును తగ్గిస్తాయి. కానీ C++ లో టెంప్లేట్లు <strong>కంపైల్-టైమ్ కోడ్ జనరేషన్ (Compile-time Monomorphization)</strong> ద్వారా పనిచేస్తాయి! ఫలితంగా <strong>సున్నా రన్‌టైమ్ ఓవర్‌హెడ్ (Zero Runtime Overhead)</strong> తో చేతితో రాసిన మెషిన్ అసెంబ్లీ కోడ్ అంతే వేగంతో అమలవుతాయి. అంతేకాకుండా Modern C++20 లో ప్రవేశపెట్టిన విప్లవాత్మకమైన <strong>Concepts &amp; Constraints</strong> టెంప్లేట్ ప్రోగ్రామింగ్‌ను మరింత సురక్షితంగా మరియు సులభంగా మార్చాయి.</p>
+      <p>ఈ సమగ్ర మాస్టర్‌క్లాస్‌లో మనం Function &amp; Class Templates, Non-type Template Parameters (NTTP), Template Specialization, Variadic Templates (C++11/C++17 Fold Expressions), C++20 Concepts &amp; <code>requires</code> నిబంధనలు, మరియు పూర్తి స్థాయి <em>"Enterprise High-Performance Generic Lock-Free Ring Buffer Engine"</em> ప్రాజెక్ట్‌ను ప్రత్యక్షంగా నిర్మించి నేర్చుకుందాం!</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> జెనరిక్ ప్రోగ్రామింగ్ అంటే ఏమిటి? (Code Generation Automation)</h2>
+      <p>
+        <strong>జెనరిక్ ప్రోగ్రామింగ్ (Generic Programming) అంటే ఏమిటి?</strong> నిర్దిష్టమైన డేటా టైప్‌లతో (int, string, double) సంబంధం లేకుండా, ఒక సాధారణ బ్లూప్రింట్ (Type-Agnostic Algorithm) రాసి, ఏ డేటా టైప్‌కైనా సరిపోయేలా కోడ్‌ను రూపొందించే పద్ధతిని జెనరిక్ ప్రోగ్రామింగ్ అంటారు.
+      </p>
+      <p>
+        C++ లో ఈ జెనరిక్ ఫిలాసఫీని సాధ్యం చేసే సాధనాలే <strong>టెంప్లేట్లు (Templates)</strong>.
+      </p>
+      <p>
+        <strong>టెంప్లేట్లు ఎలా పనిచేస్తాయి?</strong><br/>
+        మీరు టెంప్లేట్ రాసినప్పుడు కంపైలర్ నేరుగా మెషిన్ కోడ్‌ను సృష్టించదు! మీరు ప్రోగ్రామ్‌లో ఆ టెంప్లేట్‌ను <code>int</code> తో పిలిస్తే, కంపైలర్ వెనుక వైపు <code>int</code> వెర్షన్ ఫంక్షన్‌ను ఆటోమేటిక్‌గా టైప్ చేస్తుంది; మీరు <code>double</code> తో పిలిస్తే <code>double</code> వెర్షన్‌ను రూపొందిస్తుంది. ఈ ప్రక్రియను <strong>Template Instantiation</strong> అంటారు.
+      </p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> ఫంక్షన్ టెంప్లేట్లు (Function Templates: <code>template <typename T></code>)</h2>
+      <p>
+        రెండు విలువలలో ఏది పెద్దదో కనుగొనడానికి సాధారణంగా మనం <code>int max(int, int)</code>, <code>double max(double, double)</code> అని విడివిడిగా రాస్తుంటాం. కానీ ఫంక్షన్ టెంప్లేట్‌తో ఒక్కటే సరిపోతుంది:
+      </p>
+      <pre><code>template &lt;typename T&gt;
+T getMaximum(T a, T b) {
+    return (a > b) ? a : b;
+}</code></pre>
+      <p>
+        ఇక్కడ <code>typename</code> మరియు <code>class</code> కీవర్డ్లు రెండూ సరిగ్గా ఒకే విధంగా పనిచేస్తాయి (రెంటిలో దేనినైనా వాడవచ్చు).
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">function_template_basics.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+// జెనరిక్ ఫంక్షన్ టెంప్లేట్
+template &lt;typename T&gt;
+T findMax(T a, T b) {
+    return (a > b) ? a : b;
+}
+
+// బహుళ విభిన్న టైప్‌ల టెంప్లేట్ (Multi-type Template)
+template &lt;typename T, typename U&gt;
+void printPair(T first, U second) {
+    std::cout << "జత: [" << first << ", " << second << "]\\n";
+}
+
+int main() {
+    std::cout << "పూర్ణాంకాల గరిష్టం (int):   " << findMax(25, 42) << "\\n";
+    std::cout << "దశాంశాల గరిష్టం (double): " << findMax(99.45, 12.30) << "\\n";
+    std::cout << "అక్షరాల గరిష్టం (string): " << findMax(std::string("Hyderabad"), std::string("Bengaluru")) << "\\n";
+
+    std::cout << "\\nబహుళ టైప్ జతలు:\\n";
+    printPair("RollNo", 101);
+    printPair(3.14159, "PI Value");
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> క్లాస్ టెంప్లేట్లు (Class Templates: Generic Containers)</h2>
+      <p>
+        ఏ డేటా టైప్‌నైనా భద్రపరచగల జెనరిక్ డేటా స్ట్రక్చర్‌లను (ఉదాహరణకు <code>std::vector&lt;T&gt;</code>, <code>std::stack&lt;T&gt;</code>) రూపొందించడానికి <strong>క్లాస్ టెంప్లేట్లు</strong> ఉపయోగపడతాయి.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">generic_container_class.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+// జెనరిక్ క్లాస్ టెంప్లేట్
+template &lt;typename T&gt;
+class SecureBox {
+private:
+    T content;
+public:
+    SecureBox(T val) : content(val) {}
+
+    void setContent(T val) { content = val; }
+    T getContent() const { return content; }
+
+    void inspect() const {
+        std::cout << "  📦 [SecureBox] డేటా విలువ: " << content 
+                  << " (సైజ్: " << sizeof(content) << " Bytes)\\n";
+    }
+};
+
+int main() {
+    SecureBox&lt;int&gt; intBox(5000);
+    SecureBox&lt;double&gt; dblBox(999.85);
+    SecureBox&lt;std::string&gt; strBox("Secret-Bank-Vault-Token");
+
+    intBox.inspect();
+    dblBox.inspect();
+    strBox.inspect();
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> Non-Type Template Parameters (NTTP)</h2>
+      <p>
+        టెంప్లేట్లలో కేవలం డేటా టైప్‌లనే కాకుండా, పూర్ణాంక సంఖ్యలను (Integers, Pointers, Enums) కూడా టెంప్లేట్ పారామీటర్‌గా పాస్ చేయవచ్చు. దీనినే <strong>Non-Type Template Parameter (NTTP)</strong> అంటారు.
+      </p>
+      <p>
+        <strong>ఉపయోగం:</strong> కంపైల్-టైమ్‌లోనే ఫిక్స్‌డ్ సైజ్ కలిగిన మెమరీ బఫర్‌లను సృష్టించి, హీప్ మెమరీ అలొకేషన్ ఓవర్‌హెడ్‌ను పూర్తిగా నివారించవచ్చు (ఉదాహరణకు <code>std::array&lt;T, N&gt;</code>).
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">nttp_fixed_buffer.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+// T అనేది డేటా టైప్, Size అనేది NTTP సంఖ్య!
+template &lt;typename T, size_t Size&gt;
+class StaticStack {
+private:
+    T buffer[Size];
+    size_t count = 0;
+
+public:
+    bool push(const T& val) {
+        if (count >= Size) return false;
+        buffer[count++] = val;
+        return true;
+    }
+
+    T pop() {
+        if (count == 0) throw std::underflow_error("స్టాక్ ఖాళీగా ఉంది!");
+        return buffer[--count];
+    }
+
+    size_t capacity() const { return Size; }
+    size_t size() const { return count; }
+};
+
+int main() {
+    // 5 ఎలిమెంట్ల ఫిక్స్‌డ్ సైజ్ స్టాక్ (హీప్ అలొకేషన్ లేదు - 100% స్టాక్ మెమరీ!)
+    StaticStack&lt;int, 5&gt; fastStack;
+    fastStack.push(10);
+    fastStack.push(20);
+    fastStack.push(30);
+
+    std::cout << "స్టాక్ సామర్థ్యం: " << fastStack.capacity() << " | ఎలిమెంట్లు: " << fastStack.size() << "\\n";
+    std::cout << "పాప్ చేసిన విలువ: " << fastStack.pop() << "\\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> టెంప్లేట్ స్పెషలైజేషన్ (Full &amp; Partial Specialization)</h2>
+      <p>
+        సాధారణ జెనరిక్ నియమం అన్ని టైప్‌లకూ సరిపోయినప్పటికీ, ఏదైనా ఒక నిర్దిష్ట డేటా టైప్ కోసం ప్రత్యేకమైన ఆప్టిమైజ్డ్ లాజిక్ అవసరమైనప్పుడు <strong>టెంప్లేట్ స్పెషలైజేషన్ (Template Specialization)</strong> ను ఉపయోగిస్తాం.
+      </p>
+      <ul>
+        <li><strong>Full Specialization:</strong> టెంప్లేట్ పారామీటర్లను పూర్తిగా ఒక నిర్దిష్ట టైప్‌కు కట్టబెట్టడం: <code>template &lt;&gt; class MyBox&lt;bool&gt; { ... };</code></li>
+        <li><strong>Partial Specialization:</strong> పాయింటర్ల కోసం లేదా పాక్షిక టైప్‌ల కోసం స్పెషలైజ్ చేయడం: <code>template &lt;typename T&gt; class MyBox&lt;T*&gt; { ... };</code></li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">template_specialization_demo.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+// 1. సాధారణ జెనరిక్ టెంప్లేట్
+template &lt;typename T&gt;
+class Formatter {
+public:
+    static void print(T val) {
+        std::cout << "  [సాధారణ ఫార్మాట్]: " << val << "\\n";
+    }
+};
+
+// 2. Full Specialization for bool (0/1 కాకుండా True/False ప్రింట్ కొరకు)
+template &lt;&gt;
+class Formatter&lt;bool&gt; {
+public:
+    static void print(bool val) {
+        std::cout << "  [బూలియన్ స్పెషలైజ్డ్ ఫార్మాట్]: " << (val ? "TRUE (నిజం)" : "FALSE (అబద్ధం)") << "\\n";
+    }
+};
+
+int main() {
+    Formatter&lt;int&gt;::print(100);
+    Formatter&lt;double&gt;::print(3.14);
+    Formatter&lt;bool&gt;::print(true); // స్పెషలైజ్డ్ వెర్షన్ అమలవుతుంది!
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> డీఫాల్ట్ టెంప్లేట్ ఆర్గుమెంట్లు (Default Template Arguments)</h2>
+      <p>
+        ఒక టెంప్లేట్‌ను ఉపయోగించేటప్పుడు ప్రోగ్రామర్ టైప్‌ను స్పష్టంగా చెప్పకపోతే కంపైలర్ డిఫాల్ట్‌గా ఒక టైప్‌ను తీసుకోవడానికి మనం డీఫాల్ట్ ఆర్గుమెంట్లను ఇవ్వవచ్చు:
+      </p>
+      <pre><code>template &lt;typename T = double, size_t Capacity = 64&gt;
+class RingBuffer { ... };</code></pre>
+      <p>
+        ఇప్పుడు <code>RingBuffer&lt;&gt; buf;</code> అని రాస్తే అది ఆటోమేటిక్‌గా <code>double</code> మరియు <code>64</code> సైజుతో ఇన్‌స్టాన్షియేట్ అవుతుంది.
+      </p>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> వేరియాడిక్ టెంప్లేట్లు &amp; C++17 Fold Expressions</h2>
+      <p>
+        <strong>వేరియాడిక్ టెంప్లేట్లు (Variadic Templates - C++11):</strong> ఎన్ని ఆర్గుమెంట్లనైనా (0, 1, 5, లేదా 100) స్వీకరించగల జెనరిక్ ఫంక్షన్లను రూపొందించడానికి <code>typename... Args</code> (Parameter Pack) ను ఉపయోగిస్తాం.
+      </p>
+      <p>
+        <strong>Modern C++17 Fold Expressions:</strong> పాత C++11 లో పారామీటర్ ప్యాక్‌ను లెక్కించడానికి రికర్సివ్ ఫంక్షన్లు రాయాల్సి వచ్చేది. కానీ C++17 లో <strong><code>(args + ...)</code></strong> అనే ఒక్క చిన్న సమీకరణంతో మొత్తం ప్యాక్‌ను అద్భుతంగా సమ్మేషన్ చేయవచ్చు!
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">fold_expressions_c17.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+// C++17 Fold Expression ద్వారా ఎన్ని సంఖ్యలనైనా ఒక్క లైన్‌లో కూడటం!
+template &lt;typename... Args&gt;
+auto sumAll(Args... args) {
+    return (args + ...); // Unary Right Fold: (a1 + (a2 + (a3 + ...)))
+}
+
+int main() {
+    std::cout << "3 సంఖ్యల మొత్తం:  " << sumAll(10, 20, 30) << "\\n";
+    std::cout << "5 సంఖ్యల మొత్తం:  " << sumAll(1.5, 2.5, 3.0, 4.0, 5.0) << "\\n";
+    std::cout << "స్ట్రింగ్స్ కలయిక: " << sumAll(std::string("C++20 "), std::string("Fold "), std::string("Magic!")) << "\\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> కంపైల్-టైమ్ ప్రోగ్రామింగ్ &amp; <code>if constexpr</code> (C++17)</h2>
+      <p>
+        రన్‌టైమ్‌లో <code>if-else</code> కండిషన్లను చెక్ చేస్తే ప్రోగ్రామ్ స్పీడ్ తగ్గుతుంది. కానీ <strong><code>if constexpr</code></strong> ద్వారా కంపైల్-టైమ్‌లోనే కండిషన్ తనిఖీ చేయబడి, తప్పుడు బ్రాంచ్ కోడ్ అసలు బైనరీ ఫైల్‌లోకే రాకుండా పూర్తిగా తొలగించబడుతుంది (Dead Code Elimination)!
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">if_constexpr_demo.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;type_traits&gt;
+
+template &lt;typename T&gt;
+void processData(T val) {
+    if constexpr (std::is_pointer_v&lt;T&gt;) {
+        std::cout << "  పాయింటర్ డేటా డీరిఫరెన్స్: " << *val << "\\n";
+    } else {
+        std::cout << "  డైరెక్ట్ వాల్యూ డేటా: " << val << "\\n";
+    }
+}
+
+int main() {
+    int num = 42;
+    processData(num);  // else బ్రాంచ్ మాత్రమే కంపైల్ అవుతుంది!
+    processData(&num); // if బ్రాంచ్ మాత్రమే కంపైల్ అవుతుంది!
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> Modern C++20 విప్లవం: Concepts &amp; Constraints (<code>requires</code>)</h2>
+      <p>
+        C++ చరిత్రలో గత 30 ఏళ్లుగా టెంప్లేట్ ప్రోగ్రామర్లను వేధించిన అతిపెద్ద సమస్య: <strong>క్రిప్టిక్ ఎర్రర్ మెసేజ్‌లు (Cryptic Compiler Errors)</strong>. ఒక టెంప్లేట్ ఫంక్షన్‌కు తప్పుడు టైప్ పాస్ చేస్తే 500 లైన్ల అర్థం కాని ఎర్రర్ వచ్చేది!
+      </p>
+      <p>
+        ఈ సమస్యకు <strong>Modern C++20</strong> లో లభించిన విప్లవాత్మక పరిష్కారమే <strong>Concepts &amp; Constraints</strong>.
+      </p>
+      <div style="background:var(--bg3); border-left:4px solid #10b981; padding:12px 16px; margin:16px 0; font-size:14px;">
+        "టెంప్లేట్ ఏ టైప్‌నైనా గుడ్డిగా తీసుకోకూడదు! కేవలం నిర్దిష్ట నిబంధనలను (ఉదా: సంఖ్యలు మాత్రమే, లేదా కూడటం సాధ్యమయ్యే టైప్స్ మాత్రమే) సంతృప్తిపరిస్తేనే అనుమతించాలి!"
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">cpp20_concepts_demo.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;concepts&gt;
+
+// C++20 Standard Concept: std::integral (పూర్ణాంకాలు మాత్రమే!)
+template &lt;std::integral T&gt;
+T computeModulo(T a, T b) {
+    return a % b;
+}
+
+// Custom Concept: నంబర్లు (int లేదా float) మాత్రమే
+template &lt;typename T&gt;
+concept Numeric = std::integral&lt;T&gt; || std::floating_point&lt;T&gt;;
+
+template &lt;Numeric T&gt;
+T average(T a, T b) {
+    return (a + b) / 2;
+}
+
+int main() {
+    std::cout << "Modulo (15 % 4): " << computeModulo(15, 4) << "\\n";
+    // computeModulo(15.5, 4.2); // ❌ కంపైలర్ క్లీన్ ఎర్రర్: Constraints not satisfied!
+
+    std::cout << "Average: " << average(10.5, 20.5) << "\\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> టెంప్లేట్స్ హెడర్-ఓన్లీ స్వభావం &amp; Code Bloat నివారణ</h2>
+      <p>
+        <strong>హెడర్-ఓన్లీ రూల్ (The Header-Only Rule):</strong><br/>
+        సాధారణ C++ ఫంక్షన్లలా కాకుండా, టెంప్లేట్ల యొక్క పూర్తి డిక్లరేషన్ మరియు ఇంప్లిమెంటేషన్‌ను తప్పనిసరిగా <strong>హెడర్ ఫైల్స్ (<code>.hpp</code> / <code>.h</code>)</strong> లోనే ఉంచాలి! ఎందుకంటే వేరే ఫైల్ టెంప్లేట్‌ను పిలిచినప్పుడు కంపైలర్‌కు ఆ టైప్ కొరకు కొత్త కోడ్‌ను సృష్టించడానికి పూర్తి టెంప్లేట్ బాడీ కంటికి కనిపించాలి.
+      </p>
+      <p>
+        <strong>కోడ్ బ్లోట్ (Code Bloat):</strong> టెంప్లేట్లను 100 వేర్వేరు టైప్‌లతో వాడితే బైనరీ ఎగ్జిక్యూటబుల్ సైజు పెరుగుతుంది. దీనిని నివారించడానికి కామన్ లాజిక్‌ను నాన్-టెంప్లేట్ బేస్ క్లాస్‌లో ఉంచడం ప్రొఫెషనల్ పద్ధతి.
+      </p>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> సాధారణ టెంప్లేట్ తప్పులు &amp; డీబగ్గింగ్ గైడ్</h2>
+      <ol style="line-height:1.8;">
+        <li>
+          <strong>Dependent Names లో <code>typename</code> మర్చిపోవడం:</strong> టెంప్లేట్ లోపల వేరొక టైప్‌ను యాక్సెస్ చేసేటప్పుడు (ఉదా: <code>T::iterator</code>) కంపైలర్‌కు అది వేరియబుల్ కాదని చెప్పడానికి <code>typename T::iterator</code> అని రాయాలి.
+        </li>
+        <li>
+          <strong>టెంప్లేట్ డెఫినిషన్‌ను <code>.cpp</code> లో దాచిపెట్టడం:</strong> దీనివల్ల లింకర్ ఎర్రర్ (Undefined Reference) వస్తుంది.
+        </li>
+      </ol>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> రియల్-వరల్డ్ ప్రాజెక్ట్: Enterprise High-Performance Generic Lock-Free Ring Buffer Engine</h2>
+      <p>
+        నిజ జీవితంలో హై-స్పీడ్ ఆడియో ఇంజిన్లు (FL Studio, ProTools), ఆటోమోటివ్ CAN-Bus నెట్‌వర్క్‌లు మరియు హై-ఫ్రీక్వెన్సీ ట్రేడింగ్ సిస్టమ్స్ సెకనుకు లక్షలాది మెసేజ్‌లను జీరో హీప్ అలొకేషన్ మరియు జీరో లాక్‌లతో పాస్ చేయడానికి <strong>రింగ్ బఫర్ (Circular Queue)</strong> ను ఉపయోగిస్తాయి.
+      </p>
+      <p>
+        ఈ సమగ్ర ప్రాజెక్ట్‌లో మనం C++20 Concepts, Non-type Template Parameters, మరియు కంపైల్-టైమ్ సైజ్ నిర్ధారణతో కూడిన ఒక <strong>ఎంటర్‌ప్రైజ్ జెనరిక్ రింగ్ బఫర్ ఇంజిన్</strong> ను నిర్మిస్తున్నాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">GenericRingBufferEngine.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="openInteractiveCompiler()">⚡ Run Live Project</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;type_traits&gt;
+#include &lt;concepts&gt;
+#include &lt;optional&gt;
+
+// C++20 Concept: కాపీ కన్‌స్ట్రక్ట్ చేయగల టైప్‌లకు మాత్రమే అనుమతి!
+template &lt;typename T&gt;
+concept Bufferable = std::is_copy_constructible_v&lt;T&gt;;
+
+// జెనరిక్ రింగ్ బఫర్ క్లాస్ టెంప్లేట్ విత్ NTTP Capacity
+template &lt;Bufferable T, size_t Capacity&gt;
+class RingBuffer {
+    static_assert(Capacity > 0, "❌ బఫర్ కెపాసిటీ ఖచ్చితంగా 0 కంటే ఎక్కువ ఉండాలి!");
+
+private:
+    T buffer[Capacity]; // ఫిక్స్‌డ్ సైజ్ స్టాక్ బఫర్ (జీరో హీప్ ఓవర్‌హెడ్!)
+    size_t head = 0;
+    size_t tail = 0;
+    size_t currentSize = 0;
+
+public:
+    RingBuffer() = default;
+
+    bool enqueue(const T& item) {
+        if (currentSize == Capacity) {
+            return false; // బఫర్ ఫుల్!
+        }
+        buffer[tail] = item;
+        tail = (tail + 1) % Capacity;
+        currentSize++;
+        return true;
+    }
+
+    std::optional&lt;T&gt; dequeue() {
+        if (currentSize == 0) {
+            return std::nullopt; // బఫర్ ఖాళీ!
+        }
+        T item = buffer[head];
+        head = (head + 1) % Capacity;
+        currentSize--;
+        return item;
+    }
+
+    size_t size() const { return currentSize; }
+    size_t maxCapacity() const { return Capacity; }
+    bool isEmpty() const { return currentSize == 0; }
+    bool isFull() const { return currentSize == Capacity; }
+};
+
+struct TelemetryLog {
+    int sensorId;
+    double reading;
+};
+
+int main() {
+    std::cout << "=======================================================================\\n";
+    std::cout << "🔄 [ENTERPRISE GENERIC RING BUFFER & CIRCULAR QUEUE ENGINE]\\n";
+    std::cout << "=======================================================================\\n";
+
+    // 1. పూర్ణాంకాల (int) రింగ్ బఫర్ (సామర్థ్యం: 4)
+    RingBuffer&lt;int, 4&gt; intQueue;
+    std::cout << "\\n[టెస్ట్ 1: పూర్ణాంకాల రింగ్ బఫర్ (Capacity: 4)]:\\n";
+    intQueue.enqueue(101);
+    intQueue.enqueue(102);
+    intQueue.enqueue(103);
+    intQueue.enqueue(104);
+
+    if (!intQueue.enqueue(105)) {
+        std::cout << "  ⚠️ బఫర్ నిండిపోయింది (105 డ్రాప్ చేయబడింది!)\\n";
+    }
+
+    while (!intQueue.isEmpty()) {
+        std::cout << "  రీడ్ చేసిన ఐటెమ్: " << *intQueue.dequeue() << "\\n";
+    }
+
+    // 2. కస్టమ్ స్ట్రక్చర్ (TelemetryLog) రింగ్ బఫర్
+    RingBuffer&lt;TelemetryLog, 3&gt; telemetryQueue;
+    std::cout << "\\n[టెస్ట్ 2: జెనరిక్ టెలిమెట్రీ సెన్సార్ స్ట్రీమ్]:\\n";
+    telemetryQueue.enqueue({0xAA1, 38.4});
+    telemetryQueue.enqueue({0xAA2, 42.1});
+
+    while (auto item = telemetryQueue.dequeue()) {
+        std::cout << "  📡 సెన్సార్ ID: 0x" << std::hex << item->sensorId 
+                  << std::dec << " | ఉష్ణోగ్రత: " << item->reading << " °C\\n";
+    }
+
+    std::cout << "\\n=======================================================================\\n";
+    std::cout << "✅ C++20 Concepts తో జెనరిక్ రింగ్ బఫర్ ఎగ్జిక్యూషన్ విజయవంతమైంది!\\n";
+    std::cout << "=======================================================================\\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> సారాంశం &amp; ఇంటరాక్టివ్ క్విజ్ (Summary &amp; Self-Check Quizzes)</h2>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:28px;">
+        <h3 style="margin-top:0; color:#10b981;">📌 ఈ అధ్యాయంలో నేర్చుకున్న ప్రధాన అంశాలు:</h3>
+        <ul style="line-height:1.8; color:var(--text);">
+          <li><strong>Generic Programming:</strong> డేటా టైప్‌తో సంబంధం లేకుండా టైప్-ఇండిపెండెంట్ కోడ్ రాసే శక్తి.</li>
+          <li><strong>Template Instantiation:</strong> కంపైలర్ మనం వాడే ప్రతి టైప్ కొరకు కంపైల్-టైమ్‌లోనే అసలు మెషిన్ కోడ్‌ను ఉచితంగా సృష్టిస్తుంది (Zero Runtime Overhead).</li>
+          <li><strong>NTTP (Non-Type Template Parameters):</strong> సైజులు, సంఖ్యలను టెంప్లేట్ ఆర్గుమెంట్లుగా పాస్ చేసి ఫిక్స్‌డ్ సైజ్ బఫర్లను నిర్మించడం.</li>
+          <li><strong>Template Specialization:</strong> నిర్దిష్ట డేటా టైప్‌ల కొరకు (ఉదా: <code>bool</code>) ప్రత్యేకమైన ఆప్టిమైజ్డ్ లాజిక్ అందించడం.</li>
+          <li><strong>Fold Expressions (C++17):</strong> వేరియాడిక్ పారామీటర్ ప్యాక్‌ను రికర్షన్ లేకుండా <code>(args + ...)</code> తో సింపుల్‌గా ఎవాల్యుయేట్ చేయడం.</li>
+          <li><strong>if constexpr (C++17):</strong> కంపైల్-టైమ్ బ్రాంచింగ్ ద్వారా అనవసరమైన కోడ్ బ్రాంచ్‌ను పూర్తిగా తొలగించడం.</li>
+          <li><strong>Concepts &amp; Constraints (C++20):</strong> టెంప్లేట్ టైప్‌లపై కచ్చితమైన నిబంధనలు విధించి క్రిప్టిక్ ఎర్రర్లను రూపుమాపడం.</li>
+          <li><strong>Header-Only Rule:</strong> టెంప్లేట్ ఫంక్షన్ల పూర్తి కోడ్‌ను ఎల్లప్పుడూ హెడర్ ఫైళ్లలోనే ఉంచాలి.</li>
+        </ul>
+      </div>
+
+      <h3 style="margin-bottom:16px;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 1: C++ టెంప్లేట్లు ఇతర భాషల జెనరిక్స్ (Java Generics) కంటే ఎందుకు మెరుపు వేగంతో పనిచేస్తాయి?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> కంపైల్-టైమ్ మోనోమార్ఫైజేషన్ (Compile-time Code Generation) వల్ల సున్నా రన్‌టైమ్ ఓవర్‌హెడ్ ఉండటం చేత!<br/>
+          <em>వివరణ:</em> Java లో రన్‌టైమ్‌లో ఆబ్జెక్ట్ కాస్టింగ్ మరియు బాక్సింగ్ జరుగుతుంది. C++ లో కంపైలర్ ప్రతి టైప్‌కు విడివిడిగా అత్యుత్తమ అసెంబ్లీ మెషిన్ కోడ్‌ను ముందే ఉత్పత్తి చేస్తుంది, ఫలితంగా రన్‌టైమ్ పెనాల్టీ సున్నా.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 2: టెంప్లేట్ డెఫినిషన్లను <code>.cpp</code> ఫైల్‌లో కాకుండా హెడర్ ఫైల్స్ (<code>.hpp</code>) లోనే ఎందుకు రాయాలి?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> కంపైలర్ కొత్త టైప్ కొరకు కోడ్‌ను ఇన్‌స్టాన్షియేట్ చేయడానికి టెంప్లేట్ బాడీ మొత్తం కంటికి కనిపించాలి కాబట్టి!<br/>
+          <em>వివరణ:</em> వేరొక ట్రాన్స్‌లేషన్ యూనిట్ లో టెంప్లేట్‌ను కాల్ చేసినప్పుడు బాడీ <code>.cpp</code> లో దాగి ఉంటే కంపైలర్ కోడ్ జనింపజేయలేదు; ఫలితంగా లింకింగ్ సమయంలో <code>undefined reference</code> ఎర్రర్ వస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 3: <strong>Non-Type Template Parameter (NTTP)</strong> అంటే ఏమిటి?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> డేటా టైప్‌కు బదులుగా పూర్ణాంక సంఖ్యలను లేదా కంపైల్-టైమ్ స్థిరరాశులను టెంప్లేట్ పారామీటర్‌గా పాస్ చేయడం!<br/>
+          <em>వివరణ:</em> ఉదాహరణకు <code>template &lt;typename T, size_t N&gt; class Array</code> లో <code>N</code> అనేది NTTP. దీనివల్ల కంపైల్-టైమ్‌లోనే ఫిక్స్‌డ్ సైజ్ కేటాయించబడి మెమరీ వేగం పెరుగుతుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 4: Modern C++20 లో <strong>Concepts</strong> ప్రవేశపెట్టడానికి గల ప్రధాన కారణం ఏమిటి?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> టెంప్లేట్ టైప్‌లపై కచ్చితమైన నిబంధనలు (Constraints) విధించి, క్రిప్టిక్ కంపైలర్ ఎర్రర్లను క్లీన్‌గా మార్చడానికి!<br/>
+          <em>వివరణ:</em> తప్పుడు టైప్ పాస్ చేసినప్పుడు వందల కొద్దీ లైన్ల లోపాలు రాకుండా, కంపైలర్ "Constraints not satisfied" అని స్పష్టమైన సూటి ఎర్రర్ ఇస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 5: C++17 లోని <strong><code>if constexpr</code></strong> సాధారణ <code>if</code> కంటే ఎలా భిన్నమైనది?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>if constexpr</code> కంపైల్-టైమ్‌లోనే కండిషన్‌ను లెక్కించి, తప్పుడు బ్రాంచ్‌ను అసలు బైనరీ లోకే రాకుండా తొలగిస్తుంది!<br/>
+          <em>వివరణ:</em> సాధారణ <code>if</code> రన్‌టైమ్‌లో చెక్ అవుతుంది మరియు రెండు బ్రాంచ్‌ల కోడ్ బైనరీలో ఉంటుంది. <code>if constexpr</code> లో కంపైలర్ కేవలం సరైన బ్రాంచ్‌ను మాత్రమే కంపైల్ చేసి మిగిలిన దాన్ని డెడ్ కోడ్‌గా పారేస్తుంది.
+        </div>
+      </details>
+    </section>
+
+    <!-- LESSON NAVIGATION -->
+    <div class="lesson-nav">
+      <a href="/blog-cpp/${currentLesson.prev.file}" class="prev-link">← మునుపటి అధ్యాయం: ${currentLesson.prev.title}</a>
+      <a href="/blog-cpp/${currentLesson.next.file}" class="next-link">తర్వాతి అధ్యాయం: ${currentLesson.next.title} →</a>
+    </div>
+
+  </main>
+</div>
+
+<!-- SCRIPTS FOR SITEMAP & INTERACTIVE RUNNER -->
+<script src="/site-nav.js"></script>
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`#include <iostream>
+#include <string>
+#include <type_traits>
+#include <concepts>
+#include <optional>
+
+template <typename T>
+concept Bufferable = std::is_copy_constructible_v<T>;
+
+template <Bufferable T, size_t Capacity>
+class RingBuffer {
+    static_assert(Capacity > 0, "❌ బఫర్ కెపాసిటీ ఖచ్చితంగా 0 కంటే ఎక్కువ ఉండాలి!");
+
+private:
+    T buffer[Capacity];
+    size_t head = 0;
+    size_t tail = 0;
+    size_t currentSize = 0;
+
+public:
+    RingBuffer() = default;
+
+    bool enqueue(const T& item) {
+        if (currentSize == Capacity) {
+            return false;
+        }
+        buffer[tail] = item;
+        tail = (tail + 1) % Capacity;
+        currentSize++;
+        return true;
+    }
+
+    std::optional<T> dequeue() {
+        if (currentSize == 0) {
+            return std::nullopt;
+        }
+        T item = buffer[head];
+        head = (head + 1) % Capacity;
+        currentSize--;
+        return item;
+    }
+
+    size_t size() const { return currentSize; }
+    size_t maxCapacity() const { return Capacity; }
+    bool isEmpty() const { return currentSize == 0; }
+    bool isFull() const { return currentSize == Capacity; }
+};
+
+struct TelemetryLog {
+    int sensorId;
+    double reading;
+};
+
+int main() {
+    std::cout << "=======================================================================\\\\n";
+    std::cout << "🔄 [ENTERPRISE GENERIC RING BUFFER & CIRCULAR QUEUE ENGINE]\\\\n";
+    std::cout << "=======================================================================\\\\n";
+
+    RingBuffer<int, 4> intQueue;
+    std::cout << "\\\\n[టెస్ట్ 1: పూర్ణాంకాల రింగ్ బఫర్ (Capacity: 4)]:\\\\n";
+    intQueue.enqueue(101);
+    intQueue.enqueue(102);
+    intQueue.enqueue(103);
+    intQueue.enqueue(104);
+
+    if (!intQueue.enqueue(105)) {
+        std::cout << "  ⚠️ బఫర్ నిండిపోయింది (105 డ్రాప్ చేయబడింది!)\\\\n";
+    }
+
+    while (!intQueue.isEmpty()) {
+        std::cout << "  రీడ్ చేసిన ఐటెమ్: " << *intQueue.dequeue() << "\\\\n";
+    }
+
+    RingBuffer<TelemetryLog, 3> telemetryQueue;
+    std::cout << "\\\\n[టెస్ట్ 2: జెనరిక్ టెలిమెట్రీ సెన్సార్ స్ట్రీమ్]:\\\\n";
+    telemetryQueue.enqueue({0xAA1, 38.4});
+    telemetryQueue.enqueue({0xAA2, 42.1});
+
+    while (auto item = telemetryQueue.dequeue()) {
+        std::cout << "  📡 సెన్సార్ ID: 0x" << std::hex << item->sensorId 
+                  << std::dec << " | ఉష్ణోగ్రత: " << item->reading << " °C\\\\n";
+    }
+
+    std::cout << "\\\\n=======================================================================\\\\n";
+    std::cout << "✅ C++20 Concepts తో జెనరిక్ రింగ్ బఫర్ ఎగ్జిక్యూషన్ విజయవంతమైంది!\\\\n";
+    std::cout << "=======================================================================\\\\n";
+    return 0;
+}\`;
+
+    try {
+      localStorage.setItem('code_cpp17', projectCode);
+      localStorage.setItem('code_cpp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-cpp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-cpp', currentLesson.file);
+fs.writeFileSync(outputPath, chapter18Content, 'utf8');
+console.log('✅ Successfully generated deep high-value C++ Chapter 18 in exact HTML style!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter18Content.length, 'characters');

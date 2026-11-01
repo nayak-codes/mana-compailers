@@ -1,0 +1,1144 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./cpp_curriculum_data.js');
+
+const currentLesson = LESSONS[19]; // Chapter 20 (0-indexed 19)
+const sidebarHtml = buildSidebar(20);
+
+const fileContent = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="Modern C++ ఎక్సెప్షన్ హ్యాండ్లింగ్ & ఫైల్ I/O సమగ్ర మాస్టర్‌క్లాస్ తెలుగులో: try, catch, throw, Stack Unwinding, RAII, Custom Exceptions, std::ifstream, std::ofstream, Binary Serialization, మరియు Enterprise Banking Audit Ledger Capstone Project." />
+  <meta name="keywords" content="c++ exception handling in telugu, file handling c++ telugu, stack unwinding telugu, raii c++, binary file io c++, custom exceptions c++, capstone project c++, learn c++ in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Exceptions, File I/O and Enterprise Capstone Project in Telugu)",
+    "description": "C++ ఎక్సెప్షన్స్, ఫైల్ హ్యాండ్లింగ్ మరియు గ్రాండ్ కాప్‌స్టోన్ ప్రాజెక్ట్: try-catch, Stack Unwinding, fstream, Binary Serialization, మరియు Enterprise Banking Audit System.",
+    "articleSection": "Phase 5: Advanced C++, STL & Real-World Projects",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-20",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, C++ Syntax Highlighter & Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side C++ Syntax Highlighter
+    function highlightCppCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___CPP_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(#[a-zA-Z_]+(?:\\s*<[^>]+>|\\s*"[^"]+")?)/g, m => pushToken('pp', m));
+      code = code.replace(/("[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'int','double','float','char','bool','void','auto','long','short','unsigned','signed',
+        'return','using','namespace','class','struct','public','private','protected',
+        'virtual','override','final','template','typename','const','constexpr','consteval',
+        'if','else','for','while','do','switch','case','break','continue','default',
+        'new','delete','try','catch','throw','nullptr','true','false','static','inline',
+        'sizeof','typedef','enum','explicit','friend','operator','typeid','noexcept'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const typList = [
+        'std','string','vector','map','unordered_map','set','list','deque','priority_queue',
+        'unique_ptr','shared_ptr','weak_ptr','ifstream','ofstream','fstream','stringstream',
+        'runtime_error','exception','invalid_argument','out_of_range','bad_alloc','streamsize',
+        'streampos','size_t','uint32_t','uint64_t','int32_t','int64_t'
+      ];
+      const typRegex = new RegExp('\\\\b(' + typList.join('|') + ')\\\\b', 'g');
+      code = code.replace(typRegex, m => pushToken('typ', m));
+
+      code = code.replace(/\\b(\\d+(\\.\\d+)?([eE][+-]?\\d+)?([fFulUL]+)?)\\b/g, m => pushToken('num', m));
+      code = code.replace(/\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()/g, (m, fn) => pushToken('fn', fn));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split('___CPP_TOK_' + idx + '___').join(tok);
+      });
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code.language-cpp').forEach(block => {
+        block.innerHTML = highlightCppCode(block.innerText);
+      });
+    });
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      const code = pre.innerText;
+      try {
+        localStorage.setItem('code_cpp17', code);
+        localStorage.setItem('code_cpp', code);
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+      window.open('/online-cpp-compiler.html', '_blank');
+    }
+  </script>
+</head>
+
+<body>
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="content">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a>
+      <span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Masterclass</a>
+      <span class="sep">›</span>
+      <span>Chapter 20: ${currentLesson.title}</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">ఎక్సెప్షన్ హ్యాండ్లింగ్, ఫైల్ I/O & గ్రాండ్ కాప్‌స్టోన్ ప్రాజెక్ట్ (Exceptions, Files & Capstone)</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge badge-tech">🌐 Modern C++ (C++17/C++20)</span>
+      <span class="badge badge-chapter">🎯 Chapter 20 of 20</span>
+      <span class="badge badge-phase">🚀 Phase 05: అడ్వాన్స్‌డ్ C++, STL & ప్రాజెక్ట్</span>
+      <span class="badge badge-edition">📅 2026 Edition</span>
+    </div>
+
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin-bottom:24px; font-size:13px; line-height:1.7;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span style="color:var(--text2); margin-left:6px;">
+        try, catch, throw · Standard Exceptions (<code style="color:#10b981;">std::exception</code>, <code style="color:#10b981;">std::runtime_error</code>) · Stack Unwinding & RAII · Custom Exception Classes · File I/O (<code style="color:#10b981;">std::ifstream</code>, <code style="color:#10b981;">std::ofstream</code>) · Binary vs Text Modes · Serialization · గ్రాండ్ ఫినాలే: పూర్తి C++ రియల్-వరల్డ్ బ్యాంకింగ్ & ఆడిట్ లెడ్జర్ ప్రాజెక్ట్!
+      </span>
+    </div>
+
+    <!-- INTRO BOX (Warm Soft Ivory HTML5 Style) -->
+    <div class="intro-box">
+      సాఫ్ట్‌వేర్ అభివృద్ధిలో కోడ్ రాయడం ఎంత ముఖ్యమో, ఊహించని ఎర్రర్స్ (Network failures, Invalid user input, File not found, Out of Memory) వచ్చినప్పుడు ప్రోగ్రామ్ క్రాష్ అవ్వకుండా సురక్షితంగా రికవర్ అవ్వడం కూడా అంతే ముఖ్యం. సాంప్రదాయ C లాంగ్వేజ్‌లో ఎర్రర్ కోడ్‌లు రిటర్న్ చేసే పద్ధతి కోడ్‌ను అస్తవ్యస్తం చేస్తుంది. కానీ Modern C++ లోని <code>try-catch-throw</code> ఆర్కిటెక్చర్, <code>Stack Unwinding</code> మరియు <code>RAII</code> మెకానిజమ్స్ మీ సిస్టమ్‌ను బుల్లెట్‌ప్రూఫ్‌గా మారుస్తాయి. దీనితో పాటు, మీ అప్లికేషన్ డేటాను డిస్క్‌లో శాశ్వతంగా భద్రపరచడానికి ఫైల్ స్ట్రీమ్స్ (Text & Binary File I/O) ఎలా ఉపయోగించాలో నేర్చుకుంటాం.
+      చివరిగా, ఈ 20 అధ్యాయాల సమగ్ర C++ ప్రయాణానికి కిరీటంలా — ఆబ్జెక్ట్ ఓరియెంటెడ్ పాలిమార్ఫిజమ్, STL కంటైనర్లు, స్మార్ట్ పాయింటర్లు, కస్టమ్ ఎక్సెప్షన్స్ మరియు డిస్క్ పర్సిస్టెన్స్ కలగలిసిన <strong>పూర్తి స్థాయి ఎంటర్‌ప్రైజ్ బ్యాంకింగ్ & ట్రాన్సాక్షన్ ఆడిట్ లెడ్జర్ ప్రాజెక్ట్</strong> ను మీ చేతులతో నిర్మిస్తారు!
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 class="section-title"><span class="num">1</span> ఎక్సెప్షన్ హ్యాండ్లింగ్ ఎందుకు? (Why Exceptions vs Traditional Error Codes)</h2>
+    <p>
+      ఒక సాఫ్ట్‌వేర్ రన్ అవుతున్నప్పుడు రెండు రకాల లోపాలు ఎదురవుతాయి:
+    </p>
+    <ul>
+      <li><strong>కంపైల్ టైమ్ ఎర్రర్స్ (Compile-time Errors):</strong> సింటాక్స్ మిస్టేక్స్, టైప్ మిస్‌మ్యాచ్‌లు. వీటిని కంపైలర్ బిల్డ్ దశలోనే పట్టి ఆపుతుంది.</li>
+      <li><strong>రన్‌టైమ్ ఎర్రర్స్ (Run-time Anomalies / Exceptions):</strong> ఫైల్ మిస్ అవ్వడం, జీరోతో డివైడ్ చేయడం, నెట్‌వర్క్ టైమ్‌అవుట్, యూజర్ నెగటివ్ బ్యాలెన్స్ ఎంటర్ చేయడం. వీటిని ప్రోగ్రామ్ రన్ అవుతున్న సమయంలో డైనమిక్‌గా హ్యాండిల్ చేయాలి.</li>
+    </ul>
+
+    <p>
+      సాంప్రదాయ C లాంగ్వేజ్‌లో ప్రతి ఫంక్షన్ ఒక ఇంటిజర్ ఎర్రర్ కోడ్ (ఉదాహరణకు <code>0</code> సక్సెస్, <code>-1</code> ఎర్రర్) రిటర్న్ చేస్తుంది. దీనివల్ల డీప్ కాల్ స్టాక్ ఉన్నప్పుడు (Function A -> Function B -> Function C -> Function D), ప్రతి లెవెల్ వద్ద పదుల సంఖ్యలో <code>if (err != 0) return err;</code> చెక్స్ రాయాల్సి వస్తుంది. దీనినే <em>"Spaghetti Error Handling"</em> అంటారు.
+    </p>
+
+    <!-- ARCHITECTURE DIAGRAM: ERROR CODES VS MODERN EXCEPTIONS -->
+    <div style="background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; color:#e2e8f0; font-family:'JetBrains Mono', monospace; font-size:13px; overflow-x:auto;">
+<span style="color:#38bdf8; font-weight:700;">[సాంప్రదాయ ఎర్రర్ కోడ్‌లు vs ఆధునిక C++ ఎక్సెప్షన్ ఆర్కిటెక్చర్]</span>
+
+<span style="color:#ef4444; font-weight:700;">1. పాత C-శైలి (Error Return Codes - బోరింగ్ & లోపభూయిష్టం):</span>
+  Caller()  -->  FuncA()  -->  FuncB()  -->  FuncC() [ఫెయిల్: returns -1]
+     |              |             |             |
+     | (if check)   | (if check)  | (if check)  |
+     v              v             v             v
+  ప్రతి ఫంక్షన్ ఎర్రర్ కోడ్‌ను మ్యానువల్‌గా పైకి పాస్ చేయాలి! ఒక్క ఫంక్షన్ మర్చిపోయినా సిస్టమ్ సైలెంట్‌గా తప్పు సమాధానం ఇస్తుంది!
+
+<span style="color:#10b981; font-weight:700;">2. Modern C++ Exceptions (స్వచ్ఛమైన సెపరేషన్ & ఆటోమేటిక్ ప్రొపగేషన్):</span>
+  Caller() [try-catch]  -->  FuncA()  -->  FuncB()  -->  FuncC() [throw std::runtime_error]
+     ▲                                                          │
+     │══════════════════ [ఆటోమేటిక్ Stack Unwinding] ═══════════╝
+     • మధ్యలోని FuncA, FuncB లలో ఏ చెక్స్ అవసరం లేదు!
+     • స్టాక్‌లోని లోకల్ ఆబ్జెక్టుల Destructors ఆటోమేటిక్‌గా రన్ అయ్యి రిసోర్సెస్ క్లీన్ అవుతాయి!
+     • ఎర్రర్ నేరుగా Caller లోని catch బ్లాక్‌కు చేరుకుంటుంది!
+    </div>
+
+    <!-- SECTION 2 -->
+    <h2 class="section-title"><span class="num">2</span> <code>try</code>, <code>catch</code>, <code>throw</code> ఫండమెంటల్స్ & కంట్రోల్ ఫ్లో</h2>
+    <p>
+      C++ ఎక్సెప్షన్ హ్యాండ్లింగ్ మూడు కీలక కీవర్డ్‌లపై ఆధారపడి పనిచేస్తుంది:
+    </p>
+    <ul>
+      <li><code>try</code>: రిస్క్ లేదా ఎర్రర్ వచ్చే అవకాశం ఉన్న కోడ్ బ్లాక్‌ను <code>try { ... }</code> లో ఉంచుతాం.</li>
+      <li><code>throw</code>: ఏదైనా ఊహించని తప్పు జరిగినప్పుడు, ఆ సమాచారాన్ని ఒక ఆబ్జెక్ట్ లేదా వేల్యూ రూపంలో బయటకు విసిరివేయడానికి (signal an anomaly) <code>throw</code> ఉపయోగిస్తాం.</li>
+      <li><code>catch</code>: విసిరివేయబడిన ఎక్సెప్షన్‌ను పట్టుకుని, సమస్యను పరిష్కరించడానికి లేదా యూజర్‌కు అర్థమయ్యేలా లాగ్ చేయడానికి <code>catch (ExceptionType e) { ... }</code> ఉపయోగిస్తాం.</li>
+    </ul>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">basic_try_catch_flow.cpp</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;stdexcept&gt; // standard exception classes
+
+// సురక్షితమైన డివిజన్ ఫంక్షన్
+double safeDivide(double numerator, double denominator) {
+    if (denominator == 0.0) {
+        // జీరోతో భాగించడం అసాధ్యం, కాబట్టి runtime_error ను త్రో చేస్తున్నాం
+        throw std::runtime_error("గణిత లోపం: సున్నాతో భాగించడం సాధ్యం కాదు (Divide by Zero)!");
+    }
+    return numerator / denominator;
+}
+
+int main() {
+    std::cout &lt;&lt; "--- Modern C++ ఎక్సెప్షన్ హ్యాండ్లింగ్ డిమో ---\\n";
+
+    double a = 100.0;
+    double b = 0.0;
+
+    try {
+        std::cout &lt;&lt; "డివిజన్ ఆపరేషన్ ప్రారంభమవుతోంది...\\n";
+        double result = safeDivide(a, b);
+        // ఎక్సెప్షన్ వస్తే క్రింది లైన్ ఎగ్జిక్యూట్ అవ్వదు!
+        std::cout &lt;&lt; "ఫలితం: " &lt;&lt; result &lt;&lt; "\\n";
+    }
+    catch (const std::runtime_error&amp; ex) {
+        // సురక్షితంగా ఎక్సెప్షన్‌ను పట్టుకున్నాం
+        std::cerr &lt;&lt; "🚨 [ERROR CAUGHT]: " &lt;&lt; ex.what() &lt;&lt; "\\n";
+        std::cout &lt;&lt; "ℹ️ రికవరీ లాజిక్: డిఫాల్ట్ వేల్యూ 0.0 కేటాయించబడింది.\\n";
+    }
+
+    std::cout &lt;&lt; "✅ ప్రోగ్రామ్ సురక్షితంగా తన ప్రయాణాన్ని కొనసాగిస్తోంది!\\n";
+    return 0;
+}</code></pre>
+    </div>
+
+    <!-- SECTION 3 -->
+    <h2 class="section-title"><span class="num">3</span> C++ స్టాండర్డ్ ఎక్సెప్షన్ హైరార్కీ (Standard Exception Hierarchy)</h2>
+    <p>
+      C++ స్టాండర్డ్ లైబ్రరీ (<code>&lt;stdexcept&gt;</code>) ఒక క్రమబద్ధమైన క్లాస్ హైరార్కీని అందిస్తుంది. ఈ క్లాసులన్నీ మూల పేరెంట్ అయిన <code>std::exception</code> నుండి ఇన్హెరిట్ అవుతాయి.
+      ప్రతి ఎక్సెప్షన్ క్లాస్‌లో <code>virtual const char* what() const noexcept;</code> అనే మెథడ్ ఉంటుంది, ఇది ఎర్రర్ వివరణాత్మక మెసేజ్‌ను రిటర్న్ చేస్తుంది.
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Exception Class</th>
+            <th>రకం / కేటగిరీ</th>
+            <th>ఎప్పుడు సంభవిస్తుంది? (Real-world Scenario)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>std::exception</code></td>
+            <td>Root Base Class</td>
+            <td>C++ లోని అన్ని స్టాండర్డ్ ఎక్సెప్షన్లకు మూల క్లాస్. పాలిమార్ఫిక్ క్యాచ్ కోసం వాడుతారు.</td>
+          </tr>
+          <tr>
+            <td><code>std::logic_error</code></td>
+            <td>ప్రోగ్రామర్ లాజిక్ లోపం</td>
+            <td>కోడ్ రాయడంలో తప్పుల వల్ల సంభవించేవి (ఉదాహరణకు ప్రీ-కండిషన్స్ ఫెయిల్ అవ్వడం).</td>
+          </tr>
+          <tr>
+            <td><code>std::invalid_argument</code></td>
+            <td>logic_error డెరివేటివ్</td>
+            <td>ఫంక్షన్‌కు చెల్లని ఆర్గ్యుమెంట్ పంపినప్పుడు (ఉదా: నెగటివ్ ఏజ్, తప్పు ఇమెయిల్ ఫార్మాట్).</td>
+          </tr>
+          <tr>
+            <td><code>std::out_of_range</code></td>
+            <td>logic_error డెరివేటివ్</td>
+            <td>కంటైనర్ పరిధి దాటి యాక్సెస్ చేసినప్పుడు (ఉదా: <code>std::vector::at(99)</code> బౌండ్స్ ఎర్రర్).</td>
+          </tr>
+          <tr>
+            <td><code>std::runtime_error</code></td>
+            <td>సిస్టమ్ / రన్‌టైమ్ లోపం</td>
+            <td>రన్‌టైమ్‌లో సిస్టమ్ లేదా ఎక్స్‌టర్నల్ ఈవెంట్ల వల్ల జరిగే లోపాలు (ఫైల్ దొరకకపోవడం, హార్డ్‌వేర్ ఫెయిల్యూర్).</td>
+          </tr>
+          <tr>
+            <td><code>std::bad_alloc</code></td>
+            <td>మెమరీ లోపం (<code>&lt;new&gt;</code>)</td>
+            <td>హీప్ మెమరీ పూర్తిగా అయిపోయి <code>new</code> ఆపరేటర్ ఫెయిల్ అయినప్పుడు.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 4 -->
+    <h2 class="section-title"><span class="num">4</span> Stack Unwinding & RAII గ్యారెంటీ (Destructor Cleanup)</h2>
+    <p>
+      C++ ఎక్సెప్షన్ సిస్టమ్ యొక్క అత్యున్నత సూపర్-పవర్ <strong>Stack Unwinding</strong>. ఒక ఫంక్షన్ లోపల <code>throw</code> జరిగినప్పుడు, దానికి సరిపడే <code>catch</code> బ్లాక్ దొరికే వరకు కాల్ స్టాక్‌లో వెనుకకు వెళ్తుంది.
+      ఈ వెనుకకు వెళ్ళే క్రమంలో స్టాక్ ఫ్రేమ్‌లలో క్రియేట్ చేయబడిన ప్రతి లోకల్ ఆబ్జెక్ట్ యొక్క <strong>Destructor ఆటోమేటిక్‌గా ఎగ్జిక్యూట్ అవుతుంది!</strong>
+    </p>
+
+    <!-- ARCHITECTURE DIAGRAM: STACK UNWINDING -->
+    <div style="background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:18px; margin:20px 0; color:#e2e8f0; font-family:'JetBrains Mono', monospace; font-size:13px; overflow-x:auto;">
+<span style="color:#38bdf8; font-weight:700;">[కాల్ స్టాక్ లో Stack Unwinding జరిగే క్రమం]</span>
+
+[CALL STACK]
+┌─────────────────────────────────────────────────────────┐
+│ Frame 3: processTransaction()                           │
+│   • ResourceGuard lock (RAII Object)                    │
+│   • DatabaseConnection db (RAII Object)                 │
+│   ==&gt; THROW Occurs!                                     │ &lt;-- 1. ఇక్కడ ఎక్సెప్షన్ త్రో అయ్యింది
+└───────────────────────────┬─────────────────────────────┘
+                            │ (Stack Unwinding స్టార్ట్: db.~DatabaseConnection() &amp; lock.~ResourceGuard() కాల్ అవుతాయి!)
+                            ▼
+┌─────────────────────────────────────────────────────────┐
+│ Frame 2: handleUserRequest()                            │
+│   • FileLogger logger (RAII Object)                     │ &lt;-- 2. logger.~FileLogger() క్లీన్ అవుతుంది!
+└───────────────────────────┬─────────────────────────────┘
+                            │ (వెనక్కి అన్-వైండ్ అవుతోంది...)
+                            ▼
+┌─────────────────────────────────────────────────────────┐
+│ Frame 1: main() [try { handleUserRequest(); } catch]    │ &lt;-- 3. సరిపడే catch దొరికింది!
+│   • catch (const std::exception&amp; e) లోకి ఎంటర్ అవుతుంది!│
+└─────────────────────────────────────────────────────────┘
+    </div>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">stack_unwinding_raii_safety.cpp</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;stdexcept&gt;
+
+// RAII రిసోర్స్ క్లాస్ - డిస్ట్రక్టర్ ఎగ్జిక్యూషన్ ట్రాక్ చేయడానికి
+class NetworkSocket {
+    std::string endpoint;
+public:
+    NetworkSocket(const std::string&amp; ep) : endpoint(ep) {
+        std::cout &lt;&lt; "  🔌 [OPEN] సాకెట్ కనెక్షన్ తెరవబడింది: " &lt;&lt; endpoint &lt;&lt; "\\n";
+    }
+    ~NetworkSocket() {
+        std::cout &lt;&lt; "  🧹 [CLEANUP] Stack Unwinding ద్వారా సాకెట్ క్లోజ్ చేయబడింది: " &lt;&lt; endpoint &lt;&lt; "\\n";
+    }
+};
+
+void deepFunction() {
+    NetworkSocket sock("192.168.1.100:8080");
+    std::cout &lt;&lt; "  ⚡ deepFunction లోపల కీలక డేటా ప్రాసెస్ అవుతోంది...\\n";
+    
+    // ఏదో తప్పు జరిగి ఎక్సెప్షన్ త్రో అయింది
+    throw std::runtime_error("నెట్‌వర్క్ ప్యాకెట్ డ్రాప్ అయ్యింది (Corrupted Payload)!");
+    
+    std::cout &lt;&lt; "  ఈ లైన్ ఎప్పటికీ ప్రింట్ అవ్వదు!\\n";
+}
+
+int main() {
+    std::cout &lt;&lt; "=== STACK UNWINDING &amp; RAII సేఫ్టీ డెమో ===\\n";
+    try {
+        deepFunction();
+    }
+    catch (const std::exception&amp; e) {
+        std::cout &lt;&lt; "🚨 [CATCH BLOCK]: ప్రధాన హ్యాండ్లర్ లో ఎర్రర్ దొరికింది: " &lt;&lt; e.what() &lt;&lt; "\\n";
+    }
+    std::cout &lt;&lt; "✅ ఏ మెమరీ లీక్ లేకుండా సిస్టమ్ రికవర్ అయ్యింది!\\n";
+    return 0;
+}</code></pre>
+    </div>
+
+    <!-- SECTION 5 -->
+    <h2 class="section-title"><span class="num">5</span> Catch by Reference & Object Slicing నివారణ</h2>
+    <p>
+      ఎక్సెప్షన్ హ్యాండ్లింగ్‌లో బిగినర్స్ చేసే అతిపెద్ద తప్పు: ఎక్సెప్షన్‌ను పాస్-బై-వేల్యూ (<code>catch (std::exception e)</code>) తో క్యాచ్ చేయడం.
+      ఎల్లప్పుడూ <strong>కాన్స్ట్ రిఫరెన్స్ (<code>catch (const std::exception&amp; e)</code>)</strong> ద్వారానే క్యాచ్ చేయాలి. ఎందుకు?
+    </p>
+    <ul>
+      <li><strong>ఆబ్జెక్ట్ స్లైసింగ్ (Object Slicing) నివారణ:</strong> బై-వేల్యూ క్యాచ్ చేస్తే, మీరు త్రో చేసిన డెరైవ్డ్ క్లాస్ (ఉదా: <code>class MyCustomError : public std::runtime_error</code>) బేస్ క్లాస్ లోకి స్లైస్ అయిపోతుంది. దీనివల్ల డెరైవ్డ్ క్లాస్‌లోని ఓవర్‌రైడ్ చేయబడిన <code>what()</code> లేదా కస్టమ్ ఫీల్డ్స్ కోల్పోతారు.</li>
+      <li><strong>అనవసరపు కాపీ ఓవర్‌హెడ్ నివారణ:</strong> కాన్స్ట్ రిఫరెన్స్ వల్ల కొత్త కాపీ ఆబ్జెక్ట్ తయారుకాదు, పెర్ఫార్మెన్స్ వేగవంతంగా ఉంటుంది.</li>
+      <li><strong>మల్టిపుల్ క్యాచ్ బ్లాక్స్ రూల్:</strong> స్పెసిఫిక్ డెరైవ్డ్ ఎక్సెప్షన్లను పైన, జనరిక్ బేస్ ఎక్సెప్షన్లను క్రింద పెట్టాలి. <code>catch (...)</code> (క్యాచ్-ఆల్) ను ఎల్లప్పుడూ చివరిలో ఉంచాలి.</li>
+    </ul>
+
+    <!-- SECTION 6 -->
+    <h2 class="section-title"><span class="num">6</span> కస్టమ్ ఎక్సెప్షన్ క్లాసెస్ నిర్మాణం (Custom Exception Classes)</h2>
+    <p>
+      రియల్ వరల్డ్ ప్రాజెక్ట్‌లలో జనరిక్ ఎర్రర్ల బదులు మీ బిజినెస్ డొమైన్‌కు సరిపడే కస్టమ్ ఎక్సెప్షన్ క్లాసులు రాయడం ఎంతో ప్రొఫెషనల్ పద్ధతి.
+      దీనికోసం <code>std::runtime_error</code> లేదా <code>std::exception</code> నుండి ఇన్హెరిట్ చేసుకుంటాం.
+    </p>
+
+    <!-- CODE BLOCK 3 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">custom_banking_exceptions.cpp</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;stdexcept&gt;
+
+// బ్యాంకింగ్ డొమైన్ కోసం రూట్ బేస్ ఎక్సెప్షన్
+class BankingException : public std::runtime_error {
+public:
+    explicit BankingException(const std::string&amp; msg) : std::runtime_error(msg) {}
+};
+
+// అకౌంట్‌లో తగినంత నిధులు లేనప్పుడు వచ్చే కస్టమ్ ఎక్సెప్షన్
+class InsufficientFundsException : public BankingException {
+    double currentBalance;
+    double requestedAmount;
+public:
+    InsufficientFundsException(double balance, double requested)
+        : BankingException("ఖాతాలో సరిపడా నిధులు లేవు! బ్యాలెన్స్: " + std::to_string(balance) + 
+                           ", ఉపసంహరించదలచిన మొత్తం: " + std::to_string(requested)),
+          currentBalance(balance), requestedAmount(requested) {}
+
+    double getDeficit() const noexcept { return requestedAmount - currentBalance; }
+};
+
+class BankAccount {
+    std::string accNumber;
+    double balance;
+public:
+    BankAccount(const std::string&amp; acc, double initial) : accNumber(acc), balance(initial) {}
+
+    void withdraw(double amount) {
+        if (amount &gt; balance) {
+            throw InsufficientFundsException(balance, amount);
+        }
+        balance -= amount;
+        std::cout &lt;&lt; "✅ ఉపసంహరణ విజయవంతం! విత్‌డ్రా: ₹ " &lt;&lt; amount &lt;&lt; ", ప్రస్తుత నిల్వ: ₹ " &lt;&lt; balance &lt;&lt; "\\n";
+    }
+};
+
+int main() {
+    BankAccount myAcc("SB-987654321", 5000.0);
+
+    try {
+        std::cout &lt;&lt; "లావాదేవీ 1: ₹ 2000 విత్‌డ్రా చేయడానికి ప్రయత్నిస్తున్నాం...\\n";
+        myAcc.withdraw(2000.0);
+
+        std::cout &lt;&lt; "\\nలావాదేవీ 2: ₹ 7000 విత్‌డ్రా చేయడానికి ప్రయత్నిస్తున్నాం...\\n";
+        myAcc.withdraw(7000.0);
+    }
+    catch (const InsufficientFundsException&amp; ex) {
+        std::cerr &lt;&lt; "❌ [BANKING ERROR]: " &lt;&lt; ex.what() &lt;&lt; "\\n";
+        std::cerr &lt;&lt; "   లక్ష్యం నెరవేరడానికి ఇంకా లోటు మొత్తం: ₹ " &lt;&lt; ex.getDeficit() &lt;&lt; "\\n";
+    }
+    catch (const BankingException&amp; ex) {
+        std::cerr &lt;&lt; "❌ [GENERAL BANK ERROR]: " &lt;&lt; ex.what() &lt;&lt; "\\n";
+    }
+    return 0;
+}</code></pre>
+    </div>
+
+    <!-- SECTION 7 -->
+    <h2 class="section-title"><span class="num">7</span> <code>noexcept</code> స్పెసిఫైయర్ & మూవ్ సెమాంటిక్స్ పెర్ఫార్మెన్స్</h2>
+    <p>
+      Modern C++ (C++11 నుండి) లో ఒక ఫంక్షన్ ఎప్పటికీ ఎక్సెప్షన్‌ను త్రో చేయదు అని కంపైలర్‌కు హామీ ఇవ్వడానికి <code>noexcept</code> కీవర్డ్ వాడతాం.
+    </p>
+    <ul>
+      <li>ఒకవేళ <code>noexcept</code> అని మార్క్ చేసిన ఫంక్షన్ నుండి ఏదైనా ఎక్సెప్షన్ త్రో అయితే, సిస్టమ్ అన్-వైండింగ్ చేయకుండా తక్షణమే <code>std::terminate()</code> ను పిలిచి ప్రోగ్రామ్‌ను ఆపేస్తుంది.</li>
+      <li><strong>STL పెర్ఫార్మెన్స్ బూస్ట్:</strong> <code>std::vector</code> వంటి కంటైనర్లు రీ-సైజ్ అయ్యేటప్పుడు, మీ క్లాస్ యొక్క మూవ్ కన్‌స్ట్రక్టర్ <code>noexcept</code> అని ఉంటేనే Move చేస్తుంది; లేకపోతే సేఫ్టీ కోసం ఖరీదైన డీప్ కాపీ (Copy Constructor) ని రన్ చేస్తుంది!</li>
+      <li><strong>డిస్ట్రక్టర్లు బై-డిఫాల్ట్ <code>noexcept(true)</code>:</strong> C++ లో డిస్ట్రక్టర్ల లోపల ఎప్పుడూ ఎక్సెప్షన్ త్రో చేయకూడదు. డిస్ట్రక్టర్ నుండి ఎక్సెప్షన్ బయటకు వస్తే అప్లికేషన్ వెంటనే క్రాష్ అవుతుంది.</li>
+    </ul>
+
+    <!-- SECTION 8 -->
+    <h2 class="section-title"><span class="num">8</span> ఫైల్ I/O పరిచయం: <code>&lt;fstream&gt;</code> స్ట్రీమ్ ఆర్కిటెక్చర్</h2>
+    <p>
+      రామ్ (RAM) లో ఉండే డేటా ప్రోగ్రామ్ ముగియగానే లేదా కరెంట్ పోగానే అంతరించిపోతుంది (Volatile). కానీ శాశ్వత స్టోరేజ్ (SSD/HDD) పై డేటాను సేవ్ చేయడానికి C++ లో <code>&lt;fstream&gt;</code> హెడర్ లైబ్రరీని ఉపయోగిస్తాం.
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Stream Class</th>
+            <th>దిశ (Direction)</th>
+            <th>పనితీరు & ప్రయోజనం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>std::ofstream</code></td>
+            <td>Output File Stream (రాయడం)</td>
+            <td>ఫైల్ లోకి డేటాను వ్రాయడానికి (Writing). ఫైల్ లేకపోతే కొత్త ఫైల్ సృష్టిస్తుంది.</td>
+          </tr>
+          <tr>
+            <td><code>std::ifstream</code></td>
+            <td>Input File Stream (చదవడం)</td>
+            <td>డిస్క్‌లోని ఫైల్ నుండి డేటాను చదవడానికి (Reading). ఫైల్ లేకపోతే ఓపెన్ అవ్వదు.</td>
+          </tr>
+          <tr>
+            <td><code>std::fstream</code></td>
+            <td>Bi-directional Stream</td>
+            <td>ఒకే ఫైల్ పై చదవడం (Read) మరియు రాయడం (Write) రెండూ చేయడానికి.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p><strong>ముఖ్యమైన ఫైల్ ఓపెన్ మోడ్స్ (Open Modes):</strong></p>
+    <ul>
+      <li><code>std::ios::in</code> — చదవడానికి మాత్రమే తెరవడం (ifstream డిఫాల్ట్).</li>
+      <li><code>std::ios::out</code> — రాయడానికి తెరవడం; ఉన్న డేటాను క్లియర్ చేస్తుంది (ofstream డిఫాల్ట్).</li>
+      <li><code>std::ios::app</code> — అపెండ్ మోడ్; ఫైల్ చివరలో కొత్త డేటాను జోడిస్తుంది.</li>
+      <li><code>std::ios::binary</code> — బైనరీ మోడ్; న్యూలైన్ ట్రాన్స్‌లేషన్ లేకుండా రా బైట్స్‌ను చదవడం/రాయడం.</li>
+    </ul>
+
+    <!-- SECTION 9 -->
+    <h2 class="section-title"><span class="num">9</span> టెక్స్ట్ ఫైల్స్ రాయడం & చదవడం (Reading & Writing Text Files)</h2>
+    <p>
+      టెక్స్ట్ ఫైల్స్‌తో పనిచేసేటప్పుడు <code>&lt;&lt;</code> ఆపరేటర్‌తో రాయడం, మరియు <code>std::getline()</code> ఫంక్షన్‌తో లైన్ల వారీగా చదవడం అత్యంత సాధారణ పద్ధతి.
+      ఫైల్ ఆబ్జెక్ట్ స్కోప్ దాటగానే RAII సూత్రం ప్రకారం ఆటోమేటిక్‌గా ఫైల్ క్లోజ్ అవుతుంది.
+    </p>
+
+    <!-- CODE BLOCK 4 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">text_file_read_write.cpp</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;string&gt;
+
+void writeAuditLog(const std::string&amp; filename) {
+    // ofstream ఆబ్జెక్ట్ సృష్టించి ఫైల్ ఓపెన్ చేస్తున్నాం
+    std::ofstream outFile(filename, std::ios::out | std::ios::app);
+    
+    if (!outFile.is_open()) {
+        std::cerr &lt;&lt; "ఫైల్ తెరవడంలో లోపం ఏర్పడింది!\\n";
+        return;
+    }
+
+    outFile &lt;&lt; "TIMESTAMP: 2026-11-01 10:30:00 | USER: Admin | EVENT: Login Successful\\n";
+    outFile &lt;&lt; "TIMESTAMP: 2026-11-01 10:32:15 | USER: User_42 | EVENT: Fund Transfer ₹ 5000\\n";
+    outFile &lt;&lt; "TIMESTAMP: 2026-11-01 10:35:40 | USER: Admin | EVENT: Password Updated\\n";
+
+    std::cout &lt;&lt; "✅ ఆడిట్ లాగ్ డేటా విజయవంతంగా ఫైల్ లోకి వ్రాయబడింది!\\n";
+    // outFile ఇక్కడ స్కోప్ దాటగానే ఆటోమేటిక్‌గా క్లోజ్ అవుతుంది (RAII)
+}
+
+void readAuditLog(const std::string&amp; filename) {
+    std::ifstream inFile(filename);
+
+    if (!inFile.is_open()) {
+        std::cerr &lt;&lt; "ఫైల్ చదవడానికి అందుబాటులో లేదు: " &lt;&lt; filename &lt;&lt; "\\n";
+        return;
+    }
+
+    std::cout &lt;&lt; "\\n--- [" &lt;&lt; filename &lt;&lt; "] నుండి లైన్ల వారీగా డేటా రీడింగ్ ---\\n";
+    std::string line;
+    int lineNum = 1;
+    while (std::getline(inFile, line)) {
+        std::cout &lt;&lt; "లైన్ " &lt;&lt; lineNum++ &lt;&lt; ": " &lt;&lt; line &lt;&lt; "\\n";
+    }
+}
+
+int main() {
+    std::string path = "system_audit.log";
+    writeAuditLog(path);
+    readAuditLog(path);
+    return 0;
+}</code></pre>
+    </div>
+
+    <!-- SECTION 10 -->
+    <h2 class="section-title"><span class="num">10</span> బైనరీ ఫైల్ I/O & డేటా స్ట్రక్చర్ సీరియలైజేషన్ (Binary Serialization)</h2>
+    <p>
+      టెక్స్ట్ ఫైల్స్ మనుషులు చదవడానికి బాగుంటాయి కానీ ఎక్కువ స్పేస్ తీసుకుంటాయి మరియు నంబర్లను స్ట్రింగ్స్‌గా మార్చడానికి CPU సైకిల్స్ వృధా అవుతాయి.
+      గేమ్ సేవ్ ఫైల్స్, డేటాబేస్ ఇండెక్స్ ఫైల్స్, హై-స్పీడ్ బ్యాంకింగ్ సిస్టమ్స్‌లో డేటాను యథాతథంగా మెమరీ బైట్స్ రూపంలో సేవ్ చేయడానికి <strong>Binary File I/O</strong> వాడతాం.
+    </p>
+    <ul>
+      <li><code>write(reinterpret_cast&lt;const char*&gt;(&amp;obj), sizeof(obj))</code> — ఆబ్జెక్ట్ బైట్లను నేరుగా డిస్క్‌కు రాయడం.</li>
+      <li><code>read(reinterpret_cast&lt;char*&gt;(&amp;obj), sizeof(obj))</code> — డిస్క్ బైట్లను నేరుగా ఆబ్జెక్ట్ మెమరీలోకి నింపడం.</li>
+    </ul>
+
+    <!-- CODE BLOCK 5 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">binary_serialization_struct.cpp</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;cstring&gt;
+
+// ఫిక్స్‌డ్ సైజ్ ఉన్న POD (Plain Old Data) స్ట్రక్చర్
+struct AccountRecord {
+    int accountId;
+    char customerName[32];
+    double balance;
+    bool isActive;
+};
+
+void saveBinaryRecord(const std::string&amp; filename, const AccountRecord&amp; record) {
+    std::ofstream out(filename, std::ios::binary);
+    if (!out) {
+        std::cerr &lt;&lt; "బైనరీ ఫైల్ తెరవడం విఫలమైంది!\\n";
+        return;
+    }
+    // మెమరీలోని బైట్లను నేరుగా డిస్క్‌పై వ్రాయడం
+    out.write(reinterpret_cast&lt;const char*&gt;(&amp;record), sizeof(AccountRecord));
+    std::cout &lt;&lt; "💾 బైనరీ రికార్డ్ సేవ్ చేయబడింది (" &lt;&lt; sizeof(AccountRecord) &lt;&lt; " బైట్స్).\\n";
+}
+
+void loadBinaryRecord(const std::string&amp; filename) {
+    std::ifstream in(filename, std::ios::binary);
+    if (!in) {
+        std::cerr &lt;&lt; "బైనరీ ఫైల్ చదవడం విఫలమైంది!\\n";
+        return;
+    }
+    AccountRecord loadedRecord{};
+    in.read(reinterpret_cast&lt;char*&gt;(&amp;loadedRecord), sizeof(AccountRecord));
+
+    std::cout &lt;&lt; "\\n🔍 [డిస్క్ నుండి లోడ్ చేయబడిన రికార్డ్]:\\n";
+    std::cout &lt;&lt; "  • అకౌంట్ ID: " &lt;&lt; loadedRecord.accountId &lt;&lt; "\\n";
+    std::cout &lt;&lt; "  • ఖాతాదారుని పేరు: " &lt;&lt; loadedRecord.customerName &lt;&lt; "\\n";
+    std::cout &lt;&lt; "  • బ్యాలెన్స్: ₹ " &lt;&lt; loadedRecord.balance &lt;&lt; "\\n";
+    std::cout &lt;&lt; "  • యాక్టివ్ స్టేటస్: " &lt;&lt; (loadedRecord.isActive ? "ACTIVE" : "INACTIVE") &lt;&lt; "\\n";
+}
+
+int main() {
+    AccountRecord user1{101, "రాజేష్ శర్మ", 85400.50, true};
+    std::string binFile = "account_101.dat";
+
+    saveBinaryRecord(binFile, user1);
+    loadBinaryRecord(binFile);
+    return 0;
+}</code></pre>
+    </div>
+
+    <!-- SECTION 11 -->
+    <h2 class="section-title"><span class="num">11</span> ఫైల్ పాయింటర్లు & ర్యాండమ్ యాక్సెస్ (File Pointers & Random Access)</h2>
+    <p>
+      ఫైల్‌ను క్రమపద్ధతిలో మొదటి నుండి చివరి వరకు చదవడమే కాకుండా, కావలసిన నిర్దిష్ట లొకేషన్‌కు నేరుగా దూకడానికి ఫైల్ పాయింటర్లు (File Pointers) ఉపయోగపడతాయి:
+    </p>
+    <ul>
+      <li><strong>Get Pointer (చదవడానికి):</strong> <code>seekg(offset, direction)</code> మూవ్ చేయడానికి, <code>tellg()</code> ప్రస్తుత స్థానం తెలుసుకోవడానికి.</li>
+      <li><strong>Put Pointer (రాయడానికి):</strong> <code>seekp(offset, direction)</code> మూవ్ చేయడానికి, <code>tellp()</code> ప్రస్తుత స్థానం తెలుసుకోవడానికి.</li>
+      <li><strong>దిశలు (Directions):</strong> <code>std::ios::beg</code> (ప్రారంభం నుండి), <code>std::ios::cur</code> (ప్రస్తుత స్థానం నుండి), <code>std::ios::end</code> (చివర నుండి).</li>
+    </ul>
+
+    <!-- SECTION 12 -->
+    <h2 class="section-title"><span class="num">12</span> కామన్ మిస్టేక్స్ & ప్రొడక్షన్ బెస్ట్ ప్రాక్టీసెస్ (Gotchas & Best Practices)</h2>
+    <p>
+      ఎక్సెప్షన్స్ మరియు ఫైల్ హ్యాండ్లింగ్‌లో ప్రొడక్షన్ సిస్టమ్స్ బ్రేక్ అవ్వకుండా పాటించాల్సిన గోల్డెన్ రూల్స్:
+    </p>
+    <ul>
+      <li><strong>Mistake 1: Empty Catch Blocks (Swallowing Exceptions):</strong> <code>catch (...) {}</code> అని రాసి ఏమీ చేయకపోతే ఎర్రర్ సైలెంట్‌గా మాయమైపోతుంది, తర్వాత సిస్టమ్ క్రాష్ అయినప్పుడు రూట్ కాజ్ కనిపెట్టడం అసాధ్యం. కనీసం లాగ్ చేయండి!</li>
+      <li><strong>Mistake 2: Throwing inside Destructors:</strong> డిస్ట్రక్టర్ నుండి ఎక్సెప్షన్ బయటకు వస్తే C++ రన్‌టైమ్ వెంటనే <code>std::terminate()</code> పిలుస్తుంది. డిస్ట్రక్టర్ల లోపల ఎల్లప్పుడూ <code>try-catch</code> పెట్టి లోపలే హ్యాండిల్ చేయాలి.</li>
+      <li><strong>Mistake 3: Serializing Pointers to Binary Files:</strong> బైనరీ ఫైల్స్ లోకి <code>std::string</code> లేదా పాయింటర్లు (e.g. <code>int* ptr</code>) ఉన్న క్లాస్‌లను <code>reinterpret_cast</code> ద్వారా రాయకూడదు. ఎందుకంటే ఫైల్ లోకి వర్చువల్ మెమరీ అడ్రస్ మాత్రమే సేవ్ అవుతుంది, మళ్ళీ లోడ్ చేసినప్పుడు ఆ అడ్రస్ ఇన్వాలిడ్ అయి క్రాష్ అవుతుంది!</li>
+      <li><strong>Mistake 4: Not checking <code>is_open()</code>:</strong> ఫైల్ పాత్ తప్పుగా ఉన్నా లేదా పర్మిషన్ లేకపోయినా స్ట్రీమ్ ఫెయిల్ అవుతుంది. డేటా రాసేముందు ఎల్లప్పుడూ <code>file.is_open()</code> చెక్ చేయాలి.</li>
+    </ul>
+
+    <!-- SECTION 13 -->
+    <h2 class="section-title"><span class="num">13</span> గ్రాండ్ ఫినాలే రియల్-వరల్డ్ కాప్‌స్టోన్ ప్రాజెక్ట్: Enterprise Bank & Transaction Audit Ledger System</h2>
+    <p>
+      ఈ 20-అధ్యాయాల C++ మాస్టర్‌క్లాస్ యొక్క అత్యున్నత శిఖరం ఈ కాప్‌స్టోన్ ప్రాజెక్ట్. ఇది ఒక సాధారణ డెమో కాదు — మొత్తం C++ కోర్సులో మీరు నేర్చుకున్న అన్ని అధునాతన కాన్సెప్టులను కలగలిపి రూపొందించిన ఒక <strong>కంప్లీట్ ప్రొడక్షన్-గ్రేడ్ బ్యాంకింగ్ & ఆడిట్ లెడ్జర్ ఇంజిన్!</strong>
+    </p>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px; margin:20px 0;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:6px;">🏗️ ఈ కాప్‌స్టోన్ ప్రాజెక్ట్‌లో కలగలిసిన 10 కీలక C++ టెక్నాలజీలు:</div>
+      <ol style="margin-left:20px; line-height:1.8; font-size:14px; color:var(--text);">
+        <li><strong>ఆబ్జెక్ట్ ఓరియెంటెడ్ పాలిమార్ఫిజమ్:</strong> Abstract Base Class <code>Account</code>, వర్చువల్ మెథడ్స్, <code>SavingsAccount</code> & <code>CheckingAccount</code>.</li>
+        <li><strong>కస్టమ్ డొమైన్ ఎక్సెప్షన్స్:</strong> <code>BankingException</code>, <code>InsufficientFundsException</code>, <code>InvalidTransactionException</code>.</li>
+        <li><strong>రెస్పాన్సిబుల్ RAII & స్మార్ట్ పాయింటర్లు:</strong> మెమరీ లీక్స్ లేకుండా <code>std::unique_ptr</code> మరియు <code>std::shared_ptr</code> మేనేజ్‌మెంట్.</li>
+        <li><strong>STL Containers & Hash Maps:</strong> ఖాతాలను వేగంగా శోధించడానికి <code>std::unordered_map</code>, లెడ్జర్ కోసం <code>std::vector</code>.</li>
+        <li><strong>ఫైల్ పర్సిస్టెన్స్ & ఆడిట్ లాగింగ్:</strong> ప్రతి లావాదేవీని టైమ్‌స్టాంప్‌తో డిస్క్‌లోని <code>bank_audit_ledger.txt</code> లోకి రాయడం.</li>
+        <li><strong>Modern C++20 ఫీచర్స్:</strong> <code>noexcept</code> మూవ్ ఆపరేషన్లు, <code>constexpr</code> లిమిట్స్, స్ట్రక్చర్డ్ బైండింగ్స్.</li>
+      </ol>
+    </div>
+
+    <!-- CODE BLOCK 6: CAPSTONE ENTERPRISE APPLICATION -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">enterprise_bank_capstone.cpp</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+#include &lt;unordered_map&gt;
+#include &lt;memory&gt;
+#include &lt;fstream&gt;
+#include &lt;sstream&gt;
+#include &lt;iomanip&gt;
+#include &lt;chrono&gt;
+#include &lt;ctime&gt;
+#include &lt;stdexcept&gt;
+
+// ==========================================
+// 1. కస్టమ్ ఎక్సెప్షన్ హైరార్కీ (Domain Exceptions)
+// ==========================================
+class BankingException : public std::runtime_error {
+public:
+    explicit BankingException(const std::string&amp; msg) : std::runtime_error(msg) {}
+};
+
+class InsufficientFundsException : public BankingException {
+public:
+    InsufficientFundsException(const std::string&amp; acc, double balance, double req)
+        : BankingException("ఖాతా [" + acc + "] లో తగినంత నిధులు లేవు! అందుబాటులో ఉన్నది: ₹ " + 
+                           std::to_string(balance) + ", కోరినది: ₹ " + std::to_string(req)) {}
+};
+
+class InvalidAccountException : public BankingException {
+public:
+    explicit InvalidAccountException(const std::string&amp; acc)
+        : BankingException("ఖాతా సంఖ్య చెల్లదు లేదా బ్యాంక్ రికార్డులలో లేదు: " + acc) {}
+};
+
+// ==========================================
+// 2. లావాదేవీ రికార్డ్ & డిస్క్ ఆడిటర్ (Audit Logger)
+// ==========================================
+struct Transaction {
+    std::string timestamp;
+    std::string accountId;
+    std::string type;
+    double amount;
+    double postBalance;
+};
+
+class AuditLogger {
+    std::string logFilePath;
+public:
+    AuditLogger(const std::string&amp; path) : logFilePath(path) {}
+
+    void log(const Transaction&amp; tx) {
+        std::ofstream file(logFilePath, std::ios::app);
+        if (file.is_open()) {
+            file &lt;&lt; tx.timestamp &lt;&lt; " | ACC: " &lt;&lt; std::setw(12) &lt;&lt; tx.accountId 
+                 &lt;&lt; " | TYPE: " &lt;&lt; std::setw(10) &lt;&lt; tx.type 
+                 &lt;&lt; " | AMOUNT: ₹ " &lt;&lt; std::fixed &lt;&lt; std::setprecision(2) &lt;&lt; std::setw(10) &lt;&lt; tx.amount 
+                 &lt;&lt; " | BAL: ₹ " &lt;&lt; std::setw(10) &lt;&lt; tx.postBalance &lt;&lt; "\\n";
+        }
+    }
+};
+
+// ==========================================
+// 3. అబ్‌స్ట్రాక్ట్ బేస్ క్లాస్: Account (OOP)
+// ==========================================
+class Account {
+protected:
+    std::string accountId;
+    std::string holderName;
+    double balance;
+public:
+    Account(std::string id, std::string name, double initialBal)
+        : accountId(std::move(id)), holderName(std::move(name)), balance(initialBal) {}
+    
+    virtual ~Account() = default;
+
+    virtual void deposit(double amount) {
+        if (amount &lt;= 0) throw BankingException("డిపాజిట్ మొత్తం ₹ 0 కంటే ఎక్కువగా ఉండాలి!");
+        balance += amount;
+    }
+
+    virtual void withdraw(double amount) = 0; // Pure Virtual Function
+
+    const std::string&amp; getId() const noexcept { return accountId; }
+    const std::string&amp; getName() const noexcept { return holderName; }
+    double getBalance() const noexcept { return balance; }
+    virtual std::string getAccountType() const = 0;
+};
+
+// ==========================================
+// 4. డెరైవ్డ్ క్లాస్ 1: SavingsAccount (వడ్డీ సౌకర్యం)
+// ==========================================
+class SavingsAccount : public Account {
+    double interestRate;
+public:
+    SavingsAccount(std::string id, std::string name, double bal, double rate = 4.5)
+        : Account(std::move(id), std::move(name), bal), interestRate(rate) {}
+
+    void withdraw(double amount) override {
+        if (amount &lt;= 0) throw BankingException("విత్‌డ్రా మొత్తం ధనాత్మకంగా ఉండాలి!");
+        if (amount &gt; balance) {
+            throw InsufficientFundsException(accountId, balance, amount);
+        }
+        balance -= amount;
+    }
+
+    std::string getAccountType() const override { return "SAVINGS (సేవింగ్స్)"; }
+};
+
+// ==========================================
+// 5. డెరైవ్డ్ క్లాస్ 2: CheckingAccount (ఓవర్‌డ్రాఫ్ట్ సౌకర్యం)
+// ==========================================
+class CheckingAccount : public Account {
+    double overdraftLimit;
+public:
+    CheckingAccount(std::string id, std::string name, double bal, double limit = 15000.0)
+        : Account(std::move(id), std::move(name), bal), overdraftLimit(limit) {}
+
+    void withdraw(double amount) override {
+        if (amount &lt;= 0) throw BankingException("విత్‌డ్రా మొత్తం ధనాత్మకంగా ఉండాలి!");
+        if (amount &gt; (balance + overdraftLimit)) {
+            throw InsufficientFundsException(accountId, balance + overdraftLimit, amount);
+        }
+        balance -= amount;
+    }
+
+    std::string getAccountType() const override { return "CURRENT/CHECKING (ఓవర్‌డ్రాఫ్ట్)"; }
+};
+
+// ==========================================
+// 6. సెంట్రల్ బ్యాంక్ సిస్టమ్ మేనేజర్ (STL + Exceptions + File I/O)
+// ==========================================
+class EnterpriseBankSystem {
+    std::unordered_map&lt;std::string, std::shared_ptr&lt;Account&gt;&gt; accounts;
+    AuditLogger auditor;
+
+    std::string getCurrentTimestamp() {
+        auto now = std::chrono::system_clock::now();
+        std::time_t t = std::chrono::system_clock::to_time_t(now);
+        char buf[32];
+        std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", std::localtime(&amp;t));
+        return std::string(buf);
+    }
+
+public:
+    EnterpriseBankSystem(const std::string&amp; logFile) : auditor(logFile) {}
+
+    void openAccount(std::shared_ptr&lt;Account&gt; acc) {
+        std::string id = acc-&gt;getId();
+        accounts[id] = acc;
+        auditor.log({getCurrentTimestamp(), id, "OPEN_ACC", acc-&gt;getBalance(), acc-&gt;getBalance()});
+        std::cout &lt;&lt; "  🎉 ఖాతా తెరవబడింది: [" &lt;&lt; id &lt;&lt; "] " &lt;&lt; acc-&gt;getName() 
+                  &lt;&lt; " | టైప్: " &lt;&lt; acc-&gt;getAccountType() &lt;&lt; " | ప్రారంభ బ్యాలెన్స్: ₹ " &lt;&lt; acc-&gt;getBalance() &lt;&lt; "\\n";
+    }
+
+    void processDeposit(const std::string&amp; id, double amount) {
+        auto it = accounts.find(id);
+        if (it == accounts.end()) throw InvalidAccountException(id);
+
+        it-&gt;second-&gt;deposit(amount);
+        auditor.log({getCurrentTimestamp(), id, "DEPOSIT", amount, it-&gt;second-&gt;getBalance()});
+        std::cout &lt;&lt; "  💰 డిపాజిట్ విజయవంతం: ACC [" &lt;&lt; id &lt;&lt; "] +₹ " &lt;&lt; amount 
+                  &lt;&lt; " =&gt; కొత్త బ్యాలెన్స్: ₹ " &lt;&lt; it-&gt;second-&gt;getBalance() &lt;&lt; "\\n";
+    }
+
+    void processWithdrawal(const std::string&amp; id, double amount) {
+        auto it = accounts.find(id);
+        if (it == accounts.end()) throw InvalidAccountException(id);
+
+        it-&gt;second-&gt;withdraw(amount);
+        auditor.log({getCurrentTimestamp(), id, "WITHDRAW", amount, it-&gt;second-&gt;getBalance()});
+        std::cout &lt;&lt; "  🏧 విత్‌డ్రా విజయవంతం: ACC [" &lt;&lt; id &lt;&lt; "] -₹ " &lt;&lt; amount 
+                  &lt;&lt; " =&gt; కొత్త బ్యాలెన్స్: ₹ " &lt;&lt; it-&gt;second-&gt;getBalance() &lt;&lt; "\\n";
+    }
+
+    void transferFunds(const std::string&amp; fromId, const std::string&amp; toId, double amount) {
+        std::cout &lt;&lt; "\\n  🔄 అకౌంట్ ట్రాన్స్‌ఫర్ మొదలైంది: [" &lt;&lt; fromId &lt;&lt; "] నుండి [" &lt;&lt; toId &lt;&lt; "] కి ₹ " &lt;&lt; amount &lt;&lt; "...\\n";
+        auto fromIt = accounts.find(fromId);
+        auto toIt = accounts.find(toId);
+
+        if (fromIt == accounts.end()) throw InvalidAccountException(fromId);
+        if (toIt == accounts.end()) throw InvalidAccountException(toId);
+
+        // Transactional Safety: డెబిట్ సక్సెస్ అయితేనే క్రెడిట్ చేస్తాం!
+        fromIt-&gt;second-&gt;withdraw(amount);
+        try {
+            toIt-&gt;second-&gt;deposit(amount);
+        } catch (...) {
+            // రోల్‌బ్యాక్ మెకానిజమ్
+            fromIt-&gt;second-&gt;deposit(amount);
+            throw BankingException("ట్రాన్స్‌ఫర్ ఫెయిల్ అయ్యింది! నిధులు రోల్‌బ్యాక్ చేయబడ్డాయి.");
+        }
+
+        auditor.log({getCurrentTimestamp(), fromId, "XFER_OUT", amount, fromIt-&gt;second-&gt;getBalance()});
+        auditor.log({getCurrentTimestamp(), toId, "XFER_IN", amount, toIt-&gt;second-&gt;getBalance()});
+        std::cout &lt;&lt; "  ✅ నిధుల బదిలీ పూర్తయింది! ఆడిట్ లాగ్ రికార్డ్ అయ్యింది.\\n";
+    }
+
+    void displayAllAccounts() const {
+        std::cout &lt;&lt; "\\n=========================================================================================\\n";
+        std::cout &lt;&lt; "                      🏦 ఎంటర్‌ప్రైజ్ బ్యాంక్ - ఖాతాదారుల రియల్-టైమ్ సమ్మరీ\\n";
+        std::cout &lt;&lt; "=========================================================================================\\n";
+        for (const auto&amp; [id, acc] : accounts) {
+            std::cout &lt;&lt; "  ID: " &lt;&lt; std::setw(12) &lt;&lt; acc-&gt;getId() 
+                      &lt;&lt; " | పేరు: " &lt;&lt; std::setw(18) &lt;&lt; acc-&gt;getName() 
+                      &lt;&lt; " | టైప్: " &lt;&lt; std::setw(22) &lt;&lt; acc-&gt;getAccountType() 
+                      &lt;&lt; " | బ్యాలెన్స్: ₹ " &lt;&lt; std::setw(10) &lt;&lt; acc-&gt;getBalance() &lt;&lt; "\\n";
+        }
+        std::cout &lt;&lt; "=========================================================================================\\n";
+    }
+};
+
+int main() {
+    std::cout &lt;&lt; "=========================================================================================\\n";
+    std::cout &lt;&lt; "      🚀 MODERN C++ గ్రాండ్ కాప్‌స్టోన్ ప్రాజెక్ట్: ENTERPRISE BANK AUDIT SYSTEM\\n";
+    std::cout &lt;&lt; "=========================================================================================\\n\\n";
+
+    EnterpriseBankSystem bank("enterprise_bank_audit.txt");
+
+    // 1. ఖాతాలు తెరవడం
+    bank.openAccount(std::make_shared&lt;SavingsAccount&gt;("SB-1001", "రాహుల్ వర్మ", 45000.0));
+    bank.openAccount(std::make_shared&lt;CheckingAccount&gt;("CA-2001", "టెక్-సొల్యూషన్స్ లిమిటెడ్", 120000.0, 50000.0));
+    bank.openAccount(std::make_shared&lt;SavingsAccount&gt;("SB-1002", "అనన్య రెడ్డి", 15000.0));
+
+    bank.displayAllAccounts();
+
+    // 2. సాధారణ విజయవంతమైన లావాదేవీలు
+    std::cout &lt;&lt; "\\n[లావాదేవీల ఎగ్జిక్యూషన్]:\\n";
+    try {
+        bank.processDeposit("SB-1001", 10000.0);
+        bank.processWithdrawal("CA-2001", 25000.0);
+        bank.transferFunds("SB-1001", "SB-1002", 15000.0);
+    }
+    catch (const BankingException&amp; e) {
+        std::cerr &lt;&lt; "🚨 [ERROR]: " &lt;&lt; e.what() &lt;&lt; "\\n";
+    }
+
+    // 3. ఎక్సెప్షన్ హ్యాండ్లింగ్ టెస్టింగ్ (నిధుల కొరత)
+    std::cout &lt;&lt; "\\n[ఎక్సెప్షన్ టెస్ట్ 1: ఖాతాలో ఉన్నదానికంటే ఎక్కువ విత్‌డ్రా చేసినప్పుడు]:\\n";
+    try {
+        bank.processWithdrawal("SB-1002", 90000.0);
+    }
+    catch (const InsufficientFundsException&amp; e) {
+        std::cerr &lt;&lt; "  🚨 ఆపరేషన్ తిరస్కరించబడింది: " &lt;&lt; e.what() &lt;&lt; "\\n";
+    }
+
+    // 4. ఎక్సెప్షన్ టెస్ట్ 2: లేని ఖాతాకు బదిలీ ప్రయత్నించినప్పుడు
+    std::cout &lt;&lt; "\\n[ఎక్సెప్షన్ టెస్ట్ 2: లేని అకౌంట్ నంబర్ ఇచ్చినప్పుడు]:\\n";
+    try {
+        bank.transferFunds("SB-1001", "SB-9999_UNKNOWN", 500.0);
+    }
+    catch (const InvalidAccountException&amp; e) {
+        std::cerr &lt;&lt; "  🚨 ఆపరేషన్ తిరస్కరించబడింది: " &lt;&lt; e.what() &lt;&lt; "\\n";
+    }
+
+    bank.displayAllAccounts();
+
+    std::cout &lt;&lt; "\\n🎯 కాప్‌స్టోన్ ప్రాజెక్ట్ సక్సెస్: అన్ని లావాదేవీలు 'enterprise_bank_audit.txt' లో ఆడిట్ అయ్యాయి!\\n";
+    std::cout &lt;&lt; "🏆 అభినందనలు! మీరు Modern C++ Masterclass కోర్సును విజయవంతంగా పూర్తి చేసారు! 🚀\\n";
+    return 0;
+}</code></pre>
+    </div>
+
+    <!-- 5 INTERACTIVE QUIZZES -->
+    <h2 class="section-title"><span class="num">★</span> ఈ అధ్యాయంపై ప్రాక్టీస్ క్విజ్ (Knowledge Check)</h2>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+      <summary style="font-weight:600; cursor:pointer; color:var(--text);">1. C++ లో Stack Unwinding సమయంలో లోకల్ ఆబ్జెక్టుల మెమరీ మరియు రిసోర్సెస్‌కి ఏమి జరుగుతుంది?</summary>
+      <div style="margin-top:10px; color:var(--text2); line-height:1.6; font-size:14px;">
+        <strong>సమాధానం:</strong> Stack Unwinding సమయంలో, త్రో అయిన స్థానం నుండి క్యాచ్ బ్లాక్ వరకు మధ్యలోని ప్రతి ఫంక్షన్ స్టాక్ ఫ్రేమ్‌లోని లోకల్ ఆబ్జెక్టుల <strong>Destructors ఆటోమేటిక్‌గా రన్ అవుతాయి</strong>. RAII (Resource Acquisition Is Initialization) సూత్రం ప్రకారం తెరవబడిన ఫైల్స్, మెమరీ లేదా నెట్‌వర్క్ సాకెట్లు ఎటువంటి లీక్స్ లేకుండా క్లీన్ చేయబడతాయి.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+      <summary style="font-weight:600; cursor:pointer; color:var(--text);">2. ఎక్సెప్షన్‌ను catch (const std::exception&amp; e) కాకుండా catch (std::exception e) ద్వారా పట్టుకుంటే ఏమి ప్రమాదం?</summary>
+      <div style="margin-top:10px; color:var(--text2); line-height:1.6; font-size:14px;">
+        <strong>సమాధానం:</strong> పాస్-బై-వేల్యూ ద్వారా క్యాచ్ చేస్తే <strong>ఆబ్జెక్ట్ స్లైసింగ్ (Object Slicing)</strong> జరుగుతుంది. మీరు త్రో చేసిన డెరైవ్డ్ క్లాస్ ఆబ్జెక్ట్ బేస్ క్లాస్ లోకి కుదించబడి, దానిలోని వర్చువల్ <code>what()</code> మరియు కస్టమ్ డెరివేటివ్ డేటా పోతుంది. కాన్స్ట్ రిఫరెన్స్ (<code>&amp;</code>) వాడితే పాలిమార్ఫిజమ్ భద్రంగా ఉంటుంది మరియు కాపీ ఓవర్‌హెడ్ ఉండదు.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+      <summary style="font-weight:600; cursor:pointer; color:var(--text);">3. Destructor లోపల throw చేయడం వల్ల Modern C++ లో ఎందుకు తీవ్రమైన ప్రమాదం జరుగుతుంది?</summary>
+      <div style="margin-top:10px; color:var(--text2); line-height:1.6; font-size:14px;">
+        <strong>సమాధానం:</strong> C++11 నుండి అన్ని డిస్ట్రక్టర్లు బై-డిఫాల్ట్ <code>noexcept(true)</code> గా పరిగణించబడతాయి. పైగా ఇప్పటికే ఒక ఎక్సెప్షన్ వల్ల Stack Unwinding జరుగుతుండగా, డిస్ట్రక్టర్ లోపల నుండి మరొక ఎక్సెప్షన్ త్రో అయితే రెండు అన్‌హ్యాండిల్డ్ ఎక్సెప్షన్స్ ఒకేసారి యాక్టివ్ అవుతాయి. అప్పుడు C++ రన్‌టైమ్ వెంటనే <code>std::terminate()</code> ను పిలిచి ప్రోగ్రామ్‌ను ఆపేస్తుంది. అందుకే డిస్ట్రక్టర్ల నుండి ఎక్సెప్షన్స్ ఎప్పుడూ బయటకు రాకూడదు.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+      <summary style="font-weight:600; cursor:pointer; color:var(--text);">4. std::vector కోసం Move Constructor కి noexcept స్పెసిఫైయర్ ఎందుకు చాలా కీలకం?</summary>
+      <div style="margin-top:10px; color:var(--text2); line-height:1.6; font-size:14px;">
+        <strong>సమాధానం:</strong> <code>std::vector</code> కెపాసిటీ నిండి కొత్త మెమరీ లోకి ఎలిమెంట్స్‌ను తరలించేటప్పుడు బలమైన ఎక్సెప్షన్ సేఫ్టీ (Strong Exception Guarantee) ని కాపాడాలి. ఒకవేళ మూవ్ కన్‌స్ట్రక్టర్ <code>noexcept</code> కాకపోతే, మధ్యలో ఎర్రర్ వస్తే పాత ఎలిమెంట్స్ చెదిరిపోతాయనే భయంతో వెక్టర్ మూవ్ చేయకుండా ప్రతి ఎలిమెంట్‌ను నెమ్మదిగా కాపీ (Copy Constructor) చేస్తుంది. <code>noexcept</code> ఇవ్వడం వల్లనే నిజమైన మూవ్ సెమాంటిక్స్ వేగవంతమైన స్పీడ్ అందుతుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+      <summary style="font-weight:600; cursor:pointer; color:var(--text);">5. బైనరీ ఫైల్ I/O లో డైనమిక్ మెమరీ ఉన్న క్లాస్‌లను (ఉదా: std::string, std::vector) reinterpret_cast తో నేరుగా ఎందుకు రాయకూడదు?</summary>
+      <div style="margin-top:10px; color:var(--text2); line-height:1.6; font-size:14px;">
+        <strong>సమాధానం:</strong> <code>std::string</code> లేదా డైనమిక్ ఆబ్జెక్టుల లోపల హీప్ మెమరీని పాయింట్ చేసే పాయింటర్లు ఉంటాయి. <code>reinterpret_cast</code> కేవలం ఆబ్జెక్ట్ యొక్క స్టాక్ బైట్స్‌ను మాత్రమే రాస్తుంది (అంటే వర్చువల్ మెమరీ అడ్రస్‌లను). తర్వాతి సెషన్‌లో లేదా వేరే కంప్యూటర్‌లో ఆ ఫైల్‌ను చదివినప్పుడు ఆ పాయింటర్ అడ్రస్ చెల్లదు (Dangling pointer / Segfault). అందువల్ల కేవలం POD (Plain Old Data / Fixed Char Arrays) లేదా ప్రాపర్ సీరియలైజేషన్ ఫార్మాట్‌లను మాత్రమే బైనరీలో రాయాలి.
+      </div>
+    </details>
+
+    <!-- BOTTOM NAVIGATION BAR (COURSE COMPLETION FINALE) -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-cpp/19-cpp-stl-containers-and-algorithms.html" style="text-decoration:none; color:var(--text); font-weight:600; display:inline-flex; align-items:center; gap:8px; background:var(--bg2); padding:10px 18px; border-radius:8px; border:1px solid var(--border);">
+        ← 19. STL కంటైనర్లు &amp; అల్గారిథమ్స్
+      </a>
+      <a href="/blog-cpp.html" style="text-decoration:none; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; background:#10b981; padding:10px 22px; border-radius:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        🏆 C++ Course HOME (ఇండెక్స్) →
+      </a>
+    </div>
+
+    <!-- INTERACTIVE COMPILER CTA CARD -->
+    <div style="margin-top:40px; background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(56,189,248,0.1) 100%); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:24px; text-align:center;">
+      <h3 style="margin-top:0; color:var(--text); font-size:20px;">ఈ కాప్‌స్టోన్ ప్రాజెక్ట్‌ను లైవ్‌గా మన కంపైలర్‌లో రన్ చేయండి!</h3>
+      <p style="color:var(--text2); max-width:650px; margin:8px auto 20px; font-size:14px; line-height:1.6;">
+        ఎటువంటి లోకల్ సెటప్ లేకుండా, బ్రౌజర్‌లోనే నేరుగా Modern C++ (GCC 13 / C++20) కంపైలర్‌లో ఈ పూర్తి స్థాయి ఎంటర్‌ప్రైజ్ బ్యాంకింగ్ సిస్టమ్ కోడ్‌ను ఎగ్జిక్యూట్ చేసి రన్‌టైమ్ అవుట్‌పుట్‌ను తనిఖీ చేయండి.
+      </p>
+      <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; padding:12px 28px; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Launch C++ Interactive Compiler
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER / NAV SCRIPTS -->
+<script src="/site-nav.js"></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`#include <iostream>
+#include <string>
+#include <vector>
+#include <unordered_map>
+#include <memory>
+#include <iomanip>
+#include <chrono>
+#include <ctime>
+#include <stdexcept>
+
+class BankingException : public std::runtime_error {
+public:
+    explicit BankingException(const std::string& msg) : std::runtime_error(msg) {}
+};
+
+class InsufficientFundsException : public BankingException {
+public:
+    InsufficientFundsException(const std::string& acc, double balance, double req)
+        : BankingException("ఖాతా [" + acc + "] లో నిధులు లేవు! అందుబాటులో ఉన్నది: ₹ " + 
+                           std::to_string(balance) + ", కోరినది: ₹ " + std::to_string(req)) {}
+};
+
+class Account {
+protected:
+    std::string accountId;
+    std::string holderName;
+    double balance;
+public:
+    Account(std::string id, std::string name, double bal)
+        : accountId(std::move(id)), holderName(std::move(name)), balance(bal) {}
+    virtual ~Account() = default;
+
+    virtual void deposit(double amount) {
+        if (amount <= 0) throw BankingException("డిపాజిట్ మొత్తం ₹ 0 కంటే ఎక్కువగా ఉండాలి!");
+        balance += amount;
+    }
+    virtual void withdraw(double amount) = 0;
+    const std::string& getId() const noexcept { return accountId; }
+    const std::string& getName() const noexcept { return holderName; }
+    double getBalance() const noexcept { return balance; }
+};
+
+class SavingsAccount : public Account {
+public:
+    SavingsAccount(std::string id, std::string name, double bal)
+        : Account(std::move(id), std::move(name), bal) {}
+
+    void withdraw(double amount) override {
+        if (amount > balance) throw InsufficientFundsException(accountId, balance, amount);
+        balance -= amount;
+    }
+};
+
+int main() {
+    std::cout << "=======================================================================\\n";
+    std::cout << "  🏦 MODERN C++ ENTERPRISE BANK AUDIT SYSTEM (LIVE RUN)\\n";
+    std::cout << "=======================================================================\\n\\n";
+
+    SavingsAccount acc1("SB-1001", "రాహుల్ వర్మ", 50000.0);
+    std::cout << "ఖాతాదారుడు: " << acc1.getName() << " | ప్రారంభ బ్యాలెన్స్: ₹ " << acc1.getBalance() << "\\n";
+
+    acc1.deposit(15000.0);
+    std::cout << "✅ డిపాజిట్: ₹ 15000.0 => కొత్త బ్యాలెన్స్: ₹ " << acc1.getBalance() << "\\n";
+
+    try {
+        std::cout << "\\n₹ 80000.0 విత్‌డ్రా చేయడానికి ప్రయత్నిస్తున్నాం...\\n";
+        acc1.withdraw(80000.0);
+    }
+    catch (const InsufficientFundsException& e) {
+        std::cerr << "🚨 [EXCEPTION CAUGHT]: " << e.what() << "\\n";
+    }
+
+    std::cout << "\\n🎉 కంగ్రాట్స్! Modern C++ Masterclass విజయవంతంగా పూర్తయ్యింది! 🚀\\n";
+    return 0;
+}\`;
+
+    try {
+      localStorage.setItem('code_cpp17', projectCode);
+      localStorage.setItem('code_cpp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-cpp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-cpp', currentLesson.file);
+fs.writeFileSync(outputPath, fileContent, 'utf8');
+console.log('✅ Successfully generated deep high-value C++ Chapter 20 (Grand Finale) in exact HTML style!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', fileContent.length, 'characters');
