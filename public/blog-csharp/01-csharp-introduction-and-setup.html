@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>C# & .NET 8 పరిచయం, ఆర్కిటెక్చర్ & డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్ — Modern C# Tutorial | Our Compiler</title>
-  <meta name="description" content="C# & .NET 8 పరిచయం, ఆర్కిటెక్చర్ & డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్ సమగ్ర తెలుగు గైడ్: Anders Hejlsberg చరిత్ర · .NET SDK vs CLR vs IL · VS Code & .NET CLI (dotnet new, run) · Hello World అనాటమీ & Top-Level Statements." />
+  <meta name="description" content="C# & .NET 8 పరిచయం సమగ్ర తెలుగు గైడ్: Anders Hejlsberg చరిత్ర, .NET SDK vs CLR vs IL ఆర్కిటెక్చర్, VS Code & .NET CLI, Hello World అనాటమీ, Top-Level Statements, సిస్టమ్ ఇన్ఫో ప్రాజెక్ట్." />
   <meta name="keywords" content="csharp tutorial in telugu, learn c# language, c# & .net 8 పరిచయం, ఆర్కిటెక్చర్ & డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్, dotnet 8, c# 12, our compiler" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
@@ -21,7 +21,7 @@
     "@context": "https://schema.org",
     "@type": "TechArticle",
     "headline": "C# & .NET 8 పరిచయం, ఆర్కిటెక్చర్ & డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్ (C# Programming in Telugu)",
-    "description": "Anders Hejlsberg చరిత్ర · .NET SDK vs CLR vs IL · VS Code & .NET CLI (dotnet new, run) · Hello World అనాటమీ & Top-Level Statements",
+    "description": "Anders Hejlsberg చరిత్ర, .NET SDK vs CLR vs IL ఆర్కిటెక్చర్, VS Code & .NET CLI, Hello World అనాటమీ, Top-Level Statements, సిస్టమ్ ఇన్ఫో ప్రాజెక్ట్",
     "articleSection": "Phase 01: C# ఫండమెంటల్స్ & బేసిక్స్",
     "inLanguage": "te",
     "author": {
@@ -35,7 +35,7 @@
       "url": "https://www.ourcompiler.com"
     },
     "datePublished": "2026-02-01",
-    "dateModified": "2026-10-30"
+    "dateModified": "2026-11-01"
   }
   </script>
 
@@ -58,223 +58,272 @@
       if (currentTheme === 'dark') {
         document.documentElement.classList.remove('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.remove('light-theme');
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
         });
       } else {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.add('light-theme');
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
         });
       }
     })();
+
+    // Code runner & copy button integration
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.code-block').forEach((block) => {
+        const pre = block.querySelector('pre');
+        const code = block.querySelector('code');
+        if (!pre || !code) return;
+        const rawCode = code.innerText;
+
+        const actions = block.querySelector('.code-actions');
+        if (actions && !actions.querySelector('.copy-btn')) {
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actions.insertBefore(copyBtn, actions.firstChild);
+
+          const tryBtn = actions.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_csharp', rawCode);
+              window.open('/online-csharp-compiler.html', '_blank');
+            });
+          }
+        }
+      });
+    });
   </script>
 </head>
 <body class="lang-csharp light-theme">
-
-<!-- TOP NAVIGATION FALLBACK -->
-<nav class="topnav">
-  <a href="/" class="brand">🖥️ Our Compiler</a>
-  <a href="/blog-python.html">Python</a>
-  <a href="/blog-java.html">Java</a>
-  <a href="/online-html-editor.html">HTML/CSS/JS</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-csharp.html" class="active">C#</a>
-</nav>
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
 
 <div class="layout">
-
+  <!-- LEFT SIDEBAR ACCORDION -->
   <aside class="sidebar">
     <div class="sidebar-heading">C# Master Course (తెలుగు)</div>
-    <a href="/blog-csharp.html" class="sidebar-home-link ">
-      ⚡ C# Course HOME (ఇండెక్స్)
-    </a>
+    <a href="/blog-csharp.html" class="sidebar-home-link">⚡ C# Course HOME (ఇండెక్స్)</a>
+
     <div class="sidebar-accordion">
-      <div class="accordion-item">
-        <button class="accordion-header active" onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">⚡</span>
-            <span>Phase 01<br><small style="font-size:11px; font-weight:600; opacity:0.85;">C# ఫండమెంటల్స్ & బేసిక్స్</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content open">
-          <ul class="lesson-list">
-            <li class="lesson-item active">
-              <a href="/blog-csharp/01-csharp-introduction-and-setup.html" class="lesson-link active">
-                <span class="lesson-num">1.</span>
-                <span class="lesson-name">C# & .NET 8 పరిచయం, ఆర్కిటెక్చర్ & డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/02-csharp-variables-data-types-and-var.html" class="lesson-link ">
-                <span class="lesson-num">2.</span>
-                <span class="lesson-name">వేరియబుల్స్, CTS డేటా టైప్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/03-csharp-user-input-type-casting-parsing.html" class="lesson-link ">
-                <span class="lesson-num">3.</span>
-                <span class="lesson-name">యూజర్ ఇన్‌పుట్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/04-csharp-operators-and-expressions.html" class="lesson-link ">
-                <span class="lesson-num">4.</span>
-                <span class="lesson-name">ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & Null-Coalescing</span>
-              </a>
-            </li>
-          </ul>
+      <!-- Phase 01 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C# ఫండమెంటల్స్ & బేసిక్స్</span>
+          </div>
         </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <ul class="lesson-list">
+          <li class="lesson-item active">
+            <a href="/blog-csharp/01-csharp-introduction-and-setup.html" class="lesson-link active">
+              <span class="lesson-num">1.</span>
+              <span class="lesson-name">1. C# & .NET 8 పరిచయం, ఆర్కిటెక్చర్</span>
+            </a>
+          </li>
+          <li class="lesson-item">
+            <a href="/blog-csharp/02-csharp-variables-data-types-and-var.html" class="lesson-link">
+              <span class="lesson-num">2.</span>
+              <span class="lesson-name">2. వేరియబుల్స్ & CTS డేటా టైప్స్</span>
+            </a>
+          </li>
+          <li class="lesson-item">
+            <a href="/blog-csharp/03-csharp-user-input-type-casting-parsing.html" class="lesson-link">
+              <span class="lesson-num">3.</span>
+              <span class="lesson-name">3. యూజర్ ఇన్‌పుట్ & టైప్ కాస్టింగ్</span>
+            </a>
+          </li>
+          <li class="lesson-item">
+            <a href="/blog-csharp/04-csharp-operators-and-expressions.html" class="lesson-link">
+              <span class="lesson-num">4.</span>
+              <span class="lesson-name">4. ఆపరేటర్లు & Null-Coalescing</span>
+            </a>
+          </li>
+        </ul>
       </div>
-      <div class="accordion-item">
-        <button class="accordion-header " onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">🔀</span>
-            <span>Phase 02<br><small style="font-size:11px; font-weight:600; opacity:0.85;">కంట్రోల్ ఫ్లో, లూప్స్ & ప్యాటర్న్ మ్యాచింగ్</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content ">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/05-csharp-conditional-statements-and-pattern-matching.html" class="lesson-link ">
-                <span class="lesson-num">5.</span>
-                <span class="lesson-name">కండిషనల్ స్టేట్‌మెంట్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/06-csharp-switch-case-and-switch-expressions.html" class="lesson-link ">
-                <span class="lesson-num">6.</span>
-                <span class="lesson-name">switch స్టేట్‌మెంట్ & మోడ్రన్ switch ఎక్స్‌ప్రెషన్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/07-csharp-loops-for-while-do-while-foreach.html" class="lesson-link ">
-                <span class="lesson-num">7.</span>
-                <span class="lesson-name">లూప్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/08-csharp-break-continue-and-nested-loops.html" class="lesson-link ">
-                <span class="lesson-num">8.</span>
-                <span class="lesson-name">break, continue & నెస్టెడ్ లూప్స్</span>
-              </a>
-            </li>
-          </ul>
+      <!-- Phase 02 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో, లూప్స్ & ప్యాటర్న్ మ్యాచింగ్</span>
+          </div>
         </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <ul class="lesson-list">
+          <li class="lesson-item">
+            <a href="/blog-csharp/05-csharp-conditional-statements-and-pattern-matching.html" class="lesson-link">
+              <span class="lesson-num">5.</span>
+              <span class="lesson-name">5. కండిషనల్ స్టేట్‌మెంట్స్</span>
+            </a>
+          </li>
+          <li class="lesson-item">
+            <a href="/blog-csharp/06-csharp-switch-case-and-switch-expressions.html" class="lesson-link">
+              <span class="lesson-num">6.</span>
+              <span class="lesson-name">6. switch స్టేట్‌మెంట్ & expressions</span>
+            </a>
+          </li>
+          <li class="lesson-item">
+            <a href="/blog-csharp/07-csharp-loops-for-while-do-while-foreach.html" class="lesson-link">
+              <span class="lesson-num">7.</span>
+              <span class="lesson-name">7. లూప్స్ (for, while, foreach)</span>
+            </a>
+          </li>
+          <li class="lesson-item">
+            <a href="/blog-csharp/08-csharp-break-continue-and-nested-loops.html" class="lesson-link">
+              <span class="lesson-num">8.</span>
+              <span class="lesson-name">8. break, continue & నెస్టెడ్ లూప్స్</span>
+            </a>
+          </li>
+        </ul>
       </div>
-      <div class="accordion-item">
-        <button class="accordion-header " onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">📦</span>
-            <span>Phase 03<br><small style="font-size:11px; font-weight:600; opacity:0.85;">మెథడ్స్, స్ట్రింగ్స్ & కలెక్షన్స్</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content ">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/09-csharp-methods-parameters-ref-out-in.html" class="lesson-link ">
-                <span class="lesson-num">9.</span>
-                <span class="lesson-name">మెథడ్స్, పారామీటర్ మోడిఫైయర్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/10-csharp-strings-stringbuilder-and-text-processing.html" class="lesson-link ">
-                <span class="lesson-num">10.</span>
-                <span class="lesson-name">స్ట్రింగ్స్, ఇమ్యుటబిలిటీ & StringBuilder ఆప్టిమైజేషన్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/11-csharp-arrays-1d-multidimensional-jagged.html" class="lesson-link ">
-                <span class="lesson-num">11.</span>
-                <span class="lesson-name">అర్రేలు</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/12-csharp-collections-and-generics-list-dict.html" class="lesson-link ">
-                <span class="lesson-num">12.</span>
-                <span class="lesson-name">జెనెరిక్ కలెక్షన్స్</span>
-              </a>
-            </li>
-          </ul>
+      <!-- Phase 03 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">మెథడ్స్, స్ట్రింగ్స్ & కలెక్షన్స్</span>
+          </div>
         </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <ul class="lesson-list">
+          <li class="lesson-item">
+            <a href="/blog-csharp/09-csharp-methods-parameters-ref-out-in.html" class="lesson-link">
+              <span class="lesson-num">9.</span>
+              <span class="lesson-name">9. మెథడ్స్, పారామీటర్ మోడిఫైయర్స్</span>
+            </a>
+          </li>
+          <li class="lesson-item">
+            <a href="/blog-csharp/10-csharp-strings-stringbuilder-and-text-processing.html" class="lesson-link">
+              <span class="lesson-num">10.</span>
+              <span class="lesson-name">10. స్ట్రింగ్స్ & StringBuilder</span>
+            </a>
+          </li>
+          <li class="lesson-item">
+            <a href="/blog-csharp/11-csharp-arrays-1d-multidimensional-jagged.html" class="lesson-link">
+              <span class="lesson-num">11.</span>
+              <span class="lesson-name">11. అర్రేలు (1D, 2D & Jagged)</span>
+            </a>
+          </li>
+          <li class="lesson-item">
+            <a href="/blog-csharp/12-csharp-collections-and-generics-list-dict.html" class="lesson-link">
+              <span class="lesson-num">12.</span>
+              <span class="lesson-name">12. జెనెరిక్ కలెక్షన్స్</span>
+            </a>
+          </li>
+        </ul>
       </div>
-      <div class="accordion-item">
-        <button class="accordion-header " onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">🏛️</span>
-            <span>Phase 04<br><small style="font-size:11px; font-weight:600; opacity:0.85;">ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content ">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/13-csharp-classes-objects-and-constructors.html" class="lesson-link ">
-                <span class="lesson-num">13.</span>
-                <span class="lesson-name">క్లాసెస్, ఆబ్జెక్ట్స్ & కన్‌స్ట్రక్టర్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/14-csharp-properties-and-encapsulation.html" class="lesson-link ">
-                <span class="lesson-num">14.</span>
-                <span class="lesson-name">ఎన్‌క్యాప్సులేషన్, యాక్సెస్ మోడిఫైయర్స్ & Auto-Properties</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/15-csharp-inheritance-and-polymorphism.html" class="lesson-link ">
-                <span class="lesson-num">15.</span>
-                <span class="lesson-name">ఇన్‌హెరిటెన్స్, పాలిమార్ఫిజం</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/16-csharp-interfaces-abstract-classes-records.html" class="lesson-link ">
-                <span class="lesson-num">16.</span>
-                <span class="lesson-name">ఇంటర్‌ఫేసెస్, అబ్‌స్ట్రాక్ట్ క్లాసెస్ & C# Records</span>
-              </a>
-            </li>
-          </ul>
+      <!-- Phase 04 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏛️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)</span>
+          </div>
         </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <ul class="lesson-list">
+          <li class="lesson-item">
+            <a href="/blog-csharp/13-csharp-classes-objects-and-constructors.html" class="lesson-link">
+              <span class="lesson-num">13.</span>
+              <span class="lesson-name">13. క్లాసెస్ & కన్‌స్ట్రక్టర్స్</span>
+            </a>
+          </li>
+          <li class="lesson-item">
+            <a href="/blog-csharp/14-csharp-properties-and-encapsulation.html" class="lesson-link">
+              <span class="lesson-num">14.</span>
+              <span class="lesson-name">14. ఎన్‌క్యాప్సులేషన్ & Properties</span>
+            </a>
+          </li>
+          <li class="lesson-item">
+            <a href="/blog-csharp/15-csharp-inheritance-and-polymorphism.html" class="lesson-link">
+              <span class="lesson-num">15.</span>
+              <span class="lesson-name">15. ఇన్‌హెరిటెన్స్ & పాలిమార్ఫిజం</span>
+            </a>
+          </li>
+          <li class="lesson-item">
+            <a href="/blog-csharp/16-csharp-interfaces-abstract-classes-records.html" class="lesson-link">
+              <span class="lesson-num">16.</span>
+              <span class="lesson-name">16. ఇంటర్‌ఫేసెస్ & Records</span>
+            </a>
+          </li>
+        </ul>
       </div>
-      <div class="accordion-item">
-        <button class="accordion-header " onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">🚀</span>
-            <span>Phase 05<br><small style="font-size:11px; font-weight:600; opacity:0.85;">అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content ">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/17-csharp-exception-handling-try-catch-finally.html" class="lesson-link ">
-                <span class="lesson-num">17.</span>
-                <span class="lesson-name">ఎక్సెప్షన్ హ్యాండ్లింగ్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/18-csharp-delegates-events-and-lambdas.html" class="lesson-link ">
-                <span class="lesson-num">18.</span>
-                <span class="lesson-name">డెలిగేట్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/19-csharp-linq-language-integrated-query.html" class="lesson-link ">
-                <span class="lesson-num">19.</span>
-                <span class="lesson-name">LINQ</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/20-csharp-mini-project-employee-management.html" class="lesson-link ">
-                <span class="lesson-num">20.</span>
-                <span class="lesson-name">కంప్లీట్ మినీ ప్రాజెక్ట్: ఎంప్లాయ్ మేనేజ్‌మెంట్ సిస్టమ్</span>
-              </a>
-            </li>
-          </ul>
+      <!-- Phase 05 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్</span>
+          </div>
         </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <ul class="lesson-list">
+          <li class="lesson-item">
+            <a href="/blog-csharp/17-csharp-exception-handling-try-catch-finally.html" class="lesson-link">
+              <span class="lesson-num">17.</span>
+              <span class="lesson-name">17. ఎక్సెప్షన్ హ్యాండ్లింగ్</span>
+            </a>
+          </li>
+          <li class="lesson-item">
+            <a href="/blog-csharp/18-csharp-delegates-events-and-lambdas.html" class="lesson-link">
+              <span class="lesson-num">18.</span>
+              <span class="lesson-name">18. డెలిగేట్స్, ఈవెంట్స్ & లాంబ్డా</span>
+            </a>
+          </li>
+          <li class="lesson-item">
+            <a href="/blog-csharp/19-csharp-linq-language-integrated-query.html" class="lesson-link">
+              <span class="lesson-num">19.</span>
+              <span class="lesson-name">19. LINQ — క్వెరీ పవర్‌హౌస్</span>
+            </a>
+          </li>
+          <li class="lesson-item">
+            <a href="/blog-csharp/20-csharp-mini-project-employee-management.html" class="lesson-link">
+              <span class="lesson-num">20.</span>
+              <span class="lesson-name">20. ఎంప్లాయ్ మేనేజ్‌మెంట్ సిస్టమ్</span>
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
     <div style="margin-top:24px; padding:16px; background:var(--bg2); border:1px solid var(--border); border-radius:10px; font-size:12px; text-align:center;">
@@ -287,218 +336,763 @@
       </a>
     </div>
   </aside>
-  <!-- MAIN LESSON CONTENT -->
+
+  <!-- MAIN ARTICLE -->
   <main class="content">
+
+    <!-- BREADCRUMB -->
     <div class="breadcrumb">
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-csharp.html">C# Masterclass</a><span class="sep">›</span>
-      <span class="current">Chapter 1: C# & .NET 8 పరిచయం, ఆర్కిటెక్చర్ & డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్</span>
+      <span class="current">Chapter 01: C# &amp; .NET 8 పరిచయం &amp; ఆర్కిటెక్చర్</span>
     </div>
 
-    <h1 class="page-title">C# & .NET 8 పరిచయం, ఆర్కిటెక్చర్ & డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్</h1>
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">C# &amp; .NET 8 పరిచయం, ఆర్కిటెక్చర్ &amp; డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్</h1>
 
+    <!-- PAGE META BADGES -->
     <div class="page-meta">
-      <span class="badge">⚡ Modern C# 12 & .NET 8</span>
-      <span class="badge">🟢 Chapter 1 of 20</span>
-      <span class="badge">📂 Phase 01: C# ఫండమెంటల్స్ & బేసిక్స్</span>
-      <span class="badge">📅 2026 Edition</span>
+      <span class="badge">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="badge">🟢 Chapter 01 of 20</span>
+      <span class="badge">📂 Phase 01: C# ఫండమెంటల్స్ &amp; బేసిక్స్</span>
+      <span class="badge">📅 2026 Academic Edition</span>
     </div>
 
-    <!-- Covered Topics Bar -->
+    <!-- SUBTOPICS PILL BAR -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>Anders Hejlsberg చరిత్ర · .NET SDK vs CLR vs IL · VS Code & .NET CLI (dotnet new, run) · Hello World అనాటమీ & Top-Level Statements</span>
+      <span>Anders Hejlsberg &amp; C# చరిత్ర · .NET ఆర్కిటెక్చర్ (.NET Framework vs Core vs .NET 8) · CLR, IL, JIT కంపైలేషన్ · .NET SDK vs Runtime · VS Code &amp; .NET CLI (dotnet new, build, run) · ప్రాజెక్ట్ ఫైల్ స్ట్రక్చర్ (.csproj, bin, obj) · Hello World అనాటమీ · Top-Level Statements · Console I/O · సిస్టమ్ ఇన్ఫో ప్రాజెక్ట్</span>
     </div>
 
-    
+    <!-- WARM IVORY INTRO ACCENT BOX -->
     <div class="intro-box">
-      మైక్రోసాఫ్ట్ సంస్థ రూపొందించిన ఆధునిక సాఫ్ట్‌వేర్ ప్రపంచంలో అత్యంత శక్తివంతమైన, పాపులర్ మరియు బహుముఖ ప్రోగ్రామింగ్ భాష <strong>C# (సీ-షార్ప్)</strong>. ఎంటర్‌ప్రైజ్ వెబ్ అప్లికేషన్లు, క్లౌడ్ మైక్రోసర్వీసెస్ (Azure/AWS), గేమింగ్ ఇండస్ట్రీ (Unity Engine), మరియు క్రాస్-ప్లాట్‌ఫామ్ మొబైల్ యాప్స్‌ను నిర్మించడానికి C# &amp; .NET 8 పవర్‌హౌస్ లాంటివి. ఈ అధ్యాయంలో C# పుట్టుక, .NET 3-టైర్ ఆర్కిటెక్చర్ (CIL, CLR &amp; JIT Compiler), మరియు మీ మొదటి C# 12 ప్రోగ్రామ్ అంతర్గత పనితీరును సమగ్రంగా పరిశీలిద్దాం.
+      <h3>స్వాగతం C# మాస్టర్‌క్లాస్‌కి! 👋 మైక్రోసాఫ్ట్ యొక్క ఫ్లాగ్‌షిప్ లాంగ్వేజ్ నేర్చుకుందాం!</h3>
+      <p>
+        ప్రపంచంలోని టాప్ ఫార్చ్యూన్ 500 ఎంటర్‌ప్రైజ్ కంపెనీలు, గ్లోబల్ బ్యాంకింగ్ సిస్టమ్స్, అజూర్ (Azure) క్లౌడ్ సర్వీసెస్, 
+        మరియు ప్రపంచ ప్రఖ్యాత యూనిటీ (Unity) గేమింగ్ ఇంజిన్ వెనుక ఉన్న ఏకైక అద్భుతమైన ప్రోగ్రామింగ్ లాంగ్వేజ్ <strong>C# (C-Sharp)</strong>. 
+        C++ యొక్క అపారమైన వేగం, జావా యొక్క పోర్టబిలిటీ, మరియు పైథాన్ యొక్క సులభమైన సింటాక్స్‌ను ఒకే వేదికపైకి తీసుకువచ్చిన ఆధునిక భాష ఇది.
+      </p>
+      <p style="margin-top:10px;">
+        ఈ సమగ్ర 20-అధ్యాయాల మాస్టర్‌క్లాస్‌లో మనం కేవలం పాత సంప్రదాయ C# మాత్రమే కాకుండా, సరికొత్త <strong>C# 12 మరియు .NET 8 (LTS)</strong> 
+        ప్రమాణాలతో ప్రొఫెషనల్ సాఫ్ట్‌వేర్ ఇంజనీర్ తరహాలో కోడింగ్ నేర్చుకోబోతున్నాం. మొదటి అధ్యాయంలో C# పుట్టుక, .NET ఆర్కిటెక్చర్, 
+        కోడ్ తెరవెనుక ఎలా ఎగ్జిక్యూట్ అవుతుంది (CLR, IL, JIT), మరియు మన కంప్యూటర్‌లో కంప్లీట్ డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్ సెటప్ చేయడం ఎలాగో క్షుణ్ణంగా అన్వేషిద్దాం!
+      </p>
     </div>
 
     <!-- SECTION 1 -->
-    <div class="section-title"><span class="num">1</span>C# అంటే ఏమిటి? Origins & Anders Hejlsberg ఫిలాసఫీ</div>
-    <div class="section-body">
+    <section class="section">
+      <h2><span class="num">1</span> C# భాష పుట్టుక, చరిత్ర &amp; Anders Hejlsberg విజన్</h2>
       <p>
-        <strong>C#</strong> అనేది ఒక modern, object-oriented, type-safe, component-oriented, garbage-collected ప్రోగ్రామింగ్ భాష. దీనిని 2000వ సంవత్సరంలో మైక్రోసాఫ్ట్‌లోని ప్రముఖ సాఫ్ట్‌వేర్ ఆర్కిటెక్ట్ <strong>Anders Hejlsberg (ఆండర్స్ హెజ్ల్స్‌బర్గ్)</strong> (Turbo Pascal మరియు Delphi సృష్టికర్త) నేతృత్వంలో రూపొందించారు.
+        1990ల చివరలో మైక్రోసాఫ్ట్ సంస్థ ఒక సరికొత్త, నెక్స్ట్-జనరేషన్ ఆబ్జెక్ట్-ఓరియెంటెడ్ భాషను రూపొందించాలని సంకల్పించింది. 
+        ఈ ప్రాజెక్ట్‌కు ప్రారంభంలో <strong>"COOL" (C-like Object Oriented Language)</strong> అని కోడ్‌నేమ్ పెట్టారు. 
+        ఈ భాష రూపకల్పన బాధ్యతను సాఫ్ట్‌వేర్ రంగంలో దిగ్గజ ఇంజనీర్ అయిన <strong>ఆండర్స్ హెల్స్‌బర్గ్ (Anders Hejlsberg)</strong> కు అప్పగించారు.
+      </p>
+      <p>
+        ఆండర్స్ హెల్స్‌బర్గ్ సామాన్యమైన వ్యక్తి కాదు—ఆయన గతంలో పాపులర్ అయిన <em>Turbo Pascal</em> మరియు <em>Delphi</em> లను రూపొందించారు, 
+        తర్వాతి కాలంలో ప్రపంచాన్ని శాసిస్తున్న <em>TypeScript</em> ను కూడా మైక్రోసాఫ్ట్‌లో ఆయనే సృష్టించారు! 
+        ఆయన ఆలోచనల ఫలితంగా 2000 సంవత్సరంలో అధికారికంగా <strong>C# (C-Sharp)</strong> ప్రకటించబడింది మరియు 2002 లో .NET Framework 1.0 తో పాటు విడుదలైంది.
       </p>
 
-      <div style="background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0; padding:16px 20px; margin:20px 0; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
-        <h4 style="color:#10b981; margin:0 0 8px 0; font-size:15px; font-weight:700;">💡 C# యొక్క ప్రధాన మూలస్తంభాలు (Core Pillars):</h4>
-        <ul style="margin:0; padding-left:20px; line-height:1.8; color:var(--text); font-size:14px;">
-          <li><strong>Type Safety (టైప్ సేఫ్టీ):</strong> కంపైలర్ ప్రతి వేరియబుల్ డేటా రకాన్ని కఠినంగా తనిఖీ చేస్తుంది. తప్పు డేటా టైప్స్ వల్ల వచ్చే రన్‌టైమ్ క్రాష్‌లను ముందే నివారిస్తుంది.</li>
-          <li><strong>Automatic Memory Management (Garbage Collector):</strong> C/C++ లో లాగా మెమరీని మాన్యువల్‌గా <code>free()</code> చేయాల్సిన అవసరం లేదు. బ్యాక్‌గ్రౌండ్‌లో రన్ అయ్యే <strong>CLR Garbage Collector (GC)</strong> పనికిరాని ఆబ్జెక్టులను స్వయంచాలకంగా క్లీన్ చేస్తుంది.</li>
-          <li><strong>Modern &amp; Expressive Syntax:</strong> Pattern Matching, Records, LINQ, Async/Await మరియు Nullable Reference Types వంటి అత్యాధునిక ఫీచర్లు కోడ్‌ను సంక్షిప్తంగా, సురక్షితంగా చేస్తాయి.</li>
-          <li><strong>Cross-Platform Freedom:</strong> .NET Core మరియు .NET 8 లతో C# కోడ్ విండోస్ మాత్రమే కాకుండా Linux, macOS, Docker మరియు WebAssembly (Blazor) లపై అద్భుతంగా రన్ అవుతుంది.</li>
-        </ul>
-      </div>
+      <h3>'C#' అనే పేరు వెనుక ఉన్న మ్యూజికల్ రహస్యం:</h3>
+      <p>
+        సంగీత శాస్త్రంలో 'C' నోట్ పక్కన '♯' (Sharp) గుర్తు పెడితే, అది సాధారణ C కంటే ఒక సెమిటోన్ ఎక్కువ శృతిలో (Higher Pitch) మరింత శ్రావ్యంగా పలికిస్తుందని అర్థం. 
+        అలాగే ప్రోగ్రామింగ్ ప్రపంచంలో C మరియు C++ భాషల కంటే ఒక స్థాయి ఉన్నతమైనది, మరింత శక్తివంతమైనది అని తెలియజేయడానికి ఈ భాషకు <strong>C#</strong> అని నామకరణం చేశారు. 
+        అంతేకాకుండా, C++ లోని నాలుగు '+' గుర్తులను ఒకచోట చేర్చితే '#' ఆకారం ఏర్పడుతుంది (C++ ++ = C#)!
+      </p>
 
-      <h4 style="color:#10b981; margin:24px 0 12px; font-size:16px; font-weight:700;">🌍 పరిశ్రమల్లో C# ను ఎక్కడ ఉపయోగిస్తున్నారు?</h4>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin-bottom:20px;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <strong style="color:var(--text); display:block; margin-bottom:6px;">🌐 Enterprise Web APIs</strong>
-          <span style="font-size:13px; color:var(--text2); line-height:1.5; display:block;">ప్రపంచంలోని అతిపెద్ద బ్యాంకులు, ఈ-కామర్స్ పోర్టల్స్ ASP.NET Core తో హై-స్పీడ్ REST APIs నిర్మిస్తున్నాయి.</span>
-        </div>
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <strong style="color:var(--text); display:block; margin-bottom:6px;">🎮 Game Development (Unity)</strong>
-          <span style="font-size:13px; color:var(--text2); line-height:1.5; display:block;">ప్రపంచవ్యాప్తంగా 70% కంటే ఎక్కువ మొబైల్ &amp; PC గేమ్స్ Unity 3D ఇంజిన్ లో C# తోనే కోడ్ చేయబడుతున్నాయి.</span>
-        </div>
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <strong style="color:var(--text); display:block; margin-bottom:6px;">☁️ Cloud &amp; Microservices</strong>
-          <span style="font-size:13px; color:var(--text2); line-height:1.5; display:block;">Azure మరియు AWS లపై మైక్రోసర్వీసెస్, సర్వర్‌లెస్ ఫంక్షన్లు, మరియు డాకర్ కంటైనర్లలో C# రారాజు.</span>
-        </div>
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <strong style="color:var(--text); display:block; margin-bottom:6px;">📱 Cross-Platform Apps</strong>
-          <span style="font-size:13px; color:var(--text2); line-height:1.5; display:block;">.NET MAUI ద్వారా ఒకే C# కోడ్‌బేస్‌తో Android, iOS, Windows, మరియు macOS యాప్‌లు తయారుచేయవచ్చు.</span>
-        </div>
+      <h3>C# వెర్షన్ల పరిణామ క్రమం (Evolution Timeline):</h3>
+      <div class="table-wrap" style="margin:20px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>వెర్షన్ &amp; సంవత్సరం</th>
+              <th>.NET ప్లాట్‌ఫారమ్</th>
+              <th>పరిచయం చేసిన విప్లవాత్మక ఫీచర్లు</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>C# 1.0 (2002)</strong></td>
+              <td>.NET Framework 1.0</td>
+              <td>ప్రాథమిక ఆబ్జెక్ట్ ఓరియెంటెడ్ ఫీచర్లు, క్లాసెస్, ఇంటర్‌ఫేసెస్, డెలిగేట్స్, ఈవెంట్స్.</td>
+            </tr>
+            <tr>
+              <td><strong>C# 2.0 (2005)</strong></td>
+              <td>.NET Framework 2.0</td>
+              <td><strong>Generics (జెనెరిక్స్)</strong> — టైప్ సేఫ్ కలెక్షన్స్, బాక్సింగ్/అన్‌బాక్సింగ్ ఓవర్‌హెడ్ తొలగింపు, Nullable Types.</td>
+            </tr>
+            <tr>
+              <td><strong>C# 3.0 (2007)</strong></td>
+              <td>.NET Framework 3.5</td>
+              <td><strong>LINQ</strong>, లాంబ్డా ఎక్స్‌ప్రెషన్స్ (=>), Extension Methods, <code>var</code> టైప్ ఇన్ఫరెన్స్.</td>
+            </tr>
+            <tr>
+              <td><strong>C# 5.0 (2012)</strong></td>
+              <td>.NET Framework 4.5</td>
+              <td><strong>Async / Await</strong> — అసింక్రోనస్ ప్రోగ్రామింగ్‌లో ప్రపంచవ్యాప్త విప్లవం (తర్వాత జావాస్క్రిప్ట్, పైథాన్ కూడా దీనినే కాపీ చేశాయి).</td>
+            </tr>
+            <tr>
+              <td><strong>C# 8.0 - 10.0 (2019-2021)</strong></td>
+              <td>.NET Core / .NET 6</td>
+              <td>Nullable Reference Types, Pattern Matching, Records, Top-Level Statements, Minimal APIs.</td>
+            </tr>
+            <tr>
+              <td><strong>C# 12 (2023 - 2026+)</strong></td>
+              <td><strong>.NET 8 LTS / .NET 9</strong></td>
+              <td>Primary Constructors (క్లాసులలో), Collection Expressions, Ref readonly, అల్ట్రా-హై పెర్ఫార్మెన్స్ Native AOT.</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </div>
+    </section>
 
     <!-- SECTION 2 -->
-    <div class="section-title"><span class="num">2</span>.NET 8 ఆర్కిటెక్చర్ — CIL, CLR & JIT కంపైలర్ పైప్‌లైన్</div>
-    <div class="section-body">
+    <section class="section">
+      <h2><span class="num">2</span> .NET ఎకోసిస్టమ్ ఆర్కిటెక్చర్: .NET Framework vs .NET Core vs .NET 8+</h2>
       <p>
-        చాలామంది బిగినర్స్ C# కోడ్ రాసినప్పుడు అది నేరుగా కంప్యూటర్ మెషిన్ లాంగ్వేజ్ (0s &amp; 1s) గా మారిపోతుందని భావిస్తారు. కానీ తెరవెనుక .NET ప్లాట్‌ఫామ్ ఒక 3-దశల ఎగ్జిక్యూషన్ పైప్‌లైన్ ను ఉపయోగిస్తుంది:
+        చాలామంది బిగినర్లు <em>"C# వేరు, .NET వేరు ఎలా?"</em> అని అయోమయానికి గురవుతారు. 
+        స్పష్టంగా చెప్పాలంటే: <strong>C# అనేది ఒక ప్రోగ్రామింగ్ లాంగ్వేజ్</strong> (మనం కోడ్ రాసే భాష), కాగా 
+        <strong>.NET అనేది ఒక రన్‌టైమ్ ప్లాట్‌ఫారమ్ మరియు భారీ లైబ్రరీల సముదాయం</strong> (ఆ కోడ్‌ను రన్ చేసే ఇంజిన్).
       </p>
 
-      <div style="display:flex; flex-direction:column; gap:12px; margin:20px 0;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:8px; padding:14px 18px;">
-          <div style="font-weight:700; color:#3b82f6; font-size:14.5px;">దశ 1: Roslyn Compiler — సోర్స్ కోడ్ నుండి CIL బైనరీ</div>
-          <p style="font-size:13.5px; color:var(--text2); margin:6px 0 0 0; line-height:1.6;">
-            మీరు రాసిన <code>.cs</code> ఫైల్‌ను మైక్రోసాఫ్ట్ Roslyn కంపైలర్ పరిశీలించి, ప్రాసెసర్-స్వతంత్ర ఇంటర్మీడియట్ కోడ్ అయిన <strong>CIL (Common Intermediate Language)</strong> లేదా <strong>IL Bytecode</strong> మరియు మెటాడేటాగా మారుస్తుంది. దీని అవుట్‌పుట్ <strong>.dll</strong> (లేదా .exe) అసెంబ్లీ.
-          </p>
-        </div>
+      <h3>.NET పరిణామంలో 3 ప్రధాన యుగాలు:</h3>
+      <ul>
+        <li><strong>యుగం 1 (.NET Framework 2002 - 2019):</strong> ఇది కేవలం విండోస్ (Windows OS) ఆపరేటింగ్ సిస్టమ్‌లో మాత్రమే పనిచేసేది. భారీ సైజు, విండోస్ డిపెండెన్సీ ఉండేది. ప్రస్తుతం ఇది కేవలం మెయింటెనెన్స్ మోడ్‌లో ఉంది.</li>
+        <li><strong>యుగం 2 (.NET Core 2016 - 2020):</strong> మైక్రోసాఫ్ట్ ఓపెన్ సోర్స్ విధానాన్ని స్వీకరించి, మొత్తం ఆర్కిటెక్చర్‌ను స్క్రాచ్ నుండి తిరగరాసింది. ఇది విండోస్, లైనక్స్, మరియు మ్యాక్ (macOS) లపై తేలికపాటిగా పనిచేసే క్రాస్-ప్లాట్‌ఫారమ్ ఇంజిన్‌గా అవతరించింది.</li>
+        <li><strong>యుగం 3 (.NET 5 / 6 / 7 / 8 / 9 Unified Era):</strong> 'Core' మరియు 'Framework' అనే గందరగోళాన్ని పూర్తిగా తొలగించి, వాటన్నింటినీ ఒకే ఒక్క <strong>Modern .NET</strong> కిందకు తీసుకువచ్చారు. వెబ్, క్లౌడ్, డెస్క్‌టాప్, మొబైల్ మరియు IoT అన్నీ ఒకే .NET SDK తో నిర్మించవచ్చు!</li>
+      </ul>
 
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:14px 18px;">
-          <div style="font-weight:700; color:#10b981; font-size:14.5px;">దశ 2: Common Language Runtime (CLR) — వర్చువల్ ఎగ్జిక్యూషన్ ఇంజిన్</div>
-          <p style="font-size:13.5px; color:var(--text2); margin:6px 0 0 0; line-height:1.6;">
-            <strong>CLR</strong> అనేది .NET యొక్క వర్చువల్ మెషిన్ ఇంజిన్. ఇది ప్రోగ్రామ్‌కు అవసరమైన మెమరీని కేటాయించడం, టైప్ సేఫ్టీని ధృవీకరించడం, ఎక్సెప్షన్లను హ్యాండిల్ చేయడం, మరియు గార్బేజ్ కలెక్షన్‌ను నిర్వహించే అంతర్గత రక్షక కవచం.
-          </p>
-        </div>
-
-        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #f59e0b; border-radius:8px; padding:14px 18px;">
-          <div style="font-weight:700; color:#f59e0b; font-size:14.5px;">దశ 3: Just-In-Time (JIT) Compiler — నేటివ్ CPU మెషిన్ కోడ్</div>
-          <p style="font-size:13.5px; color:var(--text2); margin:6px 0 0 0; line-height:1.6;">
-            ప్రోగ్రామ్ రన్ అవుతున్న ఖచ్చితమైన క్షణంలో (At Runtime), CLR లోని <strong>JIT కంపైలర్</strong> ఆ IL బైట్‌కోడ్‌ను మీ కంప్యూటర్ ప్రాసెసర్ (x86-64, ARM64) నేరుగా అమలు చేయగల అత్యంత వేగవంతమైన నేటివ్ మెషిన్ కోడ్‌గా మారుస్తుంది.
-          </p>
-        </div>
+      <div class="tip-box" style="background:rgba(16,185,129,0.08); border-left:4px solid #10b981; padding:14px; margin:16px 0; border-radius:4px;">
+        <strong style="color:#059669;">🏢 .NET 8 LTS అంటే ఏమిటి?</strong><br/>
+        .NET 8 అనేది <strong>Long Term Support (LTS)</strong> విడుదల. మైక్రోసాఫ్ట్ దీనికి 3 సంవత్సరాల పాటు ఎంటర్‌ప్రైజ్-గ్రేడ్ సెక్యూరిటీ ప్యాచెస్ మరియు స్టెబిలిటీ సపోర్ట్ అందిస్తుంది. 
+        అందుకే ప్రపంచవ్యాప్తంగా సాఫ్ట్‌వేర్ కంపెనీలు తమ ప్రొడక్షన్ అప్లికేషన్లను .NET 8 పైనే నిర్మిస్తాయి.
       </div>
-    </div>
+    </section>
 
     <!-- SECTION 3 -->
-    <div class="section-title"><span class="num">3</span>డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్ సెటప్ — .NET SDK & CLI</div>
-    <div class="section-body">
+    <section class="section">
+      <h2><span class="num">3</span> కంప్యూటర్ మెమరీ &amp; ఎగ్జిక్యూషన్ పైప్‌లైన్: C# కోడ్ ఎలా రన్ అవుతుంది?</h2>
       <p>
-        C# కోడింగ్ ప్రారంభించడానికి మీ కంప్యూటర్‌లో <strong>.NET 8 SDK</strong> మాత్రమే అవసరం. SDK (Software Development Kit) లో కంపైలర్, రన్‌టైమ్ మరియు శక్తివంతమైన <code>dotnet</code> CLI టూల్స్ ఉంటాయి.
+        C భాష నేరుగా మెషిన్ కోడ్‌గా కంపైల్ అవుతుంది, పైథాన్ ఇంటర్‌ప్రిటర్‌తో లైన్ బై లైన్ రన్ అవుతుంది. 
+        కానీ C# ఒక అద్భుతమైన <strong>టూ-స్టేజ్ హైబ్రిడ్ కంపైలేషన్ (Two-Stage Compilation Pipeline)</strong> విధానాన్ని ఉపయోగిస్తుంది. 
+        ఇది ప్లాట్‌ఫారమ్ ఇండిపెండెన్స్‌ను మరియు అత్యధిక ప్రాసెసింగ్ వేగాన్ని రెండింటినీ అందిస్తుంది.
       </p>
 
-      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; margin:16px 0;">
-        <h4 style="color:#10b981; margin:0 0 8px 0; font-size:14.5px;">💻 ప్రతి C# డెవలపర్ తెలుసుకోవలసిన 3 ప్రాథమిక CLI కమాండ్లు:</h4>
-        <div style="font-family:monospace; font-size:13px; line-height:1.8; color:var(--text);">
-          <div style="padding:4px 0;"><span style="color:#10b981; font-weight:700;">dotnet new console -o HelloApp</span> : కొత్త కన్సోల్ ప్రాజెక్ట్‌ను సృష్టిస్తుంది.</div>
-          <div style="padding:4px 0;"><span style="color:#10b981; font-weight:700;">cd HelloApp &amp;&amp; dotnet run</span> : కోడ్‌ను కంపైల్ చేసి వెంటనే రన్ చేస్తుంది.</div>
-          <div style="padding:4px 0;"><span style="color:#10b981; font-weight:700;">dotnet build</span> : కోడ్‌లో ఎర్రర్లు ఉన్నాయో లేదో కంపైల్ చేసి తనిఖీ చేస్తుంది.</div>
-        </div>
+      <h3>స్టేజ్ 1: డెవలప్‌మెంట్ టైమ్ (Roslyn C# Compiler - csc)</h3>
+      <p>
+        మనం రాసిన C# సోర్స్ కోడ్ (<code>.cs</code> ఫైల్స్) ను మైక్రోసాఫ్ట్ యొక్క ఆధునిక ఓపెన్ సోర్స్ కంపైలర్ <strong>Roslyn</strong> కంపైల్ చేస్తుంది. 
+        అయితే ఇది నేరుగా CPU కి అర్థమయ్యే మెషిన్ కోడ్‌గా మార్చదు! 
+        బదులుగా ఇది <strong>CIL / IL (Common Intermediate Language)</strong> అనే మధ్యంతర బైనరీ బైట్‌కోడ్‌గా మార్చి, మెటాడేటాతో కలిపి <code>.dll</code> లేదా <code>.exe</code> అసెంబ్లీలుగా భద్రపరుస్తుంది.
+      </p>
+
+      <h3>స్టేజ్ 2: రన్‌టైమ్ (Common Language Runtime - CLR &amp; RyuJIT Compiler)</h3>
+      <p>
+        యూజర్ ప్రోగ్రామ్‌ను రన్ చేసినప్పుడు, <strong>CLR (Common Language Runtime)</strong> రంగంలోకి దిగుతుంది. 
+        CLR లోపల ఉండే <strong>RyuJIT (Just-In-Time) Compiler</strong> ఆ IL కోడ్‌ను చదివి, ఆ సమయంలో మీ కంప్యూటర్‌లో ఉన్న CPU ఆర్కిటెక్చర్ (Intel x64, AMD64, లేదా Apple Silicon ARM64) కి సరిపోయే 
+        అల్ట్రా-ఫాస్ట్ నేటివ్ మెషిన్ కోడ్ (Native Machine Instructions) గా అక్కడికక్కడే మార్చి ఎగ్జిక్యూట్ చేస్తుంది!
+      </p>
+
+      <h3>విజువల్ ఎగ్జిక్యూషన్ పైప్‌లైన్ ఆర్కిటెక్చర్ డయాగ్రమ్:</h3>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; margin:16px 0; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.6; color:var(--text1);">
+[ C# Source Code: Program.cs ]<br/>
+                │<br/>
+                ▼  (Compile Time: Roslyn csc Compiler)<br/>
+[ Managed Assembly: MyApp.dll ]<br/>
+  ├── CIL (Common Intermediate Language - Bytecode)<br/>
+  └── Manifest &amp; Type Metadata (రకాల వివరాలు)<br/>
+                │<br/>
+                ▼  (Run Time: Target Operating System)<br/>
+┌────────────────────────────────────────────────────────┐<br/>
+│              COMMON LANGUAGE RUNTIME (CLR)             │<br/>
+│                                                        │<br/>
+│  [ Class Loader &amp; Verifier ] ➔ [ Type Safety Check ]   │<br/>
+│                            │                           │<br/>
+│                            ▼                           │<br/>
+│  [ JIT Compiler (RyuJIT) ] ➔ నేటివ్ CPU కోడ్ కన్వర్షన్ │<br/>
+│                            │                           │<br/>
+│  [ Garbage Collector (GC) ] &amp; [ Exception Manager ]    │<br/>
+└────────────────────────────────────────────────────────┘<br/>
+                │<br/>
+                ▼  (Direct Hardware Execution)<br/>
+[ CPU &amp; RAM: Native 010101 Instructions (x64 / ARM64) ]
       </div>
-    </div>
+
+      <div class="tip-box" style="background:rgba(59,130,246,0.08); border-left:4px solid #3b82f6; padding:14px; margin:16px 0; border-radius:4px;">
+        <strong style="color:#2563eb;">🎯 IL (Intermediate Language) వల్ల అతిపెద్ద ప్రయోజనం ఏమిటి?</strong><br/>
+        ఒకసారి కంపైల్ చేసిన <code>MyApp.dll</code> అసెంబ్లీని మార్చకుండానే విండోస్ లాప్‌టాప్, ఉబుంటు లైనక్స్ క్లౌడ్ సర్వర్, లేదా మ్యాక్‌బుక్ ఎం-సిరీస్ ప్రాసెసర్‌లలో నేరుగా రన్ చేయవచ్చు! 
+        ఆయా ఆపరేటింగ్ సిస్టమ్‌లలోని స్థానిక CLR ఆ IL కోడ్‌ను ఆయా CPUలకు సరిపోయేలా తర్జుమా చేసుకుంటుంది.
+      </div>
+    </section>
 
     <!-- SECTION 4 -->
-    <div class="section-title"><span class="num">4</span>మొదటి C# ప్రోగ్రామ్: Hello World & Top-Level Statements</div>
-    <div class="section-body">
+    <section class="section">
+      <h2><span class="num">4</span> CLR (Common Language Runtime) యొక్క 4 సూపర్ పవర్స్</h2>
       <p>
-        ఆధునిక C# (C# 9 నుండి C# 12 వరకు) లో అనవసరమైన బోయిలర్‌ప్లేట్ కోడ్‌ను తీసివేసి <strong>Top-Level Statements</strong> అనే విప్లవాత్మక ఫీచర్‌ను ప్రవేశపెట్టారు. విద్యార్థులు క్లాసులు, నేమ్‌స్పేస్‌లతో సతమతం కాకుండా నేరుగా లాజిక్ రాయవచ్చు:
+        C# కోడ్‌ను <strong>మేనేజ్డ్ కోడ్ (Managed Code)</strong> అంటారు. ఎందుకంటే ఈ కోడ్ నేరుగా ఆపరేటింగ్ సిస్టమ్‌పై నిర్లక్ష్యంగా పరిగెత్తదు; 
+        ఇది CLR అనే ఒక నిపుణులైన వర్చువల్ గార్డియన్ పర్యవేక్షణలో పనిచేస్తుంది. CLR అందించే 4 అద్భుతమైన సేవలు:
       </p>
 
-      <div class="code-block" style="margin:16px 0;">
-        <div class="code-block-header">
-          <span class="lang-tag">C# — Modern Hello World (Top-Level Statement)</span>
-          <a class="try-btn" href="/online-csharp-compiler.html">⚡ Try in C# Compiler</a>
-        </div>
-        <pre><code>// ఆధునిక C# 12 ప్రోగ్రామ్: ఒకే లైన్ తో అద్భుతమైన ప్రారంభం!
-Console.WriteLine("నమస్కారం, C# & .NET 8 ప్రపంచానికి స్వాగతం!");
+      <div class="table-wrap" style="margin:20px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>సూపర్ పవర్</th>
+              <th>సాంకేతిక విభాగం</th>
+              <th>ఇంజనీరింగ్ ప్రయోజనం</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Automatic Memory Management</strong></td>
+              <td>Garbage Collector (GC)</td>
+              <td>C లో లాగా మనం మాన్యువల్‌గా <code>free()</code> చేయాల్సిన అవసరం లేదు. వాడని ఆబ్జెక్టులను గుర్తించి RAM ని ఆటోమేటిక్‌గా రీక్లెయిమ్ చేస్తుంది (Zero Memory Leaks).</td>
+            </tr>
+            <tr>
+              <td><strong>2. Strict Type Safety &amp; Boundary Check</strong></td>
+              <td>IL Verifier</td>
+              <td>అర్రే బౌండరీ దాటి పక్కనున్న మెమరీని కరప్ట్ చేయకుండా లేదా అక్రమ పాయింటర్ డీరెఫరెన్సింగ్ చేయకుండా బఫర్ ఓవర్‌ఫ్లో హ్యాకింగ్ దాడులను అడ్డుకుంటుంది.</td>
+            </tr>
+            <tr>
+              <td><strong>3. Cross-Language Interoperability</strong></td>
+              <td>CTS (Common Type System)</td>
+              <td>C# లో రాసిన క్లాస్‌ను F# లేదా VB.NET లో నేరుగా ఇన్‌హెరిట్ చేసుకోవచ్చు, ఎందుకంటే అన్ని భాషలూ ఒకే విధమైన IL డేటా టైప్స్‌ను షేర్ చేసుకుంటాయి.</td>
+            </tr>
+            <tr>
+              <td><strong>4. Robust Exception Handling</strong></td>
+              <td>SEH Engine</td>
+              <td>ప్రోగ్రామ్ అకస్మాత్తుగా బ్లూ స్క్రీన్ (BSOD) తో క్రాష్ అవ్వకుండా, లోపాలను పట్టుకుని కాల్ స్టాక్ (Call Stack) వివరాలతో క్లీన్‌గా హ్యాండిల్ చేస్తుంది.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-int year = 2026;
-Console.WriteLine($"ప్రస్తుత ఎడిషన్: {year}");</code></pre>
+    <!-- SECTION 5 -->
+    <section class="section">
+      <h2><span class="num">5</span> డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్ సెటప్: .NET 8 SDK &amp; VS Code</h2>
+      <p>
+        C# ప్రోగ్రామింగ్ ప్రారంభించడానికి మీ కంప్యూటర్‌లో ప్రధానంగా రెండు సాఫ్ట్‌వేర్లు ఉండాలి:
+      </p>
+      <ol style="line-height:1.8;">
+        <li><strong>.NET 8 SDK (Software Development Kit):</strong> ఇందులో C# కంపైలర్ (Roslyn), రన్‌టైమ్ ఇంజిన్ (CLR), మరియు కమాండ్ లైన్ టూల్స్ ఉంటాయి.</li>
+        <li><strong>కోడ్ ఎడిటర్ (IDE):</strong> Visual Studio Code (ఉచితం &amp; లైట్‌వెయిట్) లేదా Visual Studio 2022 Community ఎడిషన్.</li>
+      </ol>
+
+      <h3>SDK vs Runtime తేడా:</h3>
+      <ul>
+        <li><strong>.NET Runtime:</strong> కేవలం ఇప్పటికే కంపైల్ చేయబడిన C# యాప్‌లను రన్ చేయడానికి మాత్రమే సరిపోతుంది (ఎండ్యూజర్లకు ఇది చాలు).</li>
+        <li><strong>.NET SDK:</strong> ఇందులో రన్‌టైమ్‌తో పాటు కొత్తగా కోడ్ రాయడానికి, కంపైల్ చేయడానికి మరియు బిల్డ్ చేయడానికి అవసరమైన అన్ని టూల్స్ ఉంటాయి (డెవలపర్లకు ఇది తప్పనిసరి).</li>
+      </ul>
+
+      <h3>స్టెప్ బై స్టెప్ ఇన్‌స్టాలేషన్ గైడ్:</h3>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; margin:16px 0; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.6; color:var(--text1);">
+# 1. అధికారిక వెబ్‌సైట్ నుండి SDK డౌన్‌లోడ్ చేయండి:<br/>
+https://dotnet.microsoft.com/download/dotnet/8.0<br/><br/>
+# 2. ఇన్‌స్టాలేషన్ పూర్తయ్యాక, మీ టెర్మినల్ (PowerShell / Command Prompt / Terminal) ఓపెన్ చేసి తనిఖీ చేయండి:<br/>
+dotnet --version<br/>
+# ఔట్‌పుట్ ఇలా కనిపించాలి: 8.0.xxx<br/><br/>
+# 3. మొత్తం ఇన్‌స్టాల్ అయిన రన్‌టైమ్‌లు మరియు SDKల వివరాలు చూడటానికి:<br/>
+dotnet --info
       </div>
 
-      <h4 style="color:#10b981; margin:20px 0 10px; font-size:15px; font-weight:700;">🔍 క్లాసిక్ C# స్ట్రక్చర్ vs మోడ్రన్ టాప్-లెవల్ స్ట్రక్చర్:</h4>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin-bottom:20px;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px;">
-          <strong style="color:var(--text2); display:block; margin-bottom:6px; font-size:13px;">🏛️ క్లాసిక్ C# 8 వరకు (సాంప్రదాయ పద్ధతి):</strong>
-          <pre style="font-size:12px; margin:0; padding:10px; background:var(--bg3); border-radius:6px; line-height:1.4;"><code>using System;
+      <div class="tip-box" style="background:rgba(16,185,129,0.08); border-left:4px solid #10b981; padding:14px; margin:16px 0; border-radius:4px;">
+        <strong style="color:#059669;">💻 VS Code రికమండెడ్ ఎక్స్‌టెన్షన్స్:</strong><br/>
+        మీరు Visual Studio Code వాడుతుంటే, Extensions మార్కెట్‌ప్లేస్ నుండి మైక్రోసాఫ్ట్ వారి అధికారిక <strong>"C# Dev Kit"</strong> మరియు <strong>"C#"</strong> ఎక్స్‌టెన్షన్‌లను ఇన్‌స్టాల్ చేసుకోండి. 
+        ఇవి వరల్డ్-క్లాస్ ఆటో-కంప్లీషన్ (IntelliSense), సింటాక్స్ హైలైటింగ్, మరియు డీబగ్గింగ్ ఫీచర్లను అందిస్తాయి!
+      </div>
+    </section>
 
-namespace HelloWorldApp {
-    class Program {
-        static void Main(string[] args) {
-            Console.WriteLine("Hello!");
+    <!-- SECTION 6 -->
+    <section class="section">
+      <h2><span class="num">6</span> .NET CLI (Command-Line Interface) ప్రాథమిక కమాండ్స్</h2>
+      <p>
+        ఆధునిక సాఫ్ట్‌వేర్ ఇంజనీర్లు మరియు డెవలప్‌మెంట్ పైప్‌లైన్లు (CI/CD) గ్రాఫికల్ బటన్ల కంటే 
+        <strong>.NET CLI (Command-Line Interface)</strong> టూల్స్‌పైనే ఎక్కువగా ఆధారపడతారు. 
+        మీరు తెలుసుకోవాల్సిన అత్యంత కీలకమైన CLI కమాండ్స్ ఇక్కడ ఉన్నాయి:
+      </p>
+
+      <div class="table-wrap" style="margin:20px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>కమాండ్</th>
+              <th>ఉద్దేశం (Purpose)</th>
+              <th>నిజ జీవిత వినియోగం</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>dotnet new console -o MyApp</code></td>
+              <td>కొత్త కన్సోల్ ప్రాజెక్ట్‌ను సృష్టించడం</td>
+              <td><code>MyApp</code> అనే ఫోల్డర్‌లో ప్రాజెక్ట్ ఫైల్స్ ఆటోమేటిక్‌గా తయారవుతాయి.</td>
+            </tr>
+            <tr>
+              <td><code>dotnet build</code></td>
+              <td>ప్రాజెక్ట్‌ను కంపైల్ చేయడం</td>
+              <td>సింటాక్స్ ఎర్రర్లను తనిఖీ చేసి <code>bin/</code> ఫోల్డర్‌లో IL అసెంబ్లీని సృష్టిస్తుంది.</td>
+            </tr>
+            <tr>
+              <td><code>dotnet run</code></td>
+              <td>బిల్డ్ &amp; రన్ ఒకేసారి చేయడం</td>
+              <td>కోడ్‌ను కంపైల్ చేసి తక్షణమే ఎగ్జిక్యూట్ చేస్తుంది (డెవలప్‌మెంట్ సమయంలో వాడతాం).</td>
+            </tr>
+            <tr>
+              <td><code>dotnet clean</code></td>
+              <td>పాత బిల్డ్ ఫైల్స్‌ను తొలగించడం</td>
+              <td><code>bin/</code> మరియు <code>obj/</code> తాత్కాలిక ఫైల్స్‌ను క్లీన్ చేసి ఫ్రెష్ బిల్డ్‌కు సిద్ధం చేస్తుంది.</td>
+            </tr>
+            <tr>
+              <td><code>dotnet add package &lt;Name&gt;</code></td>
+              <td>NuGet లైబ్రరీలను జోడించడం</td>
+              <td>ఉదాహరణకు <code>dotnet add package Newtonsoft.Json</code> ద్వారా థర్డ్-పార్టీ లైబ్రరీలను కలపవచ్చు.</td>
+            </tr>
+            <tr>
+              <td><code>dotnet publish -c Release</code></td>
+              <td>ప్రొడక్షన్ రిలీజ్ ప్యాకేజింగ్</td>
+              <td>సర్వర్‌లో డిప్లాయ్ చేయడానికి అవసరమైన హై-స్పీడ్ ఆప్టిమైజ్డ్ బైట్లను జనరేట్ చేస్తుంది.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section class="section">
+      <h2><span class="num">7</span> ప్రాజెక్ట్ ఫైల్ స్ట్రక్చర్ అనాటమీ (.csproj, bin, obj, Program.cs)</h2>
+      <p>
+        మనం <code>dotnet new console -o HelloCSharp</code> అని టైప్ చేయగానే ఆ ఫోల్డర్‌లో క్రింది ఫైల్స్ సృష్టించబడతాయి:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; margin:16px 0; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.6; color:var(--text1);">
+HelloCSharp/<br/>
+├── HelloCSharp.csproj    &lt;--- ప్రాజెక్ట్ కాన్ఫిగరేషన్ ఫైల్ (XML రూపంలో)<br/>
+├── Program.cs            &lt;--- మనం C# కోడ్ రాసే ప్రధాన సోర్స్ ఫైల్<br/>
+├── obj/                  &lt;--- కంపైలర్ వాడే తాత్కాలిక ఇంటర్మీడియట్ ఫైల్స్<br/>
+└── bin/                  &lt;--- చివరగా తయారైన బైనరీ అసెంబ్లీలు (DLL / EXE)
+      </div>
+
+      <h3>1. HelloCSharp.csproj ఫైల్ అంతర్గత స్వరూపం:</h3>
+      <p>
+        ఇది MSBuild ఇంజిన్‌కు మన ప్రాజెక్ట్ గురించి తెలిపే కాన్ఫిగరేషన్ ఫైల్:
+      </p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">XML — .csproj Project Configuration File</span>
+        </div>
+        <pre><code class="language-xml">&lt;Project Sdk="Microsoft.NET.Sdk"&gt;
+
+  &lt;PropertyGroup&gt;
+    &lt;!-- కన్సోల్ అప్లికేషన్ అని నిర్ధారించడం --&gt;
+    &lt;OutputType&gt;Exe&lt;/OutputType&gt;
+    
+    &lt;!-- .NET 8 LTS టార్గెట్ ఫ్రేమ్‌వర్క్ --&gt;
+    &lt;TargetFramework&gt;net8.0&lt;/TargetFramework&gt;
+    
+    &lt;!-- System నేమ్‌స్పేస్‌ను ఆటోమేటిక్‌గా ఇంక్లూడ్ చేసే ఆధునిక C# ఫీచర్ --&gt;
+    &lt;ImplicitUsings&gt;enable&lt;/ImplicitUsings&gt;
+    
+    &lt;!-- నల్ పాయింటర్ ఎర్రర్లను నివారించే స్ట్రిక్ట్ టైప్ చెకింగ్ --&gt;
+    &lt;Nullable&gt;enable&lt;/Nullable&gt;
+  &lt;/PropertyGroup&gt;
+
+&lt;/Project&gt;</code></pre>
+      </div>
+
+      <div class="warning-box" style="background:rgba(239,68,68,0.08); border-left:4px solid #ef4444; padding:14px; margin:16px 0; border-radius:4px;">
+        <strong style="color:#dc2626;">🚨 Git రిపోజిటరీ నిబంధన (Golden Git Rule):</strong><br/>
+        <code>bin/</code> మరియు <code>obj/</code> ఫోల్డర్‌లను ఎప్పుడూ GitHub లేదా Git లోకి కమిట్ చేయకూడదు! 
+        ఎందుకంటే అవి మీ స్థానిక కంప్యూటర్ కంపైలేషన్‌లో ఆటోమేటిక్‌గా ఉత్పన్నమయ్యే తాత్కాలిక ఫైల్స్. 
+        ఎల్లప్పుడూ ప్రామాణిక <code>.gitignore</code> ఫైల్ వాడి వాటిని విస్మరించాలి.
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section class="section">
+      <h2><span class="num">8</span> మొదటి C# ప్రోగ్రామ్: క్లాసిక్ vs మోడ్రన్ Top-Level Statements</h2>
+      <p>
+        C# భాష ప్రారంభం నుండి C# 8 వరకు ప్రతి చిన్న కోడ్ ముక్క రాయాలన్నా ఒక క్లాస్ మరియు ఒక స్టాటిక్ <code>Main()</code> మెథడ్ తప్పనిసరిగా ఉండేది. 
+        కానీ C# 9 నుండి మైక్రోసాఫ్ట్ <strong>టాప్-లెవల్ స్టేట్‌మెంట్స్ (Top-Level Statements)</strong> అనే అద్భుతమైన ఫీచర్‌ను పరిచయం చేసింది.
+      </p>
+
+      <h3>క్లాసిక్ విధానం (Traditional C# with Boilerplate):</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C# (Classic C# 1 to 8 Boilerplate)</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-csharp-compiler.html" target="_blank">▶ Run in Online C# Compiler</a>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+
+namespace MyFirstApp
+{
+    internal class Program
+    {
+        // ప్రోగ్రామ్ ఎగ్జిక్యూషన్ ఇక్కడే ప్రారంభమవుతుంది
+        static void Main(string[] args)
+        {
+            Console.WriteLine("నమస్కారం ప్రపంచం! ఇది క్లాసిక్ C# శైలి.");
         }
     }
 }</code></pre>
-        </div>
-
-        <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:14px;">
-          <strong style="color:#10b981; display:block; margin-bottom:6px; font-size:13px;">⚡ మోడ్రన్ C# 9 నుండి C# 12 (ఆధునిక పద్ధతి):</strong>
-          <pre style="font-size:12px; margin:0; padding:10px; background:var(--bg3); border-radius:6px; line-height:1.4;"><code>// కంపైలర్ స్వయంచాలకంగా Main() మరియు class ని సృష్టిస్తుంది!
-Console.WriteLine("Hello!");</code></pre>
-        </div>
       </div>
 
-      <div style="display:flex; flex-direction:column; gap:8px; font-size:13.5px; color:var(--text); line-height:1.7;">
-        <div>• <strong>Console</strong>: ఇది <code>System</code> నేమ్‌స్పేస్‌లో ఉన్న ఒక స్టాటిక్ క్లాస్. ఇది కీబోర్డ్ ఇన్‌పుట్ మరియు స్క్రీన్ అవుట్‌పుట్ స్ట్రీమ్‌లను నిర్వహిస్తుంది.</div>
-        <div>• <strong>WriteLine()</strong>: ఇచ్చిన టెక్స్ట్‌ను స్క్రీన్‌పై ముద్రించి కర్సర్‌ను తర్వాతి లైన్‌కు (Newline) తీసుకువెళుతుంది.</div>
-        <div>• <strong>$"{year}" (String Interpolation)</strong>: డాలర్ <code>$</code> గుర్తుతో వేరియబుల్స్ ను కర్లీ బ్రేసెస్ లోపల సులువుగా ఎంబెడ్ చేయవచ్చు.</div>
+      <h3>క్లాసిక్ కోడ్ భాగాల సమగ్ర విశ్లేషణ:</h3>
+      <ul>
+        <li><code>using System;</code> — బేసిక్ డేటా టైప్స్ మరియు Console క్లాస్ ఉన్న ప్రధాన నేమ్‌స్పేస్‌ను దిగుమతి చేసుకుంటుంది.</li>
+        <li><code>namespace MyFirstApp</code> — సంబంధిత క్లాసులను ఒక గ్రూప్‌గా నిర్వహించే ఒక లాజికల్ కంటైనర్ (పేర్ల వైరుధ్యం రాకుండా చూస్తుంది).</li>
+        <li><code>class Program</code> — C# లో ప్రతి ఫంక్షన్ మరియు వేరియబుల్ ఖచ్చితంగా ఏదో ఒక క్లాస్ లోపలే ఉండాలి (Pure Object-Oriented).</li>
+        <li><code>static void Main(string[] args)</code> — OS ప్రోగ్రామ్‌ను రన్ చేసే అధికారిక ప్రారంభ ద్వారం (Entry Point). <code>static</code> అంటే ఆబ్జెక్ట్ సృష్టించకుండానే రన్ అవ్వగలదు; <code>void</code> అంటే ఏ విలువను రిటర్న్ చేయదు; <code>string[] args</code> కమాండ్ లైన్ ఆర్గ్యుమెంట్లను తీసుకుంటుంది.</li>
+      </ul>
+
+      <h3>మోడ్రన్ శైలి (Modern C# 12 Top-Level Statements):</h3>
+      <p>
+        ఆధునిక C# లో ఈ అనవసరమైన బోయిలర్‌ప్లేట్ మొత్తం రాయాల్సిన పనిలేదు! 
+        <code>Program.cs</code> ఫైల్‌లో నేరుగా ఒకే లైన్ రాయవచ్చు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C# (Modern Top-Level Statement)</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-csharp-compiler.html" target="_blank">▶ Run in Online C# Compiler</a>
+          </div>
+        </div>
+        <pre><code class="language-csharp">// .NET 8 లో సింగిల్ లైన్ టాప్-లెవల్ కోడ్
+Console.WriteLine("నమస్కారం! ఇది సరికొత్త మోడ్రన్ C# 12.");</code></pre>
       </div>
-    </div>
 
-    <!-- SECTION 5 -->
-    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
-    <div class="section-body">
-      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
-        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
-          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. కేస్-సెన్సిటివిటీ మర్చిపోవడం (Case Sensitivity Error):</div>
-          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">console.writeline("Hello"); // తప్పు! C# లో C మరియు W క్యాపిటల్ లెటర్స్</code>
-          <span style="font-size:13px; color:var(--text2); display:block;">C# కచ్చితమైన Case-Sensitive లాంగ్వేజ్. <code>Console.WriteLine</code> ని స్మాల్ లెటర్స్‌తో రాస్తే కంపైలర్ ఎర్రర్ ఇస్తుంది.</span>
-        </div>
-
-        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
-          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. .NET SDK కి బదులుగా కేవలం Runtime డౌన్‌లోడ్ చేసుకోవడం:</div>
-          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;">కేవలం .NET Runtime డౌన్‌లోడ్ చేసుకుంటే ముందే కంపైల్ అయిన యాప్‌లను మాత్రమే రన్ చేయగలం కానీ కొత్త కోడ్ కంపైల్ చేయలేం. డెవలపర్లు ఎల్లప్పుడూ <strong>.NET SDK</strong> నే ఇన్‌స్టాల్ చేసుకోవాలి.</span>
-        </div>
-
-        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
-          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 3. ఒకే ప్రాజెక్ట్‌లో రెండు ఫైల్స్‌లో టాప్-లెవల్ స్టేట్‌మెంట్స్ రాయడం:</div>
-          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;">C# లో ఒక ప్రాజెక్ట్‌లోని కేవలం ఒకే ఒక్క ఫైల్ మాత్రమే Top-Level Statements కలిగి ఉండాలి. రెండు ఫైల్స్‌లో రాస్తే "Only one compilation unit can have top-level statements" ఎర్రర్ వస్తుంది.</span>
-        </div>
+      <div class="tip-box" style="background:rgba(245,158,11,0.08); border-left:4px solid #f59e0b; padding:14px; margin:16px 0; border-radius:4px;">
+        <strong style="color:#d97706;">❓ తెరవెనుక ఏం జరుగుతుంది?</strong><br/>
+        మీరు పై విధంగా రాసినప్పటికీ, Roslyn కంపైలర్ బ్యాక్‌గ్రౌండ్‌లో స్వయంగా ఒక సింథటిక్ <code>Program</code> క్లాస్‌ను మరియు <code>&lt;Main&gt;$</code> ఎంట్రీ పాయింట్‌ను సృష్టించి మీ కోడ్‌ను అందులో పెడుతుంది! 
+        కాబట్టి పెర్ఫార్మెన్స్‌లో కానీ, ఆర్కిటెక్చర్‌లో కానీ ఎలాంటి తేడా ఉండదు. పైథాన్ లేదా జావాస్క్రిప్ట్ లాంటి స్వచ్ఛమైన కోడింగ్ అనుభూతిని C# అందిస్తుంది!
       </div>
-    </div>
+    </section>
 
-    <!-- SECTION 6 -->
-    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
-    <div class="section-body">
-      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: C# నేర్చుకోవడానికి ముందు C లేదా C++ నేర్చుకోవడం తప్పనిసరా?</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
-            అస్సలు అవసరం లేదు! C# చాలా యూజర్ ఫ్రెండ్లీ మరియు అధునాతన లాంగ్వేజ్. పాయింటర్లు, మాన్యువల్ మెమరీ డీఅలొకేషన్ వంటి సంక్లిష్టతలు లేకుండా నేరుగా మొదటి లాంగ్వేజ్‌గా C# ను ఎవరైనా సులభంగా నేర్చుకోవచ్చు.
-          </p>
-        </div>
+    <!-- SECTION 9 -->
+    <section class="section">
+      <h2><span class="num">9</span> Console క్లాస్ &amp; బేసిక్ I/O మెకానిక్స్</h2>
+      <p>
+        కన్సోల్ టెర్మినల్‌తో మాట్లాడటానికి C# లో <strong><code>System.Console</code></strong> అనే స్టాటిక్ క్లాస్‌ను ఉపయోగిస్తాం. 
+        ఇందులో ముఖ్యమైన మెథడ్స్ మరియు ఫీచర్లు:
+      </p>
 
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: పాత .NET Framework మరియు మోడ్రన్ .NET 8 ల మధ్య ముఖ్యమైన తేడా ఏమిటి?</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
-            పాత .NET Framework (4.x వరకు) కేవలం విండోస్ ఆపరేటింగ్ సిస్టమ్‌పై మాత్రమే పనిచేసేది. ఆధునిక .NET 8 అనేది పూర్తిగా ఓపెన్-సోర్స్, అత్యంత వేగవంతమైనది మరియు లైనక్స్, డాకర్, మాక్, విండోస్‌లలో సమానంగా రన్ అయ్యే క్రాస్-ప్లాట్‌ఫామ్ ఫ్రేమ్‌వర్క్.
-          </p>
+      <ul>
+        <li><code>Console.WriteLine("టెక్స్ట్")</code> — టెక్స్ట్‌ను ప్రింట్ చేసి కర్సర్‌ను తదుపరి లైన్‌కు (Newline) తీసుకెళ్తుంది.</li>
+        <li><code>Console.Write("టెక్స్ట్")</code> — టెక్స్ట్‌ను ప్రింట్ చేస్తుంది కానీ అదే లైన్‌లో కర్సర్‌ను ఉంచుతుంది.</li>
+        <li><code>Console.ReadLine()</code> — యూజర్ కీబోర్డ్ ద్వారా ఎంటర్ చేసిన పూర్తి వాక్యాన్ని <code>string</code> రూపంలో రీడ్ చేస్తుంది.</li>
+      </ul>
+
+      <h3>ప్రాక్టికల్ డెమో: స్ట్రింగ్ ఇంటర్‌పోలేషన్ ($) మరియు కలర్ టెర్మినల్ అవుట్‌పుట్</h3>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C# — Interactive Console I/O &amp; Styling</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-csharp-compiler.html" target="_blank">▶ Run in Online C# Compiler</a>
+          </div>
         </div>
+        <pre><code class="language-csharp">using System;
+
+// టెర్మినల్ టైటిల్ మరియు రంగులు సెట్ చేయడం
+Console.Title = "C# మాస్టర్‌క్లాస్ డెమో";
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine("========================================");
+Console.WriteLine("   🚀 C# &amp; .NET 8 ఇంటరాక్టివ్ వెల్‌కమ్    ");
+Console.WriteLine("========================================");
+Console.ResetColor();
+
+// యూజర్ ఇన్‌పుట్ స్వీకరించడం
+Console.Write("మీ శుభనామం ఏమిటి? ");
+string? userName = Console.ReadLine();
+
+Console.Write("మీరు ఏ నగరంలో నివసిస్తున్నారు? ");
+string? city = Console.ReadLine();
+
+// మోడ్రన్ C# స్ట్రింగ్ ఇంటర్‌పోలేషన్ ($) వాడకం
+Console.ForegroundColor = ConsoleColor.Green;
+Console.WriteLine($"\nహలో {userName}! {city} నగరానికి మా హృదయపూర్వక స్వాగతం!");
+Console.WriteLine($"ప్రస్తుత సర్వర్ సమయం: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+Console.ResetColor();
+
+Console.WriteLine("\nముగించడానికి ఏదైనా కీ ప్రెస్ చేయండి...");
+Console.ReadKey();</code></pre>
       </div>
-    </div>
-  
+    </section>
 
-    <!-- PREV / NEXT NAVIGATION -->
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
-      <div></div>
+    <!-- SECTION 10 -->
+    <section class="section">
+      <h2><span class="num">10</span> C# కోడింగ్ కన్వెన్షన్స్ &amp; Microsoft బెస్ట్ ప్రాక్టీసెస్</h2>
+      <p>
+        ప్రపంచవ్యాప్తంగా ప్రొఫెషనల్ C# కోడ్ బేస్‌లు మైక్రోసాఫ్ట్ నిర్దేశించిన ప్రామాణిక నామకరణ నిబంధనలను (Naming Conventions) ఖచ్చితంగా పాటిస్తాయి:
+      </p>
+
+      <div class="table-wrap" style="margin:20px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>కేసింగ్ శైలి</th>
+              <th>దేనికి ఉపయోగిస్తారు?</th>
+              <th>ఉదాహరణలు</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>PascalCase</strong></td>
+              <td>క్లాసులు, మెథడ్స్, ప్రాపర్టీలు, ఈవెంట్స్, నేమ్‌స్పేస్‌లు</td>
+              <td><code>StudentManager</code>, <code>CalculateGpa()</code>, <code>TotalScore</code></td>
+            </tr>
+            <tr>
+              <td><strong>camelCase</strong></td>
+              <td>లోకల్ వేరియబుల్స్, మెథడ్ పారామీటర్లు</td>
+              <td><code>studentCount</code>, <code>userName</code>, <code>maxLimit</code></td>
+            </tr>
+            <tr>
+              <td><strong>_camelCase (with underscore)</strong></td>
+              <td>ప్రైవేట్ ఫీల్డ్స్ (Private member variables)</td>
+              <td><code>_databaseConnection</code>, <code>_retryCount</code></td>
+            </tr>
+            <tr>
+              <td><strong>I + PascalCase</strong></td>
+              <td>ఇంటర్‌ఫేసెస్ (Interfaces)</td>
+              <td><code>IDisposable</code>, <code>IEnumerable</code>, <code>IRepository</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>XML డాక్యుమెంటేషన్ కామెంట్స్ (XML Doc Comments):</h3>
+      <p>
+        C# లో సాధారణ <code>//</code> కామెంట్లతో పాటు మూడు స్లాష్‌లతో కూడిన <code>///</code> కామెంట్లను వాడతారు. 
+        ఇది రాస్తే విజువల్ స్టూడియో మరియు ఇతర ఎడిటర్లు ఫంక్షన్లపై మౌస్ పెట్టినప్పుడు అందమైన హెల్ప్ బాక్సులను (IntelliSense Tooltips) చూపిస్తాయి!
+      </p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C# — XML Documentation Comments</span>
+        </div>
+        <pre><code class="language-csharp">/// &lt;summary&gt;
+/// ఇచ్చిన రెండు సంఖ్యల మొత్తాన్ని లెక్కిస్తుంది.
+/// &lt;/summary&gt;
+/// &lt;param name="a"&gt;మొదటి పూర్ణాంకం&lt;/param&gt;
+/// &lt;param name="b"&gt;రెండవ పూర్ణాంకం&lt;/param&gt;
+/// &lt;returns&gt;రెండు సంఖ్యల కూడిక ఫలితం&lt;/returns&gt;
+int AddNumbers(int a, int b)
+{
+    return a + b;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section class="section">
+      <h2><span class="num">11</span> ప్రాక్టికల్ ప్రాజెక్ట్: ఇంటరాక్టివ్ .NET సిస్టమ్ ఇన్ఫర్మేషన్ CLI టూల్</h2>
+      <p>
+        మనం నేర్చుకున్న C# &amp; .NET పరిజ్ఞానంతో మన కంప్యూటర్ హార్డ్‌వేర్, ఆపరేటింగ్ సిస్టమ్, మెమరీ మరియు .NET రన్‌టైమ్ వివరాలను వెలికితీసే 
+        ఒక ప్రొడక్షన్-గ్రేడ్ <strong>సిస్టమ్ డయాగ్నోస్టిక్స్ CLI టూల్ (System Diagnostics Tool)</strong> ను నిర్మిద్దాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C# — System Diagnostics CLI Project (DotNetSysInfo)</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-csharp-compiler.html" target="_blank">▶ Run in Online C# Compiler</a>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+
+Console.ForegroundColor = ConsoleColor.Green;
+Console.WriteLine("================================================================");
+Console.WriteLine("        💻 .NET 8 SYSTEM DIAGNOSTICS &amp; RUNTIME AUDITOR           ");
+Console.WriteLine("================================================================");
+Console.ResetColor();
+
+// Environment క్లాస్ ద్వారా సిస్టమ్ సమాచారాన్ని సేకరించడం
+string osVersion = Environment.OSVersion.ToString();
+string machineName = Environment.MachineName;
+string userName = Environment.UserName;
+int coreCount = Environment.ProcessorCount;
+Version dotnetVersion = Environment.Version;
+bool is64BitOS = Environment.Is64BitOperatingSystem;
+bool is64BitProcess = Environment.Is64BitProcess;
+long workingSetMemory = Environment.WorkingSet / (1024 * 1024); // MB లోకి మార్చడం
+TimeSpan uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
+
+Console.WriteLine($"
+[1] హోస్ట్ మెషిన్ సమాచారం:");
+Console.WriteLine($"    • కంప్యూటర్ పేరు      : {machineName}");
+Console.WriteLine($"    • లాగిన్ యూజర్        : {userName}");
+Console.WriteLine($"    • ఆపరేటింగ్ సిస్టమ్     : {osVersion} ({(is64BitOS ? "64-bit OS" : "32-bit OS")})");
+
+Console.ForegroundColor = ConsoleColor.Yellow;
+Console.WriteLine($"
+[2] .NET రన్‌టైమ్ వివరాలు:");
+Console.WriteLine($"    • .NET CLR వెర్షన్    : {dotnetVersion}");
+Console.WriteLine($"    • ప్రాసెస్ ఆర్కిటెక్చర్ : {(is64BitProcess ? "x64 Managed Process" : "x86 Process")}");
+Console.WriteLine($"    • GC అలోకేటెడ్ మెమరీ  : {workingSetMemory} MB");
+Console.ResetColor();
+
+Console.ForegroundColor = ConsoleColor.Cyan;
+Console.WriteLine($"
+[3] ప్రాసెసర్ &amp; పనితీరు లెక్కలు:");
+Console.WriteLine($"    • లభ్యమైన CPU కోర్లు   : {coreCount} Logical Cores");
+Console.WriteLine($"    • సిస్టమ్ అప్‌టైమ్     : {uptime.Days} రోజుల {uptime.Hours} గంటల {uptime.Minutes} నిమిషాలు");
+Console.WriteLine($"    • ప్రస్తుత ఫోల్డర్     : {Environment.CurrentDirectory}");
+Console.ResetColor();
+
+Console.ForegroundColor = ConsoleColor.Green;
+Console.WriteLine("
+================================================================");
+Console.WriteLine("✅ సిస్టమ్ ఆడిట్ విజయవంతంగా పూర్తయింది. .NET 8 రన్‌టైమ్ పర్ఫెక్ట్‌గా ఉంది!");
+Console.WriteLine("================================================================");
+Console.ResetColor();</code></pre>
+      </div>
+
+      <!-- PLAYGROUND TRY BOX -->
+      <div class="try-box" style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:18px; margin:24px 0; text-align:center;">
+        <h3 style="margin-top:0; color:#10b981;">🚀 లైవ్ C# కంపైలర్‌లో రన్ చేసి చూడండి!</h3>
+        <p style="margin-bottom:14px; font-size:14px; color:var(--text2);">
+          ఎలాంటి లోకల్ సాఫ్ట్‌వేర్ ఇన్‌స్టాల్ చేయకుండానే మీ బ్రౌజర్‌లోనే ఈ కోడ్‌ను నేరుగా ఎగ్జిక్యూట్ చేయండి!
+        </p>
+        <a href="/online-csharp-compiler.html" class="action-btn try-btn" style="display:inline-block; padding:10px 24px; font-size:14px; text-decoration:none;">
+          Online C# Compiler ఓపెన్ చేయండి ➔
+        </a>
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section class="section">
+      <h2><span class="num">12</span> కామన్ బిగినర్ ఎర్రర్స్ &amp; ట్రబుల్‌షూటింగ్ గైడ్</h2>
+      <p>
+        C# ప్రారంభంలో విద్యార్థులు తరచుగా ఎదుర్కొనే 4 ప్రధాన సమస్యలు మరియు వాటిని పరిష్కరించే మార్గాలు:
+      </p>
+
+      <div class="table-wrap" style="margin:20px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ఎర్రర్ సందేశం / సమస్య</th>
+              <th>కారణం (Why it happens)</th>
+              <th>పరిష్కారం (Quick Solution)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>'dotnet' is not recognized as an internal or external command</code></td>
+              <td>.NET SDK ఇన్‌స్టాల్ కాలేదు లేదా Windows PATH ఎన్విరాన్‌మెంట్ వేరియబుల్‌లో చేర్చబడలేదు.</td>
+              <td>SDK ని రీ-ఇన్‌స్టాల్ చేసి టెర్మినల్‌ను రీస్టార్ట్ చేయండి. PATH లో <code>C:Program Filesdotnet</code> ఉందో లేదో సరిచూసుకోండి.</td>
+            </tr>
+            <tr>
+              <td><code>CS0103: The name 'Console' does not exist in the current context</code></td>
+              <td><code>System</code> నేమ్‌స్పేస్ ఇంక్లూడ్ కాలేదు మరియు ప్రాజెక్ట్‌లో <code>ImplicitUsings</code> డిసేబుల్ అయి ఉంది.</td>
+              <td>ఫైల్ ప్రారంభంలో <code>using System;</code> అని రాయండి లేదా <code>.csproj</code> లో <code>&lt;ImplicitUsings&gt;enable&lt;/ImplicitUsings&gt;</code> ఉంచండి.</td>
+            </tr>
+            <tr>
+              <td><code>CS8803: Top-level statements must precede namespace and type declarations</code></td>
+              <td>టాప్-లెవల్ కోడ్ రాస్తూనే, దాని పైన క్లాసులు లేదా నేమ్‌స్పేస్‌లను డిక్లేర్ చేశారు.</td>
+              <td>టాప్-లెవల్ స్టేట్‌మెంట్స్ ఎల్లప్పుడూ ఫైల్ ప్రారంభంలోనే ఉండాలి. క్లాసులు మరియు ఫంక్షన్లను వాటి క్రింద మాత్రమే రాయాలి.</td>
+            </tr>
+            <tr>
+              <td><code>CS5001: Program does not contain a static 'Main' method suitable for an entry point</code></td>
+              <td>ప్రాజెక్ట్‌లో ఏ ఫైల్‌లోనూ <code>Main()</code> మెథడ్ కానీ లేదా టాప్-లెవల్ స్టేట్‌మెంట్ కానీ లేకపోవడం.</td>
+              <td>కనీసం ఒక ఫైల్‌లో టాప్-లెవల్ స్టేట్‌మెంట్ లేదా <code>static void Main()</code> ఉండేలా చూసుకోండి.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section class="section">
+      <h2><span class="num">13</span> సారాంశం, ఇంటర్వ్యూ ప్రశ్నలు &amp; సెల్ఫ్-అసెస్మెంట్ క్విజ్</h2>
       
+      <h3>కీలక సారాంశం (Key Takeaways):</h3>
+      <ul>
+        <li><strong>C# &amp; .NET:</strong> C# అనేది ఆధునిక, టైప్-సేఫ్ ఆబ్జెక్ట్-ఓరియెంటెడ్ భాష; .NET అనేది దానిని రన్ చేసే పవర్‌ఫుల్ ప్లాట్‌ఫారమ్.</li>
+        <li><strong>Two-Stage Compilation:</strong> Roslyn కంపైలర్ C# కోడ్‌ను <strong>IL (Intermediate Language)</strong> గా మారుస్తుంది; రన్‌టైమ్‌లో <strong>RyuJIT</strong> దానిని నేటివ్ మెషిన్ కోడ్‌గా ఎగ్జిక్యూట్ చేస్తుంది.</li>
+        <li><strong>CLR (Common Language Runtime):</strong> ఆటోమేటిక్ గార్బేజ్ కలెక్షన్, మెమరీ సేఫ్టీ, ఎక్సెప్షన్ హ్యాండ్లింగ్ అందించే ఇంజిన్.</li>
+        <li><strong>CLI Commands:</strong> <code>dotnet new</code>, <code>dotnet build</code>, <code>dotnet run</code> ప్రాజెక్ట్ లైఫ్‌సైకిల్‌ను శాసిస్తాయి.</li>
+        <li><strong>Top-Level Statements:</strong> మోడ్రన్ C# లో బోయిలర్‌ప్లేట్ లేకుండా డైరెక్ట్‌గా క్లీన్ కోడ్ రాయవచ్చు.</li>
+      </ul>
+
+      <h3>టాప్ 5 C# &amp; .NET ఇంటర్వ్యూ ప్రశ్నలు:</h3>
+      <ol style="line-height:1.8;">
+        <li><strong>Q1: మేనేజ్డ్ కోడ్ (Managed Code) మరియు అన్‌మేనేజ్డ్ కోడ్ (Unmanaged Code) మధ్య తేడా ఏమిటి?</strong><br/>
+            <em>జవాబు:</em> CLR వర్చువల్ మెషిన్ పర్యవేక్షణలో నడుస్తూ గార్బేజ్ కలెక్టర్ ద్వారా మెమరీ మేనేజ్ చేయబడే కోడ్‌ను మేనేజ్డ్ కోడ్ (C#, F#, VB.NET) అంటారు. నేరుగా ఆపరేటింగ్ సిస్టమ్ హార్డ్‌వేర్‌పై నడుస్తూ డెవలపరే మెమరీని ఫ్రీ చేయాల్సిన కోడ్‌ను అన్‌మేనేజ్డ్ కోడ్ (C, C++) అంటారు.
+        </li>
+        <li><strong>Q2: .NET లో IL (Intermediate Language) మరియు JIT కంపైలర్ పాత్ర ఏమిటి?</strong><br/>
+            <em>జవాబు:</em> C# కంపైలర్ కోడ్‌ను ప్రాసెసర్-స్వతంత్ర IL బైట్‌కోడ్‌గా మారుస్తుంది. ప్రోగ్రామ్ రన్ అయ్యే సమయంలో JIT (Just-In-Time) కంపైలర్ ఆ IL కోడ్‌ను ఆ కంప్యూటర్ CPU కి తగిన నేటివ్ మెషిన్ కోడ్‌గా క్షణాల్లో కంపైల్ చేస్తుంది.
+        </li>
+        <li><strong>Q3: .NET Framework మరియు ఆధునిక .NET 8 మధ్య ప్రధాన వ్యత్యాసాలు ఏమిటి?</strong><br/>
+            <em>జవాబు:</em> పాత .NET Framework కేవలం Windows లో మాత్రమే పనిచేసేది, ఓపెన్ సోర్స్ కాదు. మోడ్రన్ .NET 8 పూర్తిగా ఓపెన్ సోర్స్, క్లౌడ్-ఆప్టిమైజ్డ్, విండోస్/లైనక్స్/మ్యాక్‌లలో పనిచేసే క్రాస్-ప్లాట్‌ఫారమ్ హై-స్పీడ్ ఇంజిన్.
+        </li>
+        <li><strong>Q4: Top-Level Statements వాడటం వల్ల ఏవైనా పెర్ఫార్మెన్స్ సమస్యలు వస్తాయా?</strong><br/>
+            <em>జవాబు:</em> అస్సలు రావు! కంపైలేషన్ సమయంలో Roslyn కంపైలర్ దానిని సాధారణ <code>Program.Main</code> లాగే మారుస్తుంది కాబట్టి ఎగ్జిక్యూషన్ స్పీడ్‌లో ఎటువంటి తేడా ఉండదు.
+        </li>
+        <li><strong>Q5: Roslyn కంపైలర్ ప్రత్యేకత ఏమిటి?</strong><br/>
+            <em>జవాబు:</em> Roslyn అనేది C# లోనే తిరిగి వ్రాయబడిన మైక్రోసాఫ్ట్ ఓపెన్ సోర్స్ కంపైలర్ ప్లాట్‌ఫారమ్. ఇది కంపైలేషన్ చేయడమే కాకుండా, కోడ్ అనాలిసిస్, రిఫ్యాక్టరింగ్ మరియు IDE IntelliSense సేవలను ఓపెన్ API ల రూపంలో అందిస్తుంది.
+        </li>
+      </ol>
+
+      <h3>ఇంటరాక్టివ్ సెల్ఫ్-అసెస్మెంట్ క్విజ్ (Self-Assessment Quiz):</h3>
+
+      <!-- QUIZ ITEM 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: C# కోడ్ కంపైల్ అయినప్పుడు నేరుగా మెషిన్ కోడ్ కాకుండా ఏ ఫార్మాట్‌లోకి మారుతుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>IL (Common Intermediate Language)</strong> బైట్‌కోడ్ రూపంలోకి మారుతుంది. ఇది <code>.dll</code> లేదా <code>.exe</code> అసెంబ్లీలో మెటాడేటాతో సహా భద్రపరచబడుతుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ ITEM 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: .NET లో మెమరీని ఆటోమేటిక్‌గా క్లీన్ చేసే అంతర్గత ఇంజిన్ ఏది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>Garbage Collector (GC)</strong>. ఇది CLR లో భాగంగా ఉంటూ ఉపయోగంలో లేని ఆబ్జెక్టులను గుర్తించి హీప్ (Heap) మెమరీని విడుదల చేస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ ITEM 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: <code>Console.WriteLine()</code> మరియు <code>Console.Write()</code> మధ్య ప్రధాన తేడా ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>Console.WriteLine()</code> టెక్స్ట్‌ను ప్రింట్ చేసిన తర్వాత చివరన న్యూలైన్ (<code>\n</code>) ను జోడిస్తుంది. <code>Console.Write()</code> కర్సర్‌ను అదే లైన్‌లోనే ఉంచుతుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ ITEM 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: ఒక కొత్త కన్సోల్ అప్లికేషన్‌ను సృష్టించడానికి ఏ .NET CLI కమాండ్‌ను ఉపయోగిస్తారు?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>dotnet new console -o ProjectName</code>
+        </div>
+      </details>
+
+      <!-- QUIZ ITEM 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: C# భాష యొక్క ప్రధాన రూపకర్త (Architect) ఎవరు?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>ఆండర్స్ హెల్స్‌బర్గ్ (Anders Hejlsberg)</strong> — మైక్రోసాఫ్ట్ టెక్నికల్ ఫెలో, అలాగే TypeScript మరియు Turbo Pascal ల రూపకర్త.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-csharp.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← C# Course Home (ఇండెక్స్)
+      </a>
       <a href="/blog-csharp/02-csharp-variables-data-types-and-var.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
-        Next: 2. వేరియబుల్స్ & CTS డేటా టైప్స్ →
+        Next: 02. వేరియబుల్స్ &amp; CTS డేటా టైప్స్ →
       </a>
     </div>
 
@@ -507,7 +1101,7 @@ Console.WriteLine("Hello!");</code></pre>
       <div class="avatar">OC</div>
       <div>
         <strong>Written by Our Compiler Technical Editorial Team</strong><br>
-        <span>Reviewed for accuracy & tested on .NET 8.0 SDK / C# 12 runtime · 2026 Academic Edition</span>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
       </div>
     </div>
 
@@ -518,3 +1112,4 @@ Console.WriteLine("Hello!");</code></pre>
 <script src="/site-nav.js" defer></script>
 </body>
 </html>
+
