@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>స్ట్రక్చర్స్ (struct), యూనియన్స్ (union) & typedef — Modern C Tutorial | Our Compiler</title>
-  <meta name="description" content="స్ట్రక్చర్స్ (struct), యూనియన్స్ (union) & typedef సమగ్ర తెలుగు గైడ్: హెటిరోజీనియస్ డేటా గ్రూపింగ్ · . డాట్ vs -> యారో ఆపరేటర్ · Memory Padding & Alignment · union షేర్డ్ మెమరీ." />
-  <meta name="keywords" content="c tutorial in telugu, learn c language, స్ట్రక్చర్స్ (struct), యూనియన్స్ (union) & typedef, c programming, our compiler" />
+  <title>C స్ట్రక్చర్స్ (struct), యూనియన్స్ (union) & Structure Padding — Modern C Tutorial | Our Compiler</title>
+  <meta name="description" content="C స్ట్రక్చర్స్ & యూనియన్స్ సమగ్ర తెలుగు గైడ్: struct vs union తేడాలు, Structure Padding & Alignment, డాట్ vs యారో ఆపరేటర్, typedef, హాస్పిటల్ పేషెంట్ మేనేజ్‌మెంట్ ప్రాజెక్ట్." />
+  <meta name="keywords" content="c structures in telugu, c unions in telugu, structure padding in c, arrow operator c, typedef in c, our compiler" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-c/17-c-structures-unions-and-typedef.html" />
@@ -20,8 +20,8 @@
   {
     "@context": "https://schema.org",
     "@type": "TechArticle",
-    "headline": "స్ట్రక్చర్స్ (struct), యూనియన్స్ (union) & typedef (C Programming in Telugu)",
-    "description": "హెటిరోజీనియస్ డేటా గ్రూపింగ్ · . డాట్ vs -> యారో ఆపరేటర్ · Memory Padding & Alignment · union షేర్డ్ మెమరీ",
+    "headline": "C స్ట్రక్చర్స్ (struct), యూనియన్స్ (union) & Structure Padding (C Programming in Telugu)",
+    "description": "struct vs union తేడాలు, Structure Padding & Alignment, డాట్ vs యారో ఆపరేటర్, typedef, హాస్పిటల్ పేషెంట్ మేనేజ్‌మెంట్ ప్రాజెక్ట్",
     "articleSection": "Phase 05: స్ట్రక్చర్స్, డైనమిక్ మెమరీ & ప్రాజెక్ట్",
     "inLanguage": "te",
     "author": {
@@ -35,11 +35,11 @@
       "url": "https://www.ourcompiler.com"
     },
     "datePublished": "2026-02-01",
-    "dateModified": "2026-10-29"
+    "dateModified": "2026-11-01"
   }
   </script>
 
-  <!-- Interactive Scripts: Accordion, C Syntax Highlighter & Default Light Theme -->
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
   <script>
     function toggleAccordion(btn) {
       const content = btn.nextElementSibling;
@@ -58,34 +58,55 @@
       if (currentTheme === 'dark') {
         document.documentElement.classList.remove('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.remove('light-theme');
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
         });
       } else {
         document.documentElement.classList.add('light-theme');
         document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.add('light-theme');
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
         });
       }
     })();
+
+    // Code runner & copy button integration
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.code-block').forEach((block) => {
+        const pre = block.querySelector('pre');
+        const code = block.querySelector('code');
+        if (!pre || !code) return;
+        const rawCode = code.innerText;
+
+        const actions = block.querySelector('.code-actions');
+        if (actions && !actions.querySelector('.copy-btn')) {
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actions.insertBefore(copyBtn, actions.firstChild);
+
+          const tryBtn = actions.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', rawCode);
+              window.open('/online-c-compiler.html', '_blank');
+            });
+          }
+        }
+      });
+    });
   </script>
 </head>
 <body class="lang-c light-theme">
-
-<!-- TOP NAVIGATION FALLBACK -->
-<nav class="topnav">
-  <a href="/" class="brand">🖥️ Our Compiler</a>
-  <a href="/blog-python.html">Python</a>
-  <a href="/blog-java.html">Java</a>
-  <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html" class="active">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/?lang=csharp">C#</a>
-  <a href="/blog-go.html">Go</a>
-  <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/online-html-editor.html">HTML/CSS/JS</a>
-</nav>
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
 
 <div class="layout">
   <!-- LEFT SIDEBAR ACCORDION -->
@@ -206,233 +227,619 @@
     <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📚 All Tutorials Index</a>
   </aside>
 
-  <!-- MAIN LESSON CONTENT -->
+
+  <!-- MAIN ARTICLE -->
   <main class="content">
+
+    <!-- BREADCRUMB -->
     <div class="breadcrumb">
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-c.html">C Masterclass</a><span class="sep">›</span>
-      <span class="current">Chapter 17: స్ట్రక్చర్స్ (struct), యూనియన్స్ (union) & typedef</span>
+      <span class="current">Chapter 17: స్ట్రక్చర్స్ (struct), యూనియన్స్ (union) &amp; typedef</span>
     </div>
 
-    <h1 class="page-title">స్ట్రక్చర్స్ (struct), యూనియన్స్ (union) & typedef</h1>
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">C స్ట్రక్చర్స్ (struct), యూనియన్స్ (union) &amp; Structure Padding</h1>
 
+    <!-- PAGE META BADGES -->
     <div class="page-meta">
-      <span class="badge">⚡ Modern C (C99 / C11)</span>
+      <span class="badge">⚡ Modern C (C99 / C11 / C17 Standards)</span>
       <span class="badge">🟢 Chapter 17 of 20</span>
-      <span class="badge">📂 Phase 05: స్ట్రక్చర్స్, డైనమిక్ మెమరీ & ప్రాజెక్ట్</span>
-      <span class="badge">📅 2026 Edition</span>
+      <span class="badge">📂 Phase 05: స్ట్రక్చర్స్, డైనమిక్ మెమరీ &amp; ప్రాజెక్ట్</span>
+      <span class="badge">📅 2026 Academic Edition</span>
     </div>
 
-    <!-- Covered Topics Bar -->
+    <!-- SUBTOPICS PILL BAR -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>హెటిరోజీనియస్ డేటా గ్రూపింగ్ · . డాట్ vs -> యారో ఆపరేటర్ · Memory Padding & Alignment · union షేర్డ్ మెమరీ</span>
+      <span>హెటిరోజీనియస్ డేటా గ్రూపింగ్ · డాట్ (.) vs యారో (->) ఆపరేటర్లు · Structure Padding &amp; Byte Alignment · #pragma pack(1) · union షేర్డ్ మెమరీ · struct vs union పట్టిక · typedef మారుపేర్లు · నెస్టెడ్ స్ట్రక్చర్స్ · బిట్-ఫీల్డ్స్ · హాస్పిటల్ పేషెంట్ ప్రాజెక్ట్ · ఇంటరాక్టివ్ క్విజ్</span>
     </div>
 
-    
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
     <div class="intro-box">
-      వాస్తవ ప్రపంచంలో సమాచారం కేవలం ఒకే రకమైన పూర్ణాంకాలు లేదా అక్షరాల రూపంలో ఉండదు. ఒక విద్యార్థి సమాచారంలో రోల్ నంబర్ (<code>int</code>), పేరు (<code>char[]</code>), మరియు మార్కులు (<code>float</code>) ఉంటాయి. అర్రేలు కేవలం ఒకే రకమైన హోమోజీనియస్ డేటాను మాత్రమే నిల్వ చేయగలవు. వేర్వేరు డేటా రకాలను ఒకే కస్టమ్ రికార్డుగా సమూహపరచడానికి C లో <strong>స్ట్రక్చర్స్ (struct)</strong>, మెమరీ ఆదా చేసే <strong>యూనియన్స్ (union)</strong>, మరియు టైప్ అలియాసింగ్ కోసం <strong>typedef</strong> ప్రాథమిక సాధనాలు.
+      <p>ఒక పెద్ద సూపర్-స్పెషాలిటీ ఆసుపత్రిలోని పేషెంట్ మెడికల్ కార్డును లేదా మీ కాలేజీ ఐడీ కార్డును ఊహించుకోండి. ఆ కార్డుపై మీ పేరు (Text: <code>char name[50]</code>), మీ రోల్ నంబర్ (Integer: <code>int id</code>), మీ రక్త వర్గం (<code>char bloodGroup[5]</code>), మరియు మీ హాజరు శాతం (Floating point: <code>float attendance</code>) ఉంటాయి. గత అధ్యాయాలలో మనం నేర్చుకున్న అర్రేలలో కేవలం ఒకే రకమైన డేటాను (Homogeneous) మాత్రమే భద్రపరచగలం. మరి ఒకే వ్యక్తికి సంబంధించిన ఈ విభిన్న డేటా టైప్స్ అన్నింటినీ కలిపి ఒకే కవరులో ఎలా భద్రపరచాలి?</p>
+      <p>కంప్యూటర్ సైన్స్‌లో ఈ సమస్యను పరిష్కరించే అత్యంత శక్తివంతమైన సాధనమే <strong>స్ట్రక్చర్స్ (Structures - <code>struct</code>)</strong>! విభిన్న డేటా టైప్స్‌ను ఏకం చేసి ప్రోగ్రామర్ తన స్వంత కస్టమ్ డేటా టైప్‌ను నిర్మించుకునే స్వేచ్ఛను C అందిస్తుంది. మరి <strong>యూనియన్ (Union)</strong> అంటే ఏమిటి? ఒకే హోటల్ గదిలోని మంచాన్ని (Shared Bed) ఉదయం ఒక అతిథి, సాయంత్రం మరొక అతిథి మాత్రమే పంచుకోగలిగినట్లు — ఒకే మెమరీ బ్లాక్‌ను వేర్వేరు వేరియబుల్స్ పంచుకోవడమే యూనియన్!</p>
+      <p>ఈ పదిహేడవ అధ్యాయంతో మనం <strong>Phase 05 (స్ట్రక్చర్స్, డైనమిక్ మెమరీ &amp; ప్రాజెక్ట్)</strong> లోకి అడుగుపెడుతున్నాం. ఇందులో మెంబర్ యాక్సెస్ ఆపరేటర్లు (<code>.</code> vs <code>-&gt;</code>), కంపైలర్ చేసే రహస్య <strong>Structure Padding &amp; Alignment</strong>, బిట్-ఫీల్డ్స్ మరియు పూర్తి స్థాయి <strong>హాస్పిటల్ పేషెంట్ మేనేజ్‌మెంట్ &amp; బిల్లింగ్ ఇంజిన్‌ను</strong> సమగ్రంగా నిర్మిద్దాం!</p>
     </div>
 
     <!-- SECTION 1 -->
-    <div class="section-title"><span class="num">1</span>స్ట్రక్చర్స్ (struct) — హెటిరోజీనియస్ డేటా గ్రూపింగ్</div>
+    <div class="section-title"><span class="num">1</span>ఈ Chapter లో మీరు నేర్చుకునే సమగ్ర అంశాలు (Roadmap)</div>
     <div class="section-body">
-      <p>
-        <strong>స్ట్రక్చర్ (struct)</strong> అనేది విభిన్న డేటా రకాలకు చెందిన వేరియబుల్స్‌ను ఒకే పేరు కింద కలిపి ఒక కొత్త యూజర్-డిఫైన్డ్ డేటా టైప్‌ను సృష్టించే విధానం.
-      </p>
-
-      <div class="code-block" style="margin:16px 0;">
-        <div class="code-block-header">
-          <span class="lang-tag">C — struct definition & dot operator</span>
-          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
-        </div>
-        <pre><code>#include &lt;stdio.h&gt;
-#include &lt;string.h&gt;
-
-// స్ట్రక్చర్ డిక్లరేషన్ (బ్లూప్రింట్)
-struct Student {
-    int rollNo;
-    char name[30];
-    float marks;
-}; // గమనిక: డిక్లరేషన్ చివర సెమికోలన్ తప్పనిసరి!
-
-int main(void) {
-    // స్ట్రక్చర్ వేరియబుల్ సృష్టి & ఇనీషియలైజేషన్
-    struct Student s1;
-    s1.rollNo = 101;
-    strcpy(s1.name, "రమేష్");
-    s1.marks = 94.5f;
-
-    // డాట్ (.) ఆపరేటర్ ద్వారా మెంబర్స్ యాక్సెస్
-    printf("రోల్ నంబర్ : %d\n", s1.rollNo);
-    printf("విద్యార్థి పేరు : %s\n", s1.name);
-    printf("మార్కులు      : %.2f\n", s1.marks);
-    return 0;
-}</code></pre>
-      </div>
+      <p>రియల్-వరల్డ్ సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌లో ఎంటిటీలను (ఉదా: కార్లు, బ్యాంక్ ఖాతాలు, ఉద్యోగులు) మోడలింగ్ చేయడానికి స్ట్రక్చర్స్ అనేవి ప్రాథమిక పునాది. ఈ అధ్యాయంలో కవర్ చేయబడే ప్రధానాంశాలు:</p>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><strong>స్ట్రక్చర్స్ ఆవశ్యకత:</strong> హోమోజీనియస్ అర్రేల పరిమితులు మరియు యూజర్-డిఫైన్డ్ హెటిరోజీనియస్ రికార్డులు.</li>
+        <li><strong>struct సింటాక్స్ &amp; డిక్లరేషన్:</strong> మెంబర్ వేరియబుల్స్, ట్యాగ్ నేమ్స్ మరియు డిజైగ్నేటెడ్ ఇనిషియలైజర్స్ (C99).</li>
+        <li><strong>డాట్ ఆపరేటర్ (.):</strong> సాధారణ స్ట్రక్చర్ వేరియబుల్ మెంబర్లను చదవడం మరియు మార్చడం.</li>
+        <li><strong>స్ట్రక్చర్ పాయింటర్లు &amp; యారో ఆపరేటర్ (-&gt;):</strong> <code>(*ptr).member</code> వర్సెస్ <code>ptr-&gt;member</code> మధ్య తేడా.</li>
+        <li><strong>హార్డ్‌వేర్ లెవల్ Structure Padding &amp; Alignment:</strong> CPU వర్డ్ సైజు (4/8 bytes) కోసం కంపైలర్ ఖాళీ బైట్లను ఎందుకు చేరుస్తుంది?</li>
+        <li><strong>పాడింగ్ నియంత్రణ:</strong> <code>#pragma pack(1)</code> మరియు నెట్‌వర్క్ ప్యాకెట్లలో మెమరీ ఆదా చేసే విధానం.</li>
+        <li><strong>యూనియన్స్ (Unions) షేర్డ్ మెమరీ:</strong> ఒకే మెమరీని వేర్వేరు టైప్స్ షేర్ చేసుకోవడం &amp; అతిపెద్ద మెంబర్ సైజు రూల్.</li>
+        <li><strong>సమగ్ర తులనాత్మక పట్టిక:</strong> struct vs union పక్కపక్కనే లోతైన విశ్లేషణ.</li>
+        <li><strong>typedef కీవర్డ్:</strong> సంక్లిష్టమైన పేర్లకు అందమైన మారుపేర్లు (Type Aliases) ఇవ్వడం.</li>
+        <li><strong>నెస్టెడ్ స్ట్రక్చర్స్:</strong> ఒక స్ట్రక్చర్ లోపల మరొక స్ట్రక్చర్ (ఉదా: ఎంప్లాయ్ లోపల అడ్రస్ లేదా పుట్టిన తేదీ).</li>
+        <li><strong>బిట్-ఫీల్డ్స్ (Bit-Fields):</strong> ఎంబెడెడ్ డివైసెస్‌లో మెమరీని బిట్ల స్థాయిలో పొదుపు చేసే కళ.</li>
+        <li><strong>సమగ్ర రియల్ వరల్డ్ ప్రాజెక్ట్:</strong> హాస్పిటల్ పేషెంట్ అడ్మిషన్, మెడికల్ రికార్డ్ &amp; డిశ్చార్జ్ బిల్లింగ్ ఇంజిన్.</li>
+        <li><strong>స్వీయ మూల్యాంకన క్విజ్:</strong> 5 లోతైన ప్రాక్టికల్ ప్రశ్నలు &amp; గేట్ ఎగ్జామ్ కాన్సెప్ట్స్.</li>
+      </ul>
     </div>
 
     <!-- SECTION 2 -->
-    <div class="section-title"><span class="num">2</span>పాయింటర్లు & స్ట్రక్చర్స్ — యారో ఆపరేటర్ (-&gt;)</div>
+    <div class="section-title"><span class="num">2</span>స్ట్రక్చర్స్ ఎందుకు అవసరం? అర్రేల పరిమితులు &amp; హెటిరోజీనియస్ మోడలింగ్</div>
     <div class="section-body">
-      <p>
-        ఒక స్ట్రక్చర్ యొక్క మెమరీ అడ్రస్‌ను పాయింటర్‌లో నిల్వ చేసినప్పుడు, దానిలోని మెంబర్లను యాక్సెస్ చేయడానికి <code>(*ptr).member</code> అని రాయడం అసౌకర్యంగా ఉంటుంది. అందుకే C మనకు సూటిగా చదవగల <strong>యారో ఆపరేటర్ (-&gt;)</strong> ను అందించింది:
-      </p>
+      <p>గత అధ్యాయాలలో మనం నేర్చుకున్న అర్రేలలో కేవలం ఒకే రకమైన డేటాను (Homogeneous) మాత్రమే ఉంచగలం. ఒక విద్యార్థి వివరాల కోసం <code>int roll[]</code>, <code>char name[][50]</code>, <code>float fee[]</code> అని వేర్వేరు అర్రేలు నిర్వహిస్తే, డేటా సింక్రొనైజేషన్ తప్పిపోయే ప్రమాదం ఉంది.</p>
 
-      <div class="code-block" style="margin:16px 0;">
-        <div class="code-block-header">
-          <span class="lang-tag">C — Arrow operator (-&gt;) demo</span>
-          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
-        </div>
-        <pre><code>#include &lt;stdio.h&gt;
-
-struct Point {
-    int x;
-    int y;
-};
-
-void updateCoordinates(struct Point *p, int newX, int newY) {
-    // యారో ఆపరేటర్ ద్వారా పాయింటర్ మెంబర్లను మార్చడం
-    p-&gt;x = newX;
-    p-&gt;y = newY;
-}
-
-int main(void) {
-    struct Point pt = {10, 20};
-    printf("ప్రారంభంలో: x = %d, y = %d\n", pt.x, pt.y);
-
-    updateCoordinates(&pt, 50, 80);
-    printf("మార్చిన తర్వాత: x = %d, y = %d\n", pt.x, pt.y);
-    return 0;
-}</code></pre>
-      </div>
-    </div>
-
-    <!-- SECTION 3 -->
-    <div class="section-title"><span class="num">3</span>మెమరీ ప్యాడింగ్ & స్ట్రక్చర్ అలైన్‌మెంట్ (Memory Padding)</div>
-    <div class="section-body">
-      <p>
-        ఇంటర్వ్యూలలో విద్యార్థులను ఆశ్చర్యపరిచే ఒక క్లాసికల్ ప్రశ్న:
-      </p>
-      <code style="font-size:13px; color:var(--text); display:block; background:var(--bg3); padding:8px 12px; border-radius:4px; margin:8px 0;">
-        struct Sample { char a; int b; }; // sizeof(struct Sample) ఎంత?
-      </code>
-      <p style="font-size:13.5px; color:var(--text); line-height:1.6;">
-        చాలామంది <code>char</code> 1 బైట్ + <code>int</code> 4 బైట్లు = <strong>5 బైట్లు</strong> అని సమాధానం చెబుతారు. కానీ ఆధునిక 64-బిట్ కంపైలర్లపై ప్రింట్ చేసి చూస్తే ఫలితం <strong>8 బైట్లు</strong> వస్తుంది!
-      </p>
-
-      <div style="background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0; padding:16px; margin:16px 0;">
-        <strong style="color:#10b981; font-size:14.5px;">⚙️ CPU వర్డ్ అలైన్‌మెంట్ రహస్యం:</strong>
-        <p style="font-size:13px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
-          ఆధునిక 32-బిట్ లేదా 64-బిట్ ప్రాసెసర్లు RAM నుండి డేటాను ఒక్కో బైట్ చొప్పున చదవవు. అవి 4 లేదా 8 బైట్ల గుణిజాలలో (Word Boundaries) చదివితేనే అత్యంత వేగంగా పనిచేస్తాయి. 4-బైట్ <code>int</code> ని బౌండరీలో పెట్టడానికి కంపైలర్ <code>char</code> పక్కన నిశ్శబ్దంగా <strong>3 ఖాళీ బైట్లను (Padding Bytes)</strong> జోడిస్తుంది. మెమరీ అత్యంత కీలకమైన ఎంబెడెడ్ డివైస్‌లలో ఈ ప్యాడింగ్‌ను నిరోధించడానికి <code>#pragma pack(1)</code> వాడతారు.
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+        <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">స్ట్రక్చర్ (struct) నిర్వచనం:</h4>
+        <p style="color:var(--text2); font-size:14px; line-height:1.7; margin:0;">
+          <strong>స్ట్రక్చర్</strong> అనేది విభిన్న డేటా టైప్స్ (int, float, char, pointers...) కలిగిన వేరియబుల్స్‌ను ఒకే యూనిట్‌గా అనుసంధానించే <strong>యూజర్-డిఫైన్డ్ కాంపౌండ్ డేటా టైప్ (User-Defined Compound Type)</strong>. దీని ద్వారా వాస్తవ ప్రపంచంలోని ఏ సంక్లిష్ట వస్తువునైనా కంప్యూటర్‌లో మోడల్ చేయవచ్చు!
         </p>
       </div>
     </div>
 
-    <!-- SECTION 4 -->
-    <div class="section-title"><span class="num">4</span>యూనియన్స్ (union) vs స్ట్రక్చర్స్ — షేర్డ్ మెమరీ మెకానిక్స్</div>
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>struct సింటాక్స్, డిక్లరేషన్ &amp; డాట్ ఆపరేటర్ (.)</div>
     <div class="section-body">
-      <p>
-        <code>struct</code> తనలోని ప్రతి మెంబర్‌కు ప్రత్యేకమైన మెమరీ స్పేస్‌ను కేటాయిస్తుంది. కానీ <strong>యూనియన్ (union)</strong> తనలోని అన్ని మెంబర్లకు కలిపి కేవలం <strong>అతిపెద్ద మెంబర్ పరిమాణం గల ఒకే ఒక్క షేర్డ్ మెమరీ లొకేషన్‌ను</strong> ఇస్తుంది.
-      </p>
+      <p>C లో స్ట్రక్చర్‌ను డిఫైన్ చేయడానికి మరియు వేరియబుల్స్ సృష్టించడానికి ప్రామాణిక సింటాక్స్ ఇది:</p>
 
-      <div style="overflow-x:auto; margin:16px 0;">
-        <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
-          <thead>
-            <tr style="background:var(--bg3); border-bottom:2px solid var(--border);">
-              <th style="padding:10px 14px; color:var(--text);">లక్షణం</th>
-              <th style="padding:10px 14px; color:var(--text);">స్ట్రక్చర్ (struct)</th>
-              <th style="padding:10px 14px; color:var(--text);">యూనియన్ (union)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:10px 14px; font-weight:700; color:#10b981;">మెమరీ సైజ్</td>
-              <td style="padding:10px 14px;">అన్ని మెంబర్ల మొత్తం సైజ్ (+ ప్యాడింగ్)</td>
-              <td style="padding:10px 14px;">అతిపెద్ద మెంబర్ సైజ్ మాత్రమే</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:10px 14px; font-weight:700; color:#10b981;">మెంబర్ల యాక్సెస్</td>
-              <td style="padding:10px 14px;">ఒకేసారి అన్ని మెంబర్లను స్వతంత్రంగా వాడవచ్చు</td>
-              <td style="padding:10px 14px;">ఒకే సమయంలో ఒకే ఒక్క మెంబర్‌ను మాత్రమే వాడాలి</td>
-            </tr>
-            <tr>
-              <td style="padding:10px 14px; font-weight:700; color:#10b981;">ప్రయోజనం</td>
-              <td style="padding:10px 14px;">సంపూర్ణ రికార్డులను నిల్వ చేయడానికి</td>
-              <td style="padding:10px 14px;">హార్డ్‌వేర్ రిజిస్టర్లు, తీవ్రమైన మెమరీ ఆదాకు</td>
-            </tr>
-          </tbody>
-        </table>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7; margin-bottom:14px;">
+        struct స్ట్రక్చర్_పేరు {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;డేటా_టైప్1 మెంబర్1;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;డేటా_టైప్2 మెంబర్2;<br>
+        };  <span style="color:#ef4444; font-weight:700;">// &lt;-- ఇక్కడ సెమికోలన్ (;) తప్పనిసరి!</span>
       </div>
 
-      <div class="code-block" style="margin:16px 0;">
+      <div class="code-block">
         <div class="code-block-header">
-          <span class="lang-tag">C — typedef for clean abstractions</span>
-          <a class="try-btn" href="/online-c-compiler.html">⚡ Try in C Compiler</a>
+          <span class="lang-tag">C — Struct Declaration &amp; Dot Operator Usage</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+// స్ట్రక్చర్ టెంప్లేట్ డిఫైన్ చేస్తున్నాం
+struct Student {
+    int rollNo;
+    char name[30];
+    float gpa;
+};
+
+int main() {
+    // 1. డైరెక్ట్ ఇనిషియలైజేషన్
+    struct Student s1 = {101, "కార్తీక్ వర్మ", 8.95f};
+
+    // 2. డాట్ ఆపరేటర్ (.) ద్వారా మెంబర్లను చదవడం
+    printf("=== విద్యార్థి ప్రొఫైల్ (డాట్ ఆపరేటర్ డెమో) ===\n");
+    printf("రోల్ నంబర్: %d\n", s1.rollNo);
+    printf("పేరు      : %s\n", s1.name);
+    printf("GPA       : %.2f\n", s1.gpa);
+
+    // డాట్ ఆపరేటర్ ద్వారా మెంబర్ విలువను సవరించడం
+    s1.gpa = 9.40f;
+    printf("అప్‌డేట్ చేసిన GPA: %.2f\n", s1.gpa);
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>స్ట్రక్చర్ పాయింటర్లు &amp; యారో ఆపరేటర్ (->)</div>
+    <div class="section-body">
+      <p>స్ట్రక్చర్లు పరిమాణంలో చాలా పెద్దవిగా ఉంటాయి. వాటిని ఫంక్షన్లకు పాస్ చేసేటప్పుడు మొత్తం కాపీ చేయకుండా పాయింటర్ ద్వారా పాస్ చేయడం సర్వోత్తమ పద్ధతి. ఒక స్ట్రక్చర్ పాయింటర్ ద్వారా మెంబర్లను యాక్సెస్ చేయడానికి <strong>యారో ఆపరేటర్ (Arrow Operator: <code>-&gt;</code>)</strong> ఉపయోగిస్తారు:</p>
+
+      <div style="background:var(--bg3); border-left:4px solid #10b981; padding:12px 16px; border-radius:0 8px 8px 0; font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--text2); margin:14px 0;">
+        ptr-&gt;member &nbsp;&nbsp;&nbsp;&nbsp;&equiv;&nbsp;&nbsp;&nbsp;&nbsp; (*ptr).member
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Structure Pointer &amp; Arrow Operator Demo</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
         </div>
         <pre><code>#include &lt;stdio.h&gt;
 
-// typedef ఉపయోగించి టైప్ అలియాస్ సృష్టించడం
-typedef struct {
-    unsigned int id;
-    char code[8];
-} Product;
+struct Account {
+    int accNumber;
+    double balance;
+};
 
-int main(void) {
-    // ప్రతిసారీ struct అని రాయకుండా నేరుగా Product అని వాడవచ్చు
-    Product laptop = {1001, "LAP-X1"};
-    printf("ప్రోడక్ట్ ID: %u | కోడ్: %s\n", laptop.id, laptop.code);
+// స్ట్రక్చర్ పాయింటర్‌ను పారామీటర్‌గా తీసుకునే ఫంక్షన్
+void addInterest(struct Account *acc, double ratePercent) {
+    // యారో ఆపరేటర్ (->) ద్వారా బ్యాలెన్స్ ను నేరుగా సవరిస్తున్నాం
+    double interest = acc-&gt;balance * (ratePercent / 100.0);
+    acc-&gt;balance += interest;
+    printf("  [ఫంక్షన్ లోపల] వడ్డీ రూ. %.2f ఖాతా #%d కి జమ అయింది!\n", interest, acc-&gt;accNumber);
+}
+
+int main() {
+    struct Account myAcc = {55401, 100000.00};
+
+    printf("వడ్డీకి ముందు బ్యాలెన్స్: రూ. %.2f\n", myAcc.balance);
+    addInterest(&amp;myAcc, 7.5); // అడ్రస్ పాస్ చేస్తున్నాం (Call by Reference)
+    printf("వడ్డీ తర్వాత బ్యాలెన్స్ : రూ. %.2f\n", myAcc.balance);
+
     return 0;
 }</code></pre>
       </div>
     </div>
 
     <!-- SECTION 5 -->
-    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
+    <div class="section-title"><span class="num">5</span>హార్డ్‌వేర్ ఆర్కిటెక్చర్: Structure Padding &amp; Alignment</div>
     <div class="section-body">
-      <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
-        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
-          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 1. struct క్లోజింగ్ బ్రేస్ తర్వాత సెమికోలన్ మర్చిపోవడం:</div>
-          <code style="font-size:13px; color:var(--text); display:block; margin:6px 0;">struct Node { int data; } // తప్పు! చివర సెమికోలన్ తప్పనిసరి</code>
-          <span style="font-size:13px; color:var(--text2); display:block;">C లో స్ట్రక్చర్ డిక్లరేషన్ ఒక స్టేట్‌మెంట్ లాంటిది. <code>};</code> సెమికోలన్ పెట్టకపోతే కంపైలర్ విచిత్రమైన సింటాక్స్ ఎర్రర్లను ఇస్తుంది.</span>
-        </div>
+      <p>ఇంటర్వ్యూలలో ప్రతి ఒక్కరినీ విస్మయపరిచే అత్యంత లోతైన కాన్సెప్ట్: <strong>Structure Padding</strong>. క్రింది చిన్న స్ట్రక్చర్‌ను పరిశీలించండి:</p>
 
-        <div style="background:rgba(239, 68, 68, 0.08); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:14px 18px;">
-          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ 2. యూనియన్‌లో ఒక విలువ రాసి మరొకటి చదవడం:</div>
-          <span style="font-size:13px; color:var(--text2); display:block; margin-top:4px;">యూనియన్‌లో <code>u.x = 10;</code> రాసిన తర్వాత <code>u.y = 3.14;</code> రాస్తే పాత <code>x</code> విలువ శాశ్వతంగా నాశనమైపోతుంది. యూనియన్ కేవలం షేర్డ్ మెమరీని మాత్రమే అందిస్తుంది.</span>
-        </div>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 16px; font-family:'JetBrains Mono',monospace; font-size:13px; margin:12px 0;">
+        struct Test {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;char a; &nbsp;&nbsp;// 1 byte<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;int b; &nbsp;&nbsp;&nbsp;// 4 bytes<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;char c; &nbsp;&nbsp;// 1 byte<br>
+        };
       </div>
+      <p>సాధారణ లెక్క ప్రకారం దీని సైజు $1 + 4 + 1 = 6$ బైట్లు ఉండాలి కదా? కానీ <code>sizeof(struct Test)</code> ప్రింట్ చేస్తే కంపైలర్ <strong>12 బైట్లు!</strong> అని చెబుతుంది! మిగిలిన 6 బైట్లు ఎక్కడి నుండి వచ్చాయి?</p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+        <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">CPU వర్డ్ అలైన్‌మెంట్ రహస్యం (Word Alignment):</h4>
+        <p style="color:var(--text2); font-size:14px; line-height:1.7; margin:0;">
+          ఆధునిక 32-బిట్ లేదా 64-బిట్ CPU ప్రాసెసర్లు RAM నుండి డేటాను 1 బైట్ చొప్పున చదవవు; అవి 4 బైట్లు లేదా 8 బైట్ల గుణిజాల అడ్రస్‌ల వద్ద (4-byte / 8-byte Word Boundaries) మాత్రమే మెరుపు వేగంతో చదవగలవు. <code>int</code> ఎల్లప్పుడూ 4 యొక్క గుణిజం వద్దే ప్రారంభం కావాలి. అందుకే <code>char a</code> (1 బైట్) పక్కన కంపైలర్ <strong>3 ఖాళీ బైట్లను (Padding Bytes)</strong> బలవంతంగా చేరుస్తుంది! అలాగే చివరన మరొక 3 బైట్ల పాడింగ్ జోడించి మొత్తం <strong>12 బైట్లు</strong> చేస్తుంది!
+        </p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Structure Padding vs Packed Structure (#pragma pack)</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// సాధారణ స్ట్రక్చర్ (పాడింగ్ తో కూడినది)
+struct NormalStruct {
+    char a;  // 1 byte + 3 bytes padding
+    int b;   // 4 bytes
+    char c;  // 1 byte + 3 bytes padding
+};
+
+// పాడింగ్ తొలగించిన ప్యాక్డ్ స్ట్రక్చర్ (#pragma pack(1))
+#pragma pack(push, 1)
+struct PackedStruct {
+    char a;  // 1 byte
+    int b;   // 4 bytes
+    char c;  // 1 byte
+};
+#pragma pack(pop)
+
+int main() {
+    printf("సాధారణ స్ట్రక్చర్ సైజు (With Padding) : %zu బైట్లు (ఆశించిన 6 కంటే ఎక్కువ!)\n", sizeof(struct NormalStruct));
+    printf("ప్యాక్డ్ స్ట్రక్చర్ సైజు (#pragma pack(1)): %zu బైట్లు (ఖచ్చితమైన 6 బైట్లు!)\n", sizeof(struct PackedStruct));
+    return 0;
+}</code></pre>
+      </div>
+
+      <p style="color:var(--text2); font-size:13.5px; margin-top:8px;">
+        💡 <strong>ఎంబెడెడ్ &amp; నెట్‌వర్కింగ్ టిప్:</strong> ఇంటర్నెట్ ద్వారా నెట్‌వర్క్ ప్యాకెట్లు లేదా బ్లూటూత్ డేటా పంపేటప్పుడు మెమరీ వృధా కాకుండా ఉండటానికి <code>#pragma pack(1)</code> వాడతారు!
+      </p>
     </div>
 
     <!-- SECTION 6 -->
-    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
+    <div class="section-title"><span class="num">6</span>యూనియన్స్ (Unions) — షేర్డ్ మెమరీ ఆర్కిటెక్చర్</div>
     <div class="section-body">
-      <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: C లాంగ్వేజ్‌లో struct లోపల ఫంక్షన్లను రాయవచ్చా?</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
-            C++ లో లాగా నేరుగా ఫంక్షన్ బాడీలను రాయలేం. కానీ ఒక ఫంక్షన్ యొక్క మెమరీ అడ్రస్‌ను సూచించే <strong>ఫంక్షన్ పాయింటర్‌ను (Function Pointer)</strong> స్ట్రక్చర్ మెంబర్‌గా ఉంచి C లో కూడా ఆబ్జెక్ట్ ఓరియెంటెడ్ పద్ధతిని అనుకరించవచ్చు.
-          </p>
-        </div>
+      <p>స్ట్రక్చర్‌లో ప్రతి మెంబర్‌కు విడివిడిగా సొంత మెమరీ కేటాయించబడుతుంది. కానీ <strong>యూనియన్ (Union)</strong> లో పరిస్థితి పూర్తిగా భిన్నం: <strong>అన్ని మెంబర్లు ఒకే ఒక్క ఉమ్మడి మెమరీ లొకేషన్‌ను (Shared Memory) పంచుకుంటాయి!</strong></p>
 
-        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
-          <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: ఒక స్ట్రక్చర్ వేరియబుల్‌ను మరొకదానికి నేరుగా s2 = s1 అని అసైన్ చేయవచ్చా?</h4>
-          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
-            చేయవచ్చు! అర్రేలకు భిన్నంగా, రెండు స్ట్రక్చర్లు ఒకే రకానికి చెందినవైతే <code>s2 = s1;</code> అని రాసినప్పుడు కంపైలర్ అన్ని మెంబర్ల విలువలను బైట్-బై-బైట్ (Shallow Copy) గా నకలు చేస్తుంది.
-          </p>
+      <div style="background:var(--bg3); border-left:4px solid #10b981; padding:14px 18px; border-radius:0 8px 8px 0; margin:14px 0; font-size:14px; color:var(--text2);">
+        <strong>📏 యూనియన్ సైజు నియమం:</strong> యూనియన్ యొక్క మొత్తం మెమరీ సైజు అందులోని <strong>అత్యంత పెద్ద మెంబర్ సైజుకు సమానంగా</strong> ఉంటుంది! ఒకే సమయంలో కేవలం ఒకే ఒక్క మెంబర్ మాత్రమే సజీవంగా ఉండగలదు. ఒక మెంబర్‌లోకి రాస్తే పాత మెంబర్ విలువ చెరిగిపోతుంది!
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Union Shared Memory Demonstration</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+union DataPacket {
+    int intVal;      // 4 bytes
+    float floatVal;  // 4 bytes
+    char charVal;    // 1 byte
+};
+
+int main() {
+    union DataPacket packet;
+    printf("యూనియన్ మొత్తం మెమరీ సైజు = %zu బైట్లు (Largest member = 4 bytes)\n\n", sizeof(packet));
+
+    // 1. పూర్ణాంకం నిల్వ చేస్తున్నాం
+    packet.intVal = 65;
+    printf("intVal = %d  | charVal = '%c' (65 కి ASCII 'A')\n", packet.intVal, packet.charVal);
+
+    // 2. ఇప్పుడు ఫ్లోట్ నిల్వ చేస్తే, పాత intVal ఓవర్‌రైట్ అయిపోతుంది!
+    packet.floatVal = 99.75f;
+    printf("floatVal = %.2f నిల్వ చేసిన తర్వాత:\n", packet.floatVal);
+    printf("  floatVal = %.2f\n", packet.floatVal);
+    printf("  intVal   = %d (కరప్ట్ అయింది! ఎందుకంటే ఫ్లోట్ ఓవర్‌రైట్ చేసింది)\n", packet.intVal);
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div class="section-title"><span class="num">7</span>సమగ్ర తులనాత్మక పట్టిక (struct vs union)</div>
+    <div class="section-body">
+      <p>స్ట్రక్చర్ మరియు యూనియన్ల మధ్య ఉన్న సమగ్ర సాంకేతిక వ్యత్యాసాలు:</p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ఫీచర్ / అంశం</th>
+            <th>స్ట్రక్చర్ (struct)</th>
+            <th>యూనియన్ (union)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>కీవర్డ్</strong></td>
+            <td><code>struct</code></td>
+            <td><code>union</code></td>
+          </tr>
+          <tr>
+            <td><strong>మెమరీ కేటాయింపు</strong></td>
+            <td>ప్రతి మెంబర్‌కు ప్రత్యేకమైన సొంత మెమరీ గది ఉంటుంది.</td>
+            <td>అన్ని మెంబర్లు ఒకే ఉమ్మడి మెమరీని పంచుకుంటాయి.</td>
+          </tr>
+          <tr>
+            <td><strong>మొత్తం పరిమాణం (sizeof)</strong></td>
+            <td>అన్ని మెంబర్ల సైజుల మొత్తం + పాడింగ్ బైట్లు.</td>
+            <td>అత్యంత పెద్ద మెంబర్ సైజుకు మాత్రమే సమానం.</td>
+          </tr>
+          <tr>
+            <td><strong>మెంబర్ల యాక్సెస్</strong></td>
+            <td>అన్ని మెంబర్లను ఒకే సమయంలో స్వేచ్ఛగా వాడవచ్చు.</td>
+            <td>ఒకే సమయంలో కేవలం ఒక్క మెంబర్‌ను మాత్రమే వాడాలి.</td>
+          </tr>
+          <tr>
+            <td><strong>విలువ ఓవర్‌రైటింగ్</strong></td>
+            <td>ఒక మెంబర్‌ను మార్చితే మిగిలిన వాటిపై ప్రభావం ఉండదు.</td>
+            <td>కొత్త మెంబర్‌ను మార్చగానే పాత మెంబర్ విలువ చెరిగిపోతుంది.</td>
+          </tr>
+          <tr>
+            <td><strong>ప్రధాన ఉపయోగం</strong></td>
+            <td>సంక్లిష్టమైన వస్తువుల మోడలింగ్ (Student, Employee, Car).</td>
+            <td>మెమరీని ఆదా చేసే ఎంబెడెడ్ హార్డ్‌వేర్ &amp; మల్టీ-ఫార్మాట్ డేటా.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div class="section-title"><span class="num">8</span>typedef కీవర్డ్ — టైప్ మారుపేర్ల మ్యాజిక్</div>
+    <div class="section-body">
+      <p>ప్రతిసారీ <code>struct Student s1; struct Student s2;</code> అని పొడవాటి <code>struct</code> కీవర్డ్ రాయడం శ్రమతో కూడుకున్నది. C లో ఇప్పటికే ఉన్న డేటా టైప్‌లకు మనకు నచ్చిన చిన్న, అర్థవంతమైన మారుపేర్లను (Type Aliases) ఇవ్వడానికి <strong><code>typedef</code></strong> కీవర్డ్ ఉపయోగిస్తారు:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Clean Structs with typedef</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// typedef ద్వారా struct Employee కి 'Employee' అనే మారుపేరు ఇచ్చాం
+typedef struct {
+    int id;
+    char department[20];
+    double salary;
+} Employee;
+
+int main() {
+    // 'struct Employee' అని రాయనక్కర్లేదు! నేరుగా 'Employee' అని వాడవచ్చు!
+    Employee emp1 = {4001, "సాఫ్ట్‌వేర్ ఇంజనీరింగ్", 85000.00};
+
+    printf("ఎంప్లాయ్ ID : %d\n", emp1.id);
+    printf("డిపార్ట్‌మెంట్: %s\n", emp1.department);
+    printf("వేతనం        : రూ. %.2f\n", emp1.salary);
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 9 -->
+    <div class="section-title"><span class="num">9</span>నెస్టెడ్ స్ట్రక్చర్స్ (Structures within Structures)</div>
+    <div class="section-body">
+      <p>ఒక స్ట్రక్చర్ లోపల మరొక స్ట్రక్చర్‌ను సభ్యుడిగా చేర్చడాన్ని <strong>నెస్టెడ్ స్ట్రక్చర్ (Nested Structure)</strong> అంటారు. ఉదాహరణకు ఒక ఉద్యోగి రికార్డులో పుట్టిన తేదీ (<code>DateOfBirth</code>) లేదా నివాస చిరునామా (<code>Address</code>) లు స్వయంగా వేరే స్ట్రక్చర్లుగా ఉంటాయి:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Nested Structure Implementation</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+struct Date {
+    int day;
+    int month;
+    int year;
+};
+
+struct Citizen {
+    char name[30];
+    long long aadhaarNo;
+    struct Date dob; // నెస్టెడ్ స్ట్రక్చర్!
+};
+
+int main() {
+    struct Citizen c1 = {
+        "రామకృష్ణ",
+        987654321012LL,
+        {15, 8, 1995} // లోపలి స్ట్రక్చర్ ఇనిషియలైజేషన్
+    };
+
+    printf("పౌరుడి పేరు: %s\n", c1.name);
+    printf("ఆధార్ నంబర్: %lld\n", c1.aadhaarNo);
+    // రెండు డాట్లతో యాక్సెస్ చేస్తున్నాం
+    printf("పుట్టిన తేదీ: %02d-%02d-%d\n", c1.dob.day, c1.dob.month, c1.dob.year);
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 10 -->
+    <div class="section-title"><span class="num">10</span>బిట్-ఫీల్డ్స్ (Bit-Fields) — మైక్రో మెమరీ ఆప్టిమైజేషన్</div>
+    <div class="section-body">
+      <p>ఎంబెడెడ్ సిస్టమ్స్ మరియు నెట్‌వర్క్ డ్రైవర్లలో కొన్ని వేరియబుల్స్‌కు కేవలం 0 లేదా 1 (బూలియన్ ఫ్లాగ్స్) మాత్రమే అవసరం. దానికి 4 బైట్ల (32 బిట్స్) ఇంటిజర్ కేటాయిస్తే 31 బిట్లు వృధా అవుతాయి. C లో <strong>బిట్-ఫీల్డ్స్ (Bit-Fields)</strong> ద్వారా ఒకే పూర్ణాంకంలో ఖచ్చితంగా ఎన్ని బిట్లు కావాలో నిర్దేశించవచ్చు:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Microcontroller Bit-Fields Optimization</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+struct DeviceStatus {
+    unsigned int isPowerOn : 1; // కేవలం 1 బిట్ (0 లేదా 1)
+    unsigned int isWiFiConnected : 1; // 1 బిట్
+    unsigned int batteryLevel : 4; // 4 బిట్లు (0 నుండి 15 వరకు)
+    unsigned int errorCode : 6; // 6 బిట్లు (0 నుండి 63 వరకు)
+};
+
+int main() {
+    struct DeviceStatus iotDevice = {1, 1, 12, 0};
+
+    printf("IoT డివైస్ మొత్తం మెమరీ సైజు = %zu బైట్లు (కేవలం ఒకే ఒక్క 4-బైట్ బ్లాక్!)\n", sizeof(iotDevice));
+    printf("పవర్ స్టేటస్    : %s\n", iotDevice.isPowerOn ? "ON" : "OFF");
+    printf("వైఫై కనెక్టెడ్ : %s\n", iotDevice.isWiFiConnected ? "YES" : "NO");
+    printf("బ్యాటరీ స్థాయి : %u / 15\n", iotDevice.batteryLevel);
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 11 -->
+    <div class="section-title"><span class="num">11</span>సమగ్ర రియల్ వరల్డ్ ప్రాజెక్ట్ — హాస్పిటల్ పేషెంట్ మేనేజ్‌మెంట్ ఇంజిన్</div>
+    <div class="section-body">
+      <p>ఇప్పటివరకు నేర్చుకున్న <code>struct</code>, <code>typedef</code>, యారో ఆపరేటర్ <code>-&gt;</code>, మరియు నెస్టెడ్ స్ట్రక్చర్స్ ఉపయోగించి ఒక వాస్తవ <strong>ఆసుపత్రి పేషెంట్ అడ్మిషన్, రూమ్ కేటాయింపు &amp; డిశ్చార్జ్ బిల్లింగ్ ఇంజిన్ (Healthcare Billing System)</strong> ను నిర్మిద్దాం:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Comprehensive Hospital Management &amp; Billing System</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// రూమ్ రకాలు
+typedef enum { GENERAL = 1, SEMI_PRIVATE = 2, ICU = 3 } RoomType;
+
+// పేషెంట్ అడ్రస్ స్ట్రక్చర్
+typedef struct {
+    char city[20];
+    int pincode;
+} Address;
+
+// సమగ్ర పేషెంట్ రికార్డు స్ట్రక్చర్
+typedef struct {
+    int patientId;
+    char name[30];
+    int age;
+    RoomType room;
+    int daysAdmitted;
+    double medicineCharges;
+    Address location;
+} Patient;
+
+// బిల్లును లెక్కించే ఫంక్షన్ (పాయింటర్ పారామీటర్ ద్వారా)
+double calculateDischargeBill(const Patient *p) {
+    double roomRatePerDay = 0.0;
+    switch (p-&gt;room) {
+        case GENERAL:      roomRatePerDay = 1500.0; break;
+        case SEMI_PRIVATE: roomRatePerDay = 3500.0; break;
+        case ICU:          roomRatePerDay = 8000.0; break;
+    }
+
+    double totalRoomRent = p-&gt;daysAdmitted * roomRatePerDay;
+    double doctorConsultation = p-&gt;daysAdmitted * 1000.0;
+    double grandTotal = totalRoomRent + doctorConsultation + p-&gt;medicineCharges;
+
+    printf("====================================================\n");
+    printf("   మనా కేర్ హాస్పిటల్స్ - డిశ్చార్జ్ సమ్మరీ &amp; బిల్లు\n");
+    printf("====================================================\n");
+    printf("పేషెంట్ ID     : #MED-%d\n", p-&gt;patientId);
+    printf("పేషెంట్ పేరు   : %s (వయస్సు: %d)\n", p-&gt;name, p-&gt;age);
+    printf("నగరం / పిన్‌కోడ్: %s - %d\n", p-&gt;location.city, p-&gt;location.pincode);
+    printf("వార్డ్ రకం     : %s (రోజుకు రూ. %.2f)\n",
+           p-&gt;room == ICU ? "ICU" : (p-&gt;room == SEMI_PRIVATE ? "సెమీ-ప్రైవేట్" : "జనరల్"), roomRatePerDay);
+    printf("చికిత్స రోజులు : %d రోజులు\n", p-&gt;daysAdmitted);
+    printf("----------------------------------------------------\n");
+    printf("  రూమ్ అద్దె మొత్తం   : రూ. %10.2f\n", totalRoomRent);
+    printf("  డాక్టర్ ఫీజు        : రూ. %10.2f\n", doctorConsultation);
+    printf("  మందులు &amp; ల్యాబ్ ఫీజు : రూ. %10.2f\n", p-&gt;medicineCharges);
+    printf("----------------------------------------------------\n");
+    printf("👉 చెల్లించాల్సిన మొత్తం: రూ. %10.2f\n", grandTotal);
+    printf("====================================================\n\n");
+
+    return grandTotal;
+}
+
+int main() {
+    Patient p1 = {
+        8801,
+        "వెంకటేశ్వర రావు",
+        58,
+        ICU,
+        4,
+        24500.00,
+        {"హైదరాబాద్", 500081}
+    };
+
+    calculateDischargeBill(&amp;p1);
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 12 -->
+    <div class="section-title"><span class="num">12</span>సాధారణంగా బిగినర్స్ చేసే టాప్ 5 స్ట్రక్చర్ తప్పులు</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:1fr; gap:12px; margin:14px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">1. struct చివర సెమికోలన్ మర్చిపోవడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;"><code>struct Point { int x, y; }</code> అని రాసి సెమికోలన్ <code>;</code> పెట్టకపోతే కంపైలర్ భయంకరమైన ఎర్రర్లను కురిపిస్తుంది.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">2. పాయింటర్‌కు డాట్ ఆపరేటర్ వాడటం (ptr.member):</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;">పాయింటర్ వేరియబుల్ ఉన్నప్పుడు కచ్చితంగా యారో <code>ptr-&gt;member</code> లేదా <code>(*ptr).member</code> మాత్రమే వాడాలి.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">3. యూనియన్‌లోని అన్ని మెంబర్లను ఒకేసారి చదవాలనుకోవడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;">యూనియన్‌లో చివరిగా ఏ మెంబర్‌ను అసైన్ చేశారో అది మాత్రమే సజీవంగా ఉంటుంది. మిగిలిన మెంబర్లు కరప్ట్ అయిపోతాయి.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">4. పెద్ద స్ట్రక్చర్లను Call by Value ద్వారా పాస్ చేయడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;">1000 బైట్లు ఉన్న స్ట్రక్చర్‌ను నేరుగా పాస్ చేస్తే మెమరీ కాపీ అయి ప్రోగ్రామ్ నెమ్మదిస్తుంది. ఎల్లప్పుడూ పాయింటర్‌ను పాస్ చేయాలి.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">5. Structure Padding ని మర్చిపోయి బైట్ లెక్కలు వేయడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;">హార్డ్‌వేర్ అలైన్‌మెంట్ కోసం కంపైలర్ పాడింగ్ బైట్లను కలుపుతుంది కాబట్టి <code>sizeof</code> ఎల్లప్పుడూ మెంబర్ల మొత్తం కంటే ఎక్కువగా ఉండవచ్చు.</span>
         </div>
       </div>
     </div>
-  
+
+    <!-- SECTION 13 -->
+    <div class="section-title"><span class="num">13</span>స్వీయ మూల్యాంకన క్విజ్ &amp; మీరే స్వయంగా Try చేయండి!</div>
+    <div class="section-body">
+      <p>ఈ పాఠంలోని లోతైన అంశాలను క్రింది 5 ప్రాక్టికల్ ప్రశ్నల ద్వారా పరీక్షించుకోండి:</p>
+
+      <!-- QUIZ QUESTIONS -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 1: స్ట్రక్చర్ (struct) మరియు యూనియన్ (union) మధ్య ముఖ్యమైన మెమరీ తేడా ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>struct</code> లో ప్రతి మెంబర్‌కు స్వతంత్ర మెమరీ ఉంటుంది (మొత్తం సైజ్ = మెంబర్ల మొత్తం + పాడింగ్). కానీ <code>union</code> లో అన్ని మెంబర్లు ఒకే ఉమ్మడి మెమరీని పంచుకుంటాయి (సైజ్ = అత్యంత పెద్ద మెంబర్ సైజు మాత్రమే).
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 2: Structure Padding ని కంపైలర్ ఎందుకు చేస్తుంది?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> CPU ప్రాసెసర్లు 4 లేదా 8 బైట్ల వర్డ్ బౌండరీస్ వద్ద డేటాను వేగంగా చదవడానికి అనువుగా మెమరీ అలైన్‌మెంట్ కోసం కంపైలర్ ఖాళీ బైట్లను (Padding Bytes) కలుపుతుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 3: (*ptr).member మరియు ptr-&gt;member ల మధ్య తేడా ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> రెండూ పూర్తిగా ఒకటే! <code>ptr-&gt;member</code> అనేది <code>(*ptr).member</code> కోసం రాయడానికి సులభంగా ఉండే ప్రామాణిక షార్ట్‌హ్యాండ్ సింటాక్స్ (Arrow Operator).
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 4: #pragma pack(1) ను ఎప్పుడు ఉపయోగిస్తారు?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> కంపైలర్ చేసే స్ట్రక్చర్ పాడింగ్‌ను పూర్తిగా ఆపివేసి, 1-బైట్ అలైన్‌మెంట్‌తో మెమరీని పొదుపు చేయడానికి (ప్రత్యేకించి నెట్‌వర్క్ ప్రోటోకాల్ ప్యాకెట్లు మరియు బైనరీ ఫైల్ స్టోరేజ్‌లో) ఉపయోగిస్తారు.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 5: typedef కీవర్డ్ యొక్క ముఖ్య ప్రయోజనం ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> సంక్లిష్టమైన డేటా టైప్స్ లేదా <code>struct Student</code> వంటి పేర్లకు చిన్న, స్పష్టమైన మారుపేర్లను (Type Aliases) సృష్టించి కోడ్ రీడబిలిటీని పెంచడం.
+        </div>
+      </details>
+
+      <!-- TRY BOX -->
+      <div class="try-box" style="margin-top:24px;">
+        <div class="try-title">🚀 హాస్పిటల్ మేనేజ్‌మెంట్ ఇంజిన్‌ను మన ఆన్‌లైన్ C కంపైలర్‌లో రన్ చేయండి!</div>
+        <p>పైన వివరించిన <code>హాస్పిటల్ పేషెంట్ బిల్లింగ్ సిస్టమ్</code> మరియు <code>Structure Padding vs Packed</code> కోడ్‌లను మన ఆన్‌లైన్ C కంపైలర్‌లో ఓపెన్ చేసి స్వయంగా రన్ చేయండి. పేషెంట్ అడ్మిషన్ రోజులను మార్చి బిల్లు ఎలా రీకాలిక్యులేట్ అవుతుందో గమనించండి!</p>
+        <a class="run-btn" href="/online-c-compiler.html" target="_blank">
+          👉 Our Compiler లో C Compiler try చేయండి
+        </a>
+      </div>
+
+      <div style="margin-top:24px;">
+        <h4 style="color:#059669; font-size:16px; margin-bottom:10px;">📌 అధ్యాయ సారాంశం (Quick Summary):</h4>
+        <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+          <li><strong>struct:</strong> విభిన్న డేటా టైప్స్‌ను కలిపి కొత్త యూజర్-డిఫైన్డ్ రికార్డును నిర్మిస్తుంది.</li>
+          <li><strong>డాట్ vs యారో:</strong> సాధారణ వేరియబుల్‌కు <code>.</code> వాడాలి; పాయింటర్‌కు <code>-&gt;</code> వాడాలి.</li>
+          <li><strong>పాడింగ్:</strong> CPU వేగవంతమైన రీడింగ్ కోసం ఖాళీ బైట్లను కలుపుతుంది.</li>
+          <li><strong>union:</strong> అన్ని మెంబర్లు ఒకే ఉమ్మడి మెమరీని పంచుకుంటాయి.</li>
+          <li><strong>typedef:</strong> పెద్ద పేర్లకు సులభమైన మారుపేర్లను అందిస్తుంది.</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:20px; padding:16px; background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0;">
+        <strong>తర్వాతి అధ్యాయంలో (Chapter 18):</strong> ప్రోగ్రామ్ రన్ అవుతున్నప్పుడే కంప్యూటర్ నుండి కావలసినంత RAM మెమరీని అడిగి తీసుకునే <strong>డైనమిక్ మెమరీ అలొకేషన్ (malloc, calloc, realloc, free) మరియు మెమరీ లీక్స్ నివారణ</strong> గురించి అద్భుతంగా నేర్చుకుందాం!
+      </div>
+    </div>
 
     <!-- PREV / NEXT NAVIGATION -->
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
-      
       <a href="/blog-c/16-c-pointers-with-arrays-and-double-pointers.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
-        ← Prev: 16. పాయింటర్లు & అర్రేస్
+        ← Prev: 16. పాయింటర్లు &amp; అర్రేస్
       </a>
-      
       <a href="/blog-c/18-c-dynamic-memory-allocation-malloc-calloc-realloc-free.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
         Next: 18. డైనమిక్ మెమరీ (malloc/free) →
       </a>
@@ -443,7 +850,7 @@ int main(void) {
       <div class="avatar">OC</div>
       <div>
         <strong>Written by Our Compiler Technical Editorial Team</strong><br>
-        <span>Reviewed for accuracy & tested on GCC 13+ / Clang 17 runtime · 2026 Academic Edition</span>
+        <span>Reviewed for accuracy &amp; tested on GCC 13+ / Clang 17 runtime · 2026 Academic Edition</span>
       </div>
     </div>
 
@@ -454,3 +861,4 @@ int main(void) {
 <script src="/site-nav.js" defer></script>
 </body>
 </html>
+
