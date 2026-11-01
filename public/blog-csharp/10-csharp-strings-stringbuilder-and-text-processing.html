@@ -1,531 +1,834 @@
 <!DOCTYPE html>
 <html class="light-theme" lang="te">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>స్ట్రింగ్స్, ఇమ్యుటబిలిటీ & StringBuilder ఆప్టిమైజేషన్ — Modern C# Tutorial | Our Compiler</title>
-  <meta name="description" content="స్ట్రింగ్స్, ఇమ్యుటబిలిటీ & StringBuilder ఆప్టిమైజేషన్ సమగ్ర తెలుగు గైడ్: String Immutability & String Pool · String Interpolation ($) · StringBuilder హై-పెర్ఫార్మెన్స్ లూప్స్ · Raw String Literals (""")." />
-  <meta name="keywords" content="csharp tutorial in telugu, learn c# language, స్ట్రింగ్స్, ఇమ్యుటబిలిటీ & stringbuilder ఆప్టిమైజేషన్, dotnet 8, c# 12, our compiler" />
-  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
-  <link rel="icon" type="image/png" href="/logo.png" />
-  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/10-csharp-strings-stringbuilder-and-text-processing.html" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/blog-style.css" />
-  <link rel="stylesheet" href="/blog-csharp/style.css" />
-  <link rel="stylesheet" href="/site-nav.css" />
+  <!-- Character Encoding & Viewport -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <!-- Schema.org TechArticle Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "TechArticle",
-    "headline": "స్ట్రింగ్స్, ఇమ్యుటబిలిటీ & StringBuilder ఆప్టిమైజేషన్ (C# Programming in Telugu)",
-    "description": "String Immutability & String Pool · String Interpolation ($) · StringBuilder హై-పెర్ఫార్మెన్స్ లూప్స్ · Raw String Literals (""")",
-    "articleSection": "Phase 03: మెథడ్స్, స్ట్రింగ్స్ & కలెక్షన్స్",
-    "inLanguage": "te",
-    "author": {
-      "@type": "Organization",
-      "name": "Our Compiler Technical Editorial Team",
-      "url": "https://www.ourcompiler.com"
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "Our Compiler",
-      "url": "https://www.ourcompiler.com"
-    },
-    "datePublished": "2026-02-01",
-    "dateModified": "2026-10-30"
-  }
-  </script>
+  <!-- SEO Title & Meta Tags -->
+  <title>C# స్ట్రింగ్స్, ఇమ్యుటబిలిటీ &amp; StringBuilder ఆప్టిమైజేషన్ — C# Masterclass | Mana Compiler</title>
+  <meta name="description" content="C# లో స్ట్రింగ్స్, Immutability, String Interning, Raw String Literals, StringBuilder performance, మరియు బ్యాంకింగ్ డేటా మాస్కింగ్ ఇంజిన్‌పై సమగ్ర తెలుగు గైడ్.">
+  <meta name="keywords" content="c# strings telugu, c# stringbuilder telugu, c# string immutability, raw string literals c# 11, c# string intern">
+  <meta name="author" content="Our Compiler Technical Editorial Team">
 
-  <!-- Interactive Scripts: Accordion & Default Light Theme -->
-  <script>
-    function toggleAccordion(btn) {
-      const content = btn.nextElementSibling;
-      const isOpen = content.classList.contains('open');
-      if (isOpen) {
-        content.classList.remove('open');
-        btn.classList.remove('active');
-      } else {
-        content.classList.add('open');
-        btn.classList.add('active');
-      }
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="C# స్ట్రింగ్స్, ఇమ్యుటబిలిటీ &amp; StringBuilder ఆప్టిమైజేషన్ — C# Masterclass">
+  <meta property="og:description" content="C# లో టెక్స్ట్ ప్రాసెసింగ్: ఇమ్యుటబిలిటీ సూత్రం నుండి హై-స్పీడ్ StringBuilder వరకు సమగ్ర తెలుగు ప్రాక్టికల్ గైడ్.">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Mana Compiler">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-csharp/10-csharp-strings-stringbuilder-and-text-processing.html">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/site-nav.css">
+  <link rel="stylesheet" href="/blog-csharp/style.css">
+
+  <style>
+    /* Inline enhancement overrides to guarantee ivory intro box and green numbers */
+    body.light-theme .intro-box {
+      background: #fefce8 !important;
+      border: 1px solid #fde047 !important;
+      border-left: 5px solid #10b981 !important;
+      border-radius: 12px !important;
+      padding: 22px 24px !important;
+      margin-bottom: 32px !important;
+      box-shadow: 0 4px 14px rgba(202, 138, 4, 0.08) !important;
     }
-
-    (function() {
-      const currentTheme = localStorage.getItem('tutorial_theme_v2');
-      if (currentTheme === 'dark') {
-        document.documentElement.classList.remove('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.remove('light-theme');
-        });
-      } else {
-        document.documentElement.classList.add('light-theme');
-        document.addEventListener('DOMContentLoaded', () => {
-          if (document.body) document.body.classList.add('light-theme');
-        });
-      }
-    })();
-  </script>
+    body.light-theme .intro-box h3,
+    body.light-theme .intro-box h4 {
+      color: #713f12 !important;
+      font-weight: 800 !important;
+      margin-bottom: 8px !important;
+    }
+    body.light-theme .intro-box p {
+      color: #1e293b !important;
+      font-size: 15.5px !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+    body.light-theme .intro-box p:last-child {
+      margin-bottom: 0 !important;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 42px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title .num {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35) !important;
+    }
+  </style>
 </head>
 <body class="lang-csharp light-theme">
 
-<!-- TOP NAVIGATION FALLBACK -->
-<nav class="topnav">
-  <a href="/" class="brand">🖥️ Our Compiler</a>
-  <a href="/blog-python.html">Python</a>
-  <a href="/blog-java.html">Java</a>
-  <a href="/online-html-editor.html">HTML/CSS/JS</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html">C++</a>
-  <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-csharp.html" class="active">C#</a>
-</nav>
+<!-- TOP GLOBAL NAVIGATION -->
+<div id="site-nav"><header class="site-header">
+  <div class="header-left">
+    <a href="/" class="logo">
+      <span class="logo-bracket">{</span>
+      <span class="logo-text">Our Compiler</span>
+      <span class="logo-bracket">}</span>
+    </a>
+    <nav class="nav-links">
+      <a href="/online-python-compiler.html">Python</a>
+      <a href="/online-java-compiler.html">Java</a>
+      <a href="/online-html-editor.html">HTML / CSS / JS</a>
+      <a href="/online-c-compiler.html">C</a>
+      <a href="/online-cpp-compiler.html">C++</a>
+      <a href="/online-javascript-compiler.html">JavaScript</a>
+      <a href="/online-csharp-compiler.html" class="active">C#</a>
+    </nav>
+  </div>
+  <div class="header-right">
+    <a href="/online-csharp-compiler.html" class="btn-primary">▶ Start Coding</a>
+    <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">🌙</button>
+  </div>
+</header></div>
 
-<div class="layout">
+<div class="page-layout">
 
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-meta">
+        <span class="series-badge">C# Master Course (తెలుగు)</span>
+        <h2 class="sidebar-title">C# &amp; .NET 8 సిలబస్</h2>
+      </div>
+    </div>
+    
+    <a href="/blog-csharp.html" class="course-home-btn">
+      <span class="icon">⚡</span> C# Course HOME (ఇండెక్స్)
+    </a>
+
+    <!-- Dynamic Phase Accordions -->
+    <div class="accordion-group">
+  <!-- LEFT SIDEBAR ACCORDION -->
   <aside class="sidebar">
     <div class="sidebar-heading">C# Master Course (తెలుగు)</div>
-    <a href="/blog-csharp.html" class="sidebar-home-link ">
-      ⚡ C# Course HOME (ఇండెక్స్)
-    </a>
+    <a href="/blog-csharp.html" class="sidebar-home-link">⚡ C# Course HOME (ఇండెక్స్)</a>
+
     <div class="sidebar-accordion">
-      <div class="accordion-item">
-        <button class="accordion-header " onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">⚡</span>
-            <span>Phase 01<br><small style="font-size:11px; font-weight:600; opacity:0.85;">C# ఫండమెంటల్స్ & బేసిక్స్</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content ">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/01-csharp-introduction-and-setup.html" class="lesson-link ">
-                <span class="lesson-num">1.</span>
-                <span class="lesson-name">C# & .NET 8 పరిచయం, ఆర్కిటెక్చర్ & డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/02-csharp-variables-data-types-and-var.html" class="lesson-link ">
-                <span class="lesson-num">2.</span>
-                <span class="lesson-name">వేరియబుల్స్, CTS డేటా టైప్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/03-csharp-user-input-type-casting-parsing.html" class="lesson-link ">
-                <span class="lesson-num">3.</span>
-                <span class="lesson-name">యూజర్ ఇన్‌పుట్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/04-csharp-operators-and-expressions.html" class="lesson-link ">
-                <span class="lesson-num">4.</span>
-                <span class="lesson-name">ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & Null-Coalescing</span>
-              </a>
-            </li>
-          </ul>
+      <!-- Phase 01 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">C# ఫండమెంటల్స్ & బేసిక్స్</span>
+          </div>
         </div>
-      </div>
-      <div class="accordion-item">
-        <button class="accordion-header " onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">🔀</span>
-            <span>Phase 02<br><small style="font-size:11px; font-weight:600; opacity:0.85;">కంట్రోల్ ఫ్లో, లూప్స్ & ప్యాటర్న్ మ్యాచింగ్</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content ">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/05-csharp-conditional-statements-and-pattern-matching.html" class="lesson-link ">
-                <span class="lesson-num">5.</span>
-                <span class="lesson-name">కండిషనల్ స్టేట్‌మెంట్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/06-csharp-switch-case-and-switch-expressions.html" class="lesson-link ">
-                <span class="lesson-num">6.</span>
-                <span class="lesson-name">switch స్టేట్‌మెంట్ & మోడ్రన్ switch ఎక్స్‌ప్రెషన్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/07-csharp-loops-for-while-do-while-foreach.html" class="lesson-link ">
-                <span class="lesson-num">7.</span>
-                <span class="lesson-name">లూప్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/08-csharp-break-continue-and-nested-loops.html" class="lesson-link ">
-                <span class="lesson-num">8.</span>
-                <span class="lesson-name">break, continue & నెస్టెడ్ లూప్స్</span>
-              </a>
-            </li>
-          </ul>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/01-csharp-introduction-and-setup.html">1. C# & .NET 8 పరిచయం, ఆర్కిటెక్చర్ & డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్</a>
+        <a href="/blog-csharp/02-csharp-variables-data-types-and-var.html">2. వేరియబుల్స్, CTS డేటా టైప్స్ (Value vs Reference) & var</a>
+        <a href="/blog-csharp/03-csharp-user-input-type-casting-parsing.html">3. యూజర్ ఇన్‌పుట్ (Console.ReadLine), టైప్ కాస్టింగ్ & Parse / TryParse</a>
+        <a href="/blog-csharp/04-csharp-operators-and-expressions.html">4. ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ & Null-Coalescing (??, ?.)</a>
       </div>
-      <div class="accordion-item">
-        <button class="accordion-header active" onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">📦</span>
-            <span>Phase 03<br><small style="font-size:11px; font-weight:600; opacity:0.85;">మెథడ్స్, స్ట్రింగ్స్ & కలెక్షన్స్</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content open">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/09-csharp-methods-parameters-ref-out-in.html" class="lesson-link ">
-                <span class="lesson-num">9.</span>
-                <span class="lesson-name">మెథడ్స్, పారామీటర్ మోడిఫైయర్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item active">
-              <a href="/blog-csharp/10-csharp-strings-stringbuilder-and-text-processing.html" class="lesson-link active">
-                <span class="lesson-num">10.</span>
-                <span class="lesson-name">స్ట్రింగ్స్, ఇమ్యుటబిలిటీ & StringBuilder ఆప్టిమైజేషన్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/11-csharp-arrays-1d-multidimensional-jagged.html" class="lesson-link ">
-                <span class="lesson-num">11.</span>
-                <span class="lesson-name">అర్రేలు</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/12-csharp-collections-and-generics-list-dict.html" class="lesson-link ">
-                <span class="lesson-num">12.</span>
-                <span class="lesson-name">జెనెరిక్ కలెక్షన్స్</span>
-              </a>
-            </li>
-          </ul>
+
+      <!-- Phase 02 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో, లూప్స్ & ప్యాటర్న్ మ్యాచింగ్</span>
+          </div>
         </div>
-      </div>
-      <div class="accordion-item">
-        <button class="accordion-header " onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">🏛️</span>
-            <span>Phase 04<br><small style="font-size:11px; font-weight:600; opacity:0.85;">ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content ">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/13-csharp-classes-objects-and-constructors.html" class="lesson-link ">
-                <span class="lesson-num">13.</span>
-                <span class="lesson-name">క్లాసెస్, ఆబ్జెక్ట్స్ & కన్‌స్ట్రక్టర్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/14-csharp-properties-and-encapsulation.html" class="lesson-link ">
-                <span class="lesson-num">14.</span>
-                <span class="lesson-name">ఎన్‌క్యాప్సులేషన్, యాక్సెస్ మోడిఫైయర్స్ & Auto-Properties</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/15-csharp-inheritance-and-polymorphism.html" class="lesson-link ">
-                <span class="lesson-num">15.</span>
-                <span class="lesson-name">ఇన్‌హెరిటెన్స్, పాలిమార్ఫిజం</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/16-csharp-interfaces-abstract-classes-records.html" class="lesson-link ">
-                <span class="lesson-num">16.</span>
-                <span class="lesson-name">ఇంటర్‌ఫేసెస్, అబ్‌స్ట్రాక్ట్ క్లాసెస్ & C# Records</span>
-              </a>
-            </li>
-          </ul>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/05-csharp-conditional-statements-and-pattern-matching.html">5. కండిషనల్ స్టేట్‌మెంట్స్ (if-else) & C# Pattern Matching</a>
+        <a href="/blog-csharp/06-csharp-switch-case-and-switch-expressions.html">6. switch స్టేట్‌మెంట్ & మోడ్రన్ switch ఎక్స్‌ప్రెషన్స్</a>
+        <a href="/blog-csharp/07-csharp-loops-for-while-do-while-foreach.html">7. లూప్స్ (for, while, do-while & foreach)</a>
+        <a href="/blog-csharp/08-csharp-break-continue-and-nested-loops.html">8. break, continue & నెస్టెడ్ లూప్స్ (2D గ్రిడ్స్)</a>
       </div>
-      <div class="accordion-item">
-        <button class="accordion-header " onclick="toggleAccordion(this)">
-          <span class="phase-title">
-            <span class="phase-icon">🚀</span>
-            <span>Phase 05<br><small style="font-size:11px; font-weight:600; opacity:0.85;">అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్</small></span>
-          </span>
-          <span class="phase-badge">4 Ch</span>
-        </button>
-        <div class="accordion-content ">
-          <ul class="lesson-list">
-            <li class="lesson-item ">
-              <a href="/blog-csharp/17-csharp-exception-handling-try-catch-finally.html" class="lesson-link ">
-                <span class="lesson-num">17.</span>
-                <span class="lesson-name">ఎక్సెప్షన్ హ్యాండ్లింగ్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/18-csharp-delegates-events-and-lambdas.html" class="lesson-link ">
-                <span class="lesson-num">18.</span>
-                <span class="lesson-name">డెలిగేట్స్</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/19-csharp-linq-language-integrated-query.html" class="lesson-link ">
-                <span class="lesson-num">19.</span>
-                <span class="lesson-name">LINQ</span>
-              </a>
-            </li>
-            <li class="lesson-item ">
-              <a href="/blog-csharp/20-csharp-mini-project-employee-management.html" class="lesson-link ">
-                <span class="lesson-num">20.</span>
-                <span class="lesson-name">కంప్లీట్ మినీ ప్రాజెక్ట్: ఎంప్లాయ్ మేనేజ్‌మెంట్ సిస్టమ్</span>
-              </a>
-            </li>
-          </ul>
+
+      <!-- Phase 03 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">మెథడ్స్, స్ట్రింగ్స్ & కలెక్షన్స్</span>
+          </div>
         </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-csharp/09-csharp-methods-parameters-ref-out-in.html">9. మెథడ్స్, పారామీటర్ మోడిఫైయర్స్ (ref, out, in, params)</a>
+        <a href="/blog-csharp/10-csharp-strings-stringbuilder-and-text-processing.html" class="active">10. స్ట్రింగ్స్, ఇమ్యుటబిలిటీ & StringBuilder ఆప్టిమైజేషన్</a>
+        <a href="/blog-csharp/11-csharp-arrays-1d-multidimensional-jagged.html">11. అర్రేలు (1D, 2D Rectangular & Jagged Arrays)</a>
+        <a href="/blog-csharp/12-csharp-collections-and-generics-list-dict.html">12. జెనెరిక్ కలెక్షన్స్ (List<T>, Dictionary<TKey, TValue>, HashSet<T>)</a>
       </div>
+
+      <!-- Phase 04 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🏛️</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/13-csharp-classes-objects-and-constructors.html">13. క్లాసెస్, ఆబ్జెక్ట్స్ & కన్‌స్ట్రక్టర్స్ (Primary Constructors)</a>
+        <a href="/blog-csharp/14-csharp-properties-and-encapsulation.html">14. ఎన్‌క్యాప్సులేషన్, యాక్సెస్ మోడిఫైయర్స్ & Auto-Properties</a>
+        <a href="/blog-csharp/15-csharp-inheritance-and-polymorphism.html">15. ఇన్‌హెరిటెన్స్, పాలిమార్ఫిజం (virtual, override, sealed)</a>
+        <a href="/blog-csharp/16-csharp-interfaces-abstract-classes-records.html">16. ఇంటర్‌ఫేసెస్, అబ్‌స్ట్రాక్ట్ క్లాసెస్ & C# Records</a>
+      </div>
+
+      <!-- Phase 05 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">అడ్వాన్స్‌డ్ C#, LINQ & ప్రాజెక్ట్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">4 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-csharp/17-csharp-exception-handling-try-catch-finally.html">17. ఎక్సెప్షన్ హ్యాండ్లింగ్ (try, catch, finally, custom exceptions)</a>
+        <a href="/blog-csharp/18-csharp-delegates-events-and-lambdas.html">18. డెలిగేట్స్ (Delegates), ఈవెంట్స్ & లాంబ్డా ఎక్స్‌ప్రెషన్స్ (=>)</a>
+        <a href="/blog-csharp/19-csharp-linq-language-integrated-query.html">19. LINQ (Language Integrated Query) — డేటా ప్రాసెసింగ్ పవర్‌హౌస్</a>
+        <a href="/blog-csharp/20-csharp-mini-project-employee-management.html">20. కంప్లీట్ మినీ ప్రాజెక్ట్: ఎంప్లాయ్ మేనేజ్‌మెంట్ సిస్టమ్ (LINQ & JSON)</a>
+      </div>
+
     </div>
-    <div style="margin-top:24px; padding:16px; background:var(--bg2); border:1px solid var(--border); border-radius:10px; font-size:12px; text-align:center;">
-      <div style="font-weight:700; color:#10b981; margin-bottom:4px;">ఇంటరాక్టివ్ ఎడిటర్</div>
-      <a href="/online-csharp-compiler.html" style="color:var(--text); text-decoration:none; font-weight:600; display:inline-block; margin-top:6px; background:rgba(16,185,129,0.12); padding:6px 12px; border-radius:6px; border:1px solid rgba(16,185,129,0.3);">
-        ▶ Try C# Online Compiler
-      </a>
-      <a href="/blog.html" style="color:var(--text2); text-decoration:none; display:block; margin-top:8px;">
-        📁 All Tutorials Index
-      </a>
-    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-csharp-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C# Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📁 All Tutorials Index</a>
   </aside>
-  <!-- MAIN LESSON CONTENT -->
+    </div>
+
+    <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+    <a href="/online-csharp-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C# Online Compiler</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📁 All Tutorials Index</a>
+  </aside>
+
+  <!-- MAIN ARTICLE CONTENT -->
   <main class="content">
+
+    <!-- BREADCRUMBS -->
     <div class="breadcrumb">
-      <a href="/">Home</a><span class="sep">›</span>
-      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
-      <a href="/blog-csharp.html">C# Masterclass</a><span class="sep">›</span>
-      <span class="current">Chapter 10: స్ట్రింగ్స్, ఇమ్యుటబిలిటీ & StringBuilder ఆప్టిమైజేషన్</span>
+      <a href="/">Home</a> › 
+      <a href="/blog.html">Tutorials</a> › 
+      <a href="/blog-csharp.html">C# Masterclass</a> › 
+      <span>Chapter 10: స్ట్రింగ్స్, ఇమ్యుటబిలిటీ &amp; StringBuilder</span>
     </div>
 
-    <h1 class="page-title">స్ట్రింగ్స్, ఇమ్యుటబిలిటీ & StringBuilder ఆప్టిమైజేషన్</h1>
+    <!-- MAIN HEADING -->
+    <h1 class="lesson-title">C# స్ట్రింగ్స్, ఇమ్యుటబిలిటీ &amp; StringBuilder ఆప్టిమైజేషన్</h1>
 
-    <div class="page-meta">
-      <span class="badge">⚡ Modern C# 12 & .NET 8</span>
-      <span class="badge">🟢 Chapter 10 of 20</span>
-      <span class="badge">📂 Phase 03: మెథడ్స్, స్ట్రింగ్స్ & కలెక్షన్స్</span>
-      <span class="badge">📅 2026 Edition</span>
+    <!-- LESSON META BADGES -->
+    <div class="lesson-meta">
+      <span class="meta-pill">⚡ Modern C# 12 / .NET 8 LTS</span>
+      <span class="meta-pill">📖 Chapter 10 of 20</span>
+      <span class="meta-pill">📁 Phase 03: మెథడ్స్, స్ట్రింగ్స్ &amp; కలెక్షన్స్</span>
+      <span class="meta-pill">🎓 2026 Academic Edition</span>
     </div>
 
-    <!-- Covered Topics Bar -->
-    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>String Immutability & String Pool · String Interpolation ($) · StringBuilder హై-పెర్ఫార్మెన్స్ లూప్స్ · Raw String Literals (""")</span>
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin:20px 0 28px; font-size:13.5px; color:var(--text2); line-height:1.6;">
+      <strong style="color:#10b981;">📌 Covered in this chapter:</strong>
+      Text Processing in Computing · System.String &amp; UTF-16 Unicode · Immutability Principle &amp; Heap Re-allocations · String Interning (CLR String Pool) · Interpolation vs Composite Formatting · Verbatim (@) &amp; C# 11+ Raw String Literals (""") · String Manipulation API (Substrings, Split, Join) · OrdinalIgnoreCase · StringBuilder Architecture &amp; Buffer Growth · Performance Benchmark: string += vs StringBuilder · ReadOnlySpan&lt;char&gt; Zero-Allocation Slicing · Real-World Project: Banking Sensitive Data Redactor &amp; Audit Engine · 7 Beginner Mistakes · Self-Assessment Quiz
     </div>
 
-    
-<div class="intro-box">
-  సాఫ్ట్‌వేర్ డెవలప్‌మెంట్‌లో టెక్స్ట్ డేటాను నిర్వహించడం అత్యంత సాధారణమైన టాస్క్. C# లో <code>string</code> అనేది Reference Type అయినప్పటికీ, దీనికి <strong>Immutability (మార్చలేని స్వభావం)</strong> ఉంటుంది. భారీ లూపుల్లో స్ట్రింగ్స్ కలిపినప్పుడు మెమరీ ఓవర్‌హెడ్ లేకుండా ఉండటానికి .NET లో <strong><code>StringBuilder</code></strong> ని ఎలా వాడాలో, మోడరన్ C# లో స్ట్రింగ్ ఇంటర్‌పోలేషన్, వెర్బాటిమ్ స్ట్రింగ్స్ మరియు <code>Span&lt;char&gt;</code> పనితీరును ఈ అధ్యాయంలో విశదీకరిస్తాం.
-</div>
-
-<div class="section-title"><span class="num">1</span> String Immutability & Heap మెమరీ పనితీరు</div>
-<div class="section-body">
-  <p>C# లో స్ట్రింగ్ ఆబ్జెక్ట్ ఒకసారి క్రియేట్ అయిన తర్వాత దాని కంటెంట్‌ను మార్చడం అసాధ్యం. మీరు ఏదైనా స్ట్రింగ్ మెథడ్ (ఉదాహరణకు <code>.ToUpper()</code> లేదా <code>str += "!"</code>) వాడినప్పుడు, ఉన్న స్ట్రింగ్ మారదు; బదులుగా మేనేజ్డ్ హీప్ (Heap) పై సరికొత్త స్ట్రింగ్ ఆబ్జెక్ట్ సృష్టించబడుతుంది.</p>
-
-  <p><strong>String Interning Pool:</strong> మెమరీ ఆదా చేయడానికి CLR ఒకే విధమైన లిటరల్ స్ట్రింగ్స్ (ఉదాహరణకు <code>"Hello"</code>) కోసం ఒక ప్రత్యేక ఇంటర్న్ పూల్ నిర్వహిస్తుంది. కోడ్‌లో ఎన్ని చోట్ల <code>"Hello"</code> అని రాసినా అవన్నీ హీప్‌లోని ఒకే మెమరీ అడ్రస్‌ను పాయింట్ చేస్తాయి.</p>
-
-  <div class="code-block">
-    <div class="code-header">
-      <span>StringImmutability.cs</span>
-      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
+    <!-- WARM IVORY INTRO BOX (EXACT C-STYLE) -->
+    <div class="intro-box">
+      <h3>స్వాగతం అధ్యాయం 10 కి! 📜 టెక్స్ట్ ప్రాసెసింగ్ &amp; మెమరీ ఆప్టిమైజేషన్ రహస్యాలు</h3>
+      <p>
+        ప్రపంచవ్యాప్తంగా నడిచే వెబ్ సైట్లు, బ్యాంకింగ్ యాప్‌లు, మెసేజింగ్ ప్లాట్‌ఫారమ్‌లు మరియు కృత్రిమ మేధ (AI) మోడళ్లలో ఉపయోగించే సమాచారంలో 90% పైగా కేవలం <strong>టెక్స్ట్ రూపంలోనే (Strings)</strong> ఉంటుంది! కంప్యూటర్లు కేవలం 0 మరియు 1 లతో కూడిన గణితాన్ని మాత్రమే అర్థం చేసుకుంటాయి; అటువంటి బైనరీ సిస్టమ్‌పై మానవ భాష అక్షరాలను భద్రపరచడం ఒక అద్భుతం.
+      </p>
+      <p>
+        అయితే C# లో స్ట్రింగ్స్ అనేవి కేవలం సాధారణ అక్షరాల వరుస కాదు. C# ఆర్కిటెక్చర్‌లో స్ట్రింగ్స్ <strong>ఇమ్యుటబుల్ (Immutability - మార్చలేనివి)</strong>! అంటే ఒకసారి మెమరీలో స్ట్రింగ్ సృష్టించబడిన తర్వాత దాన్ని ఎప్పటికీ మార్చలేరు. మీరు <code>str += "x"</code> చేసిన ప్రతిసారీ పాత స్ట్రింగ్ మారదు; మెమరీ హీప్‌లో సరికొత్త స్ట్రింగ్ పుడుతుంది, మరియు పాత స్ట్రింగ్ గార్బేజ్ కలెక్టర్‌పై పెనుభారంగా మారుతుంది.
+      </p>
+      <p>
+        ఈ తీవ్రమైన మెమరీ సమస్యను అధిగమించడానికి C# మనకు <strong><code>StringBuilder</code></strong> మరియు <strong><code>ReadOnlySpan&lt;char&gt;</code></strong> వంటి అత్యున్నత హై-స్పీడ్ సాధనాలను అందించింది. ఈ సమగ్ర 10వ అధ్యాయంలో మనం స్ట్రింగ్ ఇంటర్నింగ్, మోడ్రన్ C# 11 Raw String Literals, స్ట్రింగ్ బిల్డర్ బఫర్ గ్రోత్ అల్గారిథమ్స్ నేర్చుకొని — బ్యాంకింగ్ రంగంలో వాడే సురక్షితమైన డేటా మాస్కింగ్ (PAN/Aadhaar Redaction) ఇంజిన్‌ను నిర్మిస్తాం!
+      </p>
     </div>
-    <pre><code>using System;
 
-class Program
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> 📜 టెక్స్ట్ ప్రాసెసింగ్ &amp; కంప్యూటింగ్ చరిత్ర</h2>
+      <p>
+        కంప్యూటర్ల ప్రారంభంలో కేవలం ఇంగ్లీష్ అక్షరాల కోసమే 7-బిట్ ASCII (0-127) ఉండేది. కానీ ప్రపంచంలోని తెలుగు, హిందీ, చైనీస్, జపనీస్ వంటి అన్ని భాషల లిపులను మరియు ఎమోజీలను (😀) ఒకే గొడుగు క్రిందకు తీసుకురావడానికి <strong>Unicode కన్సార్టియం</strong> ఏర్పడింది.
+      </p>
+      <p>
+        .NET లో <code>System.String</code> అనేది <strong>UTF-16 ఎన్‌కోడింగ్</strong> ను ఉపయోగిస్తుంది. అంటే ప్రతి క్యారెక్టర్ (<code>char</code>) మెమరీలో సరిగ్గా <strong>2 బైట్లను (16 బిట్లు)</strong> తీసుకుంటుంది. కాబట్టి 10 అక్షరాల స్ట్రింగ్ మెమరీలో కనీసం 20 బైట్లు (ప్లస్ ఆబ్జెక్ట్ హెడర్ ఓవర్‌హెడ్) ఆక్రమిస్తుంది.
+      </p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> 🧱 C# String ఇంటర్నల్స్: System.String &amp; చార్ అర్రే</h2>
+      <p>
+        C# లో చిన్న అక్షరాలతో రాసే <code>string</code> కీవర్డ్ మరియు పెద్ద అక్షరాలతో రాసే <code>System.String</code> క్లాస్ రెండూ 100% ఒక్కటే (Alias).
+      </p>
+      <p>
+        అంతర్గతంగా ఒక స్ట్రింగ్ అనేది <strong>సీక్వెన్షియల్ క్యారెక్టర్ అర్రే (Sequential <code>char[]</code>)</strong>. కాబట్టి మీరు ఒక స్ట్రింగ్‌లోని అక్షరాలను అర్రే ఇండెక్స్ ద్వారా నేరుగా యాక్సెస్ చేయవచ్చు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · String Indexer Demonstration</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">string word = "DotNet";
+
+Console.WriteLine($"మొదటి అక్షరం: {word[0]}"); // 'D'
+Console.WriteLine($"ఆఖరి అక్షరం : {word[^1]}"); // 't' (C# 8 Index from end)
+Console.WriteLine($"అక్షరాల పొడవు: {word.Length}"); // 6</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> 🔒 ఇమ్యుటబిలిటీ (Immutability) సూత్రం &amp; మెమరీ ట్రాప్</h2>
+      <p>
+        C# లో స్ట్రింగ్స్ యొక్క అత్యంత కీలకమైన లక్షణం: <strong>Immutability (మార్పులేని తత్వం)</strong>!
+      </p>
+      <p>
+        ఒకసారి మెమరీ హీప్‌లో <code>"Hello"</code> అనే ఆబ్జెక్ట్ ఏర్పడిన తర్వాత, దానిలోని ఏ ఒక్క అక్షరాన్ని కూడా మార్చలేరు. <code>word[0] = 'B';</code> అని రాస్తే కంపైలర్ ఖరాఖండీగా ఎర్రర్ ఇస్తుంది!
+      </p>
+
+      <div style="background:var(--bg3); border-left:4px solid #ef4444; padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0;">
+        <strong style="color:#ef4444; font-size:15px;">🚨 లూప్ లోపల string += వాడితే ఏం జరుగుతుంది?</strong>
+        <p style="margin:8px 0 0; color:var(--text2); font-size:14px; line-height:1.7;">
+          ఒకవేళ మీరు <code>for (int i = 0; i &lt; 10000; i++) str += i;</code> అని రాస్తే, కంప్యూటర్ 10,000 సార్లు కొత్త కొత్త స్ట్రింగ్ ఆబ్జెక్టులను మెమరీలో సృష్టిస్తుంది! 9,999 పాత స్ట్రింగ్స్ చెత్తగా మారిపోతాయి. దీనివల్ల మెమరీ క్షణాల్లో నిండిపోయి, Garbage Collector (GC) తరచుగా రన్ అవుతూ సాఫ్ట్‌వేర్ ఫ్రీజ్ అయిపోతుంది.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> 🧠 స్ట్రింగ్ ఇంటర్నింగ్ (String Interning / CLR String Pool)</h2>
+      <p>
+        ఒక ప్రోగ్రామ్‌లో <code>"Admin"</code> అనే పదం 500 ఫైళ్లలో ఉండవచ్చు. వాటన్నింటికీ 500 వేర్వేరు మెమరీ కాపీలు సృష్టిస్తే రామ్ వృధా అవుతుంది.
+      </p>
+      <p>
+        దీనిని నివారించడానికి CLR ఒక <strong>ఇంటర్న్ పూల్ (String Intern Pool)</strong> అనే హాష్ టేబుల్‌ను నిర్వహిస్తుంది. కోడ్‌లో హార్డ్‌కోడ్ చేసిన స్ట్రింగ్ లిటరల్స్ అన్నీ ఒకేసారి పూల్ చేయబడి, అన్నింటికీ ఒకే మెమరీ అడ్రస్ రీ-యూజ్ అవుతుంది:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · String Interning Proof</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">string s1 = "Hyderabad";
+string s2 = "Hyderabad";
+
+// ReferenceEquals: రెండూ మెమరీలో ఒకే చిరునామాను పంచుకుంటున్నాయా?
+bool isSameMemory = object.ReferenceEquals(s1, s2);
+Console.WriteLine($"ఒకే మెమరీ అడ్రస్ లో ఉన్నాయా? : {isSameMemory}"); // True! (Interning Magic)</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> ⚡ స్ట్రింగ్ ఫార్మాటింగ్, Verbatim (@) &amp; C# 11 Raw String Literals</h2>
+      <p>
+        ఆధునిక C# లో టెక్స్ట్‌ను ఫార్మాట్ చేయడానికి 4 మార్గాలు ఉన్నాయి:
+      </p>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">1. String Interpolation ($)</h3>
+      <p>
+        స్ట్రింగ్ లోపల నేరుగా వేరియబుల్స్‌ను <code>$"{name} వయస్సు {age}"</code> రూపంలో పొందుపరచడం అత్యంత ప్రజాదరణ పొందిన ఆధునిక మార్గం.
+      </p>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">2. Verbatim Strings (@)</h3>
+      <p>
+        ఎస్కేప్ సీక్వెన్స్‌లు (<code>
+</code>, <code>	</code>, <code>\</code>) పట్టించుకోకుండా ఉన్నది ఉన్నట్లుగా చదవడానికి <code>@</code> వాడతారు. ఫైల్ పాత్‌లు మరియు రెగ్యులర్ ఎక్స్‌ప్రెషన్స్‌కు ఇది సూపర్: <code>@"C:UsersAdminDocuments"</code>.
+      </p>
+
+      <h3 style="font-size:17px; margin-top:24px; color:var(--text);">3. C# 11+ Raw String Literals (""")</h3>
+      <p>
+        JSON, XML, SQL లేదా HTML వంటి సంక్లిష్టమైన కొటేషన్లతో కూడిన కోడ్‌ను రాసేటప్పుడు ఎటువంటి ఎస్కేప్ క్యారెక్టర్లు లేకుండా కనీసం మూడు డబుల్ కోట్స్ (<code>"""</code>) తో రాయవచ్చు:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Modern C# 11 Raw String Literals</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">string customerName = "మనోజ్ కుమార్";
+int accountId = 987654;
+
+// C# 11 Raw String Literal ($$$""" ... """)
+string jsonPayload = $$"""
 {
-    static void Main()
-    {
-        string s1 = "Hyderabad";
-        string s2 = s1; // Both point to the same memory
-        
-        s1 += ", India"; // Creates a brand new string on Heap!
-        
-        Console.WriteLine($"s1: {s1}"); // "Hyderabad, India"
-        Console.WriteLine($"s2: {s2}"); // "Hyderabad" (Unchanged!)
-        
-        // Checking reference equality
-        Console.WriteLine($"Are references equal? {object.ReferenceEquals(s1, s2)}");
+    "user": {
+        "name": "{{customerName}}",
+        "account": {{accountId}},
+        "status": "ACTIVE"
     }
-}</code></pre>
-  </div>
-</div>
+}
+""";
 
-<div class="section-title"><span class="num">2</span> Modern String Interpolation ($), Verbatim (@) & Raw Strings (""")</div>
-<div class="section-body">
-  <p>C# లో స్ట్రింగ్స్ రాయడానికి మూడు ఆధునిక విధానాలు ఉన్నాయి:</p>
-  <ul>
-    <li><strong>String Interpolation (<code>$""</code>):</strong> కర్లీ బ్రేసెస్ లోపల వేరియబుల్స్ లేదా ఎక్స్‌ప్రెషన్స్‌ను నేరుగా పొందుపరచవచ్చు. ఫార్మాట్ స్పెసిఫైయర్స్ (ఉదా: <code>{val:C2}</code> కరెన్సీ కోసం, <code>{val:F2}</code> డెసిమల్ కోసం) మద్దతు ఇస్తుంది.</li>
-    <li><strong>Verbatim Strings (<code>@""</code>):</strong> ఎస్కేప్ సీక్వెన్సెస్ (ఉదా: <code>
-</code>, <code>	</code>) ని ఇగ్నోర్ చేస్తుంది. ఫైల్ పాత్‌లు మరియు రెగ్యులర్ ఎక్స్‌ప్రెషన్స్ రాయడానికి అనువైనది.</li>
-    <li><strong>Raw String Literals (<code>"""</code> C# 11+):</strong> డబుల్ కోట్స్ మరియు మల్టీ-లైన్ టెక్స్ట్‌లను (ముఖ్యంగా JSON, SQL లేదా HTML) ఎటువంటి ఎస్కేపింగ్ లేకుండా రాయడానికి ఇది ఉత్తమమైన పద్ధతి.</li>
-  </ul>
+Console.WriteLine("స్పష్టమైన JSON పేలోడ్:");
+Console.WriteLine(jsonPayload);</code></pre>
+      </div>
+    </section>
 
-  <div class="code-block">
-    <div class="code-header">
-      <span>StringFormats.cs</span>
-      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
-    </div>
-    <pre><code>using System;
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> 🧰 కీలక స్ట్రింగ్ మెథడ్స్ పవర్‌హౌస్ &amp; OrdinalIgnoreCase</h2>
+      <p>
+        టెక్స్ట్ విశ్లేషణలో నిత్యం వాడే ముఖ్యమైన మెథడ్స్:
+      </p>
+      <ul style="margin-left:24px; line-height:1.8; color:var(--text2);">
+        <li><code>Trim()</code> / <code>TrimStart()</code> / <code>TrimEnd()</code>: ముందు, వెనుక అనవసరమైన ఖాళీలను తొలగిస్తుంది.</li>
+        <li><code>Split(',')</code>: స్ట్రింగ్‌ను కామా లేదా డీలిమిటర్ వద్ద ముక్కలు చేసి <code>string[]</code> గా మారుస్తుంది.</li>
+        <li><code>string.Join(" - ", array)</code>: ఒక అర్రేలోని అంశాలన్నింటినీ కలిపి ఒకే స్ట్రింగ్‌గా మారుస్తుంది.</li>
+        <li><code>Contains()</code>, <code>StartsWith()</code>, <code>EndsWith()</code>: పదాల ఉనికిని తనిఖీ చేస్తుంది.</li>
+        <li><code>Replace("old", "new")</code>: పదాలను మారుస్తుంది.</li>
+      </ul>
 
-class Program
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Case-Insensitive String Comparison Best Practice</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">string inputRole = "admin";
+
+// ❌ తప్పు దారి: ToUpper() లేదా ToLower() చేసి పోల్చడం వల్ల అనవసరంగా కొత్త స్ట్రింగ్ అలోకేట్ అవుతుంది
+if (inputRole.ToUpper() == "ADMIN") { }
+
+// ✅ ప్రొఫెషనల్ దారి: StringComparison.OrdinalIgnoreCase తో జీరో-అలోకేషన్ పోలిక
+if (string.Equals(inputRole, "ADMIN", StringComparison.OrdinalIgnoreCase))
 {
-    static void Main()
-    {
-        string name = "Sita";
-        decimal balance = 12500.75m;
-        
-        // 1. Interpolated String with Formatting
-        Console.WriteLine($"Customer: {name}, Balance: {balance:C}");
-        
-        // 2. Verbatim String (No escaping needed for backslashes)
-        string filePath = @"C:UsersBalajiDocumentseport.pdf";
-        Console.WriteLine($"Path: {filePath}");
-        
-        // 3. Raw String Literal (C# 11+) for Clean JSON
-        string json = """
-        {
-            "id": 101,
-            "title": "C# Masterclass",
-            "active": true
-        }
-        """;
-        Console.WriteLine(json);
-    }
+    Console.WriteLine("✅ అడ్మిన్ యాక్సెస్ నిర్ధారించబడింది!");
 }</code></pre>
-  </div>
-</div>
+      </div>
+    </section>
 
-<div class="section-title"><span class="num">3</span> StringBuilder vs String Concatenation: పెర్ఫార్మెన్స్ విశ్లేషణ</div>
-<div class="section-body">
-  <p>ఒక లూప్ లోపల <code>+=</code> ఆపరేటర్ వాడి వందలాది సార్లు స్ట్రింగ్స్ కలిపితే, ప్రతి ఐటరేషన్‌లోనూ పాత స్ట్రింగ్ కాపీ చేయబడి కొత్త ఆబ్జెక్ట్ సృష్టించబడుతుంది. దీనివల్ల <strong>O(N²) మెమరీ అలొకేషన్స్</strong> జరిగి గార్బేజ్ కలెక్టర్ (GC) పై విపరీతమైన భారం పడుతుంది.</p>
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> 🚀 StringBuilder క్లాస్ — మ్యూటబుల్ టెక్స్ట్ బఫర్ ఆర్కిటెక్చర్</h2>
+      <p>
+        <code>System.Text.StringBuilder</code> అనేది ఇమ్యుటబుల్ స్ట్రింగ్‌కు విరుగుడు! ఇది ఒక <strong>మ్యూటబుల్ బఫర్ (Mutable Memory Buffer)</strong>.
+      </p>
+      <p>
+        దీనిలో కొత్త టెక్స్ట్‌ను జతచేసినప్పుడు (<code>Append</code>), ప్రతిసారీ కొత్త ఆబ్జెక్ట్ పుట్టదు; అంతర్గతంగా ఉన్న చార్ అర్రే బఫర్‌లోనే టెక్స్ట్ పెరుగుతూ పోతుంది.
+      </p>
 
-  <p>దీనికి పరిష్కారమే <strong><code>System.Text.StringBuilder</code></strong>. ఇది ఒక మ్యూటబుల్ (మార్చదగిన) ఇంటర్నల్ బఫర్‌ను నిర్వహిస్తుంది. కాబట్టి కొత్త ఆబ్జెక్ట్స్ క్రియేట్ అవ్వకుండా ఉన్న బఫర్‌లోనే క్యారెక్టర్స్ అపెండ్ అవుతాయి.</p>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · StringBuilder Methods in Action</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System.Text;
 
-  <div class="code-block">
-    <div class="code-header">
-      <span>StringBuilderBenchmark.cs</span>
-      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
-    </div>
-    <pre><code>using System;
+// ప్రారంభ కెపాసిటీ 128 అక్షరాలతో StringBuilder ను సృష్టించడం
+StringBuilder sb = new StringBuilder(128);
+
+sb.AppendLine("=== మన సాఫ్ట్‌వేర్ బిల్డ్ లాగ్ ===");
+sb.Append("స్టేటస్: ").Append("SUCCESS").AppendLine();
+sb.AppendFormat("తేదీ: {0:dd-MMM-yyyy}", DateTime.Now).AppendLine();
+sb.Insert(0, "[CONFIDENTIAL] "); // ప్రారంభంలో చేర్చడం
+sb.Replace("SUCCESS", "VERIFIED_OK"); // భర్తీ చేయడం
+
+string finalLog = sb.ToString(); // చివరికి ఒకే ఒక్కసారి స్వచ్ఛమైన స్ట్రింగ్ గా మార్చడం
+Console.WriteLine(finalLog);</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> 📈 పెర్ఫార్మెన్స్ బెంచ్‌మార్క్: string += vs StringBuilder</h2>
+      <p>
+        1 లక్ష పదాలను కలపడానికి (Concatenation) ఈ రెండు విధానాలకు పట్టే సమయాన్ని విశ్లేషిస్తే:
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Performance Showdown: += vs StringBuilder</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System.Diagnostics;
 using System.Text;
 
-class Program
+int iterations = 20000;
+
+// 1. StringBuilder టెస్ట్
+Stopwatch sw = Stopwatch.StartNew();
+StringBuilder builder = new StringBuilder();
+for (int i = 0; i &lt; iterations; i++)
 {
-    static void Main()
-    {
-        // Recommended for loops: StringBuilder
-        StringBuilder sb = new StringBuilder();
-        sb.Append("List of IDs: ");
-        
-        for (int i = 1; i <= 5; i++)
-        {
-            sb.Append(i).Append(i < 5 ? ", " : ".");
-        }
-        
-        string result = sb.ToString();
-        Console.WriteLine(result);
-    }
-}</code></pre>
-  </div>
+    builder.Append(i);
+}
+string sbResult = builder.ToString();
+sw.Stop();
+Console.WriteLine($"StringBuilder సమయం: {sw.ElapsedMilliseconds} ms (క్షణాల్లో పూర్తి!)");
 
-  <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:14px; margin-top:12px;">
-    <strong>గోల్డెన్ రూల్:</strong> 3-4 స్ట్రింగ్స్ సాధారణంగా కలపడానికి స్ట్రింగ్ ఇంటర్‌పోలేషన్ <code>$"{a} {b}"</code> వాడండి. కానీ లూపుల్లో (లూప్ 5 కంటే ఎక్కువ సార్లు తిరిగితే) ఎల్లప్పుడూ <code>StringBuilder</code> వాడాలి.
-  </div>
-</div>
-
-<div class="section-title"><span class="num">4</span> నిత్యజీవితంలో వాడే ముఖ్యమైన String మెథడ్స్</div>
-<div class="section-body">
-  <p>వాస్తవ ప్రాజెక్టులలో డేటా క్లీనింగ్ మరియు పార్సింగ్ కోసం C# అనేక శక్తివంతమైన ఇన్-బిల్ట్ మెథడ్స్ అందిస్తుంది:</p>
-
-  <div class="code-block">
-    <div class="code-header">
-      <span>StringMethodsDemo.cs</span>
-      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
-    </div>
-    <pre><code>using System;
-
-class Program
+// 2. string += టెస్ట్ (చాలా నెమ్మదిగా నడుస్తుంది)
+sw.Restart();
+string slowStr = "";
+for (int i = 0; i &lt; iterations; i++)
 {
-    static void Main()
-    {
-        string rawInput = "  kiran@gmail.com, suresh@yahoo.com, rani@outlook.com  ";
-        
-        // 1. Trim: Whitespace తొలగింపు
-        string cleaned = rawInput.Trim();
-        
-        // 2. Split: అరేగా విభజించడం
-        string[] emails = cleaned.Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
-        
-        foreach (string email in emails)
-        {
-            // 3. Case-Insensitive Search
-            if (email.Contains("GMAIL", StringComparison.OrdinalIgnoreCase))
-            {
-                Console.WriteLine($"Found Gmail user: {email.ToUpper()}");
-            }
-        }
+    slowStr += i;
+}
+sw.Stop();
+Console.WriteLine($"సాధారణ string += సమయం: {sw.ElapsedMilliseconds} ms (అపారమైన మెమరీ నష్టం!)");</code></pre>
+      </div>
+    </section>
 
-        // 4. Join: అరే ఎలిమెంట్స్ ను ఒకే స్ట్రింగ్ గా కలపడం
-        string joined = string.Join(" | ", emails);
-        Console.WriteLine($"Joined: {joined}");
-    }
-}</code></pre>
-  </div>
-</div>
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> 📊 తులనాత్మక పట్టిక: string vs StringBuilder vs ReadOnlySpan&lt;char&gt;</h2>
+      <p>
+        టెక్స్ట్ ప్రాసెసింగ్ యొక్క 3 శక్తిమంతమైన సాధనాల తులనాత్మక పరిశీలన:
+      </p>
 
-<div class="section-title"><span class="num">5</span> Span&lt;char&gt; & Zero-Allocation టెక్నిక్ అవలోకనం</div>
-<div class="section-body">
-  <p>.NET Core మరియు .NET 8 ప్రపంచంలో అత్యంత వేగవంతమైన రన్‌టైమ్‌గా నిలవడానికి గల ముఖ్య కారణాలలో <strong><code>ReadOnlySpan&lt;char&gt;</code></strong> ఒకటి. సాధారణంగా <code>str.Substring(0, 5)</code> వాడితే హీప్‌పై కొత్త సబ్‌స్ట్రింగ్ ఆబ్జెక్ట్ ఏర్పడుతుంది. కానీ <code>ReadOnlySpan</code> వాడితే మెమరీని కాపీ చేయకుండా అసలు స్ట్రింగ్‌లోని నిర్దిష్ట క్యారెక్టర్ల భాగానికి కేవలం ఒక విండో (view) ను మాత్రమే అందిస్తుంది (Zero Allocation!).</p>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ఫీచర్ / కొలమానం</th>
+            <th>System.String (string)</th>
+            <th>System.Text.StringBuilder</th>
+            <th>ReadOnlySpan&lt;char&gt;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>మెమరీ స్వభావం</strong></td>
+            <td><strong>Immutable</strong> (మార్చలేనిది)</td>
+            <td><strong>Mutable</strong> (మార్చదగిన బఫర్)</td>
+            <td><strong>Stack-only View</strong> (జీరో అలోకేషన్)</td>
+          </tr>
+          <tr>
+            <td><strong>మెమరీ లొకేషన్</strong></td>
+            <td>Managed Heap</td>
+            <td>Managed Heap</td>
+            <td>Stack / Direct Pointer</td>
+          </tr>
+          <tr>
+            <td><strong>మార్పుల వేగం</strong></td>
+            <td>స్లో (ప్రతిసారీ రీ-అలోకేషన్)</td>
+            <td><strong>అత్యంత వేగం</strong></td>
+            <td><strong>మెరుపు వేగం (Zero Copies)</strong></td>
+          </tr>
+          <tr>
+            <td><strong>థ్రెడ్ సేఫ్టీ</strong></td>
+            <td>ఇమ్యుటబుల్ కాబట్టి 100% Thread-safe</td>
+            <td>Thread-safe కాదు</td>
+            <td>Stack-bound కాబట్టి సహజసిద్ధ సేఫ్</td>
+          </tr>
+          <tr>
+            <td><strong>ఉత్తమ వినియోగం</strong></td>
+            <td>తక్కువ మార్పులు గల సాధారణ టెక్స్ట్‌కు</td>
+            <td>లూప్స్‌లో భారీ టెక్స్ట్ నిర్మాణం &amp; లాగింగ్‌కు</td>
+            <td>హై-పెర్ఫార్మెన్స్ పార్సర్లు &amp; వెబ్ సర్వర్లకు</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
 
-  <div class="code-block">
-    <div class="code-header">
-      <span>SpanDemo.cs</span>
-      <a href="/online-csharp-compiler.html" target="_blank" class="run-btn">⚡ Try in C# Compiler</a>
-    </div>
-    <pre><code>using System;
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> 🎯 ఆధునిక ReadOnlySpan&lt;char&gt; తో జీరో-అలోకేషన్ స్లైసింగ్</h2>
+      <p>
+        సాధారణంగా <code>text.Substring(0, 4)</code> చేసినప్పుడు మెమరీలో కొత్త సబ్‌స్ట్రింగ్ పుడుతుంది. కానీ .NET లో <strong><code>AsSpan()</code></strong> వాడితే అసలైన మెమరీపై కేవలం ఒక కిటికీని (Window/View) మాత్రమే తెరుస్తుంది:
+      </p>
 
-class Program
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Zero-Allocation Substrings with ReadOnlySpan</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">string orderLog = "ORDER:2026-IN-98745:PAID";
+
+// Substring వాడకుండా జీరో మెమరీ కాపీయింగ్ తో ఐడీ ని వేరు చేయడం:
+ReadOnlySpan&lt;char&gt; span = orderLog.AsSpan();
+ReadOnlySpan&lt;char&gt; orderId = span.Slice(6, 13); // "2026-IN-98745"
+
+Console.WriteLine($"క్రాష్-రహిత జీరో-కాపీ ఐడీ: {orderId.ToString()}");</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> 🚀 రియల్-వరల్డ్ ప్రాజెక్ట్: "Banking Sensitive Data Redactor &amp; Audit Engine"</h2>
+      <p>
+        బ్యాంకింగ్ సిస్టమ్స్‌లో కస్టమర్ల ఆధార్ నంబర్, క్రెడిట్ కార్డు మరియు ఈమెయిల్ అడ్రస్‌లను లాగ్ ఫైల్స్ లోకి రాసేటప్పుడు సెక్యూరిటీ నిబంధనల ప్రకారం (RBI &amp; PCI-DSS) మాస్కింగ్ (హైడింగ్) చేయాలి.
+      </p>
+      <p>
+        <code>StringBuilder</code>, <code>Substring</code>, మరియు మోడ్రన్ స్ట్రింగ్ API ఉపయోగించి — సున్నితమైన డేటాను మాస్క్ చేసే ఒక పూర్తి స్థాయి <strong>బ్యాంకింగ్ ఆడిట్ లాగ్ ఇంజిన్</strong> ను తయారు చేద్దాం!
+      </p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span>csharp · Banking Sensitive Data Redactor Project</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <button class="try-btn" onclick="runCode(this)">Run</button>
+          </div>
+        </div>
+        <pre><code class="language-csharp">using System;
+using System.Text;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("🔐 మన బ్యాంక్ - సెక్యూర్ డేటా మాస్కింగ్ &amp; ఆడిట్ ఇంజిన్");
+Console.WriteLine("=================================================\n");
+
+// 1. ఆధార్ నంబర్ మాస్కింగ్ మెథడ్ (మొదటి 8 అంకెలు XXXXXXXX, ఆఖరి 4 అంకెలు కనిపిస్తాయి)
+string MaskAadhaar(string aadhaar)
 {
-    static void Main()
-    {
-        string dateStr = "2026-10-30";
-        
-        // Creating spans without allocating memory on Heap
-        ReadOnlySpan<char> span = dateStr.AsSpan();
-        ReadOnlySpan<char> year = span.Slice(0, 4);
-        ReadOnlySpan<char> month = span.Slice(5, 2);
-        ReadOnlySpan<char> day = span.Slice(8, 2);
-        
-        Console.WriteLine($"Year: {year.ToString()}, Month: {month.ToString()}, Day: {day.ToString()}");
-    }
-}</code></pre>
-  </div>
-</div>
+    string cleaned = aadhaar.Replace(" ", "").Replace("-", "");
+    if (cleaned.Length != 12) return "XXXX-XXXX-XXXX";
+    return $"XXXX-XXXX-{cleaned.Substring(8, 4)}";
+}
 
-<div class="section-title"><span class="num">6</span> బిగినర్ తప్పులు & ఇంటర్వ్యూ FAQ</div>
-<div class="section-body">
-  <div style="background:#fee2e2; border-left:4px solid #ef4444; padding:14px 18px; border-radius:0 8px 8px 0; margin-bottom:16px;">
-    <strong style="color:#b91c1c;">⚠️ ప్రమాదకరమైన తప్పు: Case Sensitivity మరియు Culture పరిగణించకపోవడం</strong><br>
-    <span style="font-size:13.5px; color:#475569;"><code>str1.ToLower() == str2.ToLower()</code> అని రాయడం వల్ల రెండు కొత్త స్ట్రింగ్స్ హీప్‌పై క్రియేట్ అవుతాయి. దానికి బదులుగా ఎల్లప్పుడూ <code>string.Equals(str1, str2, StringComparison.OrdinalIgnoreCase)</code> వాడటం ద్వారా పెర్ఫార్మెన్స్ పెరుగుతుంది మరియు అనవసర మెమరీ వేస్ట్ కాదు.</span>
-  </div>
+// 2. క్రెడిట్ కార్డు మాస్కింగ్ (మొదటి 4, ఆఖరి 4 కనిపిస్తాయి, మధ్యలో **** ****)
+string MaskCreditCard(string cardNo)
+{
+    string cleaned = cardNo.Replace(" ", "").Replace("-", "");
+    if (cleaned.Length != 16) return "****-****-****-****";
+    return $"{cleaned.Substring(0, 4)}-****-****-{cleaned.Substring(12, 4)}";
+}
 
-  <h3>తరచుగా అడిగే ప్రశ్నలు (FAQ):</h3>
-  <ul>
-    <li><strong>String మరియు StringBuilder మధ్య తేడా ఏమిటి?</strong><br>
-    String ఇమ్మ్యూటబుల్ (మార్చలేము), ఏదైనా మార్పు చేస్తే కొత్త ఆబ్జెక్ట్ తయారవుతుంది. StringBuilder మ్యూటబుల్, ఇప్పటికే ఉన్న బఫర్‌లోనే క్యారెక్టర్లను మారుస్తుంది.</li>
-    <li><strong>String Interning అంటే ఏమిటి?</strong><br>
-    ఒకే విధమైన స్ట్రింగ్ లిటరల్స్‌ను CLR ఒక ప్రత్యేక టేబుల్‌లో భద్రపరిచి, మెమరీ ఆదా చేయడానికి అన్ని రిఫరెన్సులకు అదే అడ్రస్‌ను షేర్ చేస్తుంది.</li>
-  </ul>
-</div>
+// 3. ఈమెయిల్ మాస్కింగ్ (మొదటి 2 అక్షరాలు + *** + @డొమైన్)
+string MaskEmail(string email)
+{
+    int atIndex = email.IndexOf('@');
+    if (atIndex &lt;= 2) return "***@domain.com";
+    string namePart = email.Substring(0, 2);
+    string domainPart = email.Substring(atIndex);
+    return $"{namePart}***{domainPart}";
+}
 
+// నమూనా కస్టమర్ సున్నిత సమాచారం
+string customerName = "వెంకటేశ్వర రావు";
+string rawAadhaar = "5432-8765-1098";
+string rawCard = "4532 9876 5432 1099";
+string rawEmail = "venkatesh.rao99@gmail.com";
+decimal transferAmount = 75000.00m;
 
-    <!-- PREV / NEXT NAVIGATION -->
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
-      
+// 4. StringBuilder తో ఆడిట్ రసీదు నిర్మాణం
+StringBuilder auditLog = new StringBuilder(512);
+
+auditLog.AppendLine("=================================================");
+auditLog.AppendLine("          అధికారిక సురక్షిత బ్యాంకింగ్ లాగ్       ");
+auditLog.AppendLine("=================================================");
+auditLog.AppendLine($"తేదీ &amp; సమయం     : {DateTime.Now:dd-MMM-yyyy hh:mm:ss tt}");
+auditLog.AppendLine($"ఖాతాదారు పేరు   : {customerName}");
+auditLog.AppendLine($"ఆధార్ నంబర్    : {MaskAadhaar(rawAadhaar)}");
+auditLog.AppendLine($"క్రెడిట్ కార్డు : {MaskCreditCard(rawCard)}");
+auditLog.AppendLine($"రిజిస్టర్డ్ మెయిల్ : {MaskEmail(rawEmail)}");
+auditLog.AppendLine("-------------------------------------------------");
+auditLog.AppendLine($"బదిలీ చేసిన మొత్తం: ₹{transferAmount:N2}");
+auditLog.AppendLine("భద్రతా స్థితి   : PCI-DSS 4.0 కంప్లైంట్ (Data Redacted)");
+auditLog.AppendLine("=================================================");
+
+Console.WriteLine(auditLog.ToString());
+Console.WriteLine("✅ సున్నితమైన సమాచారం సురక్షితంగా మాస్క్ చేయబడింది! లాగ్ సేవ్ అయింది. 🚀\n");</code></pre>
+      </div>
+
+      <!-- TRY BOX COMPONENT -->
+      <div class="try-box">
+        <div class="try-title">🧪 లైవ్ కంపైలర్‌లో ఈ డేటా రెడాక్టర్ ఇంజిన్‌ను పరీక్షించండి!</div>
+        <p>
+          మీ స్వంత ఆధార్ లేదా కార్డ్ నంబర్లు ఇచ్చి — సెన్సిటివ్ డిజిట్స్ స్వయంచాలకంగా ఎలా మాస్క్ చేయబడుతున్నాయో ఆన్‌లైన్ ఎడిటర్‌లో లైవ్‌గా పరిశీలించండి!
+        </p>
+        <button class="run-btn" onclick="openInteractiveCompiler()">
+          ▶ Open C# Online Compiler with this Project
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> 🛑 బిగినర్స్ చేసే 7 ఘోరమైన స్ట్రింగ్ తప్పులు</h2>
+      <p>
+        స్ట్రింగ్స్ తో పనిచేసేటప్పుడు సాఫ్ట్‌వేర్ ఇంజనీర్లు తరచుగా చేసే 7 పొరపాట్లు:
+      </p>
+
+      <div style="display:grid; grid-template-columns:1fr; gap:16px; margin:24px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">1. లూప్ లోపల string += వాడటం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            ఇది సిస్టమ్‌ను అత్యంత నెమ్మదిస్తుంది మరియు మెమరీని నింపుతుంది. లూప్‌లో ఎల్లప్పుడూ <code>StringBuilder</code> వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">2. స్ట్రింగ్స్ పోల్చేటప్పుడు ToUpper() లేదా ToLower() వాడటం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            అనవసరమైన తాత్కాలిక స్ట్రింగ్స్ హీప్‌లో ఏర్పడతాయి. <code>StringComparison.OrdinalIgnoreCase</code> వాడటం ప్రొఫెషనల్ పద్ధతి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">3. str == "" లేదా str.Length == 0 తో ఖాళీతనాన్ని చెక్ చేయడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            ఒకవేళ str నల్ అయితే <code>NullReferenceException</code> వస్తుంది! ఎల్లప్పుడూ <code>string.IsNullOrEmpty(str)</code> లేదా <code>string.IsNullOrWhiteSpace(str)</code> వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">4. ఫైల్ పాత్స్‌లో సింగిల్ బ్యాక్‌స్లాష్ () వాడటం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            <code>"C:
+ew	est"</code> లో <code>
+</code> మరియు <code>	</code> ఎస్కేప్ అయి పాత్ పాడవుతుంది. వెర్బాటిమ్ <code>@"C:
+ew	est"</code> వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">5. స్ట్రింగ్ ఇండెక్స్‌ను బౌండరీ దాటించి పిలవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            ఖాళీ స్ట్రింగ్ పై <code>str[0]</code> పిలిస్తే <code>IndexOutOfRangeException</code> వస్తుంది. లెంగ్త్ చెక్ చేయకుండా ఇండెక్స్ వాడకండి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">6. StringBuilder కెపాసిటీని డిఫైన్ చేయకపోవడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            డీఫాల్ట్ కెపాసిటీ కేవలం 16 అక్షరాలు. పెద్ద డేటా ఉన్నప్పుడు పదే పదే ఇంటర్నల్ అర్రే రీ-సైజ్ అవుతుంది. ప్రారంభంలోనే సైజు ఇవ్వడం మంచిది.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ef4444;">7. పాస్‌వర్డ్స్ వంటి సెన్సిటివ్ డేటాను సాధారణ string లో ఉంచడం:</strong>
+          <p style="margin:6px 0 0; color:var(--text2); font-size:14px;">
+            స్ట్రింగ్స్ ఇమ్యుటబుల్ కాబట్టి మెమరీ డంప్‌లలో సులభంగా బయటపడతాయి. హై-సెక్యూరిటీ యాప్స్ లో <code>SecureString</code> లేదా <code>char[]</code> వాడాలి.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> 🧠 ఇంటరాక్టివ్ సెల్ఫ్-అసెస్మెంట్ క్విజ్ (5 లోతైన ప్రాక్టికల్ ప్రశ్నలు &amp; వివరణలు)</h2>
+      <p>
+        స్ట్రింగ్స్ మరియు మెమరీ ఆర్కిటెక్చర్‌పై మీ పట్టును ఈ 5 ప్రశ్నలతో పరీక్షించుకోండి:
+      </p>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: C# లో "String Immutability" అంటే ఏమిటి మరియు దీనివల్ల కలిగే ప్రయోజనం ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఒకసారి మెమరీలో స్ట్రింగ్ ఆబ్జెక్ట్ క్రియేట్ అయిన తర్వాత దానిలోని కంటెంట్‌ను మార్చలేము. దీనివల్ల స్ట్రింగ్స్ సహజసిద్ధంగా <strong>Thread-Safe</strong> అవుతాయి, మరియు బహుళ థ్రెడ్‌లు ఎటువంటి లాకింగ్ మెకానిజమ్స్ లేకుండా ఒకే స్ట్రింగ్‌ను సురక్షితంగా ఏకకాలంలో చదవగలవు.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: <code>string.IsNullOrEmpty(s)</code> మరియు <code>string.IsNullOrWhiteSpace(s)</code> మధ్య తేడా ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>IsNullOrEmpty</code> అనేది స్ట్రింగ్ <code>null</code> లేదా పొడవు 0 (<code>""</code>) అయితేనే ట్రూ ఇస్తుంది. కానీ <code>IsNullOrWhiteSpace</code> స్ట్రింగ్‌లో కేవలం స్పేస్‌లు, ట్యాబ్‌లు లేదా న్యూలైన్‌లు (ఉదా: <code>"   "</code>) ఉన్నా కూడా ట్రూ ఇస్తుంది. యూజర్ ఫారమ్ ఇన్‌పుట్ వాలిడేషన్‌కు <code>IsNullOrWhiteSpace</code> ఉత్తమం.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: CLR "String Intern Pool" అంటే ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఇది .NET రన్‌టైమ్ నిర్వహించే ఒక ఇంటర్నల్ టేబుల్. ప్రోగ్రామ్‌లోని ఒకేలాంటి స్ట్రింగ్ లిటరల్స్ అన్నింటికీ వేర్వేరు మెమరీ అలోకేట్ చేయకుండా, ఒకే కాపీని అన్ని వేరియబుల్స్ పంచుకునేలా చేసి ర్యామ్ (RAM) ను ఆదా చేస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: C# 11 "Raw String Literals" యొక్క ప్రత్యేకత ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> కనీసం మూడు డబుల్ కోట్స్ (<code>"""</code>) తో ప్రారంభమై ముగిసే ఈ లిటరల్స్ లోపల JSON, XML లేదా SQL కోడ్‌లోని కొటేషన్లను ఎస్కేప్ (<code>"</code>) చేయవలసిన అవసరం లేదు. అవి ఉన్నవి ఉన్నట్లుగా, మల్టీ-లైన్ ఇండెంటేషన్‌ను కాపాడుతూ స్పష్టంగా ఉంటాయి.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: స్ట్రింగ్స్ పోల్చేటప్పుడు <code>s1.ToUpper() == s2.ToUpper()</code> ఎందుకు వాడకూడదు?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>ToUpper()</code> ప్రతిసారీ మెమరీ హీప్‌లో సరికొత్త స్ట్రింగ్ ఆబ్జెక్ట్‌ను అలోకేట్ చేస్తుంది, దీనివల్ల మెమరీ మరియు ప్రాసెసింగ్ వేస్ట్ అవుతుంది. దీనికి బదులుగా <code>string.Equals(s1, s2, StringComparison.OrdinalIgnoreCase)</code> వాడితే ఎటువంటి మెమరీ అలోకేషన్ లేకుండా బైట్ స్థాయిలో వేగంగా పోలుస్తుంది.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
       <a href="/blog-csharp/09-csharp-methods-parameters-ref-out-in.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
-        ← Prev: 9. మెథడ్స్ & పారామీటర్లు
+        ← Previous: 09. మెథడ్స్ &amp; పారామీటర్ మోడిఫైయర్స్
       </a>
-      
       <a href="/blog-csharp/11-csharp-arrays-1d-multidimensional-jagged.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
-        Next: 11. అర్రేలు & జాగ్‌డ్ అర్రేస్ →
+        Next: 11. అర్రేలు (1D, 2D &amp; Jagged Arrays) →
       </a>
     </div>
 
@@ -534,7 +837,7 @@ class Program
       <div class="avatar">OC</div>
       <div>
         <strong>Written by Our Compiler Technical Editorial Team</strong><br>
-        <span>Reviewed for accuracy & tested on .NET 8.0 SDK / C# 12 runtime · 2026 Academic Edition</span>
+        <span>Reviewed for accuracy &amp; tested on .NET 8 SDK / C# 12 runtime · 2026 Academic Edition</span>
       </div>
     </div>
 
@@ -543,5 +846,95 @@ class Program
 
 <!-- SITE NAVIGATION LOADER -->
 <script src="/site-nav.js" defer></script>
+
+<!-- RUNNER & INTERACTIVE LOGIC -->
+<script>
+  function toggleAccordion(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.accordion-arrow');
+    const isOpen = content.classList.contains('open');
+    if (isOpen) {
+      content.classList.remove('open');
+      btn.classList.remove('active');
+    } else {
+      content.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      btn.style.color = '#10b981';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function runCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const rawCode = codeBlock.innerText;
+    try {
+      localStorage.setItem('code_csharp', rawCode);
+    } catch (e) {
+      console.warn('LocalStorage access restricted:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+
+  function openInteractiveCompiler() {
+    const projectCode = `using System;
+using System.Text;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.WriteLine("=================================================");
+Console.WriteLine("🔐 మన బ్యాంక్ - సెక్యూర్ డేటా మాస్కింగ్ & ఆడిట్ ఇంజిన్");
+Console.WriteLine("=================================================\n");
+
+string MaskAadhaar(string aadhaar)
+{
+    string cleaned = aadhaar.Replace(" ", "").Replace("-", "");
+    if (cleaned.Length != 12) return "XXXX-XXXX-XXXX";
+    return $"XXXX-XXXX-{cleaned.Substring(8, 4)}";
+}
+
+string MaskCreditCard(string cardNo)
+{
+    string cleaned = cardNo.Replace(" ", "").Replace("-", "");
+    if (cleaned.Length != 16) return "****-****-****-****";
+    return $"{cleaned.Substring(0, 4)}-****-****-{cleaned.Substring(12, 4)}";
+}
+
+string customerName = "వెంకటేశ్వర రావు";
+string rawAadhaar = "5432-8765-1098";
+string rawCard = "4532 9876 5432 1099";
+
+StringBuilder auditLog = new StringBuilder(512);
+auditLog.AppendLine("=================================================");
+auditLog.AppendLine("          అధికారిక సురక్షిత బ్యాంకింగ్ లాగ్       ");
+auditLog.AppendLine("=================================================");
+auditLog.AppendLine($"తేదీ & సమయం     : {DateTime.Now:dd-MMM-yyyy hh:mm:ss tt}");
+auditLog.AppendLine($"ఖాతాదారు పేరు   : {customerName}");
+auditLog.AppendLine($"ఆధార్ నంబర్    : {MaskAadhaar(rawAadhaar)}");
+auditLog.AppendLine($"క్రెడిట్ కార్డు : {MaskCreditCard(rawCard)}");
+auditLog.AppendLine("భద్రతా స్థితి   : PCI-DSS 4.0 కంప్లైంట్ (Data Redacted)");
+auditLog.AppendLine("=================================================");
+
+Console.WriteLine(auditLog.ToString());`;
+
+    try {
+      localStorage.setItem('code_csharp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-csharp-compiler.html', '_blank');
+  }
+</script>
+
 </body>
 </html>
