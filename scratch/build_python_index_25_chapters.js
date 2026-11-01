@@ -311,3 +311,4 @@ const outputPath = path.join(__dirname, '..', 'public', 'blog-python.html');
 fs.writeFileSync(outputPath, htmlContent, 'utf8');
 console.log('✅ Successfully wrote clean, new 25-chapter Python index to public/blog-python.html!');
 console.log('Target file size:', htmlContent.length, 'characters');
+
