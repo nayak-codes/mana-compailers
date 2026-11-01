@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>వేరియబుల్స్, డేటా టైప్స్ & auto కీవర్డ్ (Variables, Data Types & auto) — Modern C++ Tutorial | Our Compiler</title>
-  <meta name="description" content="C++ వేరియబుల్స్ మరియు డేటా టైప్స్ పూర్తి గైడ్ తెలుగులో: Primitive types (int, float, double, char, bool), sizeof ఆపరేటర్, Type Modifiers, Integer Overflow, const vs constexpr, మరియు Modern C++ auto టైప్ డిడక్షన్." />
-  <meta name="keywords" content="c++ variables telugu, c++ data types in telugu, c++ auto keyword, c++ sizeof operator, integer overflow c++, c++ constexpr telugu, our compiler" />
+  <title>వేరియబుల్స్, డేటా టైప్స్ & auto — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ వేరియబుల్స్, డేటా టైప్స్, auto, sizeof, const vs constexpr తెలుగులో: RAM మెమరీ అలొకేషన్, Signed vs Unsigned ఓవర్‌ఫ్లో, Uniform Initialization, static_cast మరియు రియల్-వరల్డ్ ప్రాజెక్ట్." />
+  <meta name="keywords" content="c++ variables telugu, c++ data types telugu, c++ auto keyword, constexpr telugu, c++ uniform initialization, static cast telugu, learn c++ in telugu, our compiler" />
   <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/02-cpp-variables-data-types.html" />
@@ -20,8 +20,8 @@
   {
     "@context": "https://schema.org",
     "@type": "TechArticle",
-    "headline": "వేరియబుల్స్, డేటా టైప్స్ & auto కీవర్డ్ (Variables, Data Types & auto in C++) తెలుగులో",
-    "description": "C++ వేరియబుల్స్ మరియు డేటా టైప్స్ పూర్తి గైడ్ తెలుగులో: Primitive types, sizeof operator, Type Modifiers, Overflow, const vs constexpr, మరియు Modern C++ auto.",
+    "headline": "వేరియబుల్స్, డేటా టైప్స్ & auto (Variables, Data Types, auto & constexpr in C++)",
+    "description": "C++ వేరియబుల్స్ మరియు డేటా టైప్స్ తెలుగులో: మెమరీ మోడల్, sizeof, limits, auto టైప్ ఇన్ఫరెన్స్, Uniform Initialization, const vs constexpr.",
     "articleSection": "Phase 1: C++ Basics & Fundamentals",
     "inLanguage": "te",
     "author": {
@@ -35,45 +35,11 @@
       "url": "https://www.ourcompiler.com"
     },
     "datePublished": "2026-02-02",
-    "dateModified": "2026-10-29"
+    "dateModified": "2026-11-01"
   }
   </script>
 
-  <!-- Schema.org FAQPage Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "float కి double కి తేడా ఏమిటి? ఏది వాడాలి?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "float 4 బైట్ల మెమరీ తీసుకుని 6-7 డెసిమల్ అంకెల ఖచ్చితత్వాన్ని ఇస్తుంది. double 8 బైట్లు తీసుకుని 15-17 డెసిమల్ అంకెల ఖచ్చితత్వాన్ని ఇస్తుంది. మోడరన్ కంప్యూటర్లలో సాధారణంగా డెసిమల్స్ కోసం 'double' వాడటమే ఉత్తమం."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Modern C++ లో 'auto' వాడటం వల్ల ప్రోగ్రామ్ స్పీడ్ తగ్గుతుందా?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "అస్సలు తగ్గదు! 'auto' రన్ టైంలో కాదు, కంపైల్ టైంలోనే డేటా టైప్‌ను కచ్చితంగా గుర్తిస్తుంది (Zero Runtime Cost). కాబట్టి 'int' వాడినా 'auto' వాడినా స్పీడ్ లో ఎలాంటి తేడా ఉండదు."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "C++ లో uninitialized వేరియబుల్స్ ఎందుకు ప్రమాదకరం?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Python లాంటి భాషల్లో వేరియబుల్స్‌కి ఆటోమేటిక్‌గా None ఉంటుంది. కానీ C++ లో వేరియబుల్‌కు విలువ ఇవ్వకపోతే (Uninitialized), ఆ మెమరీ లొకేషన్‌లో ముందు నుంచి ఉన్న పాత వ్యర్థ విలువ (Garbage Value) అందులోకి వస్తుంది, దీనివల్ల ఊహించని బగ్‌లు వస్తాయి."
-        }
-      }
-    ]
-  }
-  </script>
-
-  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Theme -->
+  <!-- Interactive Scripts: Accordion, C++ Syntax Highlighter & Theme -->
   <script>
     function toggleAccordion(btn) {
       const content = btn.nextElementSibling;
@@ -92,18 +58,14 @@
       const tokens = [];
       const pushToken = (cls, text) => {
         const id = tokens.length;
-        tokens.push(`<span class="${cls}">${text}</span>`);
-        return `___CPP_TOK_${id}___`;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___CPP_TOK_' + id + '___';
       };
 
-      // Comments
       let code = rawCode.replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)/g, m => pushToken('cm', m));
-      // Preprocessor
       code = code.replace(/(#[a-zA-Z_]+(?:\s*<[^>]+>|\s*"[^"]+")?)/g, m => pushToken('pp', m));
-      // Strings & chars
       code = code.replace(/("[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
 
-      // Keywords
       const kwList = [
         'int','double','float','char','bool','void','auto','long','short','unsigned','signed',
         'return','using','namespace','class','struct','public','private','protected',
@@ -112,20 +74,42 @@
         'new','delete','try','catch','throw','nullptr','true','false','static','inline',
         'sizeof','typedef','enum','explicit','friend','operator','typeid','static_cast'
       ];
-      const kwRegex = new RegExp(`\\b(${kwList.join('|')})\\b`, 'g');
+      const kwRegex = new RegExp('\\b(' + kwList.join('|') + ')\\b', 'g');
       code = code.replace(kwRegex, m => pushToken('kw', m));
 
-      // Identifiers
-      const fnList = ['std','cout','cin','endl','string','vector','map','set','pair','main','printf','scanf','numeric_limits'];
-      const fnRegex = new RegExp(`\\b(${fnList.join('|')})\\b`, 'g');
+      const fnList = ['std','cout','cin','endl','cerr','clog','string','vector','map','set','pair','main','printf','scanf','getline','numeric_limits'];
+      const fnRegex = new RegExp('\\b(' + fnList.join('|') + ')\\b', 'g');
       code = code.replace(fnRegex, m => pushToken('fn', m));
 
-      // Numbers
       code = code.replace(/\b(\d+(?:\.\d+)?(?:f|u|l|ll)?)\b/gi, m => pushToken('nu', m));
-
-      // Restore Tokens
       code = code.replace(/___CPP_TOK_(\d+)___/g, (_, id) => tokens[id]);
       return code;
+    }
+
+    function copyCode(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (!codeEl) return;
+      const rawText = codeEl.textContent;
+      navigator.clipboard.writeText(rawText).then(() => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '✅ Copied!';
+        setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (!codeEl) return;
+      const rawText = codeEl.textContent;
+      try {
+        localStorage.setItem('code_cpp17', rawText);
+        localStorage.setItem('code_cpp', rawText);
+      } catch (e) {
+        console.warn('LocalStorage unavailable:', e);
+      }
+      window.open('/online-cpp-compiler.html', '_blank');
     }
 
     (function() {
@@ -138,60 +122,8 @@
       }
 
       window.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.code-block').forEach(block => {
-          const header = block.querySelector('.code-block-header');
-          const codeEl = block.querySelector('pre code');
-          if (!header || !codeEl) return;
-
-          const rawCode = codeEl.textContent;
-          codeEl.innerHTML = highlightCppCode(rawCode);
-
-          let actionsContainer = header.querySelector('.code-actions');
-          if (!actionsContainer) {
-            actionsContainer = document.createElement('div');
-            actionsContainer.className = 'code-actions';
-            actionsContainer.style.cssText = 'display:flex; gap:8px; align-items:center; margin-left:auto;';
-            const tryBtn = header.querySelector('.try-btn');
-            if (tryBtn) actionsContainer.appendChild(tryBtn);
-            header.appendChild(actionsContainer);
-          }
-
-          const copyBtn = document.createElement('button');
-          copyBtn.className = 'copy-btn';
-          copyBtn.innerHTML = '📋 Copy';
-          copyBtn.style.cssText = 'background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "Inter", sans-serif; white-space: nowrap;';
-          copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(rawCode).then(() => {
-              copyBtn.innerHTML = '✅ Copied!';
-              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
-            });
-          });
-          actionsContainer.insertBefore(copyBtn, actionsContainer.firstChild);
-
-          const tryBtn = actionsContainer.querySelector('.try-btn');
-          if (tryBtn) {
-            tryBtn.addEventListener('click', (e) => {
-              e.preventDefault();
-              localStorage.setItem('code_cpp17', rawCode);
-              window.location.href = '/online-cpp-compiler.html';
-            });
-          }
-        });
-
-        document.querySelectorAll('.try-box').forEach(tryBox => {
-          const codeEl = tryBox.querySelector('pre code');
-          const runBtn = tryBox.querySelector('.run-btn');
-          if (codeEl) {
-            const rawCode = codeEl.textContent;
-            codeEl.innerHTML = highlightCppCode(rawCode);
-            if (runBtn) {
-              runBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.setItem('code_cpp17', rawCode);
-                window.location.href = '/online-cpp-compiler.html';
-              });
-            }
-          }
+        document.querySelectorAll('.code-block pre code').forEach(codeEl => {
+          codeEl.innerHTML = highlightCppCode(codeEl.textContent);
         });
       });
     })();
@@ -199,21 +131,8 @@
 </head>
 <body class="lang-cpp light-theme">
 
-<!-- TOP NAVIGATION FALLBACK -->
-<nav class="topnav">
-  <a href="/" class="brand">🖥️ Our Compiler</a>
-  <a href="/blog-python.html">Python</a>
-  <a href="/blog-java.html">Java</a>
-  <a href="/blog-javascript.html">JavaScript</a>
-  <a href="/blog-c.html">C</a>
-  <a href="/blog-cpp.html" class="active">C++</a>
-  <a href="/?lang=csharp">C#</a>
-  <a href="/blog-go.html">Go</a>
-  <a href="/blog-ruby.html">Ruby</a>
-  <a href="/blog-rust.html">Rust</a>
-  <a href="/blog-php.html">PHP</a>
-  <a href="/online-html-editor.html">HTML/CSS/JS</a>
-</nav>
+<!-- SITE NAVIGATION BAR PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
 
 <div class="layout">
   <!-- LEFT SIDEBAR ACCORDION -->
@@ -222,7 +141,7 @@
     <a href="/blog-cpp.html" class="sidebar-home-link">⚡ C++ Course HOME (ఇండెక్స్)</a>
 
     <div class="sidebar-accordion">
-      <!-- PHASE 1: BASICS -->
+      <!-- Phase 01 -->
       <button class="accordion-header active" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">⚡</span>
@@ -243,7 +162,7 @@
         <a href="/blog-cpp/04-cpp-operators-and-expressions.html">4. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్</a>
       </div>
 
-      <!-- PHASE 2: CONTROL FLOW -->
+      <!-- Phase 02 -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🔀</span>
@@ -264,7 +183,7 @@
         <a href="/blog-cpp/08-cpp-break-continue.html">8. break, continue & లూప్ కంట్రోల్</a>
       </div>
 
-      <!-- PHASE 3: FUNCTIONS & MEMORY -->
+      <!-- Phase 03 -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🧠</span>
@@ -285,7 +204,7 @@
         <a href="/blog-cpp/12-cpp-dynamic-memory-smart-pointers.html">12. డైనమిక్ మెమరీ & Smart Pointers</a>
       </div>
 
-      <!-- PHASE 4: OOPS -->
+      <!-- Phase 04 -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🏗️</span>
@@ -307,7 +226,7 @@
         <a href="/blog-cpp/17-cpp-operator-overloading.html">17. ఆపరేటర్ ఓవర్‌లోడింగ్ & Friends</a>
       </div>
 
-      <!-- PHASE 5: ADVANCED STL -->
+      <!-- Phase 05 -->
       <button class="accordion-header" onclick="toggleAccordion(this)">
         <div class="accordion-header-main">
           <span class="phase-icon-box">🚀</span>
@@ -326,11 +245,12 @@
         <a href="/blog-cpp/19-cpp-stl-containers-and-algorithms.html">19. STL కంటైనర్లు & అల్గారిథమ్స్</a>
         <a href="/blog-cpp/20-cpp-exception-file-handling-project.html">20. Exceptions, Files & Mini Project</a>
       </div>
+
     </div>
 
     <div class="sidebar-heading" style="margin-top:20px;">ఇంటరాక్టివ్ ఎడిటర్</div>
     <a href="/online-cpp-compiler.html" style="color:#10b981; font-weight:700; text-decoration:none; padding:8px 12px; display:block;">▶ Try C++ Online Compiler</a>
-    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📚 All Tutorials Index</a>
+    <a href="/blog.html" style="color:var(--text2); text-decoration:none; padding:8px 12px; display:block;">📁 All Tutorials Index</a>
   </aside>
 
   <!-- MAIN LESSON CONTENT -->
@@ -339,221 +259,548 @@
       <a href="/">Home</a><span class="sep">›</span>
       <a href="/blog.html">Tutorials</a><span class="sep">›</span>
       <a href="/blog-cpp.html">C++ Masterclass</a><span class="sep">›</span>
-      <span class="current">Chapter 2: Variables, Data Types & auto</span>
+      <span class="current">Chapter 02: వేరియబుల్స్, డేటా టైప్స్ & auto</span>
     </div>
 
-    <h1 class="page-title">వేరియబుల్స్, డేటా టైప్స్, కాన్‌స్టాంట్స్ & auto (Variables & Types)</h1>
+    <h1 class="page-title">C++ వేరియబుల్స్, డేటా టైప్స్, auto & constexpr మాస్టర్‌క్లాస్</h1>
 
     <div class="page-meta">
       <span class="badge">⚡ Modern C++20 / C++17</span>
-      <span class="badge">🟢 Chapter 2 of 20</span>
-      <span class="badge">📂 Phase 1: C++ Basics & Fundamentals</span>
-      <span class="badge">📅 2026 Edition</span>
+      <span class="badge">🟢 Chapter 02 of 20</span>
+      <span class="badge">📂 Phase 01: బేసిక్స్ & ఫండమెంటల్స్</span>
+      <span class="badge">📅 2026 Academic Edition</span>
     </div>
 
     <!-- Covered Topics Bar -->
     <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
       <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
-      <span>What is a Variable? · RAM Memory Architecture · Primitive Data Types (Sizes & Ranges) · Signed vs Unsigned Overflow Trap · Floating Point Precision · auto Type Deduction · const vs constexpr · Variable Shadowing</span>
+      <span>RAM Memory Layout · Primitive Data Types (int, float, double, char, bool) · sizeof & numeric_limits · Uniform Initialization ({}) · auto Type Inference · const vs constexpr · Scope & Lifetime · static_cast · Integer Overflow · Real-World Payroll Project</span>
     </div>
 
     <!-- Intro Overview Box -->
     <div class="intro-box">
-      ప్రోగ్రామింగ్ అంటేనే డేటాను ప్రాసెస్ చేయడం. కంప్యూటర్ మెమరీ (RAM) లో డేటాను ఎలా భద్రపరచాలి, ఎన్ని బైట్ల స్థలం అవసరం, మరియు C++ లో టైప్ సేఫ్టీ ద్వారా బగ్స్ రాకుండా ఎలా అరికట్టవచ్చో ఈ అధ్యాయంలో ప్రాక్టికల్‌గా నేర్చుకుందాం.
+      <p>కంప్యూటర్ ప్రోగ్రామింగ్‌లో ప్రతి అప్లికేషన్ యొక్క గుండెకాయ <strong>డేటా (Data)</strong>. మీ ఫోన్‌లో గేమింగ్ స్కోర్ అయినా, బ్యాంక్ బ్యాలెన్స్ అయినా, లేదా రాకెట్ స్పీడ్ అయినా — అన్నీ కంప్యూటర్ RAM మెమరీలో చిన్న చిన్న బైట్స్ రూపంలో భద్రపరచబడతాయి. C++ భాష ప్రత్యేకత ఏమిటంటే, ఇది హార్డ్‌వేర్ మెమరీపై మీకు 100% ప్రత్యక్ష నియంత్రణను (Direct Hardware Control) ఇస్తుంది.</p>
+      <p style="margin-bottom:0;">ఈ రెండవ అధ్యాయంలో, కంప్యూటర్ సిలికాన్ మెమరీ సెల్స్ ఎలా పనిచేస్తాయి, C++ ప్రిమిటివ్ డేటా టైప్స్ యొక్క బైట్ సైజులు, C++11 లో వచ్చిన అద్భుతమైన <code>auto</code> టైప్ ఇన్ఫరెన్స్, మరియు కంపైల్-టైమ్ పెర్ఫార్మెన్స్ ఇచ్చే <code>constexpr</code> ల గురించి లోతుగా నేర్చుకుందాం!</p>
     </div>
 
     <!-- SECTION 1 -->
-    <div class="section-title"><span class="num">1</span>వేరియబుల్ అంటే ఏమిటి? (RAM మెమరీలో ఒక పేరున్న బాక్స్)</div>
-    <div class="section-body">
+    <section>
+      <h2 class="section-title"><span class="num">1</span> వేరియబుల్ అంటే ఏమిటి? కంప్యూటర్ RAM మెమరీలో అసలు ఏం జరుగుతుంది?</h2>
       <p>
-        ఒక <strong>Variable (వేరియబుల్)</strong> అంటే కంప్యూటర్ RAM మెమరీలోని ఒక నిర్దిష్ట అడ్రస్‌కు మనం పెట్టుకునే స్నేహపూర్వక పేరు (Named Memory Location).
+        ఒక వేరియబుల్ (Variable) అంటే సరళంగా చెప్పాలంటే <strong>"విలువను భద్రపరిచే ఒక మెమరీ పెట్టె (Named Memory Container)"</strong>. కంప్యూటర్ యొక్క ప్రాథమిక మెమరీ అయిన <strong>RAM (Random Access Memory)</strong> అనేది బిలియన్ల కొద్దీ 1-బైట్ (8-bits) మెమరీ గదుల సమాహారం. ప్రతి గదికి ఒక ప్రత్యేకమైన హెక్సాడెసిమల్ చిరునామా (Hexadecimal Memory Address, ఉదాహరణకు <code>0x7ffee4b2a8</code>) ఉంటుంది.
+      </p>
+      <p>
+        మనం ప్రోగ్రామ్‌లో అలాంటి సంక్లిష్టమైన మెమరీ అడ్రస్‌లను గుర్తుపెట్టుకోవడం అసాధ్యం. అందుకే మనం ఒక మెమరీ లొకేషన్‌కు ఇచ్చే మానవ-అనుకూలమైన పేరునే <strong>వేరియబుల్</strong> అంటాము.
       </p>
 
-      <!-- Sleek Modern Visual RAM Architecture Cards -->
-      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px 20px; margin:20px 0;">
-        <div style="font-size:12px; font-weight:800; color:#10b981; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">
-          🧠 హార్డ్‌వేర్ RAM మెమరీ లేఅవుట్ (Memory Slot Visualization):
-        </div>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
-          <div style="background:var(--bg3); border:1px solid rgba(16,185,129,0.3); border-radius:8px; padding:12px; border-top:3px solid #10b981;">
-            <div style="font-size:11px; color:#10b981; font-family:var(--font-mono);">Address: 0x7ffd01</div>
-            <div style="font-weight:700; font-size:14px; color:var(--text); margin:4px 0;">int userAge = 25;</div>
-            <div style="font-size:12px; color:var(--text2);">Size: 4 Bytes (32 bits) | Binary Stored</div>
-          </div>
-
-          <div style="background:var(--bg3); border:1px solid rgba(59,130,246,0.3); border-radius:8px; padding:12px; border-top:3px solid #3b82f6;">
-            <div style="font-size:11px; color:#3b82f6; font-family:var(--font-mono);">Address: 0x7ffd05</div>
-            <div style="font-weight:700; font-size:14px; color:var(--text); margin:4px 0;">double balance = 99.45;</div>
-            <div style="font-size:12px; color:var(--text2);">Size: 8 Bytes (64 bits) | IEEE 754 Stored</div>
-          </div>
-
-          <div style="background:var(--bg3); border:1px solid rgba(245,158,11,0.3); border-radius:8px; padding:12px; border-top:3px solid #f59e0b;">
-            <div style="font-size:11px; color:#f59e0b; font-family:var(--font-mono);">Address: 0x7ffd0d</div>
-            <div style="font-weight:700; font-size:14px; color:var(--text); margin:4px 0;">char grade = 'A';</div>
-            <div style="font-size:12px; color:var(--text2);">Size: 1 Byte (8 bits) | ASCII: 65 Stored</div>
-          </div>
-        </div>
+      <div class="card" style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px 20px; margin:20px 0;">
+        <h4 style="color:#10b981; margin:0 0 8px 0; font-size:15px;">🧠 మెమరీ అలొకేషన్ ప్రాసెస్ (When you write: int age = 21;)</h4>
+        <ol style="margin:0 0 0 18px; line-height:1.8; font-size:13.5px; color:var(--text);">
+          <li><strong>కంపైలర్ చెక్:</strong> కంపైలర్ <code>int</code> ని చూసి, దీనికి RAM లో వరుసగా 4 బైట్లు (32-బిట్లు) అవసరమని నిర్ణయిస్తుంది.</li>
+          <li><strong>అడ్రస్ కేటాయింపు:</strong> RAM లో ఖాళీగా ఉన్న 4 బైట్ల బ్లాక్‌ను రిజర్వ్ చేస్తుంది (ఉదా: <code>0x1000</code> నుండి <code>0x1003</code> వరకు).</li>
+          <li><strong>బైనరీ కన్వర్షన్:</strong> <code>21</code> అనే సంఖ్యను బైనరీగా (<code>00000000 00000000 00000000 00010101</code>) మార్చి ఆ మెమరీ సెల్స్‌లో నింపుతుంది.</li>
+          <li><strong>సింబల్ టేబుల్:</strong> భవిష్యత్తులో మీరు ఎప్పుడు <code>age</code> అని రాసినా ఆ 4 బైట్ల డేటాను చదవడానికి వీలుగా తన అంతర్గత సింబల్ టేబుల్‌లో నమోదు చేసుకుంటుంది.</li>
+        </ol>
       </div>
-    </div>
+    </section>
 
     <!-- SECTION 2 -->
-    <div class="section-title"><span class="num">2</span>C++ ఫండమెంటల్ డేటా టైప్స్ (Data Types Matrix)</div>
-    <div class="section-body">
+    <section>
+      <h2 class="section-title"><span class="num">2</span> C++ ఫండమెంటల్ డేటా టైప్స్ వర్గీకరణ (Core Type System)</h2>
       <p>
-        C++ లో ప్రతి వేరియబుల్‌కు తప్పనిసరిగా ఒక డేటా టైప్ ఉండాలి (Statically Typed). కంపైలర్ ఆ టైప్‌ను బట్టి RAM లో ఎన్ని బైట్లు కేటాయించాలో నిర్ణయిస్తుంది:
+        C++ అనేది <strong>Statically Typed</strong> లాంగ్వేజ్. అంటే ప్రతి వేరియబుల్ యొక్క డేటా టైప్ కంపైలేషన్ సమయంలోనే స్పష్టంగా తెలిసి ఉండాలి. ఒక వేరియబుల్‌కు ఒక టైప్ ఇచ్చిన తర్వాత దానిలోకి వేరే టైప్ డేటాను బలవంతంగా పెట్టలేము. C++ డేటా టైప్స్ ప్రధానంగా మూడు వర్గాలుగా విభజించబడ్డాయి:
       </p>
 
-      <div style="overflow-x:auto; margin:18px 0;">
-        <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#10b981; margin:0 0 8px 0; font-size:15px;">1. Primitive / Fundamental</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            భాషతో పాటే అంతర్నిర్మితంగా వచ్చే ప్రాథమిక టైప్స్: పూర్ణాంకాలు (<code>int</code>, <code>short</code>, <code>long</code>), ఫ్లోట్స్ (<code>float</code>, <code>double</code>), అక్షరాలు (<code>char</code>), మరియు బూలియన్లు (<code>bool</code>).
+          </p>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#3b82f6; margin:0 0 8px 0; font-size:15px;">2. Derived Data Types</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            ప్రాథమిక టైపుల ఆధారంగా నిర్మించబడినవి: అర్రేలు (<code>int arr[]</code>), పాయింటర్లు (<code>int* ptr</code>), రిఫరెన్సులు (<code>int& ref</code>), మరియు ఫంక్షన్లు.
+          </p>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <h4 style="color:#ec4899; margin:0 0 8px 0; font-size:15px;">3. User-Defined Types</h4>
+          <p style="font-size:13px; color:var(--text2); margin:0; line-height:1.6;">
+            డెవలపర్లు తమ ప్రాజెక్ట్ అవసరాల కోసం సృష్టించుకునే కస్టమ్ టైప్స్: క్లాసెస్ (<code>class</code>), స్ట్రక్చర్స్ (<code>struct</code>), యూనియన్లు (<code>union</code>), మరియు ఎన్యూమరేషన్లు (<code>enum class</code>).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> పూర్ణాంకాలు (Integers): short, int, long, long long & Signed vs Unsigned</h2>
+      <p>
+        పూర్ణాంకాలు అంటే దశాంశాలు (Decimals) లేని సంఖ్యలు. వివిధ సైజుల సంఖ్యలను భద్రపరచడానికి C++ నాలుగు ప్రధాన పూర్ణాంక రకాలను అందిస్తుంది:
+      </p>
+
+      <div style="overflow-x:auto; margin:20px 0;">
+        <table class="tbl" style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
           <thead>
             <tr style="background:var(--bg3); border-bottom:2px solid #10b981;">
-              <th style="padding:10px 12px; color:#10b981;">డేటా టైప్ (Type)</th>
-              <th style="padding:10px 12px; color:var(--text);">మెమరీ పరిమాణం (Size)</th>
-              <th style="padding:10px 12px; color:var(--text);">విలువల పరిధి (Range)</th>
-              <th style="padding:10px 12px; color:var(--text2);">సాధారణ ఉపయోగం</th>
+              <th style="padding:10px 12px; color:#10b981;">డేటా టైప్</th>
+              <th style="padding:10px 12px; color:var(--text);">పరిమాణం (RAM)</th>
+              <th style="padding:10px 12px; color:var(--text);">Signed పరిధి (Range)</th>
+              <th style="padding:10px 12px; color:#10b981;">Unsigned పరిధి (Range)</th>
             </tr>
           </thead>
           <tbody>
             <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:9px 12px; font-weight:700; color:#10b981;">bool</td>
-              <td style="padding:9px 12px;">1 Byte</td>
-              <td style="padding:9px 12px;">true (1) లేదా false (0)</td>
-              <td style="padding:9px 12px; color:var(--text2);">నిజం / అబద్ధం ఫ్లాగ్స్</td>
+              <td style="padding:10px 12px; font-weight:700;"><code>short</code> (short int)</td>
+              <td style="padding:10px 12px;">2 Bytes (16-bits)</td>
+              <td style="padding:10px 12px; color:var(--text2);">-32,768 నుండి +32,767</td>
+              <td style="padding:10px 12px; color:var(--text);">0 నుండి 65,535</td>
             </tr>
             <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:9px 12px; font-weight:700; color:#10b981;">char</td>
-              <td style="padding:9px 12px;">1 Byte</td>
-              <td style="padding:9px 12px;">-128 to 127 (లేదా 0 to 255)</td>
-              <td style="padding:9px 12px; color:var(--text2);">సింగిల్ అక్షరం ('A', 'z')</td>
+              <td style="padding:10px 12px; font-weight:700;"><code>int</code></td>
+              <td style="padding:10px 12px;">4 Bytes (32-bits)</td>
+              <td style="padding:10px 12px; color:var(--text2);">-2.14 బిలియన్ల నుండి +2.14 బిలియన్లు</td>
+              <td style="padding:10px 12px; color:var(--text);">0 నుండి 4.29 బిలియన్లు</td>
             </tr>
             <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:9px 12px; font-weight:700; color:#10b981;">int</td>
-              <td style="padding:9px 12px;">4 Bytes</td>
-              <td style="padding:9px 12px;">-2,147,483,648 to 2,147,483,647</td>
-              <td style="padding:9px 12px; color:var(--text2);">పూర్ణాంకాలు (Numbers)</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:9px 12px; font-weight:700; color:#10b981;">long long</td>
-              <td style="padding:9px 12px;">8 Bytes</td>
-              <td style="padding:9px 12px;">$-9 	imes 10^{18}$ to $9 	imes 10^{18}$</td>
-              <td style="padding:9px 12px; color:var(--text2);">భారీ నంబర్లు, కరెన్సీ పైసలు</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:9px 12px; font-weight:700; color:#10b981;">float</td>
-              <td style="padding:9px 12px;">4 Bytes</td>
-              <td style="padding:9px 12px;">$approx 7$ దశాంశ ఖచ్చితత్వం</td>
-              <td style="padding:9px 12px; color:var(--text2);">గ్రాఫిక్స్ కోఆర్డినేట్స్</td>
+              <td style="padding:10px 12px; font-weight:700;"><code>long</code></td>
+              <td style="padding:10px 12px;">4 లేదా 8 Bytes (OS బట్టి)</td>
+              <td style="padding:10px 12px; color:var(--text2);">కనీసం 32-bits పరిధి</td>
+              <td style="padding:10px 12px; color:var(--text);">కనీసం 0 to 4.29 బిలియన్లు</td>
             </tr>
             <tr>
-              <td style="padding:9px 12px; font-weight:700; color:#10b981;">double</td>
-              <td style="padding:9px 12px;">8 Bytes</td>
-              <td style="padding:9px 12px;">$approx 15-17$ దశాంశ ఖచ్చితత్వం</td>
-              <td style="padding:9px 12px; color:var(--text2);">సైంటిఫిక్ గణనలు, డాలర్లు</td>
+              <td style="padding:10px 12px; font-weight:700;"><code>long long</code></td>
+              <td style="padding:10px 12px;">8 Bytes (64-bits)</td>
+              <td style="padding:10px 12px; color:var(--text2);">-9 క్వింటిలియన్ల నుండి +9 క్వింటిలియన్లు</td>
+              <td style="padding:10px 12px; color:var(--text);">0 నుండి 18.44 క్వింటిలియన్లు</td>
             </tr>
           </tbody>
         </table>
       </div>
-    </div>
 
-    <!-- SECTION 3 -->
-    <div class="section-title"><span class="num">3</span>auto కీవర్డ్: మోడరన్ టైప్ డిడక్షన్</div>
-    <div class="section-body">
+      <div class="concept-box" style="background:var(--bg2); border-left:4px solid #f59e0b; padding:16px 20px; border-radius:8px; margin:20px 0;">
+        <h4 style="color:#f59e0b; margin:0 0 8px 0; font-size:15px;">⚖️ Signed vs Unsigned అంటే ఏమిటి?</h4>
+        <p style="margin:0; font-size:13.5px; color:var(--text); line-height:1.6;">
+          డిఫాల్ట్‌గా అన్ని పూర్ణాంకాలు <strong>Signed</strong> (ధనాత్మక + మరియు రణాత్మక - సంఖ్యలను నిల్వ చేస్తాయి). మొదటి బిట్ (Most Significant Bit - MSB) గుర్తు కోసం కేటాయించబడుతుంది. మీరు ఒకవేళ <code>unsigned int</code> అని వాడితే, నెగటివ్ సంఖ్యలకు అవకాశం ఉండదు; ఆ బిట్ కూడా సంఖ్య పరిమాణానికే ఉపయోగపడటం వల్ల గరిష్ట పాజిటివ్ రేంజ్ రెట్టింపు అవుతుంది (0 to 4.29 Billion)!
+        </p>
+      </div>
+
+      <div class="card" style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:20px 0;">
+        <h4 style="color:#10b981; margin:0 0 10px 0; font-size:15px;">🛡️ మోడరన్ C++ ఫిక్స్‌డ్-విడ్త్ ఇంటిజర్స్ (&lt;cstdint&gt;)</h4>
+        <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin:0 0 10px 0;">
+          సాంప్రదాయ <code>int</code> లేదా <code>long</code> సైజులు వేర్వేరు ఆపరేటింగ్ సిస్టమ్‌లలో (Windows vs Linux 64-bit) మారే అవకాశం ఉంది. అందుకే నెట్‌వర్కింగ్, గేమింగ్ ఇంజిన్లు మరియు ఫైల్ ఫార్మాట్స్ లో ఖచ్చితమైన బిట్ సైజు ఉండే <strong>Fixed-Width Integers (C++11)</strong> వాడతారు:
+        </p>
+        <ul style="margin:0 0 0 18px; line-height:1.8; font-size:13px; color:var(--text2);">
+          <li><code>std::int8_t</code> / <code>std::uint8_t</code>: ఖచ్చితంగా 1 Byte (8-bits). బైట్ స్ట్రీమ్స్ కోసం వాడుతారు.</li>
+          <li><code>std::int16_t</code> / <code>std::uint16_t</code>: ఖచ్చితంగా 2 Bytes (16-bits). ఆడియో శాంపిల్స్ కోసం.</li>
+          <li><code>std::int32_t</code> / <code>std::uint32_t</code>: ఏ OS లో అయినా ఖచ్చితంగా 4 Bytes (32-bits). 3D గ్రాఫిక్స్ కోఆర్డినేట్స్.</li>
+          <li><code>std::int64_t</code> / <code>std::uint64_t</code>: ఏ కంప్యూటర్‌లో అయినా గ్యారెంటీగా 8 Bytes (64-bits). మైక్రోసెకండ్ టైమ్‌స్టాంప్స్ & ఫైనాన్షియల్ లెడ్జర్స్.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> ఫ్లోటింగ్ పాయింట్ సంఖ్యలు: float, double, long double & IEEE-754</h2>
       <p>
-        Modern C++11 నుండి ప్రవేశపెట్టబడిన అత్యంత శక్తివంతమైన ఫీచర్ <strong>`auto`</strong>. వేరియబుల్‌కు మనం ఇచ్చే విలువ ఆధారంగా కంపైలరే స్వయంగా సరైన టైప్‌ను పసిగడుతుంది (Type Deduction):
+        దశాంశ బిందువులు (డెసిమల్స్) ఉండే సైంటిఫిక్ గణనలు మరియు కరెన్సీ కాలిక్యులేషన్ల కోసం C++ మూడు రకాల ఫ్లోటింగ్-పాయింట్ రకాలను అందిస్తుంది:
       </p>
+      <ul>
+        <li><code>float</code> (Single Precision - 4 Bytes): సుమారు 7 డెసిమల్ అంకెల కచ్చితత్వాన్ని (Precision) ఇస్తుంది. సంఖ్య చివర <code>f</code> అక్షరం పెట్టాలి (ఉదా: <code>3.14159f</code>).</li>
+        <li><code>double</code> (Double Precision - 8 Bytes): సుమారు 15 నుండి 17 డెసిమల్ అంకెల అద్భుతమైన కచ్చితత్వాన్ని ఇస్తుంది. ఆధునిక CPU లలో ఇది డిఫాల్ట్ మరియు అత్యంత వేగవంతమైన ఛాయిస్!</li>
+        <li><code>long double</code> (Extended Precision - 8, 12, లేదా 16 Bytes): అంతరిక్ష శాస్త్రం మరియు క్వాంటం ఫిజిక్స్ పరిశోధనల్లో అత్యున్నత కచ్చితత్వం కోసం వాడతారు.</li>
+      </ul>
 
-      <div style="margin-top: 16px; margin-bottom: 12px;">
-        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Type Deduction with auto</div>
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: Floating Point Precision Demo</div>
         <div class="code-block">
           <div class="code-block-header">
             <span class="lang-tag">C++17</span>
-            <a class="try-btn" href="/online-cpp-compiler.html">▶ Run in Compiler</a>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
           </div>
           <pre><code>#include &lt;iostream&gt;
+#include &lt;iomanip&gt; // std::setprecision కోసం
 
 int main() {
-    auto age = 21;          // Compiler deduces: int
-    auto price = 99.99;     // Compiler deduces: double
-    auto grade = 'A';       // Compiler deduces: char
-    auto isPassed = true;   // Compiler deduces: bool
+    float fVal = 1.0f / 3.0f;
+    double dVal = 1.0 / 3.0;
 
-    std::cout &lt;&lt; "Age size in RAM: " &lt;&lt; sizeof(age) &lt;&lt; " bytes\n"
-              &lt;&lt; "Price size in RAM: " &lt;&lt; sizeof(price) &lt;&lt; " bytes\n";
+    std::cout &lt;&lt; std::setprecision(18); // 18 స్థానాల వరకు ప్రింట్ చేయడం
+    std::cout &lt;&lt; "Float Precision (7 digits):   " &lt;&lt; fVal &lt;&lt; '\n';
+    std::cout &lt;&lt; "Double Precision (16 digits):  " &lt;&lt; dVal &lt;&lt; '\n';
+
     return 0;
 }</code></pre>
         </div>
       </div>
+    </section>
 
-      <div class="concept-box">
-        <h4>⚡ Performance Fact about 'auto'</h4>
-        <p style="margin:0;">
-          చాలామంది <code>auto</code> అంటే Python లాగా రన్‌టైమ్‌లో స్లో అవుతుంది అనుకుంటారు. కానీ C++ లో <code>auto</code> పూర్తిగా కంపైల్ సమయంలోనే నిర్ణయించబడుతుంది. రన్‌టైమ్‌లో <strong>ZERO</strong> పెనాల్టీ! మీ ప్రోగ్రామ్ మెరుపు వేగంతో నడుస్తుంది.
-        </p>
-      </div>
-    </div>
-
-    <!-- SECTION 4 -->
-    <div class="section-title"><span class="num">4</span>const vs constexpr: స్థిర విలువల భద్రత</div>
-    <div class="section-body">
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> అక్షరాలు & బూలియన్లు: char, bool, ASCII & Modern char8_t</h2>
       <p>
-        ప్రోగ్రామ్‌లో కొన్ని విలువలు ఎప్పటికీ మారకూడదు (ఉదా: $pi = 3.14159$, కాంతి వేగం). వాటిని భద్రపరచడానికి రెండు మార్గాలు ఉన్నాయి:
+        టెక్స్ట్ మరియు బూలియన్ ట్రూత్ వాల్యూస్ కంప్యూటర్ మెమరీలో ఎలా భద్రపరచబడతాయి?
       </p>
-      <ul style="line-height:1.8; margin-left:18px;">
-        <li>
-          <strong>const:</strong> రన్‌టైమ్‌లో వేరియబుల్‌ను రీడ్-ఓన్లీగా మారుస్తుంది. ఒకసారి విలువ అసైన్ చేసిన తర్వాత మార్చడానికి ప్రయత్నిస్తే కంపైలర్ ఎర్రర్ ఇస్తుంది.
-        </li>
-        <li>
-          <strong>constexpr (C++11):</strong> ఇది కంపైల్ సమయంలోనే స్థిర విలువను లెక్కించి, ప్రోగ్రామ్ బైనరీ మెషిన్ కోడ్‌లోనే పొందుపరుస్తుంది. దీనివల్ల రన్‌టైమ్ CPU సైకిల్స్ ఆదా అవుతాయి!
-        </li>
+      <ul>
+        <li><code>char</code> (1 Byte / 8-bits): సింగిల్ క్యారెక్టర్‌ను నిల్వ చేస్తుంది. అంతర్గతంగా ఇది ఒక చిన్న ఇంటిజర్ (ASCII కోడ్). ఉదాహరణకు <code>char ch = 'A';</code> అని రాస్తే మెమరీలో <code>65</code> అనే బైనరీ విలువ సేవ్ అవుతుంది!</li>
+        <li><code>bool</code> (1 Byte): కేవలం <code>true</code> (1) లేదా <code>false</code> (0) లను మాత్రమే నిల్వ చేస్తుంది. వాస్తవానికి 1 బిట్ సరిపోయినప్పటికీ, CPU మెమరీ అడ్రసింగ్ సులభతరం కోసం 1 పూర్తి బైట్ కేటాయించబడుతుంది.</li>
+        <li><code>char8_t</code> (C++20), <code>char16_t</code>, <code>wchar_t</code>: ప్రపంచంలోని వివిధ భాషల యూనికోడ్ (UTF-8, UTF-16, తెలుగు ఫాంట్స్) ప్రాసెస్ చేయడానికి మోడరన్ C++ లో చేర్చబడ్డాయి.</li>
       </ul>
-    </div>
+    </section>
 
-    <!-- SECTION 5: PITFALLS -->
-    <div class="section-title"><span class="num">5</span>బిగినర్స్ చేసే ఘోరమైన తప్పులు (Beginner Pitfalls)</div>
-    <div class="section-body">
-      <div style="display:flex; flex-direction:column; gap:12px; margin:14px 0;">
-        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.3); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
-          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ Trap 1: Uninitialized Variables (గార్బేజ్ వ్యాల్యూ ట్రాష్)</div>
-          <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
-            C++ లో <code>int count;</code> అని రాసి వదిలేస్తే దానికి డీఫాల్ట్‌గా 0 రాదు! ఆ సమయంలో RAM లో ఉన్న పాత చెత్త విలువ (Garbage Value: ఉదాహరణకు <code>-858993460</code>) అందులోకి వస్తుంది. ఎల్లప్పుడూ <code>int count = 0;</code> లేదా <code>int count{0};</code> అని బ్రాకెట్ ఇనిషియలైజేషన్ చేయాలి!
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> sizeof ఆపరేటర్ & &lt;limits&gt; హెడర్ ఫైల్ (Memory & Ranges)</h2>
+      <p>
+        మీ కంప్యూటర్ ఆర్కిటెక్చర్‌లో ఏ డేటా టైప్ ఎంత స్థలాన్ని తీసుకుంటుందో తెలుసుకోవడానికి <code>sizeof</code> ఆపరేటర్ ఉపయోగపడుతుంది. అలాగే <code>&lt;limits&gt;</code> హెడర్ ద్వారా ఏ టైప్ గరిష్టంగా ఎంత సంఖ్యను నిల్వ చేయగలదో తెలుసుకోవచ్చు:
+      </p>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: sizeof & numeric_limits Inspection</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;limits&gt;
+
+int main() {
+    std::cout &lt;&lt; "--- C++ టైప్ మెమరీ సైజులు & పరిధులు ---\n";
+    std::cout &lt;&lt; "int సైజు: " &lt;&lt; sizeof(int) &lt;&lt; " Bytes | Min: " 
+              &lt;&lt; std::numeric_limits&lt;int&gt;::min() &lt;&lt; " | Max: " 
+              &lt;&lt; std::numeric_limits&lt;int&gt;::max() &lt;&lt; '\n';
+
+    std::cout &lt;&lt; "double సైజు: " &lt;&lt; sizeof(double) &lt;&lt; " Bytes | Max: " 
+              &lt;&lt; std::numeric_limits&lt;double&gt;::max() &lt;&lt; '\n';
+
+    std::cout &lt;&lt; "char సైజు: " &lt;&lt; sizeof(char) &lt;&lt; " Byte\n";
+    std::cout &lt;&lt; "bool సైజు: " &lt;&lt; sizeof(bool) &lt;&lt; " Byte\n";
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> వేరియబుల్ ఇనిషియలైజేషన్: C-Style vs Modern C++11 Uniform Initialization ({})</h2>
+      <p>
+        C++ లో వేరియబుల్స్‌ను ప్రారంభించడానికి (Initialize) 3 మార్గాలు ఉన్నాయి:
+      </p>
+      <ol style="line-height:1.8; font-size:14px; color:var(--text);">
+        <li><code>int a = 10;</code> (C-Style Copy Initialization)</li>
+        <li><code>int b(20);</code> (Direct Constructor Initialization)</li>
+        <li><code>int c{30};</code> (Modern C++11 Uniform / Brace Initialization) — <strong>🌟 ప్రొఫెషనల్ గోల్డ్ స్టాండర్డ్!</strong></li>
+      </ol>
+
+      <div class="card" style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:18px 20px; margin:20px 0;">
+        <h4 style="color:#10b981; margin:0 0 10px 0; font-size:15px;">🛡️ Brace Initialization ({}) ఎందుకు అత్యంత సురక్షితమైనది?</h4>
+        <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin:0;">
+          పాత పద్ధతిలో <code>int x = 7.9;</code> అని రాస్తే కంపైలర్ సైలెంట్‌గా దశాంశాన్ని కట్ చేసి <code>7</code> గా మార్చేస్తుంది (Narrowing Conversion బగ్). కానీ మీరు <code>int x{7.9};</code> అని కర్లీ బ్రేసెస్‌తో రాస్తే, కంపైలర్ వెంటనే <strong>"error: narrowing conversion of 7.9 from double to int"</strong> అని ఎర్రర్ ఇచ్చి ప్రమాదాన్ని నివారిస్తుంది!
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> auto కీవర్డ్: Modern C++ టైప్ ఇన్ఫరెన్స్ (Type Inference)</h2>
+      <p>
+        C++11 లో ప్రవేశపెట్టబడిన అత్యంత శక్తివంతమైన ఆధునిక ఫీచర్ <code>auto</code> కీవర్డ్. వేరియబుల్‌కు మీరు కేటాయించే ప్రారంభ విలువను బట్టి కంపైలర్ స్వయంగా సరైన డేటా టైప్‌ను కంపైల్ సమయంలోనే నిర్ణయిస్తుంది (Automatic Type Deduction).
+      </p>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: auto Type Deduction in Action</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;typeinfo&gt;
+
+int main() {
+    auto age = 25;           // కంపైలర్ ఆటోమేటిక్‌గా 'int' గా గుర్తిస్తుంది
+    auto price = 99.50;      // కంపైలర్ 'double' గా గుర్తిస్తుంది
+    auto currency = '₹';     // 'char'
+    auto isOnline = true;    // 'bool'
+
+    std::cout &lt;&lt; "Age: " &lt;&lt; age &lt;&lt; " (Bytes: " &lt;&lt; sizeof(age) &lt;&lt; ")\n";
+    std::cout &lt;&lt; "Price: " &lt;&lt; price &lt;&lt; " (Bytes: " &lt;&lt; sizeof(price) &lt;&lt; ")\n";
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+      <p style="font-size:13px; color:var(--text3);">
+        ముఖ్య గమనిక: <code>auto</code> వాడినప్పుడు పర్ఫార్మెన్స్ ఒక్క శాతం కూడా తగ్గదు! ఎందుకంటే టైప్ నిర్ణయించే పని కంపైలర్ చేస్తుంది, రన్‌టైమ్ కాదు.
+      </p>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> const vs constexpr vs consteval: కంపైల్-టైమ్ కాన్స్టాంట్స్</h2>
+      <p>
+        ప్రోగ్రామ్‌లో మారకూడని విలువలను స్థిరంగా ఉంచడానికి (Constants) C++ లో మూడు స్థాయిల రక్షణ ఉంది:
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:12px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #3b82f6; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#3b82f6;">1. const (రన్‌టైమ్ లేదా కంపైల్-టైమ్ రీడ్-ఓన్లీ):</strong>
+          <p style="font-size:13.5px; color:var(--text); margin:4px 0 0 0;">
+            ఒకసారి విలువ అసైన్ చేసిన తర్వాత ఇక మార్చలేము. ఇది రన్‌టైమ్‌లో యూజర్ ఇచ్చే ఇన్‌పుట్‌ను కూడా రీడ్-ఓన్లీగా లాక్ చేయగలదు.
           </p>
         </div>
 
-        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.3); border-left:4px solid #ef4444; border-radius:8px; padding:14px 18px;">
-          <div style="font-weight:700; color:#ef4444; font-size:14px;">❌ Trap 2: Unsigned Integer Wrap-around Overflow</div>
-          <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
-            <code>unsigned int x = 0; x--;</code> అని రాస్తే <code>-1</code> రాదు! అన్‌సైన్డ్ ఇంటిజర్‌కు నెగెటివ్ ఉండదు కాబట్టి అది డైరెక్ట్‌గా గరిష్ట విలువ <code>4294967295</code> కు వెళ్ళిపోయి లూప్స్‌లో అనంతమైన ఇన్ఫినిట్ లూప్‌ను సృష్టిస్తుంది.
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#10b981;">2. constexpr (కచ్చితమైన కంపైల్-టైమ్ కాన్స్టాంట్):</strong>
+          <p style="font-size:13.5px; color:var(--text); margin:4px 0 0 0;">
+            ఈ విలువ కంపైలేషన్ సమయంలోనే ఖరారు కావాలి. దీనివల్ల రన్‌టైమ్‌లో ఎటువంటి ప్రాసెసింగ్ సమయం వృధా కాదు (Zero Runtime Overhead). ఉదాహరణకు: <code>constexpr double PI = 3.1415926535;</code>
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ec4899; border-radius:8px; padding:14px 18px;">
+          <strong style="color:#ec4899;">3. consteval (Immediate Function - C++20):</strong>
+          <p style="font-size:13.5px; color:var(--text); margin:4px 0 0 0;">
+            ఫంక్షన్ కచ్చితంగా కంపైల్-టైమ్ లోనే ఎగ్జిక్యూట్ అవ్వాలని ఆదేశిస్తుంది. రన్‌టైమ్‌లో ఇది అసలు ఉండదు, ఫలితం మాత్రమే డైరెక్ట్ గా కోడ్‌లో కూర్చుంటుంది!
           </p>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- FAQ SECTION -->
-    <div class="section-title"><span class="num">6</span>తరచుగా అడిగే ప్రశ్నలు (FAQ)</div>
-    <div class="section-body">
-      <div class="faq-card" style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px;">
-        <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: float మరియు double మధ్య ఏది ఎంచుకోవాలి?</h4>
-        <p style="margin:0; font-size:13.5px; color:var(--text2); line-height:1.6;">
-          మోడరన్ CPU లలో <code>double</code> వాడటమే ప్రామాణికం. ఎందుకంటే ఆధునిక 64-బిట్ ప్రాసెసర్లు 8-బైట్ డబుల్ లెక్కలను అంతే వేగంగా చేస్తాయి మరియు 15 దశాంశాల ఖచ్చితత్వాన్ని ఇస్తాయి.
-        </p>
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> వేరియబుల్ స్కోప్ & లైఫ్‌టైమ్ (Scope, Lifetime & Shadowing)</h2>
+      <p>
+        ఒక వేరియబుల్ ప్రోగ్రామ్‌లో ఎక్కడెక్కడ అందుబాటులో ఉంటుంది (Scope) మరియు ఎంతసేపు RAM మెమరీలో జీవించి ఉంటుంది (Lifetime)?
+      </p>
+      <ul>
+        <li><strong>Local Scope (బ్లాక్ స్కోప్):</strong> ఒక ఫంక్షన్ లేదా <code>{ ... }</code> కర్లీ బ్రాకెట్ల లోపల డిక్లేర్ చేసిన వేరియబుల్స్ ఆ బ్లాక్ ముగియగానే మెమరీ నుండి ఆటోమేటిక్‌గా నశించిపోతాయి (Stack Memory Cleanup).</li>
+        <li><strong>Global Scope:</strong> అన్ని ఫంక్షన్ల కంటే పైన బయట డిక్లేర్ చేసిన వేరియబుల్స్ ప్రోగ్రామ్ ముగిసేవరకు జీవించి ఉంటాయి.</li>
+        <li><strong>Variable Shadowing:</strong> గ్లోబల్ వేరియబుల్ పేరుతోనే లోకల్ వేరియబుల్ సృష్టిస్తే, లోకల్ వేరియబుల్ గ్లోబల్ దాన్ని దాచిపెడుతుంది. గ్లోబల్ వేరియబుల్‌ను తిరిగి యాక్సెస్ చేయడానికి <strong>Scope Resolution Operator (<code>::</code>)</strong> వాడాలి.</li>
+      </ul>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 4: Scope Resolution Operator (::) Demo</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+int globalTaxRate = 18; // గ్లోబల్ వేరియబుల్
+
+int main() {
+    int globalTaxRate = 5; // లోకల్ వేరియబుల్ (Shadows the global one)
+
+    std::cout &lt;&lt; "లోకల్ టాక్స్ రేట్: " &lt;&lt; globalTaxRate &lt;&lt; "%\n";
+    std::cout &lt;&lt; "గ్లోబల్ టాక్స్ రేట్ (:: తో): " &lt;&lt; ::globalTaxRate &lt;&lt; "%\n";
+
+    return 0;
+}</code></pre>
+        </div>
       </div>
+    </section>
 
-      <div class="faq-card" style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px;">
-        <h4 style="color:#10b981; margin:0 0 6px 0; font-size:14.5px;">Q: sizeof ఆపరేటర్ రన్‌టైమ్‌లో పనిచేస్తుందా?</h4>
-        <p style="margin:0; font-size:13.5px; color:var(--text2); line-height:1.6;">
-          లేదు! <code>sizeof</code> అనేది ఒక కంపైల్-టైమ్ ఆపరేటర్. కంపైలర్ కోడ్‌ను ప్రాసెస్ చేసేటప్పుడే ఆ టైప్ ఎన్ని బైట్లు తీసుకుంటుందో లెక్కించి స్థిర విలువను బైనరీలో రాసిపెడుతుంది.
-        </p>
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> టైప్ కాస్టింగ్ మెకానిక్స్: Implicit Coercion vs Modern static_cast</h2>
+      <p>
+        ఒక డేటా టైప్‌ను మరొక డేటా టైప్‌గా మార్చడాన్ని <strong>Type Casting</strong> అంటారు. C++ లో పాత C-Style కాస్టింగ్ (<code>(int)3.14</code>) వాడటం నిషేధం. ఎందుకంటే అది టైప్ సేఫ్టీని విస్మరించి ప్రమాదకరమైన మెమరీ బగ్స్ తెస్తుంది. ఆధునిక C++ లో స్పష్టమైన <strong><code>static_cast&lt;T&gt;()</code></strong> వాడాలి!
+      </p>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 5: Integer Division Bug & static_cast Solution</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    int totalMarks = 475;
+    int maxMarks = 500;
+
+    // ❌ ప్రమాదం: రెండు పూర్ణాంకాల భాగహారం ఎల్లప్పుడూ పూర్ణాంకమే (0 అవుతుంది!)
+    double wrongPercentage = totalMarks / maxMarks * 100;
+
+    // ✅ సరైన ఆధునిక C++ పరిష్కారం: static_cast తో కన్వర్ట్ చేయడం
+    double correctPercentage = static_cast&lt;double&gt;(totalMarks) / maxMarks * 100.0;
+
+    std::cout &lt;&lt; "తప్పుడు పద్ధతి పర్సంటేజ్ : " &lt;&lt; wrongPercentage &lt;&lt; "%\n";
+    std::cout &lt;&lt; "static_cast తో కచ్చితమైన ఫలితం: " &lt;&lt; correctPercentage &lt;&lt; "%\n";
+
+    return 0;
+}</code></pre>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- PREV / NEXT NAVIGATION -->
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> సాధారణ బిగినర్ తప్పులు, అన్‌ఇనిషియలైజ్డ్ గార్బేజ్ & Overflow Bugs</h2>
+      <div style="display:flex; flex-direction:column; gap:14px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.3); border-left:4px solid #ef4444; border-radius:8px; padding:16px 20px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14.5px;">❌ Trap 1: వేరియబుల్‌ను ఇనిషియలైజ్ చేయకుండా వాడటం (Garbage Value Trap)</div>
+          <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+            Java లేదా C# లాగా C++ వేరియబుల్స్‌ను ఆటోమేటిక్‌గా జీరో (0) చేయదు! మీరు <code>int count;</code> అని రాసి నేరుగా ప్రింట్ చేస్తే, ఆ RAM మెమరీ స్లాట్‌లో గతంలో ఏ యాప్ వాడి వదిలేసిన చెత్త (Garbage Value, ఉదా: <code>-858993460</code>) ఉంటుందో అదే వస్తుంది. ఎల్లప్పుడూ <code>int count{0};</code> వాడండి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.3); border-left:4px solid #ef4444; border-radius:8px; padding:16px 20px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14.5px;">❌ Trap 2: పూర్ణాంక ఓవర్‌ఫ్లో (Integer Overflow)</div>
+          <p style="font-size:13.5px; color:var(--text); margin:6px 0 0 0; line-height:1.6;">
+            ఒక 32-బిట్ <code>int</code> గరిష్ట పరిధి సుమారు 2.14 బిలియన్లు. మీరు దానికి 1 కలిపితే అది పాజిటివ్ కాస్తా సడన్‌గా నెగటివ్‌గా (<code>-2147483648</code>) మారిపోతుంది! పెద్ద మొత్తాల కోసం ఎల్లప్పుడూ <code>long long</code> వాడాలి.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాక్టీస్ ప్రాజెక్ట్: "Enterprise Employee Payroll Engine"</h2>
+      <p>
+        ఈ అధ్యాయంలో మనం నేర్చుకున్న <code>auto</code>, <code>constexpr</code>, <code>sizeof</code>, <code>static_cast</code> మరియు బ్రేస్ ఇనిషియలైజేషన్ అన్నింటినీ ఉపయోగించి ఒక నిజమైన <strong>"Enterprise Employee Payroll & Tax Architecture Engine"</strong> ను నిర్మిద్దాం:
+      </p>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Complete Masterclass Practice Project: Payroll Engine</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17 / C++20 Complete Project</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;iomanip&gt;
+
+int main() {
+    // 1. కంపైల్-టైమ్ కాన్స్టాంట్స్ (constexpr)
+    constexpr double PF_PERCENT{12.0};       // ప్రావిడెంట్ ఫండ్ 12%
+    constexpr double PROFESSIONAL_TAX{200.0}; // ప్రొఫెషనల్ టాక్స్ ₹200
+    constexpr double HEALTH_INSURANCE{1500.0};
+
+    // 2. ఎంప్లాయ్ డేటా (Modern Brace Initialization & auto)
+    const std::string empName{"శ్రీకాంత్ వర్మ (Srikanth Varma)"};
+    const long long empId{9804218765LL}; // 64-bit integer
+    double basicSalary{85000.00};
+    double performanceBonus{12500.50};
+    char performanceGrade{'A'};
+    bool isEligibleForIncrement{true};
+
+    // 3. శాలరీ కాలిక్యులేషన్స్
+    auto grossSalary = basicSalary + performanceBonus;
+    auto pfDeduction = grossSalary * (PF_PERCENT / 100.0);
+    auto totalDeductions = pfDeduction + PROFESSIONAL_TAX + HEALTH_INSURANCE;
+    auto netInHandSalary = grossSalary - totalDeductions;
+
+    // 4. అందమైన పేస్లిప్ జనరేషన్
+    std::cout &lt;&lt; std::fixed &lt;&lt; std::setprecision(2);
+    std::cout &lt;&lt; "=================================================\n";
+    std::cout &lt;&lt; "       🏢 OUR COMPILER ENTERPRISE PAYROLL        \n";
+    std::cout &lt;&lt; "=================================================\n";
+    std::cout &lt;&lt; "ఉద్యోగి పేరు       : " &lt;&lt; empName &lt;&lt; '\n';
+    std::cout &lt;&lt; "ఎంప్లాయ్ ఐడీ       : " &lt;&lt; empId &lt;&lt; " (64-bit Size: " &lt;&lt; sizeof(empId) &lt;&lt; "B)\n";
+    std::cout &lt;&lt; "పెర్ఫార్మెన్స్ గ్రేడ్: " &lt;&lt; performanceGrade &lt;&lt; '\n';
+    std::cout &lt;&lt; "ఇంక్రిమెంట్ అర్హత  : " &lt;&lt; (isEligibleForIncrement ? "అవును (Eligible)" : "కాదు") &lt;&lt; '\n';
+    std::cout &lt;&lt; "-------------------------------------------------\n";
+    std::cout &lt;&lt; "బేసిక్ శాలరీ       : ₹ " &lt;&lt; basicSalary &lt;&lt; '\n';
+    std::cout &lt;&lt; "పెర్ఫార్మెన్స్ బోనస్: ₹ " &lt;&lt; performanceBonus &lt;&lt; '\n';
+    std::cout &lt;&lt; "గ్రాస్ జీతం (Gross) : ₹ " &lt;&lt; grossSalary &lt;&lt; '\n';
+    std::cout &lt;&lt; "-------------------------------------------------\n";
+    std::cout &lt;&lt; "PF కటింగ్ (12%)    : -₹ " &lt;&lt; pfDeduction &lt;&lt; '\n';
+    std::cout &lt;&lt; "హెల్త్ ఇన్సూరెన్స్ : -₹ " &lt;&lt; HEALTH_INSURANCE &lt;&lt; '\n';
+    std::cout &lt;&lt; "ప్రొఫెషనల్ టాక్స్  : -₹ " &lt;&lt; PROFESSIONAL_TAX &lt;&lt; '\n';
+    std::cout &lt;&lt; "మొత్తం తగ్గింపులు  : -₹ " &lt;&lt; totalDeductions &lt;&lt; '\n';
+    std::cout &lt;&lt; "=================================================\n";
+    std::cout &lt;&lt; "నెట్ టేక్-హోమ్ శాలరీ: ₹ " &lt;&lt; netInHandSalary &lt;&lt; " /-\n";
+    std::cout &lt;&lt; "=================================================\n";
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZ SECTION (5 DETAILS QUESTIONS) -->
+    <section style="margin-top:40px;">
+      <h2 class="section-title"><span class="num">❓</span> ఇంటర్వ్యూ & పరీక్షల క్విజ్ (Knowledge Check)</h2>
+      
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 1: C++ లో Modern Brace Initialization (int x{5};) ఎందుకు రికమండ్ చేస్తారు?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> కర్లీ బ్రేసెస్ <code>{}</code> తో ఇనిషియలైజ్ చేస్తే కంపైలర్ ప్రమాదకరమైన <strong>Narrowing Conversions</strong> (ఉదాహరణకు <code>double</code> నుండి <code>int</code> కి సమాచారం కోల్పోవడం) జరగకుండా కంపైల్-టైమ్ లోనే ఎర్రర్ ఇస్తుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 2: const మరియు constexpr మధ్య ప్రధాన వ్యత్యాసం ఏమిటి?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>const</code> అనేది కేవలం వేరియబుల్‌ను రీడ్-ఓన్లీగా మారుస్తుంది (ఇది రన్‌టైమ్‌లో కూడా లెక్కించబడవచ్చు). కానీ <code>constexpr</code> అనేది కచ్చితంగా <strong>కంపైలేషన్ సమయంలోనే</strong> గణించబడే గ్యారెంటీని ఇస్తుంది; దీనివల్ల రన్‌టైమ్ మెమరీ మరియు ప్రాసెసింగ్ కాస్ట్ జీరో అవుతుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 3: auto కీవర్డ్ వాడటం వల్ల C++ ప్రోగ్రామ్ స్పీడ్ తగ్గుతుందా?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> అస్సలు తగ్గదు! ఎందుకంటే <code>auto</code> అనేది కంపైల్-టైమ్ లో మాత్రమే కంపైలర్ చేత టైప్ డిడక్షన్ చేయబడుతుంది. రన్‌టైమ్‌లో ఇది స్పష్టంగా రాసిన సాధారణ డేటా టైప్ లాగానే నేరుగా మెషిన్ కోడ్‌గా రన్ అవుతుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 4: float కి బదులుగా double ని ఎందుకు ప్రాధాన్యతగా వాడాలి?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>float</code> కేవలం 7 దశాంశ అంకెల కచ్చితత్వాన్ని ఇస్తుంది (రౌండింగ్ ఎర్రర్స్ వచ్చే అవకాశం ఎక్కువ). <code>double</code> 15 నుండి 17 అంకెల కచ్చితత్వాన్ని ఇస్తుంది. అంతేకాకుండా ఆధునిక 64-బిట్ CPU లు <code>double</code> ని నేరుగా హార్డ్‌వేర్ రిజిస్టర్లలో మెరుపువేగంతో ప్రాసెస్ చేస్తాయి.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 5: C++ లో పాత C-Style (int)a కి బదులుగా static_cast&lt;int&gt;(a) ఎందుకు వాడాలి?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> C-Style కాస్ట్ చాలా బలవంతపు టైప్ కన్వర్షన్ చేస్తుంది (ప్రమాదకరమైన పాయింటర్ కన్వర్షన్లను కూడా ఆపదు). కానీ <code>static_cast&lt;T&gt;()</code> టైప్-సేఫ్టీ చెక్ చేస్తుంది; చట్టవిరుద్ధమైన లేదా అర్థంలేని కన్వర్షన్లు జరిగితే కంపైలర్ ఎర్రర్ ఇచ్చి ఆపుతుంది.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
       <a href="/blog-cpp/01-cpp-introduction-and-hello-world.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
-        ← Prev: 1. C++ పరిచయం
+        ← Prev: 1. C++ పరిచయం & Hello World
       </a>
       <a href="/blog-cpp/03-cpp-input-output-cin-cout.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
-        Next: 3. ఇన్‌పుట్ & అవుట్‌పుట్ →
+        Next: 3. ఇన్‌పుట్ & అవుట్‌పుట్ (cin, cout) →
       </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on GCC 13 / Clang 17 (C++20 Standard) · 2026 Academic Edition</span>
+      </div>
     </div>
 
   </main>
@@ -561,6 +808,66 @@ int main() {
 
 <!-- SITE NAVIGATION LOADER -->
 <script src="/site-nav.js" defer></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = `// =================================================
+//        🏢 OUR COMPILER ENTERPRISE PAYROLL
+// =================================================
+#include <iostream>
+#include <string>
+#include <iomanip>
+
+int main() {
+    constexpr double PF_PERCENT{12.0};
+    constexpr double PROFESSIONAL_TAX{200.0};
+    constexpr double HEALTH_INSURANCE{1500.0};
+
+    const std::string empName{"శ్రీకాంత్ వర్మ (Srikanth Varma)"};
+    const long long empId{9804218765LL};
+    double basicSalary{85000.00};
+    double performanceBonus{12500.50};
+    char performanceGrade{'A'};
+    bool isEligibleForIncrement{true};
+
+    auto grossSalary = basicSalary + performanceBonus;
+    auto pfDeduction = grossSalary * (PF_PERCENT / 100.0);
+    auto totalDeductions = pfDeduction + PROFESSIONAL_TAX + HEALTH_INSURANCE;
+    auto netInHandSalary = grossSalary - totalDeductions;
+
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << "=================================================\\n";
+    std::cout << "       🏢 OUR COMPILER ENTERPRISE PAYROLL        \\n";
+    std::cout << "=================================================\\n";
+    std::cout << "ఉద్యోగి పేరు       : " << empName << '\\n';
+    std::cout << "ఎంప్లాయ్ ఐడీ       : " << empId << " (Size: " << sizeof(empId) << "B)\\n";
+    std::cout << "పెర్ఫార్మెన్స్ గ్రేడ్: " << performanceGrade << '\\n';
+    std::cout << "ఇంక్రిమెంట్ అర్హత  : " << (isEligibleForIncrement ? "అవును (Eligible)" : "కాదు") << '\\n';
+    std::cout << "-------------------------------------------------\\n";
+    std::cout << "బేసిక్ శాలరీ       : ₹ " << basicSalary << '\\n';
+    std::cout << "పెర్ఫార్మెన్స్ బోనస్: ₹ " << performanceBonus << '\\n';
+    std::cout << "గ్రాస్ జీతం (Gross) : ₹ " << grossSalary << '\\n';
+    std::cout << "-------------------------------------------------\\n";
+    std::cout << "PF కటింగ్ (12%)    : -₹ " << pfDeduction << '\\n';
+    std::cout << "హెల్త్ ఇన్సూరెన్స్ : -₹ " << HEALTH_INSURANCE << '\\n';
+    std::cout << "ప్రొఫెషనల్ టాక్స్  : -₹ " << PROFESSIONAL_TAX << '\\n';
+    std::cout << "మొత్తం తగ్గింపులు  : -₹ " << totalDeductions << '\\n';
+    std::cout << "=================================================\\n";
+    std::cout << "నెట్ టేక్-హోమ్ శాలరీ: ₹ " << netInHandSalary << " /-\\n";
+    std::cout << "=================================================\\n";
+
+    return 0;
+}`;
+
+    try {
+      localStorage.setItem('code_cpp17', projectCode);
+      localStorage.setItem('code_cpp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-cpp-compiler.html', '_blank');
+  }
+</script>
+
 </body>
 </html>
-

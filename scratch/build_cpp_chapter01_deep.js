@@ -797,3 +797,4 @@ fs.writeFileSync(outputPath, chapter01Content, 'utf8');
 console.log('✅ Successfully generated deep high-value C++ Chapter 01!');
 console.log('Target file:', currentLesson.file);
 console.log('Target file size:', chapter01Content.length, 'characters');
+
