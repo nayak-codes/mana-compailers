@@ -1,0 +1,716 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./c_curriculum_data.js');
+
+const lesson = LESSONS.find(l => l.num === 11);
+const sidebarHtml = buildSidebar(11);
+
+const chapterContentHtml = `
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 11: వేరియబుల్ స్కోప్ &amp; స్టోరేజ్ క్లాసెస్</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">వేరియబుల్ స్కోప్, లైఫ్‌టైమ్ &amp; స్టోరేజ్ క్లాసెస్</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C (C99 / C11 / C17 Standards)</span>
+      <span class="badge">🟢 Chapter 11 of 20</span>
+      <span class="badge">📂 Phase 03: ఫంక్షన్స్, స్కోప్ &amp; రికర్షన్</span>
+      <span class="badge">📅 2026 Academic Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>వేరియబుల్ స్కోప్ &amp; విజిబిలిటీ · లైఫ్‌టైమ్ · వేరియబుల్ షాడోయింగ్ · auto డీఫాల్ట్ మెకానిక్స్ · register CPU స్పీడ్ &amp; &amp; పరిమితి · static లోకల్ పవర్ &amp; Data Segment · static గ్లోబల్ ప్రైవసీ · extern మల్టీ-ఫైల్ లింకేజ్ · 4 స్టోరేజ్ క్లాసెస్ పట్టిక · యూనిక్ ట్రాన్సాక్షన్ ఐడీ ఇంజిన్ · ఇంటరాక్టివ్ క్విజ్</span>
+    </div>
+
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
+    <div class="intro-box">
+      <p>ఒక మనిషి యొక్క గుర్తింపు మరియు అధికారాన్ని ఊహించుకోండి. మీ ఇంట్లోని బెడ్‌రూమ్‌లో మీ వ్యక్తిగత డైరీ లేదా వస్తువులు ఉంటాయి. వాటిని కేవలం ఆ గది లోపల మాత్రమే మీరు చూసుకోగలరు; బయటి వీధిలోకి వెళ్తే ఎవరికీ కనిపించవు. ఇది <strong>లోకల్ స్కోప్ (Local Scope)</strong>. అదే మీ గ్రామ పంచాయతీ లేదా కాలేజీ నోటీస్ బోర్డుపై ఉన్న సమాచారాన్ని ఆ ఊరిలోని ప్రతి పౌరుడూ చూడగలడు, దానిని ఎవరైనా మార్చవచ్చు. ఇది <strong>గ్లోబల్ స్కోప్ (Global Scope)</strong>.</p>
+      <p>మరి ఒక పెద్ద గ్రంథాలయంలోని (Library) <em>విజిటర్స్ లాగ్ బుక్ (Visitor Counter)</em> ఎలాంటిది? ప్రతిరోజూ వందలాది మంది పాఠకులు వచ్చి పుస్తకాలు చదివి ఇంటికి వెళ్లిపోతారు (ఫంక్షన్ కాల్స్ ముగిసినట్లు). పాఠకులు వచ్చి వెళ్లినా, ఆ లాగ్ బుక్‌లోని మొత్తం కౌంటర్ అలాగే స్థిరంగా పెరుగుతూ నిల్వ ఉంటుంది తప్ప పాఠకుడు వెళ్లగానే సున్నా అవ్వదు! ఇది C లోని <strong>static వేరియబుల్</strong> సూపర్ పవర్!</p>
+      <p>కంప్యూటర్ ప్రోగ్రామింగ్‌లో ఒక వేరియబుల్ RAM లో ఎక్కడ దాగి ఉంటుంది? దాని ప్రారంభ విలువ ఏమిటి? అది ఎంతసేపు బ్రతుకుతుంది? ప్రోగ్రామ్‌లోని ఏయే భాగాలు దానిని తాకగలవు? అనే నాలుగు పరమ రహస్యాలను నిర్ణయించేవే <strong>స్టోరేజ్ క్లాసెస్ (Storage Classes: auto, static, extern, register)</strong>. ఈ పదకొండవ అధ్యాయంలో, మెమరీ సెగ్మెంట్స్, మల్టీ-ఫైల్ ప్రాజెక్ట్ లింకేజ్ మరియు సురక్షితమైన <strong>యూనిక్ బ్యాంకింగ్ ట్రాన్సాక్షన్ ఐడీ జనరేటర్ ప్రాజెక్ట్‌ను</strong> లోతుగా నేర్చుకుందాం!</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="section-title"><span class="num">1</span>ఈ Chapter లో మీరు నేర్చుకునే సమగ్ర అంశాలు (Roadmap)</div>
+    <div class="section-body">
+      <p>సిస్టమ్స్ లెవల్ C ప్రోగ్రామింగ్‌లో వేరియబుల్ మెమరీ లైఫ్‌సైకిల్‌ను అర్థం చేసుకోవడం చాలా ముఖ్యం. ఈ పాఠంలో కవర్ చేయబడే ప్రధాన అంశాలు:</p>
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+        <li><strong>వేరియబుల్ యొక్క 4 మూలస్తంభాలు:</strong> Storage Location, Default Initial Value, Scope (Visibility), మరియు Lifetime (Longevity).</li>
+        <li><strong>స్కోప్ రకాలు (Scope Hierarchy):</strong> బ్లాక్ స్కోప్ <code>{ }</code>, ఫంక్షన్ స్కోప్, మరియు ఫైల్/గ్లోబల్ స్కోప్.</li>
+        <li><strong>వేరియబుల్ షాడోయింగ్ (Variable Shadowing):</strong> లోకల్ వేరియబుల్ గ్లోబల్ వేరియబుల్‌ను ఎలా దాచిపెడుతుంది?</li>
+        <li><strong>auto స్టోరేజ్ క్లాస్:</strong> స్టాక్ మెమరీపై ఆటోమేటిక్ కేటాయింపు &amp; గార్బేజ్ వాల్యూస్ (Garbage Values) ట్రాప్.</li>
+        <li><strong>register స్టోరేజ్ క్లాస్:</strong> RAM కాకుండా నేరుగా CPU రిజిస్టర్లలో స్టోర్ చేయడం, మెరుపు వేగం &amp; <code>&amp;</code> (అడ్రస్) ఎందుకు నిషేధం?</li>
+        <li><strong>static లోకల్ వేరియబుల్స్:</strong> ఫంక్షన్ ముగిసినా మెమరీ చెరిగిపోకుండా ఉంచే Data Segment ఆర్కిటెక్చర్.</li>
+        <li><strong>static గ్లోబల్ వేరియబుల్స్ &amp; ఇంటర్నల్ లింకేజ్:</strong> ఇతర C ఫైల్స్ నుండి వేరియబుల్స్‌ను ప్రైవేట్‌గా దాచిపెట్టే విధానం.</li>
+        <li><strong>extern కీవర్డ్ &amp; ఎక్స్‌టర్నల్ లింకేజ్:</strong> మల్టీ-ఫైల్ ప్రాజెక్టులలో (Multi-File Architecture) గ్లోబల్ వేరియబుల్స్ షేరింగ్.</li>
+        <li><strong>సమగ్ర తులనాత్మక పట్టిక:</strong> 4 స్టోరేజ్ క్లాసెస్ మాస్టర్ రిఫరెన్స్ టేబుల్.</li>
+        <li><strong>మెమరీ సెగ్మెంట్స్ పరిచయం:</strong> Stack, Heap, BSS, Data Segment, Code Segment.</li>
+        <li><strong>సమగ్ర రియల్ వరల్డ్ ప్రాజెక్ట్:</strong> ఆటో-ఇంక్రిమెంటింగ్ యూనిక్ ట్రాన్సాక్షన్ ఐడీ &amp; సర్వర్ సెషన్ మేనేజర్.</li>
+        <li><strong>బిగినర్స్ చేసే టాప్ 5 స్కోప్ తప్పులు:</strong> గ్లోబల్ వేరియబుల్స్ సైడ్ ఎఫెక్ట్స్, extern లో ఇనిషియలైజ్ చేసే బగ్స్.</li>
+        <li><strong>స్వీయ మూల్యాంకన క్విజ్:</strong> 5 లోతైన విశ్లేషణాత్మక ప్రశ్నలు &amp; గేట్/ఎగ్జామ్ కాన్సెప్ట్స్.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section-title"><span class="num">2</span>వేరియబుల్ యొక్క 4 ప్రాథమిక లక్షణాలు (The 4 Storage Attributes)</div>
+    <div class="section-body">
+      <p>C లాంగ్వేజ్‌లో ఒక వేరియబుల్‌ను డిక్లేర్ చేసినప్పుడు, కంపైలర్ దాని గురించి <strong>4 ముఖ్యమైన విషయాలను</strong> నిర్ధారిస్తుంది:</p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px;">
+          <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">1. నిల్వ ప్రదేశం (Storage Location)</h4>
+          <p style="color:var(--text2); font-size:13.5px; margin:0; line-height:1.6;">ఆ వేరియబుల్ భౌతికంగా ఎక్కడ నిల్వ అవుతుంది? (RAM స్టాక్ మెమరీలోనా, డేటా సెగ్మెంట్‌లోనా, లేదా CPU రిజిస్టర్‌లలోనా?).</p>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px;">
+          <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">2. డీఫాల్ట్ ప్రారంభ విలువ (Initial Value)</h4>
+          <p style="color:var(--text2); font-size:13.5px; margin:0; line-height:1.6;">మనం ఎటువంటి విలువను ఇవ్వకపోతే కంపైలర్ దానికి ఏమి ఇస్తుంది? (సున్నా <code>0</code> ఇస్తుందా లేక ప్రమాదకరమైన చెత్త విలువ <code>Garbage</code> ఇస్తుందా?).</p>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px;">
+          <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">3. స్కోప్ / దృశ్యమానత (Scope / Visibility)</h4>
+          <p style="color:var(--text2); font-size:13.5px; margin:0; line-height:1.6;">ఆ వేరియబుల్‌ను ప్రోగ్రామ్‌లోని ఏయే ఫంక్షన్లు చూడగలవు మరియు ఉపయోగించగలవు? (Local, File, or Global).</p>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px;">
+          <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">4. లైఫ్‌టైమ్ / ఆయుష్షు (Lifetime)</h4>
+          <p style="color:var(--text2); font-size:13.5px; margin:0; line-height:1.6;">ఆ వేరియబుల్ మెమరీలో ఎంతకాలం సజీవంగా ఉంటుంది? (బ్లాక్ ముగిసేవరకా లేదా మొత్తం ప్రోగ్రామ్ ముగిసేవరకా?).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section-title"><span class="num">3</span>లోకల్ స్కోప్ vs గ్లోబల్ స్కోప్ (Local vs Global Scope)</div>
+    <div class="section-body">
+      <p>స్కోప్ (Scope) అనేది ఒక వేరియబుల్ యొక్క దృశ్యమానతను (Visibility) నిర్ణయిస్తుంది. C లో ప్రధానంగా రెండు స్థాయిల స్కోప్‌లు ఉంటాయి:</p>
+
+      <h4 style="color:#059669; margin:16px 0 8px; font-size:15px;">1. లోకల్ వేరియబుల్స్ (Block Scope):</h4>
+      <p>ఏదైనా ఒక ఫంక్షన్ లేదా కర్లీ బ్రేసెస్ <code>{ ... }</code> బ్లాక్ లోపల డిక్లేర్ చేయబడిన వేరియబుల్స్. అవి ఆ బ్లాక్ లోపల మాత్రమే పనిచేస్తాయి. ఆ బ్లాక్ ముగియగానే మెమరీ నుండి నాశనమవుతాయి.</p>
+
+      <h4 style="color:#059669; margin:16px 0 8px; font-size:15px;">2. గ్లోబల్ వేరియబుల్స్ (File / Program Scope):</h4>
+      <p>అన్ని ఫంక్షన్ల వెలుపల (సాధారణంగా ఫైల్ పైభాగంలో) డిక్లేర్ చేయబడిన వేరియబుల్స్. వీటిని ప్రోగ్రామ్‌లోని ఏ ఫంక్షన్ అయినా నేరుగా చదవవచ్చు మరియు సవరించవచ్చు. ప్రోగ్రామ్ ప్రారంభమైనప్పటి నుండి ముగిసేవరకు ఇవి సజీవంగా ఉంటాయి.</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Local vs Global Scope Demo</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// గ్లోబల్ వేరియబుల్: మొత్తం ఫైల్ లో ఎక్కడి నుండైనా యాక్సెస్ చేయవచ్చు
+int globalCounter = 100;
+
+void printCounters() {
+    int localVal = 20; // printCounters కి మాత్రమే పరిమితమైన లోకల్ వేరియబుల్
+    printf("printCounters లోపల: localVal = %d, globalCounter = %d\\n", localVal, globalCounter);
+}
+
+int main() {
+    int mainLocal = 50; // main కి మాత్రమే పరిమితమైన లోకల్ వేరియబుల్
+
+    printf("main లోపల: mainLocal = %d, globalCounter = %d\\n", mainLocal, globalCounter);
+    printCounters();
+
+    // గ్లోబల్ వేరియబుల్‌ను ఇక్కడ మార్చితే ఇతర ఫంక్షన్లలోనూ మారుతుంది
+    globalCounter += 50;
+    printf("గ్లోబల్ మార్చిన తర్వాత: globalCounter = %d\\n", globalCounter);
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:12px 16px; margin:14px 0; color:#991b1b; font-size:13.5px;">
+        ⚠️ <strong>గ్లోబల్ వేరియబుల్స్ ప్రమాదం (The Evils of Global Variables):</strong> పెద్ద సాఫ్ట్‌వేర్ ప్రాజెక్టులలో గ్లోబల్ వేరియబుల్స్ ఎక్కువగా వాడకూడదు! ఏ ఫంక్షన్ ఎప్పుడు ఆ విలువను మార్చిందో కనిపెట్టడం అసాధ్యమైపోయి, వింతైన సైడ్ ఎఫెక్ట్స్ (Unintended Side Effects) వస్తాయి. సాధ్యమైనంతవరకు లోకల్ వేరియబుల్స్ వాడటమే ఉత్తమ ఇంజనీరింగ్ పద్ధతి!
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section-title"><span class="num">4</span>వేరియబుల్ షాడోయింగ్ (Variable Shadowing / Hiding)</div>
+    <div class="section-body">
+      <p>ఒకవేళ గ్లోబల్ వేరియబుల్ పేరుతోనే ఒక లోకల్ వేరియబుల్‌ను కూడా అదే పేరుతో డిక్లేర్ చేస్తే ఏం జరుగుతుంది? దీనినే <strong>వేరియబుల్ షాడోయింగ్ (Variable Shadowing)</strong> అంటారు.</p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:16px; margin:14px 0; font-size:14px; line-height:1.7; color:var(--text2);">
+        <strong>🌓 షాడోయింగ్ రూల్:</strong> ఒక బ్లాక్ లోపల లోకల్ వేరియబుల్ ఎల్లప్పుడూ గ్లోబల్ వేరియబుల్‌పై <strong>అధిక ప్రాధాన్యతను (Higher Precedence)</strong> కలిగి ఉంటుంది! లోకల్ వేరియబుల్ గ్లోబల్ వేరియబుల్‌ను తాత్కాలికంగా నీడలా కప్పివేస్తుంది (Shadows/Hides). ఆ బ్లాక్ దాటిన తర్వాత మళ్లీ గ్లోబల్ వేరియబుల్ కనిపిస్తుంది.
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Variable Shadowing Demo</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int age = 40; // 1. గ్లోబల్ వేరియబుల్
+
+int main() {
+    printf("[main ప్రారంభం] గ్లోబల్ age = %d\\n", age);
+
+    int age = 25; // 2. లోకల్ వేరియబుల్ (గ్లోబల్ age ను షాడో చేస్తుంది!)
+    printf("[main లోకల్ స్కోప్] లోకల్ age = %d\\n", age);
+
+    {
+        int age = 10; // 3. అంతర్గత బ్లాక్ స్కోప్ (మరింత లోపలి షాడోయింగ్!)
+        printf("  [లోపలి బ్లాక్] నెస్టెడ్ age = %d\\n", age);
+    }
+
+    printf("[బ్లాక్ బయట] తిరిగి main లోకల్ age = %d\\n", age);
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section-title"><span class="num">5</span>auto స్టోరేజ్ క్లాస్ — డీఫాల్ట్ లోకల్ మెకానిక్స్</div>
+    <div class="section-body">
+      <p>C లాంగ్వేజ్‌లో ఒక ఫంక్షన్ లోపల డిక్లేర్ చేసే ప్రతి సాధారణ వేరియబుల్ డీఫాల్ట్‌గా <strong><code>auto</code> (Automatic)</strong> స్టోరేజ్ క్లాస్‌కు చెందుతుంది. మీరు <code>int x;</code> అని రాసినా లేదా <code>auto int x;</code> అని రాసినా రెండూ పూర్తిగా ఒకటే!</p>
+
+      <ul style="margin-left: 20px; color: var(--text2); font-size: 14px; line-height: 1.7;">
+        <li><strong>నిల్వ ప్రదేశం:</strong> RAM లోని <strong>Stack Segment</strong> లో కేటాయించబడుతుంది.</li>
+        <li><strong>డీఫాల్ట్ విలువ:</strong> <strong>గార్బేజ్ విలువ (Garbage Value / Undefined)!</strong> ప్రారంభ విలువను మనం ఇవ్వకపోతే అందులో గతంలో వాడిన చెత్త విలువ ఉంటుంది.</li>
+        <li><strong>స్కోప్:</strong> బ్లాక్ స్కోప్ (కేవలం ఆ కర్లీ బ్రేసెస్ లోపల మాత్రమే).</li>
+        <li><strong>లైఫ్‌టైమ్:</strong> ఫంక్షన్ ఎగ్జిక్యూషన్ ముగియగానే ఆ వేరియబుల్ మెమరీ ఆటోమేటిక్‌గా డిలీట్ అవుతుంది.</li>
+      </ul>
+
+      <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:12px 16px; margin:14px 0; color:#991b1b; font-size:13.5px;">
+        ⚠️ <strong>బిగినర్స్ ట్రాప్:</strong> <code>auto</code> వేరియబుల్స్‌ను డిక్లేర్ చేసిన వెంటనే <code>int count = 0;</code> అని ఇనిషియలైజ్ చేయాలి! అలా చేయకుండా నేరుగా <code>count++</code> చేస్తే గార్బేజ్ విలువతో కూడిక జరిగి ఊహించని తప్పుడు సమాధానాలు వస్తాయి!
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="section-title"><span class="num">6</span>register స్టోరేజ్ క్లాస్ &amp; CPU కాష్ స్పీడ్</div>
+    <div class="section-body">
+      <p>సాధారణ వేరియబుల్స్ RAM మెమరీలో ఉంటాయి. RAM నుండి CPU ప్రాసెసర్ లోపలికి డేటాను తీసుకురావడానికి కొన్ని క్లాక్ సైకిల్స్ సమయం పడుతుంది. ఒక వేరియబుల్‌ను లూప్‌లో కోట్లాది సార్లు అమిత వేగంతో యాక్సెస్ చేయాల్సి వస్తే, దానిని RAM లో కాకుండా నేరుగా <strong>CPU రిజిస్టర్లలో (CPU Registers)</strong> భద్రపరచమని కంపైలర్‌ను కోరడానికి <strong><code>register</code></strong> కీవర్డ్ ఉపయోగిస్తారు!</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Register Storage Class Usage</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    // లూప్ కౌంటర్‌ను నేరుగా CPU రిజిస్టర్‌లో ఉంచమని రిక్వెస్ట్ చేస్తున్నాం
+    register int i;
+    long long sum = 0;
+
+    for (i = 1; i &lt;= 1000000; i++) {
+        sum += i;
+    }
+
+    printf("1 నుండి 10 లక్షల వరకు మొత్తం = %lld\\n", sum);
+    return 0;
+}</code></pre>
+      </div>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:16px; margin:16px 0;">
+        <h4 style="color:#ef4444; margin:0 0 8px; font-size:15px;">⚠️ register వేరియబుల్స్ పై కఠినమైన నిషేధం:</h4>
+        <p style="color:var(--text2); font-size:13.5px; line-height:1.7; margin:0;">
+          <strong>మీరు register వేరియబుల్ యొక్క మెమరీ అడ్రస్ (&amp;) ను ఎప్పటికీ తీసుకోలేరు!</strong> ఎందుకంటే CPU రిజిస్టర్లకు RAM మెమరీ చిరునామాలు ఉండవు. మీరు <code>&amp;i</code> అని రాయడానికి ప్రయత్నిస్తే GCC కంపైలర్ వెంటనే: <code>error: address of register variable 'i' requested</code> అని ఎర్రర్ ఇచ్చి ఆపేస్తుంది! అంతేకాకుండా, <code>register</code> అనేది కంపైలర్‌కు ఇచ్చే ఒక సిఫార్సు (Hint) మాత్రమే; CPU లో రిజిస్టర్లు ఖాళీగా లేకపోతే కంపైలర్ దానిని సాధారణ <code>auto</code> వేరియబుల్‌గా పరిగణిస్తుంది.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div class="section-title"><span class="num">7</span>static లోకల్ వేరియబుల్స్ — నిలిచి ఉండే సూపర్ పవర్</div>
+    <div class="section-body">
+      <p>C ప్రోగ్రామింగ్‌లోనే అత్యంత ఉపయోగకరమైన స్టోరేజ్ క్లాస్ <strong><code>static</code></strong>. ఒక లోకల్ వేరియబుల్ ముందు <code>static</code> అని పెడితే దానికి ఒక వింతైన శక్తీ వస్తుంది:</p>
+
+      <div style="background:var(--bg3); border-left:4px solid #10b981; padding:14px 18px; border-radius:0 8px 8px 0; margin:14px 0; font-size:14px; color:var(--text2);">
+        <strong>🌟 static లోకల్ వేరియబుల్ నియమం:</strong> ఫంక్షన్ ఎగ్జిక్యూషన్ ముగిసినప్పటికీ, ఈ వేరియబుల్ మెమరీ నుండి నాశనం కాదు! అది తన చివరి విలువను భద్రంగా గుర్తుపెట్టుకుంటుంది. మళ్లీ ఆ ఫంక్షన్‌ను పిలిచినప్పుడు ఆ పాత విలువతోనే కొనసాగుతుంది!
+      </div>
+
+      <p>క్రింది ఉదాహరణలో సాధారణ <code>auto</code> వేరియబుల్‌కు మరియు <code>static</code> వేరియబుల్‌కు మధ్య ఉన్న భారీ వ్యత్యాసాన్ని పరిశీలించండి:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Normal Local vs Static Local Variable</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+void demoFunction() {
+    int normalCount = 0;        // సాధారణ auto వేరియబుల్ (ప్రతిసారీ కొత్తగా పుడుతుంది)
+    static int staticCount = 0; // static వేరియబుల్ (ప్రోగ్రామ్ ప్రారంభంలో ఒకేసారి ఇనిషియలైజ్ అవుతుంది!)
+
+    normalCount++;
+    staticCount++;
+
+    printf("normalCount = %d  |  staticCount = %d\\n", normalCount, staticCount);
+}
+
+int main() {
+    printf("--- మొదటి కాల్ ---\\n");
+    demoFunction();
+
+    printf("--- రెండవ కాల్ ---\\n");
+    demoFunction();
+
+    printf("--- మూడవ కాల్ ---\\n");
+    demoFunction();
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-top:14px; font-size:13.5px; color:var(--text2);">
+        <strong>అవుట్‌పుట్:</strong><br>
+        <code>--- మొదటి కాల్ ---  ➔ normalCount = 1  |  staticCount = 1</code><br>
+        <code>--- రెండవ కాల్ ---   ➔ normalCount = 1  |  staticCount = 2</code><br>
+        <code>--- మూడవ కాల్ ---   ➔ normalCount = 1  |  staticCount = 3</code><br>
+        చూశారా? <code>normalCount</code> ప్రతిసారీ చనిపోయి మళ్లీ 1 అవుతుంటే, <code>staticCount</code> మాత్రం తన మునుపటి విలువను గుర్తుపెట్టుకుని పెరుగుతూనే ఉంది!
+      </div>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div class="section-title"><span class="num">8</span>static గ్లోబల్ వేరియబుల్స్ &amp; ఇంటర్నల్ లింకేజ్ (Internal Linkage)</div>
+    <div class="section-body">
+      <p><code>static</code> కీవర్డ్‌ను ఫంక్షన్ల వెలుపల ఒక గ్లోబల్ వేరియబుల్ లేదా ఫంక్షన్ ముందు పెడితే దాని అర్థం పూర్తిగా మారిపోతుంది! దీనిని <strong>ఇంటర్నల్ లింకేజ్ (Internal Linkage / File Scope)</strong> అంటారు.</p>
+
+      <p>ఒక పెద్ద ప్రాజెక్ట్‌లో అనేక <code>.c</code> ఫైల్స్ ఉంటాయి. ఒక ఫైల్‌లో ఉన్న గ్లోబల్ వేరియబుల్‌ను ఇతర ఫైల్స్ చూడకూడదు, కేవలం ఆ ఒక్క ఫైల్‌కు మాత్రమే పరిమితం కావాలి (Data Hiding / Encapsulation) అనుకుంటే దాని ముందు <code>static</code> ఉంచుతారు:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Internal Linkage with static Global</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>// file1.c లోపల:
+static int internalDatabaseKey = 9482; // ఈ వేరియబుల్ కేవలం file1.c కి మాత్రమే పరిమితం!
+
+// ఇతర ఫైల్స్ (file2.c) లో extern ద్వారా కూడా దీనిని యాక్సెస్ చేయడం అసాధ్యం!
+static void privateHelperFunction() {
+    // ఈ ఫంక్షన్ కూడా ఫైల్ వెలుపలికి కనిపించదు (Private Function)
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 9 -->
+    <div class="section-title"><span class="num">9</span>extern కీవర్డ్ &amp; ఎక్స్‌టర్నల్ లింకేజ్ (Multi-File Projects)</div>
+    <div class="section-body">
+      <p>ఆధునిక సాఫ్ట్‌వేర్ అభివృద్ధిలో వేలాది లైన్ల కోడ్ వేర్వేరు ఫైల్స్‌గా విభజించబడుతుంది. ఒక ఫైల్‌లో డిక్లేర్ చేసిన గ్లోబల్ వేరియబుల్‌ను మరొక ఫైల్‌లో ఉపయోగించాలంటే <strong><code>extern</code> (External Linkage)</strong> కీవర్డ్ తప్పనిసరి!</p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+        <h4 style="color:#059669; margin:0 0 8px; font-size:15px;">డిక్లరేషన్ vs డెఫినిషన్ వ్యత్యాసం:</h4>
+        <p style="color:var(--text2); font-size:14px; line-height:1.7; margin:0;">
+          <code>int sharedCounter = 10;</code> అని రాస్తే అది <strong>డెఫినిషన్</strong> (మెమరీ కేటాయించబడుతుంది).<br>
+          కానీ వేరే ఫైల్‌లో <code>extern int sharedCounter;</code> అని రాస్తే అది కేవలం <strong>డిక్లరేషన్</strong> మాత్రమే! కంపైలర్‌కు ఇలా చెబుతున్నాం: <em>"ఈ వేరియబుల్ కోసం కొత్తగా మెమరీ కేటాయించకు; ఇది ఇప్పటికే వేరొక ఫైల్‌లో ఉంది, లింకర్ దానిని కలుపుతుంది!"</em>
+        </p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Multi-File Architecture with extern</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>// ============================================
+// ఫైల్ 1: server_config.c (అసలైన డెఫినిషన్)
+// ============================================
+int serverMaxClients = 500; // గ్లోబల్ వేరియబుల్ డెఫినిషన్
+
+// ============================================
+// ఫైల్ 2: client_handler.c (extern డిక్లరేషన్)
+// ============================================
+#include &lt;stdio.h&gt;
+
+// వేరొక ఫైల్‌లోని వేరియబుల్‌ను ఇక్కడ వాడుకోవడానికి extern డిక్లరేషన్
+extern int serverMaxClients;
+
+void checkCapacity(int currentClients) {
+    if (currentClients &gt;= serverMaxClients) {
+        printf("🚨 సర్వర్ ఫుల్ అయింది! పరిమితి: %d క్లయింట్లు.\\n", serverMaxClients);
+    } else {
+        printf("✅ కనెక్షన్ అనుమతించబడింది. మిగిలిన ఖాళీలు: %d\\n", serverMaxClients - currentClients);
+    }
+}
+
+int main() {
+    checkCapacity(350);
+    checkCapacity(500);
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 10 -->
+    <div class="section-title"><span class="num">10</span>సమగ్ర తులనాత్మక పట్టిక (The 4 Storage Classes Master Table)</div>
+    <div class="section-body">
+      <p>C లోని నాలుగు స్టోరేజ్ క్లాసుల పూర్తి సాంకేతిక వివరాలను క్రింది మాస్టర్ రిఫరెన్స్ టేబుల్‌లో పోల్చి చూడండి:</p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>స్టోరేజ్ క్లాస్</th>
+            <th>మెమరీ ప్రదేశం (Location)</th>
+            <th>డీఫాల్ట్ ప్రారంభ విలువ</th>
+            <th>స్కోప్ (Scope)</th>
+            <th>లైఫ్‌టైమ్ (Lifetime)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>auto</strong></td>
+            <td>RAM (Stack Segment)</td>
+            <td>గార్బేజ్ విలువ (Garbage)</td>
+            <td>లోకల్ / బ్లాక్ స్కోప్</td>
+            <td>ఫంక్షన్ ముగిసేవరకు మాత్రమే</td>
+          </tr>
+          <tr>
+            <td><strong>register</strong></td>
+            <td>CPU Registers (లేదా Stack)</td>
+            <td>గార్బేజ్ విలువ (Garbage)</td>
+            <td>లోకల్ / బ్లాక్ స్కోప్</td>
+            <td>ఫంక్షన్ ముగిసేవరకు మాత్రమే</td>
+          </tr>
+          <tr>
+            <td><strong>static (లోకల్)</strong></td>
+            <td>RAM (Data / BSS Segment)</td>
+            <td><strong>సున్నా (0)</strong></td>
+            <td>లోకల్ / బ్లాక్ స్కోప్</td>
+            <td><strong>మొత్తం ప్రోగ్రామ్ ముగిసేవరకు</strong></td>
+          </tr>
+          <tr>
+            <td><strong>static (గ్లోబల్)</strong></td>
+            <td>RAM (Data / BSS Segment)</td>
+            <td><strong>సున్నా (0)</strong></td>
+            <td>ఫైల్ స్కోప్ (ఇంటర్నల్ లింకేజ్)</td>
+            <td><strong>మొత్తం ప్రోగ్రామ్ ముగిసేవరకు</strong></td>
+          </tr>
+          <tr>
+            <td><strong>extern</strong></td>
+            <td>RAM (Data / BSS Segment)</td>
+            <td><strong>సున్నా (0)</strong></td>
+            <td>గ్లోబల్ (ఎక్స్‌టర్నల్ లింకేజ్)</td>
+            <td><strong>మొత్తం ప్రోగ్రామ్ ముగిసేవరకు</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 11 -->
+    <div class="section-title"><span class="num">11</span>సమగ్ర రియల్ వరల్డ్ ప్రాజెక్ట్ — యూనిక్ ట్రాన్సాక్షన్ ఐడీ జనరేటర్ &amp; సెషన్ ఇంజిన్</div>
+    <div class="section-body">
+      <p>ఇప్పటివరకు నేర్చుకున్న <code>static</code>, <code>auto</code>, మరియు స్కోప్ నియమాలను ఉపయోగించి ఒక వాస్తవ బ్యాంకింగ్ <strong>యూనిక్ ట్రాన్సాక్షన్ ఐడీ జనరేటర్ &amp; యాక్టివ్ సెషన్ ట్రాకర్ (Transaction ID Engine)</strong> ను నిర్మిద్దాం. ప్రతిసారీ ఒక ట్రాన్సాక్షన్ జరిగినప్పుడు అది మునుపటి కౌంటర్‌ను గుర్తుపెట్టుకుని సరికొత్త సీరియల్ నంబర్‌ను ఉత్పత్తి చేయాలి:</p>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">C — Unique Transaction ID &amp; Session Audit Engine</span>
+          <div class="code-actions">
+            <a class="try-btn" href="/online-c-compiler.html" target="_blank">▶ Run in Online C Compiler</a>
+          </div>
+        </div>
+        <pre><code>#include &lt;stdio.h&gt;
+
+// యూనిక్ ట్రాన్సాక్షన్ ఐడీ ఉత్పత్తి చేసే కోర్ ఇంజిన్ (static వినియోగం)
+long long generateNextTxnID() {
+    // ప్రారంభ ట్రాన్సాక్షన్ బేస్ నంబర్: TXN-2026-0001
+    static long long currentSerial = 20260000;
+    currentSerial++; // ప్రతి కాల్ కి శాశ్వతంగా 1 పెరుగుతుంది
+    return currentSerial;
+}
+
+// ఒక ఖాతా నుండి నగదు బదిలీని ఆడిట్ చేసే ఫంక్షన్
+void executePayment(const char* payer, const char* payee, double amount) {
+    long long txnId = generateNextTxnID(); // యూనిక్ ఐడీని పొందుతున్నాం
+    static double totalVolumeProcessed = 0.0; // మొత్తం బ్యాంక్ బిజినెస్ వాల్యూమ్
+    static int successfulTxnCount = 0;
+
+    totalVolumeProcessed += amount;
+    successfulTxnCount++;
+
+    printf("====================================================\\n");
+    printf("   ట్రాన్సాక్షన్ రసీదు #TXN-%lld\\n", txnId);
+    printf("====================================================\\n");
+    printf("   చెల్లింపుదారు (From) : %s\\n", payer);
+    printf("   స్వీకర్త (To)        : %s\\n", payee);
+    printf("   మొత్తం (Amount)      : రూ. %.2f\\n", amount);
+    printf("   స్టేటస్              : ✅ సక్సెస్ (ధృవీకరించబడింది)\\n");
+    printf("----------------------------------------------------\\n");
+    printf("   [ఆడిట్ లాగ్] నేటి మొత్తం లావాదేవీలు: %d\\n", successfulTxnCount);
+    printf("   [ఆడిట్ లాగ్] నేటి మొత్తం టర్నోవర్   : రూ. %.2f\\n", totalVolumeProcessed);
+    printf("====================================================\\n\\n");
+}
+
+int main() {
+    printf("🏦 మనా పేమెంట్స్ కోర్ గేట్‌వే ఆన్‌లైన్ (2026 Academic)\\n\\n");
+
+    // వరుసగా 3 లావాదేవీలను రన్ చేద్దాం
+    executePayment("విక్రమ్ రెడ్డి", "అమేజాన్ ఇండియా", 3499.00);
+    executePayment("సుజాత రావు", "ఫ్లిప్‌కార్ట్ ప్రైవేట్ లిమిటెడ్", 12500.00);
+    executePayment("ఆదిత్య వర్మ", "స్విగ్గీ ఫుడ్స్", 450.00);
+
+    return 0;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- SECTION 12 -->
+    <div class="section-title"><span class="num">12</span>సాధారణంగా బిగినర్స్ చేసే టాప్ 5 స్కోప్ &amp; స్టోరేజ్ తప్పులు</div>
+    <div class="section-body">
+      <div style="display:grid; grid-template-columns:1fr; gap:12px; margin:14px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">1. అన్‌ఇనిషియలైజ్డ్ ఆటో వేరియబుల్స్ వాడటం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;"><code>int sum;</code> అని డిక్లేర్ చేసి సున్నా ఇవ్వకుండా నేరుగా కూడికలు చేస్తే చెత్త విలువలతో తప్పుడు గణనలు వస్తాయి.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">2. extern వేరియబుల్‌ను డిక్లరేషన్‌లోనే ఇనిషియలైజ్ చేయడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;"><code>extern int x = 10;</code> అని రాస్తే అది డిక్లరేషన్ కాకుండా డెఫినిషన్ అయిపోయి లింకర్ 'multiple definition of x' ఎర్రర్ విసురుతుంది!</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">3. register వేరియబుల్ కు &amp; ఆపరేటర్ వాడటం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;"><code>register int reg; scanf("%d", &amp;reg);</code> అని రాస్తే కంపైల్ కాదు! CPU రిజిస్టర్లకు మెమరీ అడ్రస్ ఉండదు.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">4. static వేరియబుల్ ను రన్‌టైమ్ వేరియబుల్‌తో ఇనిషియలైజ్ చేయాలనుకోవడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;"><code>static int x = getUserInput();</code> అని C లో రాయకూడదు! static వేరియబుల్స్ కంపైల్-టైమ్ స్థిర విలువలతో (Constants) మాత్రమే ఇనిషియలైజ్ కావాలి.</span>
+        </div>
+        <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:0 8px 8px 0; padding:12px 16px;">
+          <strong style="color:#ef4444;">5. వేరియబుల్ షాడోయింగ్ వలన గ్లోబల్ వేరియబుల్ మిస్ అవ్వడం:</strong><br>
+          <span style="color:var(--text2); font-size:13.5px;">లోపల అదే పేరుతో వేరియబుల్ ఉన్నప్పుడు, మీరు గ్లోబల్ అనుకుని మార్చింది లోకల్ కే పరిమితమై బగ్స్ ఏర్పడతాయి.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 13 -->
+    <div class="section-title"><span class="num">13</span>స్వీయ మూల్యాంకన క్విజ్ &amp; మీరే స్వయంగా Try చేయండి!</div>
+    <div class="section-body">
+      <p>ఈ పాఠంలోని లోతైన అంశాలను క్రింది 5 ప్రాక్టికల్ ప్రశ్నల ద్వారా పరీక్షించుకోండి:</p>
+
+      <!-- QUIZ QUESTIONS -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 1: auto మరియు static లోకల్ వేరియబుల్స్ మధ్య ముఖ్యమైన తేడా ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>auto</code> వేరియబుల్ ఫంక్షన్ ముగియగానే నాశనమవుతుంది (డీఫాల్ట్ విలువ గార్బేజ్). కానీ <code>static</code> వేరియబుల్ ఫంక్షన్ ముగిసినా తన చివరి విలువను గుర్తుపెట్టుకుని ప్రోగ్రామ్ ముగిసేవరకు నిలిచి ఉంటుంది (డీఫాల్ట్ విలువ 0).
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 2: register వేరియబుల్ యొక్క అడ్రస్ (&amp;var) ను ఎందుకు తీసుకోలేము?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>register</code> వేరియబుల్స్ RAM లో కాకుండా నేరుగా CPU రిజిస్టర్లలో నిల్వ చేయబడతాయి. CPU రిజిస్టర్లకు మెమరీ అడ్రస్ ఉండదు కాబట్టి <code>&amp;</code> ఆపరేటర్ వాడటం చట్టవిరుద్ధం (Compile Error).
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 3: ఒక గ్లోబల్ వేరియబుల్ ముందు 'static' పెడితే ఏం జరుగుతుంది?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> అది <strong>ఇంటర్నల్ లింకేజ్ (Internal Linkage)</strong> ను పొందుతుంది. అంటే ఆ వేరియబుల్ కేవలం ఆ ఒక్క ఫైల్‌కు మాత్రమే పరిమితమవుతుంది; ఇతర ఫైల్స్ దానిని యాక్సెస్ చేయలేవు (File Encapsulation).
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 4: మల్టీ-ఫైల్ ప్రాజెక్టులలో extern కీవర్డ్ యొక్క పాత్ర ఏమిటి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> వేరొక C సోర్స్ ఫైల్‌లో ఇప్పటికే డిఫైన్ చేయబడిన గ్లోబల్ వేరియబుల్‌ను ప్రస్తుత ఫైల్‌లో మెమరీ డూప్లికేషన్ లేకుండా వాడుకోవడానికి (External Linkage) <code>extern</code> డిక్లరేషన్ ఉపయోగిస్తారు.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:700; cursor:pointer; color:#059669;">
+          ❓ ప్రశ్న 5: static వేరియబుల్స్ RAM లో ఏ మెమరీ సెగ్మెంట్ లో నిల్వ చేయబడతాయి?
+        </summary>
+        <div style="margin-top:10px; color:var(--text2); font-size:14px; line-height:1.6;">
+          <strong>సమాధానం:</strong> అవి స్టాక్ (Stack) పై ఉండవు. ఇనిషియలైజ్ చేయబడితే <strong>Data Segment</strong> లోను, ఇనిషియలైజ్ చేయకపోతే <strong>BSS Segment</strong> లోను నిల్వ చేయబడతాయి.
+        </div>
+      </details>
+
+      <!-- TRY BOX -->
+      <div class="try-box" style="margin-top:24px;">
+        <div class="try-title">🚀 యూనిక్ ట్రాన్సాక్షన్ ఐడీ జనరేటర్‌ను మన ఆన్‌లైన్ C కంపైలర్‌లో రన్ చేయండి!</div>
+        <p>పైన వివరించిన <code>ట్రాన్సాక్షన్ ఐడీ &amp; ఆడిట్ సిస్టమ్</code> కోడ్‌ను మన ఆన్‌లైన్ C కంపైలర్‌లో ఓపెన్ చేసి స్వయంగా రన్ చేయండి. కొత్త ట్రాన్సాక్షన్లను పిలిచి స్టాటిక్ కౌంటర్లు ఎలా పెరుగుతున్నాయో గమనించండి!</p>
+        <a class="run-btn" href="/online-c-compiler.html" target="_blank">
+          👉 Our Compiler లో C Compiler try చేయండి
+        </a>
+      </div>
+
+      <div style="margin-top:24px;">
+        <h4 style="color:#059669; font-size:16px; margin-bottom:10px;">📌 అధ్యాయ సారాంశం (Quick Summary):</h4>
+        <ul style="margin-left: 20px; color: var(--text2); font-size: 14.5px; line-height: 1.7;">
+          <li><strong>స్కోప్ &amp; లైఫ్‌టైమ్:</strong> వేరియబుల్ ఎక్కడ కనిపిస్తుంది మరియు ఎంతకాలం బ్రతుకుతుందో నిర్ణయిస్తాయి.</li>
+          <li><strong>auto:</strong> సాధారణ లోకల్ వేరియబుల్స్; స్టాక్ పై ఉంటాయి, డీఫాల్ట్‌గా గార్బేజ్ విలువను కలిగి ఉంటాయి.</li>
+          <li><strong>register:</strong> CPU రిజిస్టర్లలో వేగవంతమైన లూప్ ఆపరేషన్లకు ఉపయోగిస్తారు; అడ్రస్ తీసుకోలేము.</li>
+          <li><strong>static:</strong> ఫంక్షన్ కాల్స్ మధ్య విలువలను శాశ్వతంగా నిలిపి ఉంచుతుంది; డీఫాల్ట్ విలువ 0.</li>
+          <li><strong>extern:</strong> మల్టీ-ఫైల్ ప్రాజెక్టులలో గ్లోబల్ వేరియబుల్స్‌ను పంచుకోవడానికి లింకర్‌తో అనుసంధానిస్తుంది.</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:20px; padding:16px; background:var(--bg2); border-left:4px solid #10b981; border-radius:0 8px 8px 0;">
+        <strong>తర్వాతి అధ్యాయంలో (Chapter 12 — Phase 03 ముగింపు):</strong> కంప్యూటర్ సైన్స్‌లోనే అత్యంత ఆకర్షణీయమైన అల్గారిథమిక్ భావన — <strong>రికార్షన్ (Recursion), బేస్ కండిషన్, ఫ్యాక్టోరియల్/ఫిబోనాచీ మరియు స్టాక్ ఓవర్‌ఫ్లో (Stack Overflow)</strong> గురించి అద్భుతంగా నేర్చుకుందాం!
+      </div>
+    </div>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-c/10-c-parameter-passing-call-by-value-reference.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; background:var(--bg3); border:1px solid var(--border); color:var(--text); text-decoration:none; font-weight:700; font-size:13.5px;">
+        ← Prev: 10. Call by Value vs Reference
+      </a>
+      <a href="/blog-c/12-c-recursion-call-stack.html" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; text-decoration:none; font-weight:700; font-size:13.5px; box-shadow:0 2px 10px rgba(16,185,129,0.2);">
+        Next: 12. రికార్షన్ &amp; కాల్ స్టాక్ →
+      </a>
+    </div>
+
+    <!-- AUTHOR FOOTER -->
+    <div class="author" style="margin-top:36px;">
+      <div class="avatar">OC</div>
+      <div>
+        <strong>Written by Our Compiler Technical Editorial Team</strong><br>
+        <span>Reviewed for accuracy &amp; tested on GCC 13+ / Clang 17 runtime · 2026 Academic Edition</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- SITE NAVIGATION LOADER -->
+<script src="/site-nav.js" defer></script>
+</body>
+</html>
+`;
+
+// Assemble the complete HTML document
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>వేరియబుల్ స్కోప్ & స్టోరేజ్ క్లాసెస్ (auto, static, extern, register) — Modern C Tutorial | Our Compiler</title>
+  <meta name="description" content="వేరియబుల్ స్కోప్, లైఫ్‌టైమ్ & స్టోరేజ్ క్లాసెస్ సమగ్ర తెలుగు గైడ్: auto, static, register, extern తేడాలు, BSS Data Segment, మల్టీ-ఫైల్ లింకేజ్, ట్రాన్సాక్షన్ ఐడీ ప్రాజెక్ట్." />
+  <meta name="keywords" content="c storage classes in telugu, c variable scope lifetime, auto static extern register in c, internal external linkage c, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/11-c-storage-classes-and-scope.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "వేరియబుల్ స్కోప్ & స్టోరేజ్ క్లాసెస్ (C Programming in Telugu)",
+    "description": "auto, static, register, extern తేడాలు, BSS Data Segment, మల్టీ-ఫైల్ లింకేజ్, ట్రాన్సాక్షన్ ఐడీ ప్రాజెక్ట్",
+    "articleSection": "Phase 03: ఫంక్షన్స్, స్కోప్ & రికర్షన్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-01",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion & Default Light Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('tutorial_theme_v2');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.remove('light-theme');
+        });
+      } else {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          const body = document.body;
+          if (body) body.classList.add('light-theme');
+        });
+      }
+    })();
+
+    // Code runner & copy button integration
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.code-block').forEach((block) => {
+        const pre = block.querySelector('pre');
+        const code = block.querySelector('code');
+        if (!pre || !code) return;
+        const rawCode = code.innerText;
+
+        const actions = block.querySelector('.code-actions');
+        if (actions && !actions.querySelector('.copy-btn')) {
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actions.insertBefore(copyBtn, actions.firstChild);
+
+          const tryBtn = actions.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', rawCode);
+              window.open('/online-c-compiler.html', '_blank');
+            });
+          }
+        }
+      });
+    });
+  </script>
+</head>
+<body class="lang-c light-theme">
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE -->
+  <main class="content">
+${chapterContentHtml}
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-c', '11-c-storage-classes-and-scope.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+
+console.log('✅ Successfully generated deep high-value C Chapter 11!');
+console.log('Target file size:', fullHtml.length, 'characters');
