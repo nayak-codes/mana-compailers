@@ -12,3 +12,4 @@ for (let i = 0; i < 9; i++) {
   const hasSection1 = content.includes('<!-- SECTION 1 -->');
   console.log(`Ch ${l.num}: ${l.file}`, { hasPageTitle, hasPageMeta, hasSubtopicsBar, hasSection1 });
 }
+

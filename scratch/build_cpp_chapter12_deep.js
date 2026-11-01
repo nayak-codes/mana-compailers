@@ -1,0 +1,1048 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./cpp_curriculum_data.js');
+
+const currentLesson = LESSONS[11]; // Chapter 12 (0-indexed 11)
+const sidebarHtml = buildSidebar(12);
+
+const chapter12Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ డైనమిక్ మెమరీ & Smart Pointers సమగ్ర మాస్టర్‌క్లాస్ తెలుగులో: Stack vs Heap, new/delete ఆపరేటర్లు, మెమరీ లీక్స్, RAII సిద్ధాంతం, std::unique_ptr, std::shared_ptr, std::weak_ptr, మరియు Enterprise Multi-Tenant Session Cache ప్రాజెక్ట్." />
+  <meta name="keywords" content="c++ smart pointers telugu, dynamic memory c++, std unique_ptr telugu, std shared_ptr telugu, std weak_ptr, raii c++, memory leaks c++, learn c++ in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Mastering C++ Dynamic Memory and Modern Smart Pointers in Telugu)",
+    "description": "C++ డైనమిక్ మెమరీ & Smart Pointers పూర్తి గైడ్: Stack vs Heap, RAII, unique_ptr, shared_ptr, weak_ptr, మరియు Enterprise Cache మేనేజర్.",
+    "articleSection": "Phase 3: Functions, Memory & Pointers",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-12",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, C++ Syntax Highlighter & Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side C++ Syntax Highlighter
+    function highlightCppCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___CPP_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(#[a-zA-Z_]+(?:\\s*<[^>]+>|\\s*"[^"]+")?)/g, m => pushToken('pp', m));
+      code = code.replace(/("[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'int','double','float','char','bool','void','auto','long','short','unsigned','signed',
+        'return','using','namespace','class','struct','public','private','protected',
+        'virtual','override','template','typename','const','constexpr','consteval',
+        'if','else','for','while','do','switch','case','break','continue','default',
+        'new','delete','try','catch','throw','nullptr','true','false','static','inline',
+        'sizeof','typedef','enum','explicit','friend','operator','typeid','static_cast',
+        'dynamic_cast','reinterpret_cast','uint8_t','uint16_t','uint32_t','uint64_t','size_t'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'std','cout','cin','endl','cerr','clog','string','vector','array','unique_ptr',
+        'shared_ptr','weak_ptr','make_unique','make_shared','move','reset','get',
+        'use_count','expired','lock','unordered_map','main','printf','swap'
+      ];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?(?:f|u|l|ll)?|0x[0-9a-fA-F]+)\\b/gi, m => pushToken('nu', m));
+      code = code.replace(/___CPP_TOK_(\\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code').forEach(el => {
+        el.innerHTML = highlightCppCode(el.textContent);
+      });
+    });
+
+    function copyCode(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (codeEl) {
+        navigator.clipboard.writeText(codeEl.textContent).then(() => {
+          const orig = btn.innerHTML;
+          btn.innerHTML = '✅ Copied!';
+          setTimeout(() => { btn.innerHTML = orig; }, 2000);
+        });
+      }
+    }
+
+    function runCodeInCompiler(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (codeEl) {
+        const rawCode = codeEl.textContent;
+        try {
+          localStorage.setItem('code_cpp17', rawCode);
+          localStorage.setItem('code_cpp', rawCode);
+        } catch (e) {
+          console.warn('LocalStorage error:', e);
+        }
+        window.open('/online-cpp-compiler.html', '_blank');
+      }
+    }
+  </script>
+</head>
+<body>
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE CONTENT -->
+  <main class="content">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 12: ${currentLesson.title}</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">${currentLesson.title}</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge">🌐 Modern C++ (C++20/C++17/C++14)</span>
+      <span class="badge">🟢 Chapter 12 of 20</span>
+      <span class="badge">📂 ${currentLesson.phaseTag}: ${currentLesson.phaseTitle}</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>${currentLesson.subtopics}</span>
+    </div>
+
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
+    <div class="intro-box">
+      <p>కంప్యూటర్ ప్రోగ్రామ్‌లు రన్ అవుతున్నప్పుడు డేటా పరిమాణం ఎల్లప్పుడూ ముందే తెలియదు. ఒక సర్వర్‌కు ఒకేసారి 10 మంది యూజర్లు కనెక్ట్ అవ్వవచ్చు, లేదా పీక్ అవర్స్‌లో 10 లక్షల మంది యూజర్లు రావచ్చు. ప్రోగ్రామ్ రన్ అయ్యే సమయంలోనే అవసరమైనప్పుడు మెమరీని పెంచుకోవడం లేదా తగ్గించుకోవడాన్ని <strong>డైనమిక్ మెమరీ అలొకేషన్ (Dynamic Memory Allocation)</strong> అంటారు.</p>
+      <p>సాంప్రదాయ C++ లో మాన్యువల్ మెమరీ కేటాయింపులు (<code>new</code> మరియు <code>delete</code>) ప్రోగ్రామర్లకు పూర్తి స్వేచ్ఛను ఇచ్చినప్పటికీ, ఒక చిన్న పొరపాటు జరిగినా <strong>మెమరీ లీక్స్ (Memory Leaks)</strong>, <strong>డబుల్ ఫ్రీ (Double Free)</strong> మరియు <strong>డాంగ్లింగ్ పాయింటర్లు</strong> వంటి వినాశకరమైన బగ్స్‌కు కారణమయ్యేవి. దీనిని రూపుమాపడానికే Modern C++ మనకు <strong>RAII (Resource Acquisition Is Initialization)</strong> సిద్ధాంతాన్ని మరియు విప్లవాత్మకమైన <strong>స్మార్ట్ పాయింటర్లను (Smart Pointers)</strong> అందించింది.</p>
+      <p>ఈ సమగ్ర మాస్టర్‌క్లాస్‌లో మనం Stack vs Heap మెమరీ ఆర్కిటెక్చర్, <code>std::unique_ptr</code> యొక్క జీరో-కాస్ట్ ఓవర్‌హెడ్ ఎక్స్‌క్లూజివ్ ఓనర్‌షిప్, <code>std::shared_ptr</code> యొక్క రిఫరెన్స్ కౌంటింగ్, సర్క్యులర్ డిపెండెన్సీలను విచ్ఛిన్నం చేసే <code>std::weak_ptr</code>, మరియు పూర్తి స్థాయి <em>"Enterprise Multi-Tenant Cloud Session Cache & Resource Manager"</em> ప్రాజెక్ట్‌ను లోతుగా అధ్యయనం చేసి నిర్మిద్దాం!</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> స్టాక్ వర్సెస్ హీప్ మెమరీ (Stack vs Heap Memory: The Two Worlds of RAM)</h2>
+      <p>
+        కంప్యూటర్ ఆపరేటింగ్ సిస్టమ్ ఒక C++ ప్రోగ్రామ్‌ను ఎగ్జిక్యూట్ చేసేటప్పుడు RAM ను ప్రధానంగా రెండు వేర్వేరు వర్క్‌స్పేస్‌లుగా విభజిస్తుంది: <strong>స్టాక్ (Stack)</strong> మరియు <strong>హీప్ (Heap లేదా Free Store)</strong>. ఈ రెండింటి ప్రాథమిక నిర్మాణాన్ని అర్థం చేసుకోవడం ప్రతి సిస్టమ్ ఇంజనీర్‌కు అత్యంత ఆవశ్యకం.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; margin:20px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.6;">
+        <div style="font-weight:bold; color:#10b981; margin-bottom:10px;">[Virtual Process Memory Layout (High to Low Addresses)]</div>
+        +-------------------------------------------------------+ 0xFFFFFFFF (High Address)<br/>
+        |  <strong>STACK MEMORY</strong> (Grows DOWNWARDS ↓)                     |<br/>
+        |  Local Variables, Function Call Frames, Return Ptrs   |<br/>
+        + - - - - - - - - - - - - - - - - - - - - - - - - - - - +<br/>
+        |  ↓ Free Space (Guard Pages)                          |<br/>
+        |  ↑ Free Space                                         |<br/>
+        + - - - - - - - - - - - - - - - - - - - - - - - - - - - +<br/>
+        |  <strong>HEAP MEMORY</strong> (Grows UPWARDS ↑)                       |<br/>
+        |  Dynamic Allocations (new, malloc), Large Data Buffers|<br/>
+        +-------------------------------------------------------+<br/>
+        |  <strong>BSS &amp; DATA SEGMENTS</strong> (Global &amp; Static Variables)      |<br/>
+        +-------------------------------------------------------+<br/>
+        |  <strong>TEXT / CODE SEGMENT</strong> (Compiled Machine Instructions) |<br/>
+        +-------------------------------------------------------+ 0x00000000 (Low Address)
+      </div>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>అంశం / ఫీచర్</th>
+            <th>స్టాక్ మెమరీ (Stack Memory)</th>
+            <th>హీప్ మెమరీ (Heap / Free Store)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>నిర్వహణ (Management)</strong></td>
+            <td>CPU హార్డ్‌వేర్ మరియు కంపైలర్ చేత పూర్తిగా ఆటోమేటిక్</td>
+            <td>ప్రోగ్రామర్ / స్మార్ట్ పాయింటర్ల చేత మాన్యువల్ నియంత్రణ</td>
+          </tr>
+          <tr>
+            <td><strong>వేగం (Performance)</strong></td>
+            <td>అత్యంత వేగవంతం (కేవలం Stack Pointer రిజిస్టర్ మూవ్ అవుతుంది)</td>
+            <td>కాస్త నెమ్మది (OS కర్నెల్ మెమరీ బ్లాక్స్ వెతికి కేటాయించాలి)</td>
+          </tr>
+          <tr>
+            <td><strong>పరిమాణం (Size Limit)</strong></td>
+            <td>పరిమితం (సాధారణంగా 1 MB నుండి 8 MB వరకు). దాటితే Stack Overflow!</td>
+            <td>విశాలమైనది (కంప్యూటర్‌లో ఉన్న మొత్తం RAM మరియు వర్చువల్ మెమరీ)</td>
+          </tr>
+          <tr>
+            <td><strong>జీవితకాలం (Lifetime)</strong></td>
+            <td>ఫంక్షన్ స్కోప్ ముగియగానే ఆటోమేటిక్‌గా నాశనమవుతుంది</td>
+            <td>మనం డిలీట్ చేసే వరకు (లేదా ప్రోగ్రామ్ ముగిసే వరకు) శాశ్వతంగా ఉంటుంది</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> సాంప్రదాయ డైనమిక్ మెమరీ: <code>new</code> మరియు <code>delete</code> ఆపరేటర్లు</h2>
+      <p>
+        C++ లో హీప్ (Heap) మెమరీ నుండి డైనమిక్‌గా స్థలాన్ని కేటాయించుకోవడానికి <strong><code>new</code></strong> ఆపరేటర్‌ను, ఆ మెమరీని తిరిగి ఆపరేటింగ్ సిస్టమ్‌కు విడుదల చేయడానికి <strong><code>delete</code></strong> ఆపరేటర్‌ను ఉపయోగిస్తాం.
+      </p>
+      <p>
+        ఇక్కడ గుర్తుంచుకోవాల్సిన అతి ముఖ్యమైన నియమం: <em>ఎన్ని <code>new</code> లు రాస్తే, ఖచ్చితంగా అన్ని <code>delete</code> లు ఉండాలి!</em>
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">raw_new_delete.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+int main() {
+    // 1. హీప్‌పై ఒక సింగిల్ ఇంటిజర్‌ను అలొకేట్ చేయడం
+    int* ptr = new int(100); // హీప్‌పై 4 బైట్లు కేటాయించి 100 స్టోర్ చేస్తుంది
+    std::cout << "హీప్ అడ్రస్: " << ptr << " | విలువ: " << *ptr << "\\n";
+
+    // ఉపయోగించిన తర్వాత తప్పనిసరిగా డిలీట్ చేయాలి!
+    delete ptr;
+    ptr = nullptr; // డాంగ్లింగ్ కాకుండా సేఫ్‌గా నల్ చేయడం
+
+    // 2. హీప్‌పై డైనమిక్ అర్రే అలొకేషన్
+    int size = 5;
+    int* dynamicArr = new int[size]; // 5 పూర్ణాంకాల మెమరీ కేటాయింపు
+
+    for (int i = 0; i < size; ++i) {
+        dynamicArr[i] = (i + 1) * 10;
+    }
+
+    std::cout << "డైనమిక్ అర్రే మూడవ ఎలిమెంట్: " << dynamicArr[2] << "\\n";
+
+    // ⚠️ అత్యంత ముఖ్యం: అర్రేలను delete[] తో మాత్రమే డిలీట్ చేయాలి!
+    delete[] dynamicArr;
+    dynamicArr = nullptr;
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="warning-box">
+        ⚠️ <strong>తీవ్రమైన హెచ్చరిక (delete vs delete[]):</strong> ఒక సింగిల్ ఆబ్జెక్ట్‌ను <code>new</code> తో సృష్టిస్తే <code>delete ptr;</code> వాడాలి. ఒక అర్రేను <code>new T[n]</code> తో సృష్టిస్తే తప్పనిసరిగా <strong><code>delete[] arr;</code></strong> వాడాలి! అర్రేకు కేవలం <code>delete arr;</code> రాస్తే కేవలం మొదటి ఎలిమెంట్ మాత్రమే డిస్ట్రక్ట్ అవుతుంది లేదా అన్-డిఫైన్డ్ బిహేవియర్ (UB) ఏర్పడుతుంది.
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> మాన్యువల్ మెమరీ మేనేజ్‌మెంట్ శాపాలు (Memory Leaks &amp; Double Free)</h2>
+      <p>
+        సాంప్రదాయ <code>new</code> మరియు <code>delete</code> తో కోడింగ్ చేయడం ఎందుకు ప్రమాదకరం? మానవ సహజమైన పొరపాట్ల వల్ల సాఫ్ట్‌వేర్ ఉత్పత్తుల్లో క్రింది మూడు ప్రధాన భద్రతా లోపాలు ఏర్పడతాయి:
+      </p>
+
+      <ol>
+        <li>
+          <strong>మెమరీ లీక్ (Memory Leak):</strong> హీప్‌పై <code>new</code> ద్వారా మెమరీని అలొకేట్ చేసుకుని, దానిని <code>delete</code> చేయడం మర్చిపోతే, ఆ మెమరీ ప్రోగ్రామ్ రన్ అయినంత కాలం బ్లాక్ అయిపోతుంది. సర్వర్ అప్లికేషన్లలో రోజులు గడిచేకొద్దీ RAM నిండిపోయి సర్వర్ మొత్తం క్రాష్ అవుతుంది (Out of Memory - OOM Killer).
+        </li>
+        <li>
+          <strong>డాంగ్లింగ్ పాయింటర్ (Dangling Pointer):</strong> మెమరీని <code>delete</code> చేసిన తర్వాత కూడా ఆ పాయింటర్‌ను అలాగే ఉంచి, పొరపాటున <code>*ptr = 50;</code> అని మళ్లీ డేటా రాయడానికి ప్రయత్నించడం. దీనివల్ల వేరొక ప్రాసెస్ డేటా కరప్ట్ అవుతుంది.
+        </li>
+        <li>
+          <strong>డబుల్ ఫ్రీ (Double Free):</strong> ఒకే మెమరీ అడ్రస్‌ను రెండుసార్లు <code>delete</code> చేయడానికి ప్రయత్నించడం. ఇది OS మెమరీ హీప్ మేనేజర్‌ను క్రాష్ చేస్తుంది మరియు హ్యాకర్లకు భద్రతా దాడులకు (Remote Code Execution) మార్గం సుగమం చేస్తుంది.
+        </li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">memory_leak_antipattern.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+void processUserData() {
+    int* buffer = new int[1000]; // 4000 బైట్లు కేటాయించాం
+
+    bool errorOccurred = true;
+    if (errorOccurred) {
+        // పొరపాటు: ఎర్రర్ రాగానే ఫంక్షన్ నుండి బయటకు వెళ్లిపోయాం!
+        // delete[] buffer చేయలేదు!
+        std::cout << "❌ లోపం సంభవించింది! మెమరీ లీక్ అయ్యింది (4000 Bytes కోల్పోయాం).\\n";
+        return; 
+    }
+
+    delete[] buffer;
+}
+
+int main() {
+    for (int i = 0; i < 3; ++i) {
+        processUserData();
+    }
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> Modern C++ విప్లవం: RAII సిద్ధాంతం (Resource Acquisition Is Initialization)</h2>
+      <p>
+        C++ రూపకర్త <strong>Bjarne Stroustrup</strong> ప్రోగ్రామింగ్ ప్రపంచానికి అందించిన అత్యంత విప్లవాత్మకమైన మరియు ప్రభావవంతమైన సాఫ్ట్‌వేర్ డిజైన్ సిద్ధాంతం: <strong>RAII (Resource Acquisition Is Initialization)</strong>.
+      </p>
+      <p>
+        <strong>RAII అసలు రహస్యం ఏమిటి?</strong>
+      </p>
+      <div style="background:var(--bg3); border-left:4px solid #10b981; padding:14px 18px; margin:16px 0; font-size:14px; line-height:1.7;">
+        "ఏదైనా ఒక కంప్యూటర్ రిసోర్స్ (హీప్ మెమరీ, ఫైల్ హ్యాండిల్, నెట్‌వర్క్ సాకెట్, లేదా మ్యూటెక్స్ లాక్) ను పొందేటప్పుడు దానిని ఒక <strong>స్టాక్ ఆబ్జెక్ట్ కన్‌స్ట్రక్టర్ (Constructor)</strong> లో కేటాయించండి; ఆ ఆబ్జెక్ట్ స్కోప్ ముగిసి నశించినప్పుడు దాని <strong>డిస్ట్రక్టర్ (Destructor)</strong> ఆటోమేటిక్‌గా ఆ రిసోర్స్‌ను క్లీన్ చేసేలా నిర్మించండి!"
+      </p>
+      <p>
+        స్టాక్ వేరియబుల్స్ వాటి స్కోప్ (Curly Braces <code>{ ... }</code>) ముగియగానే 100% గ్యారెంటీగా డిస్ట్రక్ట్ అవుతాయి — ప్రోగ్రామ్ సాధారణంగా ముగిసినా, <code>return</code> చేసినా, లేదా మధ్యలో ఎక్సెప్షన్ (Exception) విసిరినా సరే! దీనివల్ల మానవ ప్రమేయం లేకుండా మెమరీ క్లీనప్ జరుగుతుంది.
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">raii_principle_demo.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+
+// RAII Wrapper క్లాస్
+class SafeIntBuffer {
+private:
+    int* data;
+public:
+    SafeIntBuffer(int val) {
+        data = new int(val);
+        std::cout << "  [RAII కన్‌స్ట్రక్టర్] హీప్ మెమరీ కేటాయించబడింది: " << *data << "\\n";
+    }
+
+    ~SafeIntBuffer() {
+        std::cout << "  [RAII డిస్ట్రక్టర్] ఆటోమేటిక్‌గా మెమరీ విడుదల చేయబడింది: " << *data << "\\n";
+        delete data;
+    }
+
+    int getValue() const { return *data; }
+};
+
+int main() {
+    std::cout << "స్కోప్ ప్రారంభం...\\n";
+    {
+        SafeIntBuffer buffer(777); // స్టాక్ ఆబ్జెక్ట్ సృష్టించబడింది
+        std::cout << "బఫర్ విలువ: " << buffer.getValue() << "\\n";
+    } // <-- ఇక్కడ స్కోప్ ముగిసింది! డిస్ట్రక్టర్ స్వయంచాలకంగా పిలువబడుతుంది!
+    std::cout << "స్కోప్ ముగిసింది! మెమరీ లీక్ సున్నా!\\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> Modern Smart Pointers పరిచయం (<code>&lt;memory&gt;</code> Header)</h2>
+      <p>
+        మనం ప్రతిసారీ స్వంతంగా RAII క్లాసులను రాయాల్సిన అవసరం లేకుండా, Modern C++ స్టాండర్డ్ లైబ్రరీ <strong><code>#include &lt;memory&gt;</code></strong> హెడర్ ఫైల్ ద్వారా మూడు అత్యున్నత స్థాయి స్మార్ట్ పాయింటర్లను అందించింది:
+      </p>
+
+      <ol>
+        <li>
+          <strong><code>std::unique_ptr</code> (Exclusive Ownership):</strong> ఆ రిసోర్స్‌పై ఏకైక యాజమాన్యం కలిగి ఉంటుంది. దీనిని వేరొకరికి కాపీ చేయలేము, కేవలం ఓనర్‌షిప్‌ను బదిలీ (Move) మాత్రమే చేయవచ్చు. జీరో రన్‌టైమ్ ఓవర్‌హెడ్!
+        </li>
+        <li>
+          <strong><code>std::shared_ptr</code> (Shared Ownership):</strong> బహుళ యజమానులు ఒకే రిసోర్స్‌ను పంచుకుంటారు. అంతర్గతంగా ఒక రిఫరెన్స్ కౌంటర్‌ను నిర్వహిస్తుంది. చివరి యజమాని కూడా వదిలేసినప్పుడు మెమరీ డిలీట్ అవుతుంది.
+        </li>
+        <li>
+          <strong><code>std::weak_ptr</code> (Non-Owning Observer):</strong> <code>shared_ptr</code> తో కలిసి పనిచేస్తుంది. రిఫరెన్స్ కౌంట్‌ను పెంచకుండా ఆబ్జెక్ట్‌ను గమనిస్తుంది. సైక్లిక్ డిపెండెన్సీ వల్ల వచ్చే మెమరీ లీక్స్‌ను నివారిస్తుంది.
+        </li>
+      </ol>
+
+      <div class="tip-box">
+        🌟 <strong>Modern C++ Core Guideline:</strong> "Never use raw <code>new</code> or <code>delete</code> in application code. Use <code>std::make_unique</code> and <code>std::make_shared</code> instead!"
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> <code>std::unique_ptr</code> (Exclusive Ownership &amp; Zero-Cost Abstraction)</h2>
+      <p>
+        <strong><code>std::unique_ptr</code></strong> అనేది Modern C++ లో అత్యంత ప్రాధాన్యత కలిగిన స్మార్ట్ పాయింటర్. దీని ప్రధాన లక్షణాలు:
+      </p>
+      <ul>
+        <li><strong>ఏకైక యాజమాన్యం (Exclusive Ownership):</strong> ఒక మెమరీ బ్లాక్‌కు ఒకే ఒక్క <code>unique_ptr</code> యజమానిగా ఉంటాడు.</li>
+        <li><strong>జీరో ఓవర్‌హెడ్ (Zero Runtime Overhead):</strong> ఇది రా పాయింటర్ (<code>T*</code>) వలె ఖచ్చితంగా 8 బైట్లు మాత్రమే ఉంటుంది. ఎటువంటి అదనపు మెమరీని లేదా CPU సైకిళ్లను వృధా చేయదు!</li>
+        <li><strong>కాపీయింగ్ నిషిద్ధం (Non-Copyable):</strong> <code>unique_ptr</code> ను డూప్లికేట్ చేయలేము. కేవలం <strong><code>std::move</code></strong> ద్వారా ఓనర్‌షిప్‌ను బదిలీ చేయవచ్చు.</li>
+        <li><strong>ఆటోమేటిక్ డిలీషన్:</strong> <code>unique_ptr</code> స్కోప్ దాటిపోగానే లోపలి మెమరీని ఆటోమేటిక్‌గా <code>delete</code> చేస్తుంది.</li>
+      </ul>
+
+      <p>
+        Modern C++14 నుండి <code>unique_ptr</code> ను సృష్టించడానికి ఎల్లప్పుడూ <strong><code>std::make_unique&lt;T&gt;()</code></strong> ఫంక్షన్‌ను ఉపయోగించాలి.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">unique_ptr_mastery.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;memory&gt;
+#include &lt;string&gt;
+
+class DeviceNode {
+public:
+    std::string name;
+    DeviceNode(std::string n) : name(n) {
+        std::cout << "  🔌 పరికరం ఆన్‌లైన్ అయ్యింది: " << name << "\\n";
+    }
+    ~DeviceNode() {
+        std::cout << "  🛑 పరికరం సురక్షితంగా షట్‌డౌన్ అయ్యింది: " << name << "\\n";
+    }
+    void ping() const {
+        std::cout << "  📡 Ping విజయవంతమైంది: " << name << "\\n";
+    }
+};
+
+int main() {
+    std::cout << "===== std::unique_ptr డెమో =====\\n";
+
+    // C++14 make_unique ఉపయోగించి సురక్షిత సృష్టి
+    std::unique_ptr&lt;DeviceNode&gt; dev1 = std::make_unique&lt;DeviceNode&gt;("Router_A1");
+    dev1->ping();
+
+    // std::unique_ptr&lt;DeviceNode&gt; dev2 = dev1; // ❌ కంపైలర్ ఎర్రర్! కాపీ చేయడం నిషిద్ధం!
+
+    std::cout << "\\nఓనర్‌షిప్‌ను dev2 కు బదిలీ (std::move) చేస్తున్నాం...\\n";
+    std::unique_ptr&lt;DeviceNode&gt; dev2 = std::move(dev1);
+
+    if (dev1 == nullptr) {
+        std::cout << "dev1 ఇప్పుడు సురక్షితంగా nullptr (ఖాళీ) అయ్యింది.\\n";
+    }
+    dev2->ping();
+
+    std::cout << "\\nమెయిన్ ఫంక్షన్ ముగింపు...\\n";
+    return 0; // dev2 స్కోప్ ముగియగానే DeviceNode ఆటోమేటిక్‌గా డిస్ట్రక్ట్ అవుతుంది!
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> <code>std::shared_ptr</code> (Shared Ownership &amp; Reference Counting)</h2>
+      <p>
+        కొన్ని సందర్భాల్లో ఒకే డేటా ఆబ్జెక్ట్‌ను సిస్టమ్‌లోని బహుళ భాగాలు (ఉదాహరణకు మల్టీ-థ్రెడెడ్ టాస్క్‌లు లేదా గ్రాఫ్ నోడ్స్) ఏకకాలంలో పంచుకోవాల్సి వస్తుంది. అటువంటి సమయాల్లో <strong><code>std::shared_ptr</code></strong> ను ఉపయోగిస్తాం.
+      </p>
+      <p>
+        <code>std::shared_ptr</code> ఎలా పనిచేస్తుంది?
+      </p>
+      <ul>
+        <li>ఇది హీప్‌పై ఒక <strong>కంట్రోల్ బ్లాక్ (Control Block)</strong> ను సృష్టించి, అందులో ఒక <strong>రిఫరెన్స్ కౌంటర్ (Reference Counter)</strong> ను నిర్వహిస్తుంది.</li>
+        <li>ఎప్పుడైతే ఒక కొత్త <code>shared_ptr</code> అదే మెమరీని పాయింట్ చేస్తుందో, రిఫరెన్స్ కౌంట్ $+1$ పెరుగుతుంది (<code>use_count()</code>).</li>
+        <li>ఒక <code>shared_ptr</code> స్కోప్ ముగిసి నశించినప్పుడు, రిఫరెన్స్ కౌంట్ $-1$ తగ్గుతుంది.</li>
+        <li>రిఫరెన్స్ కౌంట్ <strong>ఖచ్చితంగా సున్నా (0)</strong> అయిన తక్షణమే, కంట్రోల్ బ్లాక్ ఆ అసలైన మెమరీని ఆటోమేటిక్‌గా <code>delete</code> చేస్తుంది!</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">shared_ptr_demo.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;memory&gt;
+
+class DatabaseConnection {
+public:
+    DatabaseConnection() { std::cout << "  🗄️ డేటాబేస్ కనెక్షన్ ఓపెన్ అయ్యింది!\\n"; }
+    ~DatabaseConnection() { std::cout << "  🔒 డేటాబేస్ కనెక్షన్ పూర్తిగా క్లోజ్ చేయబడింది!\\n"; }
+    void query() { std::cout << "  ⚡ SQL Query అమలు చేయబడుతోంది...\\n"; }
+};
+
+int main() {
+    std::cout << "===== std::shared_ptr రిఫరెన్స్ కౌంటింగ్ డెమో =====\\n";
+
+    // make_shared ద్వారా సింగిల్ మెమరీ అలొకేషన్
+    std::shared_ptr&lt;DatabaseConnection&gt; conn1 = std::make_shared&lt;DatabaseConnection&gt;();
+    std::cout << "conn1 ప్రారంభం | రిఫరెన్స్ కౌంట్: " << conn1.use_count() << "\\n";
+
+    {
+        std::shared_ptr&lt;DatabaseConnection&gt; conn2 = conn1; // కాపీ సవ్యమైనది!
+        std::cout << "conn2 చేరింది    | రిఫరెన్స్ కౌంట్: " << conn1.use_count() << "\\n";
+
+        {
+            std::shared_ptr&lt;DatabaseConnection&gt; conn3 = conn2;
+            std::cout << "conn3 చేరింది    | రిఫరెన్స్ కౌంట్: " << conn1.use_count() << "\\n";
+            conn3->query();
+        } // conn3 నశించింది
+
+        std::cout << "conn3 వెళ్ళిపోయింది | రిఫరెన్స్ కౌంట్: " << conn1.use_count() << "\\n";
+    } // conn2 నశించింది
+
+    std::cout << "conn2 వెళ్ళిపోయింది | రిఫరెన్స్ కౌంట్: " << conn1.use_count() << "\\n";
+    std::cout << "మెయిన్ ఫంక్షన్ ముగింపు...\\n";
+    return 0; // conn1 నశించగానే కౌంట్ 0 అయ్యి డేటాబేస్ కనెక్షన్ క్లోజ్ అవుతుంది!
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> సర్క్యులర్ డిపెండెన్సీ సమస్య &amp; <code>std::weak_ptr</code> (Breaking Cycles)</h2>
+      <p>
+        <code>std::shared_ptr</code> చాలా అద్భుతమైనదే అయినప్పటికీ, దానికి ఒక ప్రమాదకరమైన బలహీనత ఉంది: <strong>సర్క్యులర్ రిఫరెన్స్ (Circular Dependency)</strong>.
+      </p>
+      <p>
+        ఆలోచించండి: ఆబ్జెక్ట్ A అనేది ఆబ్జెక్ట్ B ని <code>shared_ptr</code> తో పాయింట్ చేస్తోంది; ఆబ్జెక్ట్ B కూడా ఆబ్జెక్ట్ A ని <code>shared_ptr</code> తో పాయింట్ చేస్తోంది అనుకుందాం. ఇప్పుడు బయట ఉన్న పాయింటర్లు పోయినా, ఈ రెండూ ఒకదాన్నొకటి పట్టుకుని ఉండటం వల్ల రిఫరెన్స్ కౌంట్ ఎప్పటికీ సున్నా కాదు! దీనివల్ల భారీ మెమరీ లీక్ ఏర్పడుతుంది.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; margin:20px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.6;">
+        <div style="font-weight:bold; color:#ef4444; margin-bottom:8px;">[The Deadlock of Circular shared_ptr]</div>
+        [Node A] ---(shared_ptr)---> [Node B]<br/>
+        [Node A] &lt;---(shared_ptr)--- [Node B]<br/>
+        Both retain use_count = 1 forever! Neither destructor will EVER be called!<br/><br/>
+        <div style="font-weight:bold; color:#10b981; margin-bottom:8px;">[The Solution: std::weak_ptr]</div>
+        [Node A] ---(shared_ptr)---> [Node B]<br/>
+        [Node A] &lt;---(weak_ptr)----- [Node B] (Non-owning observer, use_count stays safe!)
+      </div>
+
+      <p>
+        ఈ సమస్యను పరిష్కరించడానికి <strong><code>std::weak_ptr</code></strong> ఉపయోగపడుతుంది:
+      </p>
+      <ul>
+        <li><code>weak_ptr</code> అనేది ఆబ్జెక్ట్‌పై యాజమాన్యాన్ని (Ownership) తీసుకోదు.</li>
+        <li>ఇది రిఫరెన్స్ కౌంటర్‌ను పెంచదు.</li>
+        <li>ఆబ్జెక్ట్ ఇంకా బ్రతికే ఉందో లేదో తెలుసుకోవడానికి <code>weak.expired()</code> లేదా తాత్కాలిక <code>shared_ptr</code> గా మార్చడానికి <strong><code>weak.lock()</code></strong> ను ఉపయోగిస్తాం.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">weak_ptr_solution.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;memory&gt;
+
+struct NodeB; // ఫార్వర్డ్ డిక్లరేషన్
+
+struct NodeA {
+    std::shared_ptr&lt;NodeB&gt; ptrB;
+    ~NodeA() { std::cout << "  NodeA డిస్ట్రక్ట్ అయ్యింది!\\n"; }
+};
+
+struct NodeB {
+    // 💡 సర్కిల్‌ను విచ్ఛిన్నం చేయడానికి weak_ptr వాడాం!
+    std::weak_ptr&lt;NodeA&gt; ptrA; 
+    ~NodeB() { std::cout << "  NodeB డిస్ట్రక్ట్ అయ్యింది!\\n"; }
+};
+
+int main() {
+    std::cout << "===== std::weak_ptr సైకిల్ నివారణ డెమో =====\\n";
+    {
+        auto a = std::make_shared&lt;NodeA&gt;();
+        auto b = std::make_shared&lt;NodeB&gt;();
+
+        a->ptrB = b;
+        b->ptrA = a; // weak_ptr అసైన్‌మెంట్ (use_count పెరగదు!)
+
+        std::cout << "NodeA use_count: " << a.use_count() << "\\n";
+        std::cout << "NodeB use_count: " << b.use_count() << "\\n";
+
+        // weak_ptr నుండి డేటాను యాక్సెస్ చేసే విధానం:
+        if (auto lockedA = b->ptrA.lock()) {
+            std::cout << "weak_ptr సురక్షితంగా లాక్ చేయబడింది! ఆబ్జెక్ట్ సజీవంగా ఉంది.\\n";
+        }
+    } // స్కోప్ ముగియగానే NodeA మరియు NodeB రెండూ సవ్యంగా డిస్ట్రక్ట్ అవుతాయి!
+
+    std::cout << "స్కోప్ ముగిసింది. మెమరీ లీక్ విజయవంతంగా నివారించబడింది!\\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> కస్టమ్ డెలీటర్లు (Custom Deleters with Smart Pointers)</h2>
+      <p>
+        స్మార్ట్ పాయింటర్లు కేవలం హీప్ ర్యామ్ మెమరీని <code>delete</code> చేయడానికి మాత్రమే పరిమితం కాలేదు! సిస్టమ్ ప్రోగ్రామింగ్‌లో ఫైల్ హ్యాండిల్స్ (<code>FILE*</code>), C-లైబ్రరీ సాకెట్లు, డేటాబేస్ కర్సర్లు, విండో హ్యాండిల్స్ వంటి ఏ రిసోర్స్‌నైనా ఆటోమేటిక్‌గా క్లీన్ చేయడానికి <strong>కస్టమ్ డెలీటర్ (Custom Deleter)</strong> ను జోడించవచ్చు.
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">custom_deleter_file.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="runCodeInCompiler(this)">▶ Run</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;memory&gt;
+#include &lt;cstdio&gt;
+
+// C-File హ్యాండిల్ కోసం కస్టమ్ డెలీటర్ లాంబ్డా
+int main() {
+    auto fileCloser = [](FILE* fp) {
+        if (fp) {
+            std::cout << "  📄 కస్టమ్ డెలీటర్: fclose() ద్వారా ఫైల్ ఆటోమేటిక్‌గా క్లోజ్ చేయబడింది!\\n";
+            std::fclose(fp);
+        }
+    };
+
+    {
+        // unique_ptr తో ఫైల్ హ్యాండిల్ నిర్వహణ
+        std::unique_ptr&lt;FILE, decltype(fileCloser)&gt; myFile(std::fopen("test_log.txt", "w"), fileCloser);
+
+        if (myFile) {
+            std::fputs("Our Compiler Modern C++ RAII Log", myFile.get());
+            std::cout << "ఫైల్‌లోకి లాగ్ డేటా వ్రాయబడింది.\\n";
+        }
+    } // <-- ఇక్కడ స్కోప్ ముగియగానే ఫైల్ ఆటోమేటిక్‌గా క్లోజ్ అవుతుంది! fclose() పిలవాల్సిన పని లేదు!
+
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> స్మార్ట్ పాయింటర్ల ఎంపిక మార్గదర్శి (Decision Matrix)</h2>
+      <p>
+        ప్రాజెక్ట్ నిర్మాణంలో ఏ పాయింటర్ ఎప్పుడు వాడాలో నిర్ణయించడానికి క్రింది సింపుల్ డెసిషన్ గైడ్‌ను అనుసరించండి:
+      </p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ప్రశ్న / అవసరం</th>
+            <th>సరైన ఎంపిక</th>
+            <th>కారణం &amp; ప్రయోజనం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>నాకు సింగిల్ ఓనర్ మరియు గరిష్ట పనితీరు కావాలి</td>
+            <td><strong><code>std::unique_ptr</code></strong></td>
+            <td>సున్నా ఓవర్‌హెడ్ (8 బైట్లు), ఫాస్ట్, కాపీ చేయడం కుదరదు. డిఫాల్ట్ ఎంపిక!</td>
+          </tr>
+          <tr>
+            <td>బహుళ భాగాలు ఆబ్జెక్ట్‌ను ఏకకాలంలో ఓన్ చేసుకోవాలి</td>
+            <td><strong><code>std::shared_ptr</code></strong></td>
+            <td>థ్రెడ్-సేఫ్ రిఫరెన్స్ కౌంటింగ్. చివరి యూజర్ పోగానే ఆటో-డిలీట్.</td>
+          </tr>
+          <tr>
+            <td>ఆబ్జెక్ట్‌ను గమనించాలి, కానీ ఓనర్‌షిప్ తీసుకోకూడదు</td>
+            <td><strong><code>std::weak_ptr</code></strong></td>
+            <td>రిఫరెన్స్ కౌంట్ పెరగదు, సర్క్యులర్ డిపెండెన్సీ లీక్స్ నివారిస్తుంది.</td>
+          </tr>
+          <tr>
+            <td>ఫంక్షన్ పారామీటర్‌గా భారీ ఆబ్జెక్ట్ పాస్ చేయాలి</td>
+            <td><strong><code>const T&amp;</code> (Reference)</strong></td>
+            <td>స్మార్ట్ పాయింటర్ కంటే వేగవంతమైనది. పాయింటర్ ఓవర్‌హెడ్ లేకుండా సున్నా కాపీ.</td>
+          </tr>
+          <tr>
+            <td>ఆప్షనల్ ఆబ్జెక్ట్ (నల్ ఉండవచ్చు) కానీ ఓనర్‌షిప్ లేదు</td>
+            <td><strong><code>const T*</code> (Raw Pointer)</strong></td>
+            <td>ఓనర్‌షిప్ లేని నాన్-ఓనింగ్ అబ్జర్వర్‌గా రా పాయింటర్లు ఇప్పటికీ ఆమోదయోగ్యమే.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> స్మార్ట్ పాయింటర్లలో బిగినర్స్ చేసే తప్పులు &amp; నివారణ</h2>
+      <ol style="line-height:1.8;">
+        <li>
+          <strong>ఒకే రా పాయింటర్‌తో రెండు <code>shared_ptr</code> లను సృష్టించడం:</strong><br/>
+          <code>int* raw = new int(10); std::shared_ptr&lt;int&gt; s1(raw); std::shared_ptr&lt;int&gt; s2(raw);</code><br/>
+          <em>ప్రమాదం:</em> రెండూ వేర్వేరు కంట్రోల్ బ్లాక్‌లను సృష్టించుకుంటాయి. దీనివల్ల <strong>Double Free</strong> జరిగి ప్రోగ్రామ్ క్రాష్ అవుతుంది!<br/>
+          <em>పరిష్కారం:</em> ఎల్లప్పుడూ <code>std::make_shared</code> వాడండి.
+        </li>
+        <li>
+          <strong>ప్రతిచోటా అనవసరంగా <code>shared_ptr</code> వాడటం:</strong> <code>unique_ptr</code> సరిపోయే చోట కూడా <code>shared_ptr</code> వాడితే అటామిక్ రిఫరెన్స్ కౌంటింగ్ వల్ల మల్టీ-కోర్ CPU లలో పనితీరు నెమ్మదిస్తుంది.
+        </li>
+        <li>
+          <strong><code>weak_ptr</code> ను చెక్ చేయకుండా వాడటం:</strong> ఎల్లప్పుడూ <code>auto sp = wp.lock()</code> ద్వారా చెక్ చేసి, అది నల్ కాదని నిర్ధారించుకున్నాకే ఉపయోగించాలి.
+        </li>
+      </ol>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> రియల్-వరల్డ్ ప్రాజెక్ట్: Enterprise Multi-Tenant Session Cache &amp; Resource Manager</h2>
+      <p>
+        నిజ జీవితంలో AWS, Google Cloud, Netflix లేదా బ్యాంకింగ్ క్లౌడ్ ప్లాట్‌ఫామ్‌లలో సెకనుకు మిలియన్ల కొద్దీ యూజర్ సెషన్లు, డేటాబేస్ క్యాష్‌లు నడుస్తాయి. అక్కడ మెమరీ లీక్ అవ్వకుండా, సెషన్లు ముగియగానే ఆటోమేటిక్‌గా క్లీన్ అవ్వాలి, మరియు సైక్లిక్ డిపెండెన్సీలు ఉండకూడదు.
+      </p>
+      <p>
+        ఈ ప్రాజెక్ట్‌లో మనం <code>std::unique_ptr</code>, <code>std::shared_ptr</code> మరియు <code>std::weak_ptr</code> మూడింటి కలయికతో ఒక <strong>ఎంటర్‌ప్రైజ్ మల్టీ-టెనెంట్ సెషన్ మేనేజర్</strong> ను నిర్మిస్తున్నాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">EnterpriseSessionManager.cpp</span>
+          <div class="btn-group">
+            <button class="btn btn-copy" onclick="copyCode(this)">📋 Copy</button>
+            <button class="btn btn-run" onclick="openInteractiveCompiler()">⚡ Run Live Project</button>
+          </div>
+        </div>
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;memory&gt;
+#include &lt;string&gt;
+#include &lt;unordered_map&gt;
+#include &lt;vector&gt;
+
+// టెనెంట్ కాన్ఫిగరేషన్ (Exclusive Ownership: unique_ptr)
+class TenantConfig {
+public:
+    std::string tenantId;
+    int maxConnections;
+    TenantConfig(std::string id, int maxConn) : tenantId(id), maxConnections(maxConn) {
+        std::cout << "  🏢 [కన్ఫిగరేషన్ లోడ్ అయింది] టెనెంట్ ID: " << tenantId << "\\n";
+    }
+    ~TenantConfig() {
+        std::cout << "  🗑️ [కన్ఫిగరేషన్ డిస్ట్రాయ్ అయింది] టెనెంట్ ID: " << tenantId << "\\n";
+    }
+};
+
+// యూజర్ సెషన్ డేటా (Shared Ownership: shared_ptr)
+class UserSession {
+public:
+    std::string sessionId;
+    std::string username;
+    UserSession(std::string sId, std::string user) : sessionId(sId), username(user) {
+        std::cout << "  👤 [లాగిన్] సెషన్ ప్రారంభమైంది: " << username << " (ID: " << sessionId << ")\\n";
+    }
+    ~UserSession() {
+        std::cout << "  🚪 [లాగౌట్] సెషన్ మెమరీ ఆటోమేటిక్‌గా విడుదల చేయబడింది: " << username << "\\n";
+    }
+    void executeAction(const std::string& action) {
+        std::cout << "  ⚡ యాక్షన్ అమలు: " << username << " -> " << action << "\\n";
+    }
+};
+
+// క్లౌడ్ సెషన్ మేనేజర్ ఇంజిన్
+class CloudSessionManager {
+private:
+    std::unordered_map&lt;std::string, std::shared_ptr&lt;UserSession&gt;&gt; activeSessions;
+    std::vector&lt;std::weak_ptr&lt;UserSession&gt;&gt; sessionAuditLog; // Non-owning weak observer
+
+public:
+    void registerSession(std::shared_ptr&lt;UserSession&gt; session) {
+        activeSessions[session->sessionId] = session;
+        sessionAuditLog.push_back(session); // weak_ptr రూపంలో స్టోర్ అవుతుంది
+        std::cout << "  [మేనేజర్] సెషన్ నమోదు చేయబడింది. ప్రస్తుత యాక్టివ్ సెషన్లు: " << activeSessions.size() << "\\n";
+    }
+
+    void terminateSession(const std::string& sessionId) {
+        std::cout << "\\n[మేనేజర్] సెషన్ ముగింపు ఆదేశం: " << sessionId << "\\n";
+        activeSessions.erase(sessionId); // మ్యాప్ నుండి తొలగించగానే use_count తగ్గుతుంది
+    }
+
+    void runAuditInspection() {
+        std::cout << "\\n--- [సెక్యూరిటీ ఆడిట్ ఇన్‌స్పెక్షన్ (weak_ptr ద్వారా)] ---\\n";
+        for (size_t i = 0; i < sessionAuditLog.size(); ++i) {
+            if (auto liveSession = sessionAuditLog[i].lock()) {
+                std::cout << "  ✅ ఆడిట్ #" << (i + 1) << ": సెషన్ సజీవంగా ఉంది -> " << liveSession->username << "\\n";
+            } else {
+                std::cout << "  ⚠️ ఆడిట్ #" << (i + 1) << ": సెషన్ ఇప్పటికే సురక్షితంగా క్లోజ్ చేయబడింది (Expired!)\\n";
+            }
+        }
+    }
+};
+
+int main() {
+    std::cout << "=======================================================================\\n";
+    std::cout << "☁️ [ENTERPRISE CLOUD MULTI-TENANT SESSION & RESOURCE ENGINE]\\n";
+    std::cout << "=======================================================================\\n";
+
+    // 1. unique_ptr తో టెనెంట్ కాన్ఫిగరేషన్ (Zero-overhead exclusive ownership)
+    std::unique_ptr&lt;TenantConfig&gt; tenant = std::make_unique&lt;TenantConfig&gt;("HDFC_BANK_PROD", 5000);
+
+    CloudSessionManager manager;
+
+    // 2. shared_ptr తో సెషన్ల నిర్వహణ
+    auto user1 = std::make_shared&lt;UserSession&gt;("SESS_001", "Ravi_Kumar");
+    auto user2 = std::make_shared&lt;UserSession&gt;("SESS_002", "Priya_Sharma");
+
+    manager.registerSession(user1);
+    manager.registerSession(user2);
+
+    user1->executeAction("₹ 25,000 NEFT Transfer");
+    user2->executeAction("Download Account Statement");
+
+    manager.runAuditInspection();
+
+    // Ravi Kumar లాగౌట్ అయ్యాడు
+    manager.terminateSession("SESS_001");
+    user1.reset(); // లోకల్ పాయింటర్ కూడా క్లియర్ చేశాం (use_count = 0)
+
+    manager.runAuditInspection();
+
+    std::cout << "\\n=======================================================================\\n";
+    std::cout << "ప్రోగ్రామ్ ముగింపు: మిగిలిన అన్ని సెషన్లు మరియు కాన్ఫిగరేషన్లు RAII ద్వారా ఆటోమేటిక్‌గా క్లీన్ అవుతాయి!\\n";
+    std::cout << "=======================================================================\\n";
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> సారాంశం &amp; ఇంటరాక్టివ్ క్విజ్ (Summary &amp; Self-Check Quizzes)</h2>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:28px;">
+        <h3 style="margin-top:0; color:#10b981;">📌 ఈ అధ్యాయంలో నేర్చుకున్న ప్రధాన అంశాలు:</h3>
+        <ul style="line-height:1.8; color:var(--text);">
+          <li><strong>Stack vs Heap:</strong> స్టాక్ మెమరీ వేగవంతమైనది మరియు ఆటోమేటిక్; హీప్ మెమరీ విశాలమైనది మరియు రన్‌టైమ్ డైనమిక్ కేటాయింపులకు అనువైనది.</li>
+          <li><strong>new &amp; delete:</strong> సాంప్రదాయ C++ ఆపరేటర్లు. <code>new[]</code> తో కేటాయించిన అర్రేలకు తప్పనిసరిగా <code>delete[]</code> వాడాలి.</li>
+          <li><strong>RAII సూత్రం:</strong> రిసోర్స్ మేనేజ్‌మెంట్‌ను ఆబ్జెక్ట్ లైఫ్‌టైమ్‌తో ముడిపెట్టే గోల్డెన్ డిజైన్ పాటర్న్. ఎక్సెప్షన్ వచ్చినా మెమరీ లీక్ కాదు.</li>
+          <li><strong>std::unique_ptr:</strong> ఏకైక యాజమాన్యం. కాపీ కుదరదు, <code>std::move</code> చేయవచ్చు. రా పాయింటర్ అంతే వేగం (Zero Overhead).</li>
+          <li><strong>std::shared_ptr:</strong> బహుళ యజమానులు. కంట్రోల్ బ్లాక్ రిఫరెన్స్ కౌంటింగ్ (<code>use_count()</code>) ద్వారా ఆటోమేటిక్ డీఅలొకేషన్.</li>
+          <li><strong>std::weak_ptr:</strong> నాన్-ఓనింగ్ అబ్జర్వర్. సర్క్యులర్ డిపెండెన్సీ డెడ్‌లాక్‌లను నివారించి మెమరీ లీక్స్ రాకుండా కాపాడుతుంది.</li>
+          <li><strong>కస్టమ్ డెలీటర్లు:</strong> ఫైల్స్, సాకెట్స్ మరియు C-హ్యాండిల్స్‌ను స్మార్ట్ పాయింటర్ల ద్వారా స్వయంచాలకంగా క్లోజ్ చేసే వెసులుబాటు.</li>
+        </ul>
+      </div>
+
+      <h3 style="margin-bottom:16px;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <!-- QUIZ 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 1: C++ లో <code>int* arr = new int[10];</code> అని కేటాయించిన మెమరీని <code>delete arr;</code> అని డిలీట్ చేస్తే ఏమవుతుంది?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>Undefined Behavior (తీవ్రమైన రన్‌టైమ్ లోపం / మెమరీ కరప్షన్)</strong> ఏర్పడుతుంది!<br/>
+          <em>వివరణ:</em> <code>new[]</code> తో కేటాయించిన అర్రేలను తప్పనిసరిగా <code>delete[] arr;</code> తోనే డిలీట్ చేయాలి. కేవలం <code>delete</code> రాస్తే కేవలం మొదటి ఎలిమెంట్ మాత్రమే ప్రాసెస్ అవుతుంది లేదా కంపైలర్ హీప్ హెడర్ మెటాడేటాను తప్పుగా చదివి ప్రోగ్రామ్ క్రాష్ అవుతుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 2: <code>std::unique_ptr</code> ను వేరొక ఫంక్షన్‌కు లేదా వేరియబుల్‌కు కాపీ (Copy) చేయడానికి ప్రయత్నిస్తే ఏమవుతుంది?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>కంపైలేషన్ ఎర్రర్</strong> వస్తుంది!<br/>
+          <em>వివరణ:</em> <code>std::unique_ptr</code> లో Copy Constructor మరియు Copy Assignment Operator లు డిలీట్ చేయబడ్డాయి (<code>= delete</code>). ఇది ఎక్స్‌క్లూజివ్ ఓనర్‌షిప్ సూత్రంపై పనిచేస్తుంది. దానిని వేరొకరికి బదిలీ చేయాలంటే కేవలం <code>std::move(ptr)</code> మాత్రమే వాడాలి.
+        </div>
+      </details>
+
+      <!-- QUIZ 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 3: <code>std::shared_ptr</code> లో ఆబ్జెక్ట్ మెమరీ ఎప్పుడు ఆటోమేటిక్‌గా డిలీట్ అవుతుంది?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> కంట్రోల్ బ్లాక్‌లోని రిఫరెన్స్ కౌంట్ (Reference Count) <strong>ఖచ్చితంగా సున్నా (0)</strong> అయినప్పుడు!<br/>
+          <em>వివరణ:</em> ఆ ఆబ్జెక్ట్‌ను పాయింట్ చేస్తున్న చివరి <code>shared_ptr</code> కూడా తన స్కోప్ ముగిసి డిస్ట్రక్ట్ అయినప్పుడు లేదా <code>reset()</code> అయినప్పుడు కౌంట్ 0 అవుతుంది; తక్షణమే ఆబ్జెక్ట్ డిస్ట్రక్టర్ కాల్ అయ్యి హీప్ మెమరీ విడుదలవుతుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 4: సర్క్యులర్ రిఫరెన్స్ (Circular Reference) సమస్యను పరిష్కరించడానికి <code>std::weak_ptr</code> ఎందుకు సరైన పరిష్కారం?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఎందుకంటే <code>std::weak_ptr</code> రిఫరెన్స్ కౌంటర్‌ను పెంచదు (Non-owning Observer)!<br/>
+          <em>వివరణ:</em> రెండు ఆబ్జెక్టులు ఒకరినొకరు <code>shared_ptr</code> తో చూసుకుంటే కౌంట్ ఎప్పటికీ 1 గానే మిగిలిపోయి మెమరీ లీక్ అవుతుంది. ఒకదానిలో <code>weak_ptr</code> వాడటం వల్ల కౌంట్ పెరగదు, బాహ్య స్కోప్ ముగియగానే ప్రధాన ఆబ్జెక్ట్ సవ్యంగా డిస్ట్రక్ట్ అవుతుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text);">
+          ప్రశ్న 5: Modern C++ లో <code>new MyClass()</code> రాసే బదులు <code>std::make_unique&lt;MyClass&gt;()</code> ఎందుకు వాడాలి?
+        </summary>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border); font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong>Exception Safety (ఎక్సెప్షన్ భద్రత)</strong> మరియు క్లీన్ సింటాక్స్ కొరకు.<br/>
+          <em>వివరణ:</em> ఫంక్షన్ కాల్స్ లోపల ఆర్గుమెంట్లు ఎగ్జిక్యూట్ అయ్యే ఆర్డర్‌లో ఎక్సెప్షన్ వస్తే <code>new</code> ద్వారా కేటాయించిన మెమరీ లీక్ అయ్యే అవకాశం ఉంటుంది. <code>make_unique</code> ఎక్సెప్షన్-సేఫ్ గ్యారెంటీని ఇస్తుంది మరియు టైప్ పేరును రెండుసార్లు రాయాల్సిన అవసరం లేకుండా కోడ్‌ను క్లీన్‌గా ఉంచుతుంది.
+        </div>
+      </details>
+    </section>
+
+    <!-- LESSON NAVIGATION -->
+    <div class="lesson-nav">
+      <a href="/blog-cpp/${currentLesson.prev.file}" class="prev-link">← మునుపటి అధ్యాయం: ${currentLesson.prev.title}</a>
+      <a href="/blog-cpp/${currentLesson.next.file}" class="next-link">తర్వాతి అధ్యాయం: ${currentLesson.next.title} →</a>
+    </div>
+
+  </main>
+</div>
+
+<!-- SCRIPTS FOR SITEMAP & INTERACTIVE RUNNER -->
+<script src="/site-nav.js"></script>
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`#include <iostream>
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+class TenantConfig {
+public:
+    std::string tenantId;
+    int maxConnections;
+    TenantConfig(std::string id, int maxConn) : tenantId(id), maxConnections(maxConn) {
+        std::cout << "  🏢 [కన్ఫిగరేషన్ లోడ్ అయింది] టెనెంట్ ID: " << tenantId << "\\\\n";
+    }
+    ~TenantConfig() {
+        std::cout << "  🗑️ [కన్ఫిగరేషన్ డిస్ట్రాయ్ అయింది] టెనెంట్ ID: " << tenantId << "\\\\n";
+    }
+};
+
+class UserSession {
+public:
+    std::string sessionId;
+    std::string username;
+    UserSession(std::string sId, std::string user) : sessionId(sId), username(user) {
+        std::cout << "  👤 [లాగిన్] సెషన్ ప్రారంభమైంది: " << username << " (ID: " << sessionId << ")\\\\n";
+    }
+    ~UserSession() {
+        std::cout << "  🚪 [లాగౌట్] సెషన్ మెమరీ ఆటోమేటిక్‌గా విడుదల చేయబడింది: " << username << "\\\\n";
+    }
+    void executeAction(const std::string& action) {
+        std::cout << "  ⚡ యాక్షన్ అమలు: " << username << " -> " << action << "\\\\n";
+    }
+};
+
+class CloudSessionManager {
+private:
+    std::unordered_map<std::string, std::shared_ptr<UserSession>> activeSessions;
+    std::vector<std::weak_ptr<UserSession>> sessionAuditLog;
+
+public:
+    void registerSession(std::shared_ptr<UserSession> session) {
+        activeSessions[session->sessionId] = session;
+        sessionAuditLog.push_back(session);
+        std::cout << "  [మేనేజర్] సెషన్ నమోదు చేయబడింది. ప్రస్తుత యాక్టివ్ సెషన్లు: " << activeSessions.size() << "\\\\n";
+    }
+
+    void terminateSession(const std::string& sessionId) {
+        std::cout << "\\\\n[మేనేజర్] సెషన్ ముగింపు ఆదేశం: " << sessionId << "\\\\n";
+        activeSessions.erase(sessionId);
+    }
+
+    void runAuditInspection() {
+        std::cout << "\\\\n--- [సెక్యూరిటీ ఆడిట్ ఇన్‌స్పెక్షన్ (weak_ptr ద్వారా)] ---\\\\n";
+        for (size_t i = 0; i < sessionAuditLog.size(); ++i) {
+            if (auto liveSession = sessionAuditLog[i].lock()) {
+                std::cout << "  ✅ ఆడిట్ #" << (i + 1) << ": సెషన్ సజీవంగా ఉంది -> " << liveSession->username << "\\\\n";
+            } else {
+                std::cout << "  ⚠️ ఆడిట్ #" << (i + 1) << ": సెషన్ ఇప్పటికే సురక్షితంగా క్లోజ్ చేయబడింది (Expired!)\\\\n";
+            }
+        }
+    }
+};
+
+int main() {
+    std::cout << "=======================================================================\\\\n";
+    std::cout << "☁️ [ENTERPRISE CLOUD MULTI-TENANT SESSION & RESOURCE ENGINE]\\\\n";
+    std::cout << "=======================================================================\\\\n";
+
+    std::unique_ptr<TenantConfig> tenant = std::make_unique<TenantConfig>("HDFC_BANK_PROD", 5000);
+
+    CloudSessionManager manager;
+
+    auto user1 = std::make_shared<UserSession>("SESS_001", "Ravi_Kumar");
+    auto user2 = std::make_shared<UserSession>("SESS_002", "Priya_Sharma");
+
+    manager.registerSession(user1);
+    manager.registerSession(user2);
+
+    user1->executeAction("₹ 25,000 NEFT Transfer");
+    user2->executeAction("Download Account Statement");
+
+    manager.runAuditInspection();
+
+    manager.terminateSession("SESS_001");
+    user1.reset();
+
+    manager.runAuditInspection();
+
+    std::cout << "\\\\n=======================================================================\\\\n";
+    std::cout << "ప్రోగ్రామ్ ముగింపు: మిగిలిన అన్ని సెషన్లు మరియు కాన్ఫిగరేషన్లు RAII ద్వారా ఆటోమేటిక్‌గా క్లీన్ అవుతాయి!\\\\n";
+    std::cout << "=======================================================================\\\\n";
+    return 0;
+}\`;
+
+    try {
+      localStorage.setItem('code_cpp17', projectCode);
+      localStorage.setItem('code_cpp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-cpp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-cpp', currentLesson.file);
+fs.writeFileSync(outputPath, chapter12Content, 'utf8');
+console.log('✅ Successfully generated deep high-value C++ Chapter 12 in exact HTML style!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter12Content.length, 'characters');

@@ -1,0 +1,839 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./cpp_curriculum_data.js');
+
+const currentLesson = LESSONS[9]; // Chapter 10
+const sidebarHtml = buildSidebar(10);
+
+const chapter10Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Modern C++ Tutorial | Our Compiler</title>
+  <meta name="description" content="C++ అర్రేలు (Arrays) & std::string సమగ్ర మాస్టర్‌క్లాస్ తెలుగులో: C-Arrays vs std::array, 2D Arrays & Row-Major Order, std::string & SSO (Small String Optimization), C++17 std::string_view (Zero-Copy), మరియు Enterprise Stock Ticker Analytics Engine ప్రాజెక్ట్." />
+  <meta name="keywords" content="c++ arrays telugu, c++ std::string telugu, std::array c++, std::string_view c++17, small string optimization sso, c++ contiguous memory, learn c++ in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-cpp/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-cpp/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Mastering C++ Arrays, std::array, std::string & std::string_view in Telugu)",
+    "description": "C++ అర్రేలు & స్ట్రింగ్స్ పూర్తి గైడ్: C-Arrays, std::array, 2D Memory Layout, std::string SSO, std::string_view, మరియు Enterprise Ticker Engine.",
+    "articleSection": "Phase 3: Functions, Memory & Pointers",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-02-10",
+    "dateModified": "2026-11-01"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, C++ Syntax Highlighter & Theme -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side C++ Syntax Highlighter
+    function highlightCppCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___CPP_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)/g, m => pushToken('cm', m));
+      code = code.replace(/(#[a-zA-Z_]+(?:\\s*<[^>]+>|\\s*"[^"]+")?)/g, m => pushToken('pp', m));
+      code = code.replace(/("[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'int','double','float','char','bool','void','auto','long','short','unsigned','signed',
+        'return','using','namespace','class','struct','public','private','protected',
+        'virtual','override','template','typename','const','constexpr','consteval',
+        'if','else','for','while','do','switch','case','break','continue','default',
+        'new','delete','try','catch','throw','nullptr','true','false','static','inline',
+        'sizeof','typedef','enum','explicit','friend','operator','typeid','static_cast',
+        'likely','unlikely','fallthrough'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'std','cout','cin','endl','cerr','clog','string','string_view','vector','array','span',
+        'map','set','pair','main','printf','scanf','getline','numeric_limits','setw',
+        'setprecision','fixed','setfill','left','right','boolalpha','noboolalpha','size',
+        'substr','find','empty','at','data','length','append','push_back','front','back'
+      ];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?(?:f|u|l|ll)?)\\b/gi, m => pushToken('nu', m));
+      code = code.replace(/___CPP_TOK_(\\d+)___/g, (_, id) => tokens[id]);
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code').forEach(el => {
+        el.innerHTML = highlightCppCode(el.textContent);
+      });
+    });
+
+    function copyCode(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (codeEl) {
+        navigator.clipboard.writeText(codeEl.textContent).then(() => {
+          const orig = btn.innerHTML;
+          btn.innerHTML = '✅ Copied!';
+          setTimeout(() => { btn.innerHTML = orig; }, 2000);
+        });
+      }
+    }
+
+    function runCodeInCompiler(btn) {
+      const codeBlock = btn.closest('.code-block');
+      const codeEl = codeBlock.querySelector('pre code');
+      if (codeEl) {
+        const rawCode = codeEl.textContent;
+        try {
+          localStorage.setItem('code_cpp17', rawCode);
+          localStorage.setItem('code_cpp', rawCode);
+        } catch (e) {
+          console.warn('LocalStorage error:', e);
+        }
+        window.open('/online-cpp-compiler.html', '_blank');
+      }
+    }
+  </script>
+</head>
+<body>
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE CONTENT -->
+  <main class="content">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-cpp.html">C++ Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 10: ${currentLesson.title}</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">${currentLesson.title}</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge">🌐 Modern C++ (C++20/C++17)</span>
+      <span class="badge">🟢 Chapter 10 of 20</span>
+      <span class="badge">📂 ${currentLesson.phaseTag}: ${currentLesson.phaseTitle}</span>
+      <span class="badge">📅 2026 Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>${currentLesson.subtopics}</span>
+    </div>
+
+    <!-- INTRO ACCENT BOX (Warm Ivory with Green Accent) -->
+    <div class="intro-box">
+      <p>నిజ జీవిత సాఫ్ట్‌వేర్ అప్లికేషన్లలో మనం ఒకే ఒక్క విలువతో పనిచేయలేం. ఒక కళాశాలలో 500 మంది విద్యార్థుల మార్కులు, ఈ-కామర్స్ పోర్టల్‌లో లక్షల ఉత్పత్తుల ధరలు, లేదా ట్రేడింగ్ ఎక్స్ఛేంజ్‌లో సెకనుకు వచ్చే వేలాది షేర్ల ధరల స్ట్రీమ్ వంటి సమూహాలను సమర్థవంతంగా భద్రపరచాలి. ఇటువంటి ఒకే రకమైన డేటా మూలకాల సమాహారాలనే మనం <strong>అర్రేలు (Arrays)</strong> అంటాం.</p>
+      <p>అలాగే కంప్యూటర్లు కేవలం సంఖ్యలతోనే కాకుండా, మానవులతో సంభాషించడానికి పేర్లు, చిరునామాలు, డాక్యుమెంట్లు మరియు నెట్‌వర్క్ సందేశాల వంటి టెక్స్ట్ డేటాను నిర్వహించాలి. దీని కోసమే C++ మనకు సాంప్రదాయ C-Style స్ట్రింగ్స్ నుండి ఆధునిక <strong><code>std::string</code></strong> మరియు సరికొత్త విప్లవాత్మక <strong><code>std::string_view</code> (Zero-Copy Strings)</strong> వరకు అత్యున్నత సాధనాలను అందించింది.</p>
+      <p>ఈ సమగ్ర మాస్టర్‌క్లాస్‌లో మనం అర్రేల అంతర్గత కంటిగ్యువస్ మెమరీ లేఅవుట్, <code>std::array</code> vs C-Arrays, మల్టీ-డైమెన్షనల్ 2D అర్రేల Row-Major మెమరీ ప్రాసెసింగ్, <code>std::string</code> యొక్క Small String Optimization (SSO), మరియు అధునాతన <code>std::string_view</code> పనితీరును లోతుగా అధ్యయనం చేస్తాం. చివరిగా పూర్తి స్థాయి <em>"Enterprise High-Performance Stock Ticker Tape & Text Analytics Engine"</em> ప్రాజెక్ట్‌ను రన్ చేసి నైపుణ్యం సాధిద్దాం!</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section>
+      <h2 class="section-title"><span class="num">1</span> అర్రేల ఆవశ్యకత & మెమరీ లేఅవుట్ (Contiguous Memory Allocation)</h2>
+      <p>
+        ఒకే డేటా టైప్‌కు చెందిన బహుళ విలువలను మెమరీలో <strong>వరుసగా ఒకదాని పక్కన ఒకటి (Contiguous Memory Locations)</strong> నిల్వ చేసే డేటా స్ట్రక్చర్‌ను <strong>అర్రే (Array)</strong> అంటారు.
+      </p>
+      <p>
+        కంప్యూటర్ ఆర్కిటెక్చర్‌లో అర్రేలు ఎందుకు అత్యంత వేగవంతమైనవి? ఎందుకంటే మెమరీలో మూలకాలు వరుసగా ఉండటం వల్ల CPU కి క్రింది రెండు అద్భుతమైన ప్రయోజనాలు లభిస్తాయి:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; margin:20px 0;">
+        <h4 style="margin:0 0 12px 0; color:#10b981; font-size:15px;">🧠 CPU Hardware & Memory Addressing Formula (O(1) Direct Access)</h4>
+        <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin:0 0 12px 0;">
+          అర్రేలోని ఏ ఇండెక్స్ <code>i</code> నైనా యాక్సెస్ చేయడానికి CPU ఎటువంటి లూప్‌లు లేదా సెర్చ్‌లు చేయాల్సిన అవసరం లేదు. అది క్రింది గణిత సూత్రం ద్వారా మెమరీ అడ్రస్‌ను ఒక్క క్లాక్ సైకిల్‌లో గణిస్తుంది:
+        </p>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:14px; background:var(--bg3); padding:12px 16px; border-radius:6px; color:#10b981;">
+          Address(arr[i]) = Base_Address + (i * sizeof(DataType))
+        </div>
+        <p style="font-size:13.5px; color:var(--text2); line-height:1.7; margin:12px 0 0 0;">
+          ఉదాహరణకు బేస్ అడ్రస్ <code>0x1000</code> వద్ద <code>int</code> అర్రే (4 బైట్లు) ఉంటే: <code>arr[3]</code> యొక్క చిరునామా <code>0x1000 + (3 * 4) = 0x100C</code> అవుతుంది. దీనివల్ల టైమ్ కాంప్లెక్సిటీ ఎల్లప్పుడూ <strong>O(1) కాన్స్టాంట్ టైమ్</strong>! అంతేకాకుండా CPU L1 Cache వరుస ఎలిమెంట్లను ముందే క్యాష్ మెమరీలోకి తెచ్చుకోవడం వల్ల <strong>Cache Hit Rate 99%</strong> కి చేరుకుంటుంది.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section>
+      <h2 class="section-title"><span class="num">2</span> C-Style Fixed Arrays & Array Decay to Pointer ట్రాప్</h2>
+      <p>
+        C భాష నుండి C++ కి సంక్రమించిన సాంప్రదాయ అర్రేలను <strong>C-Style Arrays</strong> లేదా Raw Arrays అంటారు: <code>int scores[5] = {90, 85, 78, 92, 88};</code>.
+      </p>
+
+      <div class="card" style="background:var(--bg2); border:1px solid rgba(239,68,68,0.4); border-left:4px solid #ef4444; border-radius:8px; padding:16px 20px; margin:18px 0;">
+        <h4 style="margin:0 0 8px 0; color:#ef4444; font-size:15px;">⚠️ The Classic "Array Decay to Pointer" Trap</h4>
+        <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin:0;">
+          ఒక C-style అర్రేను ఫంక్షన్‌కు పారామీటర్‌గా పంపినప్పుడు (ఉదా: <code>void process(int arr[])</code>), అది తన సైజ్ సమాచారాన్ని పూర్తిగా కోల్పోయి, కేవలం మొదటి ఎలిమెంట్ యొక్క పాయింటర్‌గా (<code>int*</code>) మారిపోతుంది! దీనినే <strong>Array Decay</strong> అంటారు.<br>
+          ఫలితంగా ఫంక్షన్ లోపల <code>sizeof(arr)</code> అని రాస్తే అది అర్రే సైజును ఇవ్వదు; కేవలం పాయింటర్ సైజును (64-bit సిస్టమ్‌లో 8 బైట్లు) మాత్రమే ఇస్తుంది! అందుకే C-style అర్రేలతో పాటు అర్రే సైజును కూడా వేరే పారామీటర్‌గా విధిగా పంపాల్సి వచ్చేది.
+        </p>
+      </div>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 1: C-Style Array Declaration & Pointer Decay Demonstration</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+
+// ఫంక్షన్‌కు పాస్ అయినప్పుడు అర్రే పాయింటర్‌గా మారిపోతుంది (Array Decay)
+void inspectCArray(int arr[], int size) {
+    std::cout &lt;&lt; "ఫంక్షన్ లోపల sizeof(arr): " &lt;&lt; sizeof(arr) &lt;&lt; " బైట్లు (కేవలం పాయింటర్ సైజ్!)\\n";
+    std::cout &lt;&lt; "ఎలిమెంట్లు: ";
+    for (int i = 0; i &lt; size; ++i) {
+        std::cout &lt;&lt; arr[i] &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; '\\n';
+}
+
+int main() {
+    int marks[5] = {95, 88, 76, 89, 92};
+
+    std::cout &lt;&lt; "main() లో sizeof(marks): " &lt;&lt; sizeof(marks) &lt;&lt; " బైట్లు (5 * 4 = 20 బైట్లు)\\n";
+    inspectCArray(marks, 5);
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section>
+      <h2 class="section-title"><span class="num">3</span> Modern C++11 std::array (Type-Safe Zero-Overhead Wrapper)</h2>
+      <p>
+        C-Style అర్రేల యొక్క పాయింటర్ డికే సమస్యను మరియు బఫర్ ఓవర్‌ఫ్లో ప్రమాదాలను శాశ్వతంగా తొలగించడానికి <strong>Modern C++11</strong> లో <strong><code>std::array</code></strong> ప్రవేశపెట్టబడింది (హెడర్: <code>#include &lt;array&gt;</code>).
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; margin:18px 0;">
+        <h4 style="margin:0 0 10px 0; color:#10b981; font-size:15px;">💎 std::array యొక్క విశిష్టతలు (Why std::array is Superior)</h4>
+        <ul style="font-size:13.5px; color:var(--text); line-height:1.8; margin:0; padding-left:20px;">
+          <li><strong>Zero Runtime Overhead:</strong> C-Style అర్రేతో పోలిస్తే ఒక్క బైట్ మెమరీ కూడా ఎక్కువ తీసుకోదు, ఒక్క క్లాక్ సైకిల్ కూడా ఆలస్యం చేయదు.</li>
+          <li><strong>No Array Decay:</strong> ఫంక్షన్‌కు పాస్ చేసినప్పుడు పాయింటర్‌గా మారిపోదు. తన సైజును (<code>.size()</code>) గుర్తుంచుకుంటుంది.</li>
+          <li><strong>Bounds Checking (<code>.at()</code>):</strong> <code>arr[10]</code> రాస్తే సెగ్మెంటేషన్ ఫాల్ట్ వస్తుంది; కానీ <code>arr.at(10)</code> రాస్తే అది <code>std::out_of_range</code> ఎక్సెప్షన్‌ను త్రో చేసి ప్రోగ్రామ్ సురక్షితంగా బయటపడుతుంది.</li>
+          <li><strong>STL Algorithm Compatibility:</strong> <code>std::sort</code>, Range-based for లూప్స్ లతో అద్భుతంగా అనుసంధానమవుతుంది.</li>
+        </ul>
+      </div>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 2: Modern C++11 std::array Operations</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Modern C++ std::array</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;array&gt;
+#include &lt;algorithm&gt;
+
+// Pass by const reference: జీరో కాపీ రక్షణ
+void printArray(const std::array&lt;double, 4&gt;&amp; data) {
+    std::cout &lt;&lt; "అర్రే పరిమాణం (.size()): " &lt;&lt; data.size() &lt;&lt; "\\nఎలిమెంట్లు: ";
+    for (const auto&amp; val : data) {
+        std::cout &lt;&lt; val &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; "\\nమొదటి ఎలిమెంట్: " &lt;&lt; data.front() &lt;&lt; " | చివరి ఎలిమెంట్: " &lt;&lt; data.back() &lt;&lt; '\\n';
+}
+
+int main() {
+    // టైప్ మరియు సైజ్ కంపైల్-టైమ్‌లోనే స్థిరీకరించబడతాయి
+    std::array&lt;double, 4&gt; sensorReadings = {42.5, 18.2, 95.8, 63.1};
+
+    printArray(sensorReadings);
+
+    // STL సార్టింగ్
+    std::sort(sensorReadings.begin(), sensorReadings.end());
+    std::cout &lt;&lt; "\\nసార్ట్ చేసిన తర్వాత:\\n";
+    printArray(sensorReadings);
+
+    // .at() తో సేఫ్ బౌండ్స్ చెకింగ్
+    try {
+        std::cout &lt;&lt; "ఇండెక్స్ [2] విలువ: " &lt;&lt; sensorReadings.at(2) &lt;&lt; '\\n';
+        // std::cout &lt;&lt; sensorReadings.at(10); // ఎక్సెప్షన్ త్రో చేస్తుంది!
+    } catch (const std::out_of_range&amp; e) {
+        std::cout &lt;&lt; "❌ బౌండరీ దాటిన ఎర్రర్: " &lt;&lt; e.what() &lt;&lt; '\\n';
+    }
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section>
+      <h2 class="section-title"><span class="num">4</span> మల్టీ-డైమెన్షనల్ 2D అర్రేలు & Row-Major మెమరీ ఆర్కిటెక్చర్</h2>
+      <p>
+        గణిత మ్యాట్రిక్స్‌లు, గ్రాఫిక్స్ ఇమేజ్ పిక్సెల్స్, లేదా స్ప్రెడ్‌షీట్‌ల వంటి అడ్డు వరుసలు (Rows) మరియు నిలువు వరుసలు (Columns) ఉన్న డేటాను నిర్వహించడానికి <strong>2D అర్రేలు</strong> ఉపయోగిస్తాం.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; margin:18px 0;">
+        <h4 style="margin:0 0 10px 0; color:#10b981; font-size:15px;">⚡ Row-Major Order: హార్డ్‌వేర్ లెవల్ మెమరీ రహస్యం</h4>
+        <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin:0;">
+          కంప్యూటర్ RAM మెమరీ అనేది కేవలం ఒకే సరళరేఖ లాంటి 1D స్థలం మాత్రమే. C++ కంపైలర్ 2D అర్రేను స్టోర్ చేసేటప్పుడు <strong>Row-Major Order</strong> ను అనుసరిస్తుంది — అంటే మొదటి రో మొత్తాన్ని వరుసగా పెట్టి, దాని వెంటనే రెండవ రోని, దాని వెంటనే మూడవ రోని భద్రపరుస్తుంది.<br><br>
+          <strong>పెర్ఫార్మెన్స్ గోల్డెన్ రూల్:</strong> 2D అర్రేలపై లూప్ రాసేటప్పుడు ఎల్లప్పుడూ <strong>ఔటర్ లూప్‌లో Row, ఇన్నర్ లూప్‌లో Column</strong> ఉండేలా రాయాలి: <code>arr[r][c]</code>. రివర్స్‌లో <code>arr[c][r]</code> రాస్తే CPU Cache Misses పెరిగి ప్రోగ్రామ్ 10 రెట్లు నెమ్మదిగా నడుస్తుంది!
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section>
+      <h2 class="section-title"><span class="num">5</span> C-Style Strings & The Null-Terminator ('\\0')</h2>
+      <p>
+        C భాషలో స్ట్రింగ్స్ కోసం ప్రత్యేకమైన డేటా టైప్ ఉండేది కాదు. క్యారెక్టర్ల అర్రేను (<code>char name[] = "India";</code>) స్ట్రింగ్‌గా భావించేవారు.
+      </p>
+      <p>
+        ఆ స్ట్రింగ్ ఎక్కడ ముగిసిందో బ్రౌజర్ లేదా కంపైలర్‌కు తెలియజేయడానికి ఆఖరున ఒక ప్రత్యేకమైన అదృశ్య గుర్తు ఉంటుంది: <strong>Null-Terminator (<code>'\\0'</code>)</strong>. అంటే <code>"India"</code> లో 5 అక్షరాలు ఉన్నప్పటికీ, మెమరీలో అది 6 బైట్లు తీసుకుంటుంది: <code>['I', 'n', 'd', 'i', 'a', '\\0']</code>!
+      </p>
+      <p>
+        ఒకవేళ పొరపాటున <code>'\\0'</code> లేకపోతే, ఫంక్షన్లు మెమరీలో ఎక్కడో ఒక సున్నా దొరికే వరకు గార్బేజ్ డేటాను చదువుతూ వెళ్లి భయంకరమైన <strong>Buffer Overflow మరియు Security Vulnerabilities</strong> కు కారణమవుతాయి.
+      </p>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section>
+      <h2 class="section-title"><span class="num">6</span> Modern C++ std::string & Small String Optimization (SSO)</h2>
+      <p>
+        C-Style స్ట్రింగ్స్ యొక్క మెమరీ లీక్‌లు మరియు బఫర్ ఓవర్‌ఫ్లో ప్రమాదాలను అరికట్టడానికి C++ స్టాండర్డ్ లైబ్రరీ అందించిన అద్భుతమైన డైనమిక్ క్లాస్ <strong><code>std::string</code></strong> (హెడర్: <code>#include &lt;string&gt;</code>).
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; margin:18px 0;">
+        <h4 style="margin:0 0 10px 0; color:#10b981; font-size:15px;">🚀 The SSO (Small String Optimization) Superpower</h4>
+        <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin:0;">
+          సాధారణంగా <code>std::string</code> డైనమిక్ హీప్ మెమరీ (Heap) ను వాడుతుంది. కానీ హీప్ అలొకేషన్ ఖరీదైనది. దీనిని నివారించడానికి ఆధునిక C++ కంపైలర్లు (GCC, Clang, MSVC) <strong>Small String Optimization (SSO)</strong> అనే ఇంజనీరింగ్ టెక్నిక్‌ను అమలు చేస్తాయి:<br><br>
+          మీ స్ట్రింగ్ పొడవు 15 నుండి 22 అక్షరాల కంటే తక్కువగా ఉన్నప్పుడు (ఉదా: యూజర్ పేర్లు, స్టేటస్ కోడ్‌లు), అది హీప్ మెమరీని ముట్టుకోదు! నేరుగా స్టాక్ మెమరీలోని అంతర్గత బఫర్‌లోనే ఆ అక్షరాలను భద్రపరుస్తుంది. ఫలితంగా సున్నా మెమరీ అలొకేషన్‌తో సూపర్-ఫాస్ట్ స్పీడ్ లభిస్తుంది!
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section>
+      <h2 class="section-title"><span class="num">7</span> std::string ఎసెన్షియల్ మెథడ్స్ & మానిప్యులేషన్</h2>
+      <p>
+        <code>std::string</code> మనకు టెక్స్ట్ ప్రాసెసింగ్ కోసం అత్యంత శక్తివంతమైన అంతర్నిర్మిత ఫంక్షన్లను అందిస్తుంది:
+      </p>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 3: Essential std::string Methods</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17 std::string</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() {
+    std::string text = "Welcome to Modern C++ Programming Masterclass";
+
+    std::cout &lt;&lt; "అసలు టెక్స్ట్: " &lt;&lt; text &lt;&lt; "\\n";
+    std::cout &lt;&lt; "పొడవు (.length()): " &lt;&lt; text.length() &lt;&lt; " అక్షరాలు\\n";
+    std::cout &lt;&lt; "ఖాళీగా ఉందా? (.empty()): " &lt;&lt; (text.empty() ? "అవును" : "కాదు") &lt;&lt; "\\n";
+
+    // సబ్‌స్ట్రింగ్ తీయడం: .substr(start_index, length)
+    std::string sub = text.substr(11, 10); // ఇండెక్స్ 11 నుండి 10 అక్షరాలు
+    std::cout &lt;&lt; "సబ్‌స్ట్రింగ్ (.substr(11, 10)): \"" &lt;&lt; sub &lt;&lt; "\"\\n";
+
+    // వెతకడం: .find()
+    size_t foundPos = text.find("Masterclass");
+    if (foundPos != std::string::npos) {
+        std::cout &lt;&lt; "\"Masterclass\" పదం ఇండెక్స్ " &lt;&lt; foundPos &lt;&lt; " వద్ద దొరికింది.\\n";
+    }
+
+    // జోడించడం (Appending)
+    text += " (2026 Edition)";
+    std::cout &lt;&lt; "నవీకరించబడిన టెక్స్ట్: " &lt;&lt; text &lt;&lt; '\\n';
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section>
+      <h2 class="section-title"><span class="num">8</span> Modern C++17 విప్లవం: std::string_view (Zero-Copy Strings)</h2>
+      <p>
+        సాంప్రదాయకంగా ఒక ఫంక్షన్‌కు <code>std::string</code> ను సబ్‌స్ట్రింగ్‌గా పంపినప్పుడు, C++ మెమరీలో కొత్తగా మరో స్ట్రింగ్‌ను సృష్టించి కాపీ చేస్తుంది. భారీ టెక్స్ట్ ఫైల్స్ లేదా నెట్‌వర్క్ ప్యాకెట్లు ప్రాసెస్ చేసేటప్పుడు ఇది వేలాది హీప్ అలొకేషన్స్‌కు కారణమై పెర్ఫార్మెన్స్‌ను నాశనం చేస్తుంది.
+      </p>
+      <p>
+        ఈ సమస్యకు విప్లవాత్మక పరిష్కారంగా <strong>Modern C++17</strong> లో <strong><code>std::string_view</code></strong> ప్రవేశపెట్టబడింది (హెడర్: <code>#include &lt;string_view&gt;</code>)!
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; margin:18px 0;">
+        <h4 style="margin:0 0 10px 0; color:#10b981; font-size:15px;">🔍 std::string_view అంతర్గత నిర్మాణం (Pointer + Length)</h4>
+        <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin:0;">
+          <code>std::string_view</code> మెమరీలో ఎటువంటి డేటాను స్వయంగా కలిగి ఉండదు (Non-owning View)! దీని సైజు కేవలం 16 బైట్లు మాత్రమే. ఇది కేవలం రెండే రెండు విషయాలను కలిగి ఉంటుంది:<br>
+          1. అసలు టెక్స్ట్ ఎక్కడ మొదలవుతుందో చూపే ఒక <strong>పాయింటర్ (const char* ptr)</strong>.<br>
+          2. ఎంత భాగం చదవాలో తెలిపే <strong>పొడవు (size_t length)</strong>.<br><br>
+          ఫలితంగా ఒక 1GB సైజు గల స్ట్రింగ్ నుండి 100 సార్లు సబ్‌స్ట్రింగ్స్ తీసినా — ఒక్క బైట్ మెమరీ కూడా కాపీ అవ్వదు (<strong>Zero-Allocation O(1) Performance</strong>)!
+        </p>
+      </div>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Example 4: C++17 Zero-Copy std::string_view Demonstration</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">Modern C++17 string_view</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;string_view&gt;
+
+// string_view ను పాస్-బై-వాల్యూ గా పంపవచ్చు (ఎందుకంటే దీని సైజ్ కేవలం 16 బైట్లు మాత్రమే!)
+void printFastToken(std::string_view sv) {
+    std::cout &lt;&lt; "టోకెన్: \"" &lt;&lt; sv &lt;&lt; "\" (పొడవు: " &lt;&lt; sv.length() &lt;&lt; ")\\n";
+}
+
+int main() {
+    // 1. C-Style స్ట్రింగ్ లిటరల్ నుండి జీరో-కాపీ వ్యూ
+    std::string_view sv1 = "High-Frequency Trading Engine";
+    printFastToken(sv1);
+
+    // 2. సబ్‌వ్యూ (Substring) తీసినా ఎటువంటి మెమరీ కాపీ జరగదు!
+    std::string_view svPrefix = sv1.substr(0, 14); // "High-Frequency"
+    printFastToken(svPrefix);
+
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section>
+      <h2 class="section-title"><span class="num">9</span> std::string_view లోని ప్రమాదాలు: Dangling String View Trap</h2>
+      <p>
+        <code>std::string_view</code> అద్భుతమైన వేగాన్ని ఇచ్చినప్పటికీ, ఒక తీవ్రమైన ప్రమాదం పొంచి ఉంది: <strong>Dangling String View</strong>!
+      </p>
+
+      <div class="card" style="background:var(--bg2); border:1px solid rgba(239,68,68,0.4); border-left:4px solid #ef4444; border-radius:8px; padding:16px 20px; margin:16px 0;">
+        <h4 style="margin:0 0 6px 0; color:#ef4444; font-size:15px;">❌ ప్రమాదకరమైన బగ్: తాత్కాలిక స్ట్రింగ్ నాశనమవడం</h4>
+        <pre style="background:var(--bg3); padding:8px 12px; border-radius:4px; font-size:13px; color:#ef4444; margin:8px 0;"><code>std::string_view getView() {
+    std::string temp = "హలో ప్రపంచం";
+    return temp; // ⚠️ ఘోరమైన తప్పు! ఫంక్షన్ ముగియగానే temp మెమరీ నుండి డిలీట్ అయిపోతుంది!
+} // బయట ఆ వ్యూను వాడితే అది శ్మశానాన్ని చూస్తున్నట్టు (Dangling Pointer Segfault)!</code></pre>
+        <p style="font-size:13.5px; color:var(--text); margin:4px 0 0 0; line-height:1.6;">
+          <strong>గోల్డెన్ రూల్:</strong> <code>std::string_view</code> ను ఫంక్షన్ పారామీటర్‌గా వాడటానికి ఎల్లప్పుడూ ప్రాధాన్యత ఇవ్వండి; కానీ ఫంక్షన్ రిటర్న్ టైప్‌గా వాడేటప్పుడు అసలు స్ట్రింగ్ ఆబ్జెక్ట్ మెమరీలో బ్రతికే ఉందని 100% ఖచ్చితంగా నిర్ధారించుకోండి!
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section>
+      <h2 class="section-title"><span class="num">10</span> C-Array vs std::array vs std::vector vs std::string: సమగ్ర పోలిక పట్టిక</h2>
+      <p>
+        C++ లో వివిధ కలెక్షన్ల మధ్య ఉన్న సాంకేతిక వ్యత్యాసాలను అర్థం చేసుకోవడానికి ఈ సమగ్ర పట్టిక ఉపయోగపడుతుంది:
+      </p>
+
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>కలెక్షన్ రకం</th>
+              <th>మెమరీ లొకేషన్</th>
+              <th>పరిమాణం (Size)</th>
+              <th>బౌండ్స్ చెకింగ్</th>
+              <th>Pointer Decay?</th>
+              <th>ఉత్తమ వినియోగం</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>C-Style Array</strong></td>
+              <td>స్టాక్ / గ్లోబల్</td>
+              <td>కంపైల్-టైమ్ ఫిక్స్‌డ్</td>
+              <td>❌ లేదు (ప్రమాదకరం)</td>
+              <td>⚠️ అవును (Decays)</td>
+              <td>పాత లెగసీ C కోడ్ ఇంటర్‌ఫేస్ కొరకు</td>
+            </tr>
+            <tr>
+              <td><strong>std::array (C++11)</strong></td>
+              <td>స్టాక్ మెమరీ</td>
+              <td>కంపైల్-టైమ్ ఫిక్స్‌డ్</td>
+              <td>✅ ఉంది (<code>.at()</code>)</td>
+              <td>🛡️ కాదు (సేఫ్)</td>
+              <td>పరిమాణం ముందే తెలిసిన ఫిక్స్‌డ్ కలెక్షన్స్</td>
+            </tr>
+            <tr>
+              <td><strong>std::vector</strong></td>
+              <td>డైనమిక్ హీప్ మెమరీ</td>
+              <td>రన్‌టైమ్‌లో పెరుగుతుంది</td>
+              <td>✅ ఉంది (<code>.at()</code>)</td>
+              <td>🛡️ కాదు (సేఫ్)</td>
+              <td>సాధారణ డైనమిక్ డేటాబేస్ &amp; జాబితాలు</td>
+            </tr>
+            <tr>
+              <td><strong>std::string_view (C++17)</strong></td>
+              <td>నాన్-ఓనింగ్ వ్యూ (16 బైట్లు)</td>
+              <td>లక్ష్య టెక్స్ట్‌పై ఆధారపడుతుంది</td>
+              <td>✅ ఉంది (<code>.at()</code>)</td>
+              <td>🛡️ కాదు</td>
+              <td>రీడ్-ఓన్లీ ఫాస్ట్ స్ట్రింగ్ పారామీటర్లు</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section>
+      <h2 class="section-title"><span class="num">11</span> Modern C++20 ఫీచర్: std::span పరిచయం</h2>
+      <p>
+        C++17 లో <code>std::string_view</code> టెక్స్ట్ కోసం జీరో-కాపీ వ్యూను అందించినట్లే, <strong>Modern C++20</strong> లో ఏదైనా కంటిగ్యువస్ అర్రేల కోసం (ఉదా: C-Array, <code>std::array</code>, <code>std::vector</code> అన్నింటికీ ఉమ్మడిగా) <strong><code>std::span</code></strong> ప్రవేశపెట్టబడింది (హెడర్: <code>#include &lt;span&gt;</code>).
+      </p>
+      <p>
+        దీనివల్ల ఒక ఫంక్షన్‌ను <code>void process(std::span&lt;int&gt; data)</code> అని రాస్తే, దానికి C-array అయినా, vector అయినా, std::array అయినా ఏ విధమైన కాపీ లేకుండా సురక్షితంగా పాస్ చేయవచ్చు!
+      </p>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section>
+      <h2 class="section-title"><span class="num">12</span> సాధారణ బిగినర్ తప్పులు, బగ్స్ & బెస్ట్ ప్రాక్టీసెస్</h2>
+      <div style="display:flex; flex-direction:column; gap:16px; margin:18px 0;">
+        <div style="background:var(--bg2); border:1px solid rgba(239,68,68,0.4); border-left:4px solid #ef4444; border-radius:8px; padding:16px 20px;">
+          <div style="font-weight:700; color:#ef4444; font-size:14.5px;">❌ Trap 1: ఇండెక్స్ పరిధి దాటి వెళ్ళడం (Out of Bounds Access)</div>
+          <p style="font-size:13.5px; color:var(--text); margin:4px 0 0 0; line-height:1.6;">
+            5 ఎలిమెంట్లు ఉన్న అర్రేలో <code>arr[5]</code> అని రాయడం (ఇండెక్స్‌లు 0 నుండి 4 మాత్రమే). ఇది కంపైల్-టైమ్‌లో ఎర్రర్ ఇవ్వదు కానీ రన్‌టైమ్‌లో తీవ్రమైన మెమరీ కరప్షన్‌కు దారితీస్తుంది. పరిష్కారం: <code>.at()</code> లేదా Range-based for వాడండి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid rgba(16,185,129,0.4); border-left:4px solid #10b981; border-radius:8px; padding:16px 20px;">
+          <div style="font-weight:700; color:#10b981; font-size:14.5px;">✅ Pro Practice: ఫంక్షన్లలో స్ట్రింగ్స్ పాస్ చేసేటప్పుడు std::string_view వాడండి</div>
+          <p style="font-size:13.5px; color:var(--text); margin:4px 0 0 0; line-height:1.6;">
+            రీడ్-ఓన్లీ స్ట్రింగ్ పారామీటర్ల కోసం <code>const std::string&amp;</code> కంటే <code>std::string_view</code> మరింత అధునాతనమైనది, ఎందుకంటే ఇది <code>const char*</code> మరియు <code>std::string</code> రెండింటినీ ఎటువంటి టెంపరరీ ఆబ్జెక్ట్ క్రియేషన్ లేకుండా అత్యంత వేగంగా స్వీకరించగలదు.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section>
+      <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాక్టీస్ ప్రాజెక్ట్: "Enterprise High-Performance Stock Ticker Tape & Text Analytics Engine"</h2>
+      <p>
+        ఈ అధ్యాయంలో నేర్చుకున్న <code>std::array</code>, 2D మెమరీ ప్రాసెసింగ్, <code>std::string</code>, మరియు Modern C++17 <code>std::string_view</code> అన్నింటినీ ఉపయోగించి — నేషనల్ స్టాక్ ఎక్స్ఛేంజ్ (NSE) తరహా <strong>"Enterprise High-Frequency Stock Ticker Tape & Analytics Engine"</strong> ప్రాజెక్ట్‌ను రన్ చేద్దాం:
+      </p>
+
+      <div style="margin:20px 0 16px;">
+        <div style="font-size:13.5px; font-weight:700; color:#10b981; margin-bottom:6px;">💻 Complete Masterclass Practice Project: Stock Ticker Tape Engine</div>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="lang-tag">C++17 / C++20 Complete Project</span>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+              <button class="try-btn" onclick="runCodeInCompiler(this)">▶ Run in Compiler</button>
+            </div>
+          </div>
+          <pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;string_view&gt;
+#include &lt;array&gt;
+#include &lt;iomanip&gt;
+
+// స్టాక్ టిక్కర్ డేటా నిర్మాణం
+struct StockQuote {
+    std::string_view symbol; // జీరో-కాపీ టిక్కర్ వ్యూ
+    double ltp;              // Last Traded Price
+    double changePercent;
+    long volume;
+};
+
+// ఫాస్ట్ స్ట్రింగ్ వ్యూ అనలైజర్: ఎటువంటి మెమరీ అలొకేషన్ లేకుండా సబ్‌స్ట్రింగ్స్ తనిఖీ
+void analyzeTickerToken(std::string_view rawFeed) {
+    std::cout &lt;&lt; "  📡 [జీరో-కాపీ ప్యాకెట్ విశ్లేషణ]: \"";
+    if (rawFeed.find("NSE") != std::string_view::npos) {
+        std::cout &lt;&lt; rawFeed.substr(0, 15) &lt;&lt; "... [NSE ఆథరైజ్డ్ ఫీడ్]\\n";
+    } else {
+        std::cout &lt;&lt; rawFeed &lt;&lt; " [ఇతర మార్కెట్ ఫీడ్]\\n";
+    }
+}
+
+int main() {
+    std::cout &lt;&lt; std::fixed &lt;&lt; std::setprecision(2);
+    std::cout &lt;&lt; "========================================================================================\\n";
+    std::cout &lt;&lt; "       📈 NATIONAL STOCK EXCHANGE (NSE) - HIGH-FREQUENCY TICKER TAPE ENGINE             \\n";
+    std::cout &lt;&lt; "========================================================================================\\n";
+
+    // 1. Modern C++11 std::array (స్టాక్ మెమరీలో 5 ప్రధాన బ్లూచిప్ షేర్ల కోట్స్)
+    std::array&lt;StockQuote, 5&gt; liveMarketWatch = {{
+        {"RELIANCE", 2950.40, +1.85, 4850200},
+        {"TCS",      3980.15, -0.45, 1890450},
+        {"HDFCBANK", 1585.60, +0.90, 7200150},
+        {"INFY",     1825.00, +2.10, 3450900},
+        {"ICICIBANK",1120.30, -0.20, 5100400}
+    }};
+
+    std::cout &lt;&lt; std::left &lt;&lt; std::setw(14) &lt;&lt; "టిక్కర్ సింబల్" 
+              &lt;&lt; std::setw(18) &lt;&lt; "మార్కెట్ ధర (LTP)" 
+              &lt;&lt; std::setw(16) &lt;&lt; "మార్పు (%)" 
+              &lt;&lt; std::setw(16) &lt;&lt; "ట్రేడింగ్ వాల్యూమ్" 
+              &lt;&lt; "స్టేటస్\\n";
+    std::cout &lt;&lt; "----------------------------------------------------------------------------------------\\n";
+
+    double totalTurnover = 0.0;
+
+    // Range-based for loop with const reference
+    for (const auto&amp; quote : liveMarketWatch) {
+        double stockTurnover = quote.ltp * quote.volume;
+        totalTurnover += stockTurnover;
+
+        std::cout &lt;&lt; std::left &lt;&lt; std::setw(14) &lt;&lt; quote.symbol
+                  &lt;&lt; "₹ " &lt;&lt; std::setw(16) &lt;&lt; quote.ltp;
+
+        if (quote.changePercent &gt;= 0.0) {
+            std::cout &lt;&lt; "🟢 +" &lt;&lt; std::setw(12) &lt;&lt; quote.changePercent;
+        } else {
+            std::cout &lt;&lt; "🔴 "   &lt;&lt; std::setw(13) &lt;&lt; quote.changePercent;
+        }
+
+        std::cout &lt;&lt; std::setw(16) &lt;&lt; quote.volume;
+
+        if (quote.changePercent &gt;= 1.5) {
+            std::cout &lt;&lt; "🚀 బుల్లిష్ ర్యాలీ (Strong Bullish)\\n";
+        } else if (quote.changePercent &lt;= -0.5) {
+            std::cout &lt;&lt; "📉 బేరిష్ క్షీణత (Bearish)\\n";
+        } else {
+            std::cout &lt;&lt; "⚪ సాధారణ స్థిరత్వం (Neutral)\\n";
+        }
+    }
+
+    std::cout &lt;&lt; "========================================================================================\\n";
+    std::cout &lt;&lt; "మొత్తం ట్రేడింగ్ టర్నోవర్: ₹ " &lt;&lt; (totalTurnover / 10000000.0) &lt;&lt; " కోట్లు\\n";
+    std::cout &lt;&lt; "----------------------------------------------------------------------------------------\\n";
+
+    // 2. std::string_view జీరో-కాపీ నెట్‌వర్క్ ఫీడ్ ప్రాసెసింగ్ డెమో
+    std::cout &lt;&lt; "\\n[Modern C++17 std::string_view నెట్‌వర్క్ స్ట్రీమ్ ప్రాసెసింగ్]:\\n";
+    std::string rawBroadcast = "NSE_TICKER_STREAM:TCS:3980.15:INFY:1825.00:TIMESTAMP_1730458920";
+
+    analyzeTickerToken(rawBroadcast);
+    analyzeTickerToken("BSE_SPOT_FEED:GOLD_MCX:78500.00");
+
+    std::cout &lt;&lt; "========================================================================================\\n";
+    return 0;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZ SECTION (5 DETAILS QUESTIONS) -->
+    <section style="margin-top:40px;">
+      <h2 class="section-title"><span class="num">❓</span> ఇంటర్వ్యూ & పరీక్షల క్విజ్ (Knowledge Check)</h2>
+      
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 1: C-Style Array మరియు Modern C++11 std::array మధ్య గల ప్రధాన సాంకేతిక తేడాలు ఏమిటి?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> C-Style అర్రేను ఫంక్షన్‌కు పాస్ చేసినప్పుడు అది తన సైజును కోల్పోయి పాయింటర్‌గా మారిపోతుంది (Array Decay). అంతేకాకుండా ఇందులో బౌండ్స్ చెకింగ్ ఉండదు. కానీ <code>std::array</code> ఎటువంటి మెమరీ లేదా రన్‌టైమ్ ఓవర్‌హెడ్ లేకుండా (Zero Overhead) తన సైజును (<code>.size()</code>) గుర్తుంచుకుంటుంది, పాయింటర్‌గా డికే అవ్వదు, మరియు <code>.at()</code> ద్వారా సురక్షితమైన బౌండ్స్ చెకింగ్‌ను అందిస్తుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 2: Modern C++ లో std::string యొక్క Small String Optimization (SSO) ఎలా పనిచేస్తుంది?</summary>
+        <div style="font-size:13.5px; color:var(--text); line-height:1.7;">
+          <strong>సమాధానం:</strong> సాధారణంగా స్ట్రింగ్స్ డైనమిక్ హీప్ మెమరీని వాడతాయి, ఇది ఖరీదైన ఆపరేషన్. చిన్న స్ట్రింగ్స్ (సాధారణంగా 15 నుండి 22 అక్షరాల వరకు) ఉన్నప్పుడు కంపైలర్ హీప్ అలొకేషన్ చేయకుండా నేరుగా స్టాక్ మెమరీలోని ఆబ్జెక్ట్ బఫర్‌లోనే టెక్స్ట్‌ను స్టోర్ చేస్తుంది. దీనినే SSO అంటారు. ఇది రన్‌టైమ్ మెమరీ అలొకేషన్‌ను నివారించి రాకెట్ వేగాన్ని అందిస్తుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 3: Modern C++17 std::string_view ను ఎందుకు వాడాలి? దాని సైజు ఎంత ఉంటుంది?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>std::string_view</code> అనేది ఒక నాన్-ఓనింగ్ వ్యూ (Non-owning View). ఇది మెమరీలో డేటాను కాపీ చేయకుండా కేవలం అసలు టెక్స్ట్ పాయింటర్ మరియు పొడవును (కేవలం 16 బైట్లు: <code>const char* ptr + size_t len</code>) మాత్రమే కలిగి ఉంటుంది. సబ్‌స్ట్రింగ్స్ తీసేటప్పుడు లేదా రీడ్-ఓన్లీ ఫంక్షన్ పారామీటర్లుగా వాడేటప్పుడు ఇది సున్నా కాపీతో (Zero-Copy) O(1) వేగాన్ని అందిస్తుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 4: 2D అర్రేలలో Row-Major Order అంటే ఏమిటి? కాలమ్-వైజ్ లూప్ ఎందుకు నెమ్మదిగా నడుస్తుంది?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> C++ మెమరీలో 2D అర్రేను భద్రపరిచేటప్పుడు మొదటి రో పూర్తయిన తర్వాత రెండవ రోని నిల్వ చేస్తుంది (Row-Major). Row-వైజ్ లూప్ నడిపినప్పుడు డేటా కంటిగ్యువస్ గా ఉండటం వల్ల CPU L1 Cache వరుస ఎలిమెంట్లను ముందుగానే లోడ్ చేసుకుంటుంది (Cache Hit). కానీ Column-వైజ్ లూప్ నడిపితే ప్రతిసారీ మెమరీలో దూరం దూరం దూకాల్సి రావడం వల్ల Cache Misses పెరిగి ప్రోగ్రామ్ గణనీయంగా నెమ్మదిస్తుంది.
+        </div>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:#10b981; font-size:14.5px;">ప్రశ్న 5: Dangling string_view సమస్య అంటే ఏమిటి? దానిని ఎలా నివారించాలి?</summary>
+        <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>string_view</code> డేటాను స్వయంగా కలిగి ఉండదు. ఒక తాత్కాలిక <code>std::string</code> లేదా లోకల్ వేరియబుల్ నాశనమైపోయిన తర్వాత కూడా (Destroyed), ఆ మెమరీని <code>string_view</code> చూపిస్తూ ఉంటే దానిని Dangling string_view అంటారు. దానిని యాక్సెస్ చేస్తే క్రాష్ లేదా గార్బేజ్ వస్తుంది. తాత్కాలిక ఆబ్జెక్టుల నుండి string_view రిటర్న్ చేయకపోవడం ద్వారా దీనిని నివారించవచ్చు.
+        </div>
+      </details>
+    </section>
+
+    <!-- LESSON NAVIGATION FOOTER -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding:20px; background:var(--bg2); border:1px solid var(--border); border-radius:8px;">
+      <div>
+        <a href="/blog-cpp/09-cpp-functions-and-overloading.html" style="color:#10b981; text-decoration:none; font-weight:600;">
+          ← మునుపటి అధ్యాయం: Chapter 09: ఫంక్షన్స్ & Function Overloading
+        </a>
+      </div>
+      <div>
+        <a href="/blog-cpp/11-cpp-pointers-and-references.html" style="color:#10b981; text-decoration:none; font-weight:600;">
+          తదుపరి అధ్యాయం: Chapter 11: పాయింటర్లు & రిఫరెన్సెస్ →
+        </a>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/site-nav.js" defer></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`#include <iostream>
+#include <string>
+#include <string_view>
+#include <array>
+#include <iomanip>
+
+struct StockQuote {
+    std::string_view symbol;
+    double ltp;
+    double changePercent;
+    long volume;
+};
+
+void analyzeTickerToken(std::string_view rawFeed) {
+    std::cout << "  📡 [జీరో-కాపీ ప్యాకెట్ విశ్లేషణ]: \\"";
+    if (rawFeed.find("NSE") != std::string_view::npos) {
+        std::cout << rawFeed.substr(0, 15) << "... [NSE ఆథరైజ్డ్ ఫీడ్]\\\\n";
+    } else {
+        std::cout << rawFeed << " [ఇతర మార్కెట్ ఫీడ్]\\\\n";
+    }
+}
+
+int main() {
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << "========================================================================================\\\\n";
+    std::cout << "       📈 NATIONAL STOCK EXCHANGE (NSE) - HIGH-FREQUENCY TICKER TAPE ENGINE             \\\\n";
+    std::cout << "========================================================================================\\\\n";
+
+    std::array<StockQuote, 5> liveMarketWatch = {{
+        {"RELIANCE", 2950.40, +1.85, 4850200},
+        {"TCS",      3980.15, -0.45, 1890450},
+        {"HDFCBANK", 1585.60, +0.90, 7200150},
+        {"INFY",     1825.00, +2.10, 3450900},
+        {"ICICIBANK",1120.30, -0.20, 5100400}
+    }};
+
+    std::cout << std::left << std::setw(14) << "టిక్కర్ సింబల్" 
+              << std::setw(18) << "మార్కెట్ ధర (LTP)" 
+              << std::setw(16) << "మార్పు (%)" 
+              << std::setw(16) << "ట్రేడింగ్ వాల్యూమ్" 
+              << "స్టేటస్\\\\n";
+    std::cout << "----------------------------------------------------------------------------------------\\\\n";
+
+    double totalTurnover = 0.0;
+
+    for (const auto& quote : liveMarketWatch) {
+        double stockTurnover = quote.ltp * quote.volume;
+        totalTurnover += stockTurnover;
+
+        std::cout << std::left << std::setw(14) << quote.symbol
+                  << "₹ " << std::setw(16) << quote.ltp;
+
+        if (quote.changePercent >= 0.0) {
+            std::cout << "🟢 +" << std::setw(12) << quote.changePercent;
+        } else {
+            std::cout << "🔴 "   << std::setw(13) << quote.changePercent;
+        }
+
+        std::cout << std::setw(16) << quote.volume;
+
+        if (quote.changePercent >= 1.5) {
+            std::cout << "🚀 బుల్లిష్ ర్యాలీ (Strong Bullish)\\\\n";
+        } else if (quote.changePercent <= -0.5) {
+            std::cout << "📉 బేరిష్ క్షీణత (Bearish)\\\\n";
+        } else {
+            std::cout << "⚪ సాధారణ స్థిరత్వం (Neutral)\\\\n";
+        }
+    }
+
+    std::cout << "========================================================================================\\\\n";
+    std::cout << "మొత్తం ట్రేడింగ్ టర్నోవర్: ₹ " << (totalTurnover / 10000000.0) << " కోట్లు\\\\n";
+    std::cout << "----------------------------------------------------------------------------------------\\\\n";
+
+    std::cout << "\\\\n[Modern C++17 std::string_view నెట్‌వర్క్ స్ట్రీమ్ ప్రాసెసింగ్]:\\\\n";
+    std::string rawBroadcast = "NSE_TICKER_STREAM:TCS:3980.15:INFY:1825.00:TIMESTAMP_1730458920";
+
+    analyzeTickerToken(rawBroadcast);
+    analyzeTickerToken("BSE_SPOT_FEED:GOLD_MCX:78500.00");
+
+    std::cout << "========================================================================================\\\\n";
+    return 0;
+}\`;
+
+    try {
+      localStorage.setItem('code_cpp17', projectCode);
+      localStorage.setItem('code_cpp', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-cpp-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-cpp', currentLesson.file);
+fs.writeFileSync(outputPath, chapter10Content, 'utf8');
+console.log('✅ Successfully generated deep high-value C++ Chapter 10 in exact HTML style!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter10Content.length, 'characters');

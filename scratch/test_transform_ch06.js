@@ -61,3 +61,4 @@ if (content.includes(mainStart) && firstSectionIdx !== -1) {
 } else {
   console.error('Could not find markers');
 }
+
