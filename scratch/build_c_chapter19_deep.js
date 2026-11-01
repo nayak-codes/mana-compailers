@@ -1,0 +1,930 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildSidebar } = require('./c_curriculum_data.js');
+
+const lesson = LESSONS.find(l => l.num === 19);
+const sidebarHtml = buildSidebar(19);
+
+const chapterContentHtml = `
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-c.html">C Masterclass</a><span class="sep">›</span>
+      <span class="current">Chapter 19: ఫైల్ హ్యాండ్లింగ్ (&lt;stdio.h&gt;, fopen, fclose, text &amp; binary)</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">C ఫైల్ హ్యాండ్లింగ్ (File Handling): టెక్స్ట్ &amp; బైనరీ ఫైల్స్, స్ట్రీమ్స్ &amp; పర్సిస్టెన్స్</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge">⚡ Modern C (C99 / C11 / C17 Standards)</span>
+      <span class="badge">🟢 Chapter 19 of 20</span>
+      <span class="badge">📂 Phase 05: స్ట్రక్చర్స్, డైనమిక్ మెమరీ &amp; ప్రాజెక్ట్</span>
+      <span class="badge">📅 2026 Academic Edition</span>
+    </div>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span>డేటా పర్సిస్టెన్స్ ఆర్కిటెక్చర్ · FILE* పాయింటర్ · fopen() మోడ్స్ ("r", "w", "a", "rb", "wb") · NULL చెకింగ్ &amp; perror() · fgetc/fputc · fgets/fputs · fprintf/fscanf · టెక్స్ట్ vs బైనరీ · fread/fwrite · fseek/ftell/rewind రాండమ్ యాక్సెస్ · fflush &amp; feof గాట్చాస్ · పర్సిస్టెంట్ ఫోన్‌బుక్ ప్రాజెక్ట్</span>
+    </div>
+
+    <!-- WARM IVORY INTRO ACCENT BOX -->
+    <div class="intro-box">
+      <h3>హలో C ప్రోగ్రామర్! 👋 డేటాను శాశ్వతంగా దాచుకునే సూపర్ పవర్ నేర్చుకుందాం!</h3>
+      <p>
+        ఇప్పటివరకు మనం రాసిన అన్ని C ప్రోగ్రామ్‌లలో ఒక పెద్ద లోపం ఉంది: ప్రోగ్రామ్ రన్ అవుతున్నంత సేపు మాత్రమే డేటా RAM లో జీవించి ఉంటుంది. 
+        టెర్మినల్ క్లోజ్ చేయగానే లేదా కంప్యూటర్ రీస్టార్ట్ చేయగానే వేరియబుల్స్, అర్రేలు, స్ట్రక్చర్లు అన్నీ ఆవిరైపోతాయి! 
+        దీనిని కంప్యూటర్ సైన్స్‌లో <strong>వోలటైల్ మెమరీ (Volatile Memory)</strong> అంటారు.
+      </p>
+      <p style="margin-top:10px;">
+        నిజమైన సాఫ్ట్‌వేర్ ఉత్పత్తులు—బ్యాంకింగ్ అప్లికేషన్లు, గేమ్‌లలో సేవ్ ఫైల్స్, యూజర్ ప్రొఫైల్స్, సర్వర్ లాగ్స్—డేటాను ఎప్పటికీ కోల్పోకూడదు. 
+        హార్డ్ డిస్క్ లేదా SSD లో డేటాను శాశ్వతంగా భద్రపరచడాన్నే <strong>డేటా పర్సిస్టెన్స్ (Data Persistence)</strong> అంటారు. 
+        C భాషలో <code>&lt;stdio.h&gt;</code> లైబ్రరీ అందించే <strong>ఫైల్ హ్యాండ్లింగ్ (File Handling)</strong> ద్వారా ఫైల్స్ సృష్టించడం, 
+        టెక్స్ట్ మరియు బైనరీ ఫార్మాట్లలో డేటాను రాయడం, చదవడం, మరియు మధ్యలోని రికార్డులను డైరెక్ట్‌గా మోడిఫై చేయడం ఎలాగో ఈ 19వ అధ్యాయంలో సమగ్రంగా నేర్చుకుందాం!
+      </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section class="section">
+      <h2><span class="num">1</span> ఫైల్ హ్యాండ్లింగ్ ప్రాముఖ్యత: పర్సిస్టెన్స్ &amp; స్ట్రీమ్స్ ఆర్కిటెక్చర్</h2>
+      <p>
+        కంప్యూటర్ మెమరీ ఆర్కిటెక్చర్‌లో RAM (ప్రైమరీ మెమరీ) వేగవంతమైనది కానీ తాత్కాలికమైనది. 
+        హార్డ్ డ్రైవ్ / SSD (సెకండరీ స్టోరేజ్) నిదానమైనది కానీ శాశ్వతమైనది (Non-Volatile). 
+        C ప్రోగ్రామ్‌లు నేరుగా హార్డ్ డిస్క్‌లోని సెక్టార్లతో మాట్లాడలేవు; అవి ఆపరేటింగ్ సిస్టమ్ ద్వారా <strong>స్ట్రీమ్స్ (Streams)</strong> అనే భావనతో పనిచేస్తాయి.
+      </p>
+
+      <div class="table-wrap" style="margin:20px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>స్ట్రీమ్ రకం (Stream)</th>
+              <th>స్టాండర్డ్ పాయింటర్</th>
+              <th>కనెక్ట్ అయ్యే పరికరం</th>
+              <th>ఉపయోగం</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Standard Input</strong></td>
+              <td><code>stdin</code></td>
+              <td>కీబోర్డ్ (Keyboard)</td>
+              <td>యూజర్ నుండి డేటాను రీడ్ చేయడం (scanf, getchar).</td>
+            </tr>
+            <tr>
+              <td><strong>Standard Output</strong></td>
+              <td><code>stdout</code></td>
+              <td>మానిటర్ / కన్సోల్ స్క్రీన్</td>
+              <td>ఔట్‌పుట్‌ను ప్రింట్ చేయడం (printf, putchar).</td>
+            </tr>
+            <tr>
+              <td><strong>Standard Error</strong></td>
+              <td><code>stderr</code></td>
+              <td>మానిటర్ / ఎర్రర్ లాగ్</td>
+              <td>బఫరింగ్ లేకుండా తక్షణమే ఎర్రర్లను డిస్‌ప్లే చేయడం.</td>
+            </tr>
+            <tr>
+              <td><strong>Custom File Stream</strong></td>
+              <td><code>FILE *fp</code></td>
+              <td>హార్డ్ డిస్క్ లోని ఫైల్</td>
+              <td>శాశ్వత ఫైల్స్ నుండి డేటాను చదవడం / రాయడం.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>స్ట్రీమ్ కమ్యూనికేషన్ ఫ్లో డయాగ్రమ్:</h3>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; margin:16px 0; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.6; color:var(--text1);">
+[ C Program / RAM Variables ]<br/>
+           │<br/>
+           ▼  (fprintf / fputs / fwrite)<br/>
+[ C Standard I/O Buffer in RAM ]  &lt;--- వేగం కోసం C లైబ్రరీ నిర్వహించే తాత్కాలిక బఫర్<br/>
+           │<br/>
+           ▼  (fflush / fclose / Buffer Full)<br/>
+[ Operating System Kernel Cache ]<br/>
+           │<br/>
+           ▼  (Physical Disk Write)<br/>
+[ Hard Disk / SSD (Persistent Storage) ]
+      </div>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section class="section">
+      <h2><span class="num">2</span> FILE* పాయింటర్ మరియు &lt;stdio.h&gt; బేసిక్స్</h2>
+      <p>
+        C భాషలో ఫైల్స్‌తో పనిచేసే ప్రతి ఆపరేషన్ <strong><code>FILE*</code></strong> అనే ప్రత్యేక పాయింటర్ ద్వారా జరుగుతుంది. 
+        <code>FILE</code> అనేది ఒక స్ట్రక్చర్, ఇది <code>&lt;stdio.h&gt;</code> లో నిర్వచించబడింది. ఇందులో:
+      </p>
+      <ul>
+        <li>ఫైల్ డిస్క్రిప్టర్ నంబర్ (OS హ్యాండిల్)</li>
+        <li>ప్రస్తుత ఫైల్ కర్సర్ లొకేషన్ (రీడ్/రైట్ పాయింటర్)</li>
+        <li>ఇంటర్నల్ మెమరీ బఫర్ అడ్రస్</li>
+        <li>ఎర్రర్ మరియు ఎండ్-ఆఫ్-ఫైల్ (EOF) ఫ్లాగ్స్ ఉంటాయి.</li>
+      </ul>
+
+      <p>
+        డెవలపర్‌గా మనం ఆ స్ట్రక్చర్ లోపలి వేరియబుల్స్‌ను నేరుగా తాకాల్సిన పనిలేదు. 
+        ఆపరేటింగ్ సిస్టమ్ ఆ స్ట్రక్చర్‌ను హీప్‌లో మెయింటైన్ చేస్తుంది, మనకు కేవలం దాని చిరునామాను <code>FILE*</code> గా ఇస్తుంది.
+      </p>
+
+      <h3>ఫైల్ లైఫ్‌సైకిల్ (3 గోల్డెన్ స్టెప్స్):</h3>
+      <ol style="line-height:1.8;">
+        <li><strong>Open File:</strong> <code>fopen()</code> ద్వారా ఫైల్ స్ట్రీమ్‌ను తెరవడం.</li>
+        <li><strong>Process File:</strong> డేటాను రాయడం (Write) లేదా చదవడం (Read).</li>
+        <li><strong>Close File:</strong> <code>fclose()</code> ద్వారా బఫర్లను ఖాళీ చేసి ఫైల్‌ను క్లోజ్ చేయడం.</li>
+      </ol>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section class="section">
+      <h2><span class="num">3</span> fopen() ఫైల్ ఓపెనింగ్ మోడ్‌లు: సమగ్ర పోలిక పట్టిక</h2>
+      <p>
+        ఫైల్‌ను తెరవడానికి <code>fopen()</code> ఫంక్షన్‌ను వాడతాం:
+      </p>
+      <pre><code>FILE *fopen(const char *filename, const char *mode);</code></pre>
+      
+      <p>
+        ఇక్కడ <code>mode</code> చాలా కీలకమైనది. మనం ఫైల్‌ను చదవడానికి తెరుస్తున్నామా, రాయడానికి తెరుస్తున్నామా లేదా చివరన అదనపు డేటాను జోడించడానికి తెరుస్తున్నామా 
+        అనేది ఈ మోడ్ నిర్ణయిస్తుంది:
+      </p>
+
+      <div class="table-wrap" style="margin:20px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>మోడ్ (Mode)</th>
+              <th>ఉద్దేశం (Purpose)</th>
+              <th>ఫైల్ ఇప్పటికే ఉంటే?</th>
+              <th>ఫైల్ లేకపోతే?</th>
+              <th>కర్సర్ ప్రారంభ స్థానం</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>"r"</code></td>
+              <td>చదవడానికి మాత్రమే (Read Only)</td>
+              <td>ఫైల్ తెరవబడుతుంది.</td>
+              <td><strong>వైఫల్యం (NULL రిటర్న్ అవుతుంది)</strong></td>
+              <td>ప్రారంభంలో (Beginning)</td>
+            </tr>
+            <tr>
+              <td><code>"w"</code></td>
+              <td>రాయడానికి (Write Only)</td>
+              <td><strong>పాత డేటా మొత్తం తుడిచిపెట్టుకుపోతుంది! (Overwritten)</strong></td>
+              <td>కొత్త ఫైల్ సృష్టించబడుతుంది.</td>
+              <td>ప్రారంభంలో (0 బైట్)</td>
+            </tr>
+            <tr>
+              <td><code>"a"</code></td>
+              <td>చివరన జోడించడానికి (Append)</td>
+              <td>పాత డేటా సురక్షితంగా ఉంటుంది.</td>
+              <td>కొత్త ఫైల్ సృష్టించబడుతుంది.</td>
+              <td><strong>ఫైల్ చివరన (End of File)</strong></td>
+            </tr>
+            <tr>
+              <td><code>"r+"</code></td>
+              <td>రీడ్ &amp; రైట్ (Read &amp; Write)</td>
+              <td>ఫైల్ తెరవబడుతుంది, డేటా తుడవబడదు.</td>
+              <td>వైఫల్యం (NULL రిటర్న్)</td>
+              <td>ప్రారంభంలో</td>
+            </tr>
+            <tr>
+              <td><code>"w+"</code></td>
+              <td>రీడ్ &amp; రైట్ (కొత్తగా సృష్టి)</td>
+              <td>పాత డేటా మొత్తం తుడిచివేయబడుతుంది!</td>
+              <td>కొత్త ఫైల్ సృష్టించబడుతుంది.</td>
+              <td>ప్రారంభంలో</td>
+            </tr>
+            <tr>
+              <td><code>"a+"</code></td>
+              <td>రీడ్ &amp; అపెండ్ (Read &amp; Append)</td>
+              <td>పాత డేటా అలాగే ఉంటుంది.</td>
+              <td>కొత్త ఫైల్ సృష్టించబడుతుంది.</td>
+              <td>రాయడం ఎల్లప్పుడూ చివరనే జరుగుతుంది.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="warning-box" style="background:rgba(239,68,68,0.08); border-left:4px solid #ef4444; padding:14px; margin:16px 0; border-radius:4px;">
+        <strong style="color:#dc2626;">🚨 "w" మోడ్ ప్రమాదం:</strong><br/>
+        ముఖ్యమైన డేటా ఉన్న ఫైల్‌ను పొరపాటున <code>"w"</code> మోడ్‌లో ఓపెన్ చేస్తే, OS ఆ ఫైల్‌లోని ప్రతి అక్షరాన్ని వెనువెంటనే తుడిచివేస్తుంది (Truncate to 0 bytes)! 
+        డేటాను కోల్పోకుండా కేవలం కొత్త అంశాలను కలపాలంటే ఎల్లప్పుడూ <strong><code>"a"</code> (append)</strong> మోడ్ వాడాలి!
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section class="section">
+      <h2><span class="num">4</span> ఫైల్ ఓపెనింగ్ వైఫల్యాలు &amp; NULL చెకింగ్ (Defensive Programming)</h2>
+      <p>
+        ఫైల్ సిస్టమ్ ఆపరేషన్లలో అనేక అనిశ్చితులు ఉంటాయి. ఉదాహరణకు:
+      </p>
+      <ul>
+        <li>మనం చదవాలనుకున్న ఫైల్ ఆ ఫోల్డర్‌లో లేకపోవచ్చు (File Not Found).</li>
+        <li>ఫైల్ రీడ్-ఓన్లీగా ఉండవచ్చు లేదా మనకు పర్మిషన్లు లేకపోవచ్చు (Permission Denied).</li>
+        <li>హార్డ్ డిస్క్ నిండిపోయి ఉండవచ్చు (Disk Full).</li>
+      </ul>
+
+      <p>
+        ఇలాంటి సందర్భాలలో <code>fopen()</code> విఫలమై <strong><code>NULL</code></strong> ను రిటర్న్ చేస్తుంది. 
+        ఒకవేళ మీరు NULL ని చెక్ చేయకుండా ఫైల్ ఆపరేషన్ చేస్తే ప్రోగ్రామ్ తక్షణమే క్రాష్ అవుతుంది!
+      </p>
+
+      <h3>perror() మరియు errno తో ఎర్రర్ హ్యాండ్లింగ్:</h3>
+      <div class="code-wrap">
+        <div class="code-actions">
+          <button class="action-btn copy-btn">📋 Copy</button>
+          <button class="action-btn try-btn">▶ Run</button>
+        </div>
+        <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main() {
+    // ఉనికిలో లేని ఫైల్‌ను చదవడానికి ప్రయత్నించడం
+    FILE *fp = fopen("non_existent_file.txt", "r");
+
+    if (fp == NULL) {
+        // perror() సిస్టమ్ ఇచ్చిన ఖచ్చితమైన కారణాన్ని ప్రింట్ చేస్తుంది (ఉదా: No such file or directory)
+        perror("ఫైల్ ఓపెన్ చేయడంలో లోపం");
+        printf("సూచన: ఫైల్ పేరు మరియు పాత్ సరిగ్గా ఉన్నాయో లేదో సరిచూసుకోండి.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("ఫైల్ విజయవంతంగా తెరవబడింది!\n");
+    fclose(fp);
+    return EXIT_SUCCESS;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section class="section">
+      <h2><span class="num">5</span> క్యారెక్టర్ I/O: fgetc() మరియు fputc() తో ఫైల్ కాపీ ప్రోగ్రామ్</h2>
+      <p>
+        ఫైల్ నుండి ఒక్కో క్యారెక్టర్‌ను చదవడానికి మరియు రాయడానికి రెండు ప్రాథమిక ఫంక్షన్లు ఉన్నాయి:
+      </p>
+      <ul>
+        <li><code>int fputc(int char, FILE *stream);</code> — ఒక అక్షరాన్ని ఫైల్‌లో రాస్తుంది.</li>
+        <li><code>int fgetc(FILE *stream);</code> — ఫైల్ నుండి తదుపరి అక్షరాన్ని చదువుతుంది.</li>
+      </ul>
+
+      <div class="tip-box" style="background:rgba(245,158,11,0.08); border-left:4px solid #f59e0b; padding:14px; margin:16px 0; border-radius:4px;">
+        <strong style="color:#d97706;">❓ fgetc() చార్ కాకుండా int ని ఎందుకు రిటర్న్ చేస్తుంది?</strong><br/>
+        ఇది ప్రతి ఇంటర్వ్యూలో అడిగే ఫేవరెట్ ప్రశ్న! ఒక సాధారణ <code>char</code> 0 నుండి 255 (లేదా -128 నుండి 127) వరకు మాత్రమే స్టోర్ చేయగలదు. 
+        కానీ ఫైల్ చివరను సూచించే <strong>EOF (End of File)</strong> విలువ సాధారణంగా <code>-1</code> గా డిఫైన్ చేయబడుతుంది. 
+        అన్ని 256 బైనరీ క్యారెక్టర్లను మరియు అదనంగా ప్రత్యేక EOF విలువను స్పష్టంగా వేరు చేయడానికి <code>fgetc()</code> <strong><code>int</code></strong> ను రిటర్న్ చేస్తుంది! 
+        అందుకే చదివే వేరియబుల్‌ను ఎల్లప్పుడూ <code>int ch;</code> గానే డిక్లేర్ చేయాలి.
+      </div>
+
+      <h3>ప్రాక్టికల్ ప్రాజెక్ట్: ఫైల్ కాపీ మరియు క్యారెక్టర్ &amp; లైన్ కౌంటర్</h3>
+      <div class="code-wrap">
+        <div class="code-actions">
+          <button class="action-btn copy-btn">📋 Copy</button>
+          <button class="action-btn try-btn">▶ Run</button>
+        </div>
+        <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main() {
+    // 1. మొదట ఒక డెమో ఫైల్ సృష్టిద్దాం
+    FILE *source = fopen("notes.txt", "w");
+    if (source == NULL) {
+        perror("సోర్స్ ఫైల్ క్రియేషన్ విఫలమైంది");
+        return 1;
+    }
+    fputs("నమస్కారం! ఇది C ఫైల్ హ్యాండ్లింగ్ డెమో.\nలైన్ నంబర్ 2: C చాలా శక్తివంతమైనది.\nలైన్ నంబర్ 3: హ్యాపీ కోడింగ్!", source);
+    fclose(source);
+
+    // 2. ఇప్పుడు ఆ ఫైల్‌ను చదివి మరొక ఫైల్‌లోకి కాపీ చేయడం
+    FILE *src = fopen("notes.txt", "r");
+    FILE *dest = fopen("notes_backup.txt", "w");
+
+    if (src == NULL || dest == NULL) {
+        perror("ఫైల్ ఓపెన్ ఎర్రర్");
+        if (src) fclose(src);
+        if (dest) fclose(dest);
+        return 1;
+    }
+
+    int ch;
+    long char_count = 0;
+    long line_count = 0;
+
+    // ఫైల్ ముగిసే వరకు (EOF) ఒక్కో అక్షరాన్ని చదవడం
+    while ((ch = fgetc(src)) != EOF) {
+        fputc(ch, dest); // డెస్టినేషన్ ఫైల్‌లో రాయడం
+        char_count++;
+        if (ch == '\n') {
+            line_count++;
+        }
+    }
+    // చివరి లైన్ కి న్యూలైన్ లేకపోతే కౌంట్ సరిచేయడం
+    if (char_count &gt; 0) line_count++;
+
+    fclose(src);
+    fclose(dest);
+
+    printf("✅ ఫైల్ విజయవంతంగా కాపీ చేయబడింది!\n");
+    printf("మొత్తం అక్షరాలు: %ld\n", char_count);
+    printf("మొత్తం లైన్లు: %ld\n", line_count);
+
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section class="section">
+      <h2><span class="num">6</span> లైన్ I/O: fgets() మరియు fputs() తో సురక్షితమైన స్ట్రింగ్ రీడింగ్</h2>
+      <p>
+        ఒక్కో అక్షరం కాకుండా మొత్తం ఒక వాక్యాన్ని లేదా లైన్‌ను చదవడానికి మరియు రాయడానికి స్ట్రింగ్ ఫంక్షన్లు వాడతాం:
+      </p>
+      <ul>
+        <li><code>int fputs(const char *str, FILE *stream);</code> — స్ట్రింగ్‌ను ఫైల్‌లో రాస్తుంది.</li>
+        <li><code>char* fgets(char *str, int num, FILE *stream);</code> — ఫైల్ నుండి గరిష్టంగా <code>num - 1</code> అక్షరాల వరకు ఒక లైన్‌ను చదువుతుంది.</li>
+      </ul>
+
+      <div class="tip-box" style="background:rgba(16,185,129,0.08); border-left:4px solid #10b981; padding:14px; margin:16px 0; border-radius:4px;">
+        <strong style="color:#059669;">🛡️ బఫర్ ఓవర్‌ఫ్లో రక్షణ:</strong><br/>
+        C లో పాత <code>gets()</code> ఫంక్షన్ ఎంత ప్రమాదకరమో మనం స్ట్రింగ్స్ చాప్టర్‌లో చూశాం. 
+        <code>fgets()</code> లో మనం బఫర్ సైజును ఖచ్చితంగా పేర్కొంటాం కాబట్టి అది ఎప్పటికీ మెమరీ పరిమితిని దాటదు. 
+        ఇది న్యూలైన్ <code>'\n'</code> క్యారెక్టర్‌ను కూడా బఫర్‌లో ఉంచుతుంది మరియు చివరన <code>'\0'</code> ను జోడిస్తుంది.
+      </div>
+
+      <h3>fgets() తో టెక్స్ట్ ఫైల్‌ను లైన్ బై లైన్ రీడ్ చేసే కోడ్:</h3>
+      <div class="code-wrap">
+        <div class="code-actions">
+          <button class="action-btn copy-btn">📋 Copy</button>
+          <button class="action-btn try-btn">▶ Run</button>
+        </div>
+        <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+#define BUFFER_SIZE 256
+
+int main() {
+    FILE *fp = fopen("config.txt", "w");
+    if (!fp) return 1;
+
+    fputs("SERVER_PORT=8080\n", fp);
+    fputs("DATABASE_URL=localhost:5432\n", fp);
+    fputs("DEBUG_MODE=true\n", fp);
+    fclose(fp);
+
+    // చదవడానికి తెరవడం
+    fp = fopen("config.txt", "r");
+    if (!fp) return 1;
+
+    char line[BUFFER_SIZE];
+    int line_num = 1;
+
+    printf("--- కాన్ఫిగరేషన్ ఫైల్ కంటెంట్ ---\n");
+    // fgets ఫైల్ చివరకు రాగానే NULL రిటర్న్ చేస్తుంది
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        printf("[%02d]: %s", line_num++, line);
+    }
+
+    fclose(fp);
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section class="section">
+      <h2><span class="num">7</span> ఫార్మాటెడ్ I/O: fprintf() మరియు fscanf()</h2>
+      <p>
+        మనకు సాధారణ <code>printf()</code> మరియు <code>scanf()</code> ఎలాగో, ఫైల్స్‌తో మాట్లాడటానికి 
+        <strong><code>fprintf()</code></strong> మరియు <strong><code>fscanf()</code></strong> అలాగే పనిచేస్తాయి. 
+        కేవలం మొదటి ఆర్గ్యుమెంట్‌గా <code>FILE*</code> పాయింటర్‌ను ఇస్తే సరిపోతుంది!
+      </p>
+
+      <pre><code>int fprintf(FILE *stream, const char *format, ...);
+int fscanf(FILE *stream, const char *format, ...);</code></pre>
+
+      <h3>fprintf మరియు fscanf తో స్టూడెంట్ గ్రేడ్ షీట్ జనరేషన్:</h3>
+      <div class="code-wrap">
+        <div class="code-actions">
+          <button class="action-btn copy-btn">📋 Copy</button>
+          <button class="action-btn try-btn">▶ Run</button>
+        </div>
+        <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main() {
+    // 1. డేటాను ఫార్మాట్ చేసి రాయడం (fprintf)
+    FILE *fp = fopen("marks.txt", "w");
+    if (!fp) { perror("ఫైల్ ఓపెన్ విఫలం"); return 1; }
+
+    fprintf(fp, "%d %s %.2f\n", 101, "కార్తీక్", 88.5);
+    fprintf(fp, "%d %s %.2f\n", 102, "లావణ్య", 94.0);
+    fprintf(fp, "%d %s %.2f\n", 103, "ప్రదీప్", 76.5);
+    fclose(fp);
+
+    // 2. ఫైల్ నుండి ఫార్మాటెడ్ డేటాను చదవడం (fscanf)
+    fp = fopen("marks.txt", "r");
+    if (!fp) { perror("ఫైల్ రీడ్ విఫలం"); return 1; }
+
+    int roll;
+    char name[50];
+    float marks;
+
+    printf("%-8s %-15s %-8s\n", "రోల్ నం", "పేరు", "మార్కులు");
+    printf("------------------------------------\n");
+
+    // fscanf సక్సెస్ ఫుల్‌గా రీడ్ చేసిన వేరియబుల్స్ సంఖ్యను రిటర్న్ చేస్తుంది (ఇక్కడ 3)
+    while (fscanf(fp, "%d %49s %f", &amp;roll, name, &amp;marks) == 3) {
+        printf("%-8d %-15s %-8.2f\n", roll, name, marks);
+    }
+
+    fclose(fp);
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section class="section">
+      <h2><span class="num">8</span> టెక్స్ట్ ఫైల్స్ vs బైనరీ ఫైల్స్: లోతైన ఆర్కిటెక్చర్ తేడాలు</h2>
+      <p>
+        కంప్యూటర్‌లో ఫైల్స్ ప్రధానంగా రెండు వర్గాలుగా ఉంటాయి: <strong>టెక్స్ట్ ఫైల్స్ (Text Files)</strong> మరియు <strong>బైనరీ ఫైల్స్ (Binary Files)</strong>. 
+        వీటి మధ్య వ్యత్యాసం అర్థం చేసుకోవడం ద్వారా సిస్టమ్ లెవల్ ప్రోగ్రామింగ్‌లో తప్పులు జరగకుండా నివారించవచ్చు:
+      </p>
+
+      <div class="table-wrap" style="margin:20px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ఫీచర్ / అంశం</th>
+              <th>టెక్స్ట్ ఫైల్స్ (Text Files)</th>
+              <th>బైనరీ ఫైల్స్ (Binary Files)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>డేటా నిల్వ రూపం</strong></td>
+              <td>ASCII లేదా UTF-8 క్యారెక్టర్లుగా నిల్వ అవుతుంది (మానవులు చదవగలరు).</td>
+              <td>RAM లోని ఖచ్చితమైన 0లు మరియు 1ల బైనరీ బైట్ల రూపంలో నేరుగా నిల్వ అవుతుంది.</td>
+            </tr>
+            <tr>
+              <td><strong>విండోస్ న్యూలైన్ ట్రాన్స్‌లేషన్</strong></td>
+              <td><code>\n</code> రాస్తే అంతర్గతంగా <code>\r\n</code> (CRLF) గా మారుతుంది.</td>
+              <td>ఎలాంటి మార్పు ఉండదు; ప్రతి బైట్ యథాతథంగా స్టోర్ అవుతుంది.</td>
+            </tr>
+            <tr>
+              <td><strong>ఫైల్ సైజ్ &amp; స్పేస్</strong></td>
+              <td>సంఖ్యలను అక్షరాలుగా రాయడం వల్ల ఎక్కువ సైజ్ తీసుకుంటుంది (ఉదా: 12345678 కు 8 బైట్లు).</td>
+              <td>చాలా తక్కువ స్థలం తీసుకుంటుంది (ఉదా: <code>int</code> సంఖ్యకు కేవలం 4 బైట్లే).</td>
+            </tr>
+            <tr>
+              <td><strong>ప్రాసెసింగ్ వేగం</strong></td>
+              <td>నెమ్మదిగా ఉంటుంది (టెక్స్ట్ నుండి నంబర్లకు కన్వర్షన్ ఓవర్‌హెడ్ ఉంటుంది).</td>
+              <td><strong>మెరుపు వేగం (Lightning Fast)</strong>: RAM మరియు డిస్క్ మధ్య డైరెక్ట్ కాపీ!</td>
+            </tr>
+            <tr>
+              <td><strong>ఓపెనింగ్ మోడ్స్</strong></td>
+              <td><code>"r"</code>, <code>"w"</code>, <code>"a"</code></td>
+              <td><code>"rb"</code>, <code>"wb"</code>, <code>"ab"</code> (b అంటే బైనరీ)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section class="section">
+      <h2><span class="num">9</span> బైనరీ I/O: fwrite() మరియు fread() తో స్ట్రక్చర్స్ నిల్వ చేయడం</h2>
+      <p>
+        స్ట్రక్చర్లు, అర్రేలు లేదా భారీ డేటాను టెక్స్ట్‌గా మార్చకుండా నేరుగా మెమరీ బైట్లుగా ఫైల్‌లో దాచడానికి 
+        <strong><code>fwrite()</code></strong> మరియు <strong><code>fread()</code></strong> ఫంక్షన్లను ఉపయోగిస్తాం.
+      </p>
+
+      <pre><code>size_t fwrite(const void *ptr, size_t size, size_t count, FILE *stream);
+size_t fread(void *ptr, size_t size, size_t count, FILE *stream);</code></pre>
+
+      <p>ఇవి నాలుగు పారామీటర్లను తీసుకుంటాయి:</p>
+      <ol>
+        <li><code>ptr</code>: రాయాల్సిన లేదా చదవాల్సిన వేరియబుల్ మెమరీ అడ్రస్.</li>
+        <li><code>size</code>: ఒక్కో ఐటమ్ సైజు (ఉదా: <code>sizeof(Employee)</code>).</li>
+        <li><code>count</code>: మొత్తం ఎన్ని ఐటమ్స్ ప్రాసెస్ చేయాలి.</li>
+        <li><code>stream</code>: ఓపెన్ చేయబడిన బైనరీ ఫైల్ పాయింటర్.</li>
+      </ol>
+
+      <h3>పూర్తి స్ట్రక్చర్‌ను ఒకే ఒక్క కాల్‌తో బైనరీ ఫైల్‌లో సేవ్ చేయడం:</h3>
+      <div class="code-wrap">
+        <div class="code-actions">
+          <button class="action-btn copy-btn">📋 Copy</button>
+          <button class="action-btn try-btn">▶ Run</button>
+        </div>
+        <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+typedef struct {
+    int id;
+    char name[30];
+    double salary;
+} Employee;
+
+int main() {
+    Employee emp_out[2] = {
+        {101, "రాజేష్ వర్మ", 75000.50},
+        {102, "సునీత రావు", 88000.00}
+    };
+
+    // 1. బైనరీ ఫైల్‌లో రాయడం ("wb" - Write Binary)
+    FILE *fp = fopen("employees.bin", "wb");
+    if (!fp) { perror("ఫైల్ ఓపెన్ ఫెయిల్"); return 1; }
+
+    // ఒకే ఒక్క CPU ఇన్‌స్ట్రక్షన్‌తో మొత్తం 2 స్ట్రక్చర్ల డేటాను డిస్క్‌పై రాయడం
+    size_t written = fwrite(emp_out, sizeof(Employee), 2, fp);
+    fclose(fp);
+    printf("✅ %zu ఉద్యోగుల రికార్డులు బైనరీ ఫైల్‌లో భద్రపరచబడ్డాయి.\n", written);
+
+    // 2. బైనరీ ఫైల్ నుండి చదవడం ("rb" - Read Binary)
+    fp = fopen("employees.bin", "rb");
+    if (!fp) { perror("రీడ్ ఫెయిల్"); return 1; }
+
+    Employee emp_in;
+    printf("\n--- బైనరీ ఫైల్ నుండి చదివిన ఉద్యోగుల వివరాలు ---\n");
+    while (fread(&amp;emp_in, sizeof(Employee), 1, fp) == 1) {
+        printf("ID: %d | పేరు: %-15s | జీతం: ₹%.2f\n", emp_in.id, emp_in.name, emp_in.salary);
+    }
+
+    fclose(fp);
+    return 0;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 10 -->
+    <section class="section">
+      <h2><span class="num">10</span> రాండమ్ యాక్సెస్: fseek(), ftell(), rewind() తో ఫైల్ కర్సర్ నావిగేషన్</h2>
+      <p>
+        సాధారణంగా ఫైల్ ఆపరేషన్లు మొదటి అక్షరం నుండి వరుసగా (Sequential Access) జరుగుతాయి. 
+        కానీ 10 లక్షల రికార్డులు ఉన్న భారీ ఫైల్‌లో నేరుగా 500వ రికార్డును చదవాలంటే లేదా మార్చాలంటే మొత్తం ఫైల్ చదవడం సమయం వృధా! 
+        దీనిని నివారించడానికి C మనకు <strong>రాండమ్ యాక్సెస్ (Random Access)</strong> ఫంక్షన్లను అందిస్తుంది:
+      </p>
+
+      <ul>
+        <li><code>int fseek(FILE *stream, long offset, int origin);</code> — కర్సర్‌ను మనకు నచ్చిన స్థానానికి తరలిస్తుంది.</li>
+        <li><code>long ftell(FILE *stream);</code> — ఫైల్ ప్రారంభం నుండి కర్సర్ ప్రస్తుతం ఎన్నో బైట్ వద్ద ఉందో తెలుపుతుంది.</li>
+        <li><code>void rewind(FILE *stream);</code> — కర్సర్‌ను తిరిగి ఫైల్ మొదటికి (0 బైట్) తెస్తుంది.</li>
+      </ul>
+
+      <h3>fseek() లో 3 మూల స్థానాలు (Origins):</h3>
+      <div class="table-wrap" style="margin:20px 0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>కాన్‌స్టాంట్</th>
+              <th>అర్థం</th>
+              <th>ఉదాహరణ వినియోగం</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>SEEK_SET</code></td>
+              <td>ఫైల్ ప్రారంభ స్థానం (Beginning)</td>
+              <td><code>fseek(fp, 100, SEEK_SET);</code> — ప్రారంభం నుండి 100వ బైట్‌కు వెళ్లడం.</td>
+            </tr>
+            <tr>
+              <td><code>SEEK_CUR</code></td>
+              <td>ప్రస్తుత కర్సర్ స్థానం (Current)</td>
+              <td><code>fseek(fp, 20, SEEK_CUR);</code> — ప్రస్తుత స్థానం నుండి 20 బైట్లు ముందుకు వెళ్లడం.</td>
+            </tr>
+            <tr>
+              <td><code>SEEK_END</code></td>
+              <td>ఫైల్ ముగింపు స్థానం (End of File)</td>
+              <td><code>fseek(fp, 0, SEEK_END);</code> — సరిగ్గా ఫైల్ చివరకు చేరుకోవడం.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-box" style="background:rgba(59,130,246,0.08); border-left:4px solid #3b82f6; padding:14px; margin:16px 0; border-radius:4px;">
+        <strong style="color:#2563eb;">⚡ ఫైల్ సైజును కనుగొనే గోల్డెన్ ట్రిక్:</strong><br/>
+        <code>fseek(fp, 0, SEEK_END);</code> చేసి, వెంటనే <code>long size = ftell(fp);</code> పిలిస్తే, ఆ ఫైల్ మొత్తం ఎన్ని బైట్లు ఉందో తక్షణమే తెలిసిపోతుంది!
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section class="section">
+      <h2><span class="num">11</span> బఫరింగ్, fflush() మరియు ఫైల్ ఎర్రర్ హ్యాండ్లింగ్ (feof &amp; ferror)</h2>
+      <p>
+        ప్రతిసారి మనం ఒక అక్షరాన్ని రాసినప్పుడు ఆపరేటింగ్ సిస్టమ్ హార్డ్ డిస్క్‌ను తిప్పదు. 
+        వేగం కోసం C లైబ్రరీ ముందుగా డేటాను RAM లోని ఒక ఇంటర్నల్ బఫర్‌లో దాచిపెడుతుంది. బఫర్ నిండినప్పుడు మాత్రమే డిస్క్‌పై రాస్తుంది.
+      </p>
+
+      <p>
+        కానీ ఏదైనా కారణం చేత కంప్యూటర్ పవర్ పోతే బఫర్‌లోని డేటా డిస్క్‌కు చేరకుండానే నశించిపోతుంది. 
+        అందువల్ల అత్యవసర డేటాను తక్షణమే డిస్క్‌కు పంపించడానికి <strong><code>fflush(fp);</code></strong> ను పిలుస్తాం.
+      </p>
+
+      <div class="warning-box" style="background:rgba(239,68,68,0.08); border-left:4px solid #ef4444; padding:14px; margin:16px 0; border-radius:4px;">
+        <strong style="color:#dc2626;">🚨 while (!feof(fp)) ఎందుకు ఒక పాపులర్ బగ్?</strong><br/>
+        చాలామంది కోడర్లు <code>while (!feof(fp)) { fscanf(...); }</code> అని రాస్తుంటారు. 
+        కానీ <code>feof()</code> ఫంక్షన్ ఫైల్ చివరను తాకినప్పుడు ట్రూ అవ్వదు—ఫైల్ చివర దాటి చదవడానికి ప్రయత్నించి <em>విఫలమైనప్పుడు మాత్రమే</em> ట్రూ అవుతుంది! 
+        దీనివల్ల లూప్ చివరి రికార్డును రెండుసార్లు ప్రాసెస్ చేస్తుంది! 
+        ఎల్లప్పుడూ <code>fscanf</code> లేదా <code>fgets</code> లేదా <code>fread</code> రిటర్న్ వాల్యూను మాత్రమే లూప్ కండిషన్‌గా వాడాలి!
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section class="section">
+      <h2><span class="num">12</span> రియల్-వరల్డ్ ప్రాజెక్ట్: పర్సిస్టెంట్ కాంటాక్ట్ డైరెక్టరీ / ఫోన్‌బుక్ సిస్టమ్</h2>
+      <p>
+        ఇప్పుడు మనం నేర్చుకున్న బైనరీ ఫైల్ హ్యాండ్లింగ్, స్ట్రక్చర్స్ మరియు ఫైల్ కర్సర్ కాన్సెప్ట్‌లతో ఒక పూర్తి స్థాయి 
+        <strong>పర్సిస్టెంట్ కాంటాక్ట్స్ మేనేజర్ (Persistent CLI Phonebook)</strong> ను నిర్మిద్దాం. 
+        ఈ ప్రోగ్రామ్‌ను క్లోజ్ చేసి మళ్లీ ఓపెన్ చేసినా కాంటాక్ట్స్ సురక్షితంగా ఉంటాయి!
+      </p>
+
+      <div class="code-wrap">
+        <div class="code-actions">
+          <button class="action-btn copy-btn">📋 Copy</button>
+          <button class="action-btn try-btn">▶ Run</button>
+        </div>
+        <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+#define FILENAME "contacts.dat"
+
+typedef struct {
+    int id;
+    char name[40];
+    char phone[15];
+    char email[40];
+} Contact;
+
+// 1. కొత్త కాంటాక్ట్‌ను ఫైల్ చివరన చేర్చడం ("ab" mode)
+void add_contact(int id, const char *name, const char *phone, const char *email) {
+    FILE *fp = fopen(FILENAME, "ab");
+    if (!fp) {
+        perror("కాంటాక్ట్ ఫైల్ తెరవలేకపోయాం");
+        return;
+    }
+
+    Contact c;
+    c.id = id;
+    strncpy(c.name, name, sizeof(c.name) - 1);
+    c.name[sizeof(c.name) - 1] = '\0';
+    strncpy(c.phone, phone, sizeof(c.phone) - 1);
+    c.phone[sizeof(c.phone) - 1] = '\0';
+    strncpy(c.email, email, sizeof(c.email) - 1);
+    c.email[sizeof(c.email) - 1] = '\0';
+
+    fwrite(&amp;c, sizeof(Contact), 1, fp);
+    fclose(fp);
+    printf("✅ కాంటాక్ట్ సేవ్ అయింది: %s (%s)\n", name, phone);
+}
+
+// 2. అన్ని కాంటాక్ట్‌లను ఫైల్ నుండి చదివి చూపించడం ("rb" mode)
+void list_all_contacts() {
+    FILE *fp = fopen(FILENAME, "rb");
+    if (!fp) {
+        printf("⚠️ ఇంకా ఎలాంటి కాంటాక్ట్స్ సేవ్ చేయబడలేదు.\n");
+        return;
+    }
+
+    Contact c;
+    printf("\n==================== ఫోన్‌బుక్ డైరెక్టరీ ====================\n");
+    printf("%-5s %-20s %-15s %-25s\n", "ID", "పేరు", "ఫోన్ నంబర్", "ఈమెయిల్");
+    printf("------------------------------------------------------------\n");
+
+    int count = 0;
+    while (fread(&amp;c, sizeof(Contact), 1, fp) == 1) {
+        printf("%-5d %-20s %-15s %-25s\n", c.id, c.name, c.phone, c.email);
+        count++;
+    }
+    printf("============================================================\n");
+    printf("మొత్తం కాంటాక్ట్స్: %d\n\n", count);
+    fclose(fp);
+}
+
+// 3. పేరు ఆధారంగా వెతకడం
+void search_contact(const char *search_name) {
+    FILE *fp = fopen(FILENAME, "rb");
+    if (!fp) {
+        printf("ఫైల్ అందుబాటులో లేదు.\n");
+        return;
+    }
+
+    Contact c;
+    int found = 0;
+    while (fread(&amp;c, sizeof(Contact), 1, fp) == 1) {
+        if (strstr(c.name, search_name) != NULL) {
+            printf("🔍 దొరికింది! -&gt; ID: %d | పేరు: %s | ఫోన్: %s | ఈమెయిల్: %s\n", 
+                   c.id, c.name, c.phone, c.email);
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        printf("❌ '%s' పేరుతో ఎలాంటి కాంటాక్ట్ దొరకలేదు.\n", search_name);
+    }
+    fclose(fp);
+}
+
+int main() {
+    printf("=== పర్సిస్టెంట్ ఫోన్‌బుక్ సిస్టమ్ ప్రారంభం ===\n");
+
+    // టెస్ట్ కోసం కొన్ని కాంటాక్ట్‌లను జోడించడం
+    add_contact(1, "శ్రీధర్ పట్నాయక్", "9848022338", "sridhar@gmail.com");
+    add_contact(2, "భార్గవి కొమర్రాజు", "9988776655", "bhargavi@yahoo.com");
+    add_contact(3, "కిరణ్ కుమార్", "9123456789", "kiran@outlook.com");
+
+    // మొత్తం లిస్ట్‌ను డిస్‌ప్లే చేయడం
+    list_all_contacts();
+
+    // సెర్చ్ టెస్టింగ్
+    printf("వెతుకుతున్నాం 'భార్గవి'...\n");
+    search_contact("భార్గవి");
+
+    return 0;
+}</code></pre>
+      </div>
+
+      <!-- PLAYGROUND TRY BOX -->
+      <div class="try-box" style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:18px; margin:24px 0; text-align:center;">
+        <h3 style="margin-top:0; color:#10b981;">🚀 లైవ్ C కంపైలర్‌లో రన్ చేసి చూడండి!</h3>
+        <p style="margin-bottom:14px; font-size:14px; color:var(--text2);">
+          ఫైల్ క్రియేషన్ మరియు బైనరీ రికార్డ్స్ ఎలా ప్రాసెస్ అవుతాయో మన ఆన్‌లైన్ C కంపైలర్‌లో స్వయంగా ఎగ్జిక్యూట్ చేయండి!
+        </p>
+        <a href="/online-c-compiler.html" class="action-btn try-btn" style="display:inline-block; padding:10px 24px; font-size:14px; text-decoration:none;">
+          Online C Compiler ఓపెన్ చేయండి ➔
+        </a>
+      </div>
+    </section>
+
+    <!-- SECTION 13 -->
+    <section class="section">
+      <h2><span class="num">13</span> సారాంశం, ఇంటర్వ్యూ ప్రశ్నలు &amp; సెల్ఫ్-అసెస్మెంట్ క్విజ్</h2>
+      
+      <h3>కీలక సారాంశం (Key Takeaways):</h3>
+      <ul>
+        <li><strong>Data Persistence:</strong> RAM తాత్కాలికం; ఫైల్స్ ద్వారా డేటా డిస్క్‌లో శాశ్వతంగా భద్రపరచబడుతుంది.</li>
+        <li><strong>FILE* Pointer:</strong> ఫైల్ స్ట్రీమ్, బఫర్ మరియు కర్సర్ లొకేషన్‌ను నిర్వహించే కీ హ్యాండిల్.</li>
+        <li><strong>Defensive fopen():</strong> ఎల్లప్పుడూ <code>if (fp == NULL)</code> చెక్ చేయాలి మరియు <code>perror()</code> వాడాలి.</li>
+        <li><strong>Character &amp; String I/O:</strong> <code>fgetc/fputc</code> ఒక్కో అక్షరానికి; <code>fgets/fputs</code> భద్రమైన లైన్ రీడింగ్‌కు.</li>
+        <li><strong>Formatted vs Binary:</strong> <code>fprintf/fscanf</code> టెక్స్ట్ ఫైల్స్‌కు; <code>fwrite/fread</code> హై-స్పీడ్ బైనరీ డేటాకు.</li>
+        <li><strong>Random Access:</strong> <code>fseek()</code> మరియు <code>ftell()</code> ద్వారా నేరుగా కావలసిన బైట్‌కు జంప్ చేయవచ్చు.</li>
+        <li><strong>fclose():</strong> బఫర్లను డిస్క్‌పై రాసి OS హ్యాండిల్‌ను విడుదల చేయడానికి తప్పనిసరి.</li>
+      </ul>
+
+      <h3>టాప్ 5 C ఫైల్ హ్యాండ్లింగ్ ఇంటర్వ్యూ ప్రశ్నలు:</h3>
+      <ol style="line-height:1.8;">
+        <li><strong>Q1: fclose() చేయడం మర్చిపోతే ఏమవుతుంది?</strong><br/>
+            <em>జవాబు:</em> బఫర్‌లో ఉన్న డేటా డిస్క్‌పై రాయబడకపోవచ్చు (Data Loss). అలాగే OS ఫైల్ హ్యాండిల్స్ పరిమిత సంఖ్యలో ఉంటాయి కాబట్టి ఇతర ప్రోగ్రామ్‌లు ఆ ఫైల్‌ను లాక్ చేయడంలో విఫలమవ్వచ్చు.
+        </li>
+        <li><strong>Q2: Windows లో టెక్స్ట్ మోడ్ ("r") మరియు బైనరీ మోడ్ ("rb") మధ్య తేడా ఏమిటి?</strong><br/>
+            <em>జవాబు:</em> విండోస్ టెక్స్ట్ మోడ్‌లో రీడ్ చేసేటప్పుడు <code>\r\n</code> ఆటోమేటిక్‌గా ఒకే <code>\n</code> గా మారుతుంది. బైనరీ మోడ్‌లో ఎలాంటి మార్పు లేకుండా ప్రతి బైట్ ఖచ్చితంగా యథాతథంగా చదవబడుతుంది.
+        </li>
+        <li><strong>Q3: remove() మరియు rename() ఫంక్షన్లు ఎలా పనిచేస్తాయి?</strong><br/>
+            <em>జవాబు:</em> <code>&lt;stdio.h&gt;</code> లో ఉండే <code>remove("file.txt")</code> ఫైల్‌ను డిలీట్ చేస్తుంది; <code>rename("old.txt", "new.txt")</code> ఫైల్ పేరును లేదా పాత్‌ను మారుస్తుంది.
+        </li>
+        <li><strong>Q4: rewind(fp) ఫంక్షన్ దేనికి సమానం?</strong><br/>
+            <em>జవాబు:</em> <code>(void)fseek(fp, 0L, SEEK_SET);</code> తో పాటు ఫైల్ ఎర్రర్ ఇండికేటర్‌ను క్లియర్ చేస్తుంది.
+        </li>
+        <li><strong>Q5: fgets() మరియు fscanf("%s") మధ్య భద్రతా వ్యత్యాసం ఏమిటి?</strong><br/>
+            <em>జవాబు:</em> <code>fscanf("%s", str)</code> స్పేస్ రాగానే ఆగిపోతుంది మరియు బౌండరీ చెక్ లేకపోతే బఫర్ ఓవర్‌ఫ్లో చేస్తుంది. <code>fgets(str, size, fp)</code> ఖచ్చితంగా <code>size</code> పరిమితికి లోబడి మాత్రమే చదువుతుంది మరియు స్పేస్‌లతో కూడిన మొత్తం వాక్యాన్ని రీడ్ చేస్తుంది.
+        </li>
+      </ol>
+
+      <h3>ఇంటరాక్టివ్ సెల్ఫ్-అసెస్మెంట్ క్విజ్ (Self-Assessment Quiz):</h3>
+
+      <!-- QUIZ ITEM 1 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 1: ఇప్పటికే ముఖ్యమైన డేటా ఉన్న ఫైల్‌ను <code>fopen("data.txt", "w")</code> తో తెరిస్తే ఏమి జరుగుతుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> ఆ ఫైల్‌లోని పాత డేటా మొత్తం తక్షణమే తుడిచివేయబడుతుంది (Truncated to 0 bytes)! పాత డేటాను కాపాడుకోవాలంటే <code>"a"</code> (append) మోడ్ వాడాలి.
+        </div>
+      </details>
+
+      <!-- QUIZ ITEM 2 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 2: <code>fgetc()</code> ఫంక్షన్ రిటర్న్ టైప్ <code>char</code> కాకుండా <code>int</code> ఎందుకు ఉంటుంది?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> అన్ని 256 బైనరీ క్యారెక్టర్లతో పాటు, ఫైల్ ముగింపును తెలిపే ప్రత్యేక <strong>EOF (-1)</strong> విలువను స్పష్టంగా గుర్తించడానికి <code>int</code> అవసరం.
+        </div>
+      </details>
+
+      <!-- QUIZ ITEM 3 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 3: <code>while (!feof(fp))</code> అని రాయడం ఎందుకు తప్పు?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>feof()</code> ఫైల్ ముగింపును తాకినప్పుడు ట్రూ అవ్వదు; ఫైల్ దాటి చదవడానికి ప్రయత్నించి ఫెయిల్ అయినప్పుడు మాత్రమే ట్రూ అవుతుంది. దీనివల్ల లూప్ చివరి రికార్డును రెండుసార్లు ఎగ్జిక్యూట్ చేస్తుంది.
+        </div>
+      </details>
+
+      <!-- QUIZ ITEM 4 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 4: ఒక బైనరీ ఫైల్ సైజును కనుగొనడానికి ఏ రెండు ఫంక్షన్ల కాంబినేషన్ వాడతారు?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <code>fseek(fp, 0, SEEK_END);</code> ద్వారా కర్సర్‌ను చివరికి తీసుకెళ్లి, ఆపై <code>long size = ftell(fp);</code> ద్వారా ఫైల్ సైజును బైట్లలో పొందుతారు.
+        </div>
+      </details>
+
+      <!-- QUIZ ITEM 5 -->
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+        <summary style="font-weight:600; cursor:pointer; color:var(--text1);">
+          ❓ ప్రశ్న 5: RAM లోని డేటాను ఒకేసారి వేగంగా ఫైల్‌లో బైనరీగా రాయడానికి ఏ ఫంక్షన్ వాడతారు?
+        </summary>
+        <div style="margin-top:10px; font-size:14px; color:var(--text2); line-height:1.6;">
+          <strong>సమాధానం:</strong> <strong><code>fwrite()</code></strong> ఫంక్షన్. ఇది ఎలాంటి టెక్స్ట్ కన్వర్షన్ లేకుండా మెమరీ బైట్లను నేరుగా డిస్క్‌పై రాస్తుంది.
+        </div>
+      </details>
+    </section>
+
+    <!-- CHAPTER NAVIGATION (PAGINATION) -->
+    <div style="display:flex; justify-content:space-between; gap:16px; margin:40px 0 20px; flex-wrap:wrap;">
+      <a href="/blog-c/18-c-dynamic-memory-allocation-malloc-calloc-realloc-free.html" style="background:var(--bg2); border:1px solid var(--border); padding:12px 20px; border-radius:8px; text-decoration:none; color:var(--text1); font-weight:600; display:inline-flex; align-items:center; gap:8px;">
+        ← Chapter 18: డైనమిక్ మెమరీ (DMA)
+      </a>
+      <a href="/blog-c/20-c-mini-project-student-record-management.html" style="background:#10b981; border:1px solid #10b981; padding:12px 20px; border-radius:8px; text-decoration:none; color:#ffffff; font-weight:600; display:inline-flex; align-items:center; gap:8px;">
+        Chapter 20: గ్రాండ్ మినీ ప్రాజెక్ట్ →
+      </a>
+    </div>
+  </main>
+</div>
+`;
+
+const fullHtml = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C ఫైల్ హ్యాండ్లింగ్ (fopen, fclose, fprintf, fscanf, fread, fwrite) — Modern C Tutorial | Our Compiler</title>
+  <meta name="description" content="C ఫైల్ హ్యాండ్లింగ్ సమగ్ర తెలుగు గైడ్: స్ట్రీమ్స్ &amp; FILE* పాయింటర్, fopen మోడ్స్, టెక్స్ట్ vs బైనరీ ఫైల్స్, fwrite/fread, fseek/ftell రాండమ్ యాక్సెస్, పర్సిస్టెంట్ ఫోన్‌బుక్ ప్రాజెక్ట్." />
+  <meta name="keywords" content="c file handling in telugu, fopen modes in c, fread fwrite in c, fseek ftell in c, text vs binary files in c, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-c/19-c-file-handling-fopen-fclose-text-binary.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-c/c-style.css" />
+  <script src="/nav.js" defer></script>
+  <script>
+    // Setup Code blocks Copy & Runner hooks
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.code-wrap').forEach((wrap) => {
+        const pre = wrap.querySelector('pre');
+        const actions = wrap.querySelector('.code-actions');
+        if (!pre || !actions) return;
+
+        const codeEl = pre.querySelector('code');
+        const rawCode = codeEl ? codeEl.innerText : pre.innerText;
+
+        if (!actions.querySelector('.copy-btn')) {
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'action-btn copy-btn';
+          copyBtn.innerHTML = '📋 Copy';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(rawCode).then(() => {
+              copyBtn.innerHTML = '✅ Copied!';
+              setTimeout(() => { copyBtn.innerHTML = '📋 Copy'; }, 2000);
+            });
+          });
+          actions.insertBefore(copyBtn, actions.firstChild);
+
+          const tryBtn = actions.querySelector('.try-btn');
+          if (tryBtn) {
+            tryBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              localStorage.setItem('code_c', rawCode);
+              window.open('/online-c-compiler.html', '_blank');
+            });
+          }
+        }
+      });
+    });
+  </script>
+</head>
+<body class="lang-c light-theme">
+<!-- NAV PLACEHOLDER -->
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN ARTICLE -->
+  <main class="content">
+${chapterContentHtml}
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-c', '19-c-file-handling-fopen-fclose-text-binary.html');
+fs.writeFileSync(outputPath, fullHtml, 'utf8');
+
+console.log('✅ Successfully generated deep high-value C Chapter 19!');
+console.log('Target file size:', fullHtml.length, 'characters');
