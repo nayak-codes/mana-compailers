@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>స్ట్రింగ్స్ డీప్ డైవ్ & స్లైసింగ్ (String Mastery) — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Python 3 స్ట్రింగ్స్ సమగ్ర తెలుగు గైడ్: Unicode UTF-8 మెమరీ ఆర్కిటెక్చర్, పాజిటివ్ & నెగటివ్ ఇండెక్సింగ్, String Slicing [start:stop:step], ఇమ్మ్యుటబిలిటీ, 25+ బిల్ట్-ఇన్ మెథడ్స్, removeprefix(), joins, మరియు Clinical Prescription NLP Parser ప్రాజెక్ట్." />
+  <meta name="keywords" content="python strings in telugu, python string slicing telugu, python string indexing telugu, python string methods telugu, removeprefix python, learn python in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/09-python-strings-deep-dive-slicing.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-python/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "స్ట్రింగ్స్ డీప్ డైవ్ & స్లైసింగ్ (String Mastery) (Complete Guide to Python Strings, Slicing and Built-in Methods in Telugu)",
+    "description": "Python 3 స్ట్రింగ్స్ పూర్తి గైడ్: Indexing, Slicing, Immutability, String Methods (split, join, strip, replace, removeprefix), మరియు Clinical Record NLP Parser.",
+    "articleSection": "Phase 02: కంట్రోల్ ఫ్లో, లూప్స్ & స్ట్రింగ్స్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-01-23",
+    "dateModified": "2026-11-02"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Compiler Integration -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___PY_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|f?"[^"\\]*(?:\\.[^"\\]*)*"|f?'[^'\\]*(?:\\.[^'\\]*)*'|r"[^"\\]*(?:\\.[^"\\]*)*"|r'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'import','from','as','def','return','class','if','elif','else','while','for','in',
+        'break','continue','pass','try','except','finally','with','lambda','global','nonlocal',
+        'and','or','not','is','yield','async','await','raise','assert','True','False','None'
+      ];
+      const kwRegex = new RegExp('\\b(' + kwList.join('|') + ')\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'print','len','range','type','isinstance','id','input','int','float','str','list',
+        'dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted',
+        'abs','open','help','dir','filter','bool'
+      ];
+      const fnRegex = new RegExp('\\b(' + fnList.join('|') + ')\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('num', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split('___PY_TOK_' + idx + '___').join(tok);
+      });
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code.language-python').forEach(block => {
+        block.innerHTML = highlightPythonCode(block.innerText);
+      });
+    });
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      const code = pre.innerText;
+      try {
+        localStorage.setItem('code_python', code);
+        localStorage.setItem('code_python3', code);
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+      window.open('/online-python-compiler.html', '_blank');
+    }
+  </script>
+</head>
+
+<body class="lang-python light-theme">
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Python 3 Master Course (తెలుగు)</div>
+    <a href="/blog-python.html" class="sidebar-home-link">🐍 Python Course HOME (ఇండెక్స్)</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">పైథాన్ ఫండమెంటల్స్ & బేసిక్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/01-python-introduction-features-and-setup.html">1. పైథాన్ పరిచయం, ఫీచర్లు & ఎన్విరాన్‌మెంట్ సెటప్</a>
+        <a href="/blog-python/02-python-syntax-indentation-and-comments.html">2. సింటాక్స్, ఇండెంటేషన్ & కామెంట్స్</a>
+        <a href="/blog-python/03-python-variables-data-types-and-naming.html">3. వేరియబుల్స్, డేటా టైప్స్ & టైప్ కాస్టింగ్</a>
+        <a href="/blog-python/04-python-input-output-formatting.html">4. ఇన్‌పుట్ & అవుట్‌పుట్ ఫార్మాటింగ్ (print, input & f-strings)</a>
+        <a href="/blog-python/05-python-operators-and-expressions.html">5. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్</a>
+      </div>
+
+      <!-- Phase 02 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో, లూప్స్ & స్ట్రింగ్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-python/06-python-conditional-statements-branching.html">6. డెసిషన్ మేకింగ్ (if, elif, else & match-case)</a>
+        <a href="/blog-python/07-python-loops-while-and-for.html">7. లూప్స్ — while & for లూప్స్</a>
+        <a href="/blog-python/08-python-loop-control-break-continue-else.html">8. లూప్ కంట్రోల్ — break, continue, pass & else</a>
+        <a href="/blog-python/09-python-strings-deep-dive-slicing.html" class="active">9. స్ట్రింగ్స్ డీప్ డైవ్ & స్లైసింగ్ (String Mastery)</a>
+        <a href="/blog-python/10-python-regular-expressions-regex.html">10. రెగ్యులర్ ఎక్స్‌ప్రెషన్స్ (Regex & Pattern Matching)</a>
+      </div>
+
+      <!-- Phase 03 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">డేటా స్ట్రక్చర్స్ & కలెక్షన్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/11-python-lists-and-comprehensions.html">11. లిస్ట్స్ (Lists) & లిస్ట్ కాంప్రహెన్షన్స్</a>
+        <a href="/blog-python/12-python-tuples-and-immutability.html">12. టుపుల్స్ (Tuples) & ఇమ్మ్యుటబిలిటీ</a>
+        <a href="/blog-python/13-python-dictionaries-deep-dive.html">13. డిక్షనరీలు (Dictionaries) & డిక్ట్ కాంప్రహెన్షన్స్</a>
+        <a href="/blog-python/14-python-sets-and-operations.html">14. సెట్స్ (Sets) & సెట్ మ్యాథమెటికల్ ఆపరేషన్స్</a>
+        <a href="/blog-python/15-python-collections-advanced-structures.html">15. కలెక్షన్స్ మాడ్యూల్ & అడ్వాన్స్‌డ్ డేటా స్ట్రక్చర్స్</a>
+      </div>
+
+      <!-- Phase 04 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">ఫంక్షన్స్, మాడ్యూల్స్ & ఫైల్ I/O</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/16-python-functions-fundamentals.html">16. ఫంక్షన్స్ ఫండమెంటల్స్ & ఆర్గ్యుమెంట్స్</a>
+        <a href="/blog-python/17-python-args-kwargs-variable-scope.html">17. వేరియబుల్ ఆర్గ్యుమెంట్స్ & స్కోప్ (*args, **kwargs & LEGB)</a>
+        <a href="/blog-python/18-python-lambda-recursion-functional.html">18. ల్యాంబ్డా, రికర్షన్ & ఫంక్షనల్ ప్రోగ్రామింగ్</a>
+        <a href="/blog-python/19-python-modules-packages-and-pip.html">19. మాడ్యూల్స్, ప్యాకేజీలు & వర్చువల్ ఎన్విరాన్‌మెంట్స్</a>
+        <a href="/blog-python/20-python-file-handling-and-json.html">20. ఫైల్ హ్యాండ్లింగ్, CSV & JSON ప్రాసెసింగ్</a>
+      </div>
+
+      <!-- Phase 05 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">OOP, ఎక్సెప్షన్స్ & ప్రాజెక్ట్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/21-python-exception-handling.html">21. ఎక్సెప్షన్ హ్యాండ్లింగ్ & కస్టమ్ ఎర్రర్స్</a>
+        <a href="/blog-python/22-python-oop-classes-and-objects.html">22. OOP బేసిక్స్ — క్లాసెస్, ఆబ్జెక్ట్స్ & __init__</a>
+        <a href="/blog-python/23-python-oop-inheritance-polymorphism.html">23. OOP పిల్లర్స్ — ఇన్హెరిటెన్స్, ఎన్‌క్యాప్సులేషన్ & పాలిమార్ఫిజమ్</a>
+        <a href="/blog-python/24-python-decorators-generators-dunder.html">24. అడ్వాన్స్‌డ్ పైథాన్ — డెకరేటర్లు, జెనరేటర్లు & డండర్ మెథడ్స్</a>
+        <a href="/blog-python/25-python-capstone-project.html">25. గ్రాండ్ ఫినాలే: రియల్-వరల్డ్ పైథాన్ క్యాప్‌స్టోన్ ప్రాజెక్ట్</a>
+      </div>
+
+    </div>
+
+    <div style="margin-top:24px; padding:16px; background:var(--bg2); border:1px solid var(--border); border-radius:10px; font-size:12px; text-align:center;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:4px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+      <a href="/online-python-compiler.html" style="color:var(--text); text-decoration:none; font-weight:600; display:inline-block; margin-top:6px; background:rgba(16,185,129,0.12); padding:6px 12px; border-radius:6px; border:1px solid rgba(16,185,129,0.3);">
+        ▶ Try Online Python Compiler
+      </a>
+      <a href="/blog.html" style="color:var(--text2); text-decoration:none; display:block; margin-top:8px;">
+        📁 All Tutorials Index
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="content">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a>
+      <span class="sep">›</span>
+      <a href="/blog-python.html">Python Masterclass</a>
+      <span class="sep">›</span>
+      <span>Chapter 9: స్ట్రింగ్స్ డీప్ డైవ్ & స్లైసింగ్ (String Mastery)</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">స్ట్రింగ్స్ డీప్ డైవ్ & స్లైసింగ్ (String Mastery)</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge badge-tech">🐍 Modern Python (Python 3.12+)</span>
+      <span class="badge badge-chapter">🎯 Chapter 9 of 25</span>
+      <span class="badge badge-phase">⚙️ Phase 02: కంట్రోల్ ఫ్లో, లూప్స్ &amp; స్ట్రింగ్స్</span>
+      <span class="badge badge-edition">📅 2026 Edition</span>
+    </div>
+
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin-bottom:24px; font-size:13px; line-height:1.7;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span style="color:var(--text2); margin-left:6px;">
+        Unicode UTF-8 ఆర్కిటెక్చర్ · పాజిటివ్ &amp; నెగటివ్ ఇండెక్సింగ్ · String Slicing [start:stop:step] · ఇమ్మ్యుటబిలిటీ · 25+ బిల్ట్-ఇన్ మెథడ్స్ (casefold, split, join, strip) · Python 3.9+ removeprefix() &amp; removesuffix() · Medical Prescription NLP Parser ప్రాజెక్ట్!
+      </span>
+    </div>
+
+    <!-- INTRO BOX (Warm Soft Ivory HTML5 Style) -->
+    <div class="intro-box">
+      కంప్యూటర్ సైన్స్‌లో అత్యధికంగా ప్రాసెస్ చేయబడే డేటా రూపం టెక్స్ట్ (Text). వెబ్‌సైట్లు, చాట్‌బాట్‌లు, మెసేజ్‌లు, ఫైల్స్, API రెస్పాన్స్‌లు — అన్నీ స్ట్రింగ్స్ రూపంలోనే ఉంటాయి.
+      సాంప్రదాయ C లాంగ్వేజ్‌లో స్ట్రింగ్స్ అంటే నల్-టెర్మినేటెడ్ క్యారెక్టర్ ఎరేలు (Null-terminated char arrays), వాటిని మార్చడం ఎంతో తలనొప్పిగా ఉండేది. కానీ <strong>పైథాన్ స్ట్రింగ్ ఆర్కిటెక్చర్ ప్రపంచంలోనే అత్యుత్తమమైనది!</strong>
+      పైథాన్‌లో స్ట్రింగ్స్ డిఫాల్ట్‌గా పూర్తి యూనికోడ్ (Unicode UTF-8) కు సపోర్ట్ చేస్తాయి, అంటే తెలుగు అక్షరాలు, సంస్కృతం, చైనీస్ మరియు ఆధునిక ఎమోజీలను నేరుగా ప్రాసెస్ చేయవచ్చు.
+      ఈ తొమ్మిదవ అధ్యాయంలో — స్ట్రింగ్ మెమరీ నిర్మాణం, నెగటివ్ ఇండెక్సింగ్, శక్తివంతమైన <code>[start:stop:step]</code> స్లైసింగ్ ఫార్ములా, 25+ ఇన్-బిల్ట్ స్ట్రింగ్ మెథడ్స్, మరియు వైద్యుల ప్రిస్క్రిప్షన్లను విశ్లేషించే పూర్తి స్థాయి <strong>Automated Clinical Prescription &amp; Patient Record NLP Parser</strong> ప్రాజెక్ట్ ద్వారా స్ట్రింగ్స్‌పై సంపూర్ణ ఆధిపత్యం సాధిద్దాం!
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 class="section-title"><span class="num">1</span> పైథాన్ స్ట్రింగ్ ఆర్కిటెక్చర్ (Unicode, UTF-8 &amp; PEP 393 Memory Model)</h2>
+    <p>
+      పైథాన్ 2 లో సాధారణ స్ట్రింగ్స్ (ASCII) మరియు యూనికోడ్ స్ట్రింగ్స్ వేర్వేరుగా ఉండేవి. కానీ <strong>Python 3 లో ప్రతి స్ట్రింగ్ కూడా బై-డిఫాల్ట్ యూనికోడ్ (Unicode)!</strong>
+    </p>
+    <p>
+      అయితే ప్రపంచంలోని అన్ని భాషల అక్షరాలను నిల్వ చేయడానికి చాలా మెమరీ అవసరమవుతుంది. దీనిని ఆప్టిమైజ్ చేయడానికి Python 3.3 లో <strong>PEP 393 (Flexible String Representation)</strong> ప్రవేశపెట్టబడింది.
+      పైథాన్ స్ట్రింగ్‌లోని అక్షరాల ఆధారంగా 3 రకాల మెమరీ స్ట్రక్చర్లను ఆటోమేటిక్‌గా ఎంచుకుంటుంది:
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>స్ట్రింగ్ రకం</th>
+            <th>అక్షరాల పరిధి</th>
+            <th>ప్రతి క్యారెక్టర్‌కు మెమరీ</th>
+            <th>ఉదాహరణ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Latin-1 (PyASCIIObject)</strong></td>
+            <td>U+0000 నుండి U+00FF (సాధారణ ఇంగ్లీష్)</td>
+            <td><strong>1 బైట్ (1 Byte)</strong></td>
+            <td><code>"Hello World"</code></td>
+          </tr>
+          <tr>
+            <td><strong>UCS-2 (Two-byte string)</strong></td>
+            <td>U+0100 నుండి U+FFFF (తెలుగు, హిందీ, ఆసియా భాషలు)</td>
+            <td><strong>2 బైట్లు (2 Bytes)</strong></td>
+            <td><code>"నమస్కారం పైథాన్"</code></td>
+          </tr>
+          <tr>
+            <td><strong>UCS-4 (Four-byte string)</strong></td>
+            <td>U+10000+ (ఎమోజీలు, అరుదైన చిహ్నాలు)</td>
+            <td><strong>4 బైట్లు (4 Bytes)</strong></td>
+            <td><code>"హలో 🚀🔥🐍"</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 2 -->
+    <h2 class="section-title"><span class="num">2</span> పాజిటివ్ &amp; నెగటివ్ ఇండెక్సింగ్ (String Indexing Architecture)</h2>
+    <p>
+      పైథాన్‌లో ఒక స్ట్రింగ్‌లోని ప్రతి అక్షరానికి ఒక స్థాన సంఖ్య (Index) ఉంటుంది. పైథాన్ రెండు దిశల ఇండెక్సింగ్‌ను సపోర్ట్ చేస్తుంది:
+    </p>
+
+    <!-- ASCII DIAGRAM FOR INDEXING -->
+    <div style="background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:20px; margin:20px 0; color:#e2e8f0; font-family:'JetBrains Mono', monospace; font-size:13px; overflow-x:auto;">
+<span style="color:#38bdf8; font-weight:700;">[పాజిటివ్ vs నెగటివ్ ఇండెక్సింగ్ డయాగ్రామ్]</span>
+
+స్ట్రింగ్ క్యారెక్టర్లు : |  P  |  Y  |  T  |  H  |  O  |  N  |
+పాజిటివ్ ఇండెక్స్     :    0     1     2     3     4     5   (ఎడమ నుండి కుడికి: 0 to len-1)
+నెగటివ్ ఇండెక్స్      :   -6    -5    -4    -3    -2    -1   (కుడి నుండి ఎడమకు: -1 to -len)
+    </div>
+
+    <ul>
+      <li><strong>పాజిటివ్ ఇండెక్స్:</strong> 0 తో ప్రారంభమై ఎడమ నుండి కుడికి వెళ్తుంది (ఉదా: <code>s[0] -&gt; 'P'</code>).</li>
+      <li><strong>నెగటివ్ ఇండెక్స్:</strong> -1 తో ప్రారంభమై కుడి నుండి ఎడమకు వెళ్తుంది (ఉదా: <code>s[-1] -&gt; 'N'</code>). చివర ఉన్న అక్షరాన్ని పొందడానికి <code>len(s) - 1</code> రాయాల్సిన అవసరం లేకుండా నేరుగా <code>s[-1]</code> రాయవచ్చు!</li>
+      <li><strong>స్ట్రింగ్ ఇమ్మ్యుటబిలిటీ (Immutability):</strong> పైథాన్‌లో స్ట్రింగ్స్ మారవు! <code>s[0] = 'J'</code> అని రాస్తే <strong><code>TypeError: 'str' object does not support item assignment</code></strong> వస్తుంది.</li>
+    </ul>
+
+    <!-- SECTION 3 -->
+    <h2 class="section-title"><span class="num">3</span> స్ట్రింగ్ స్లైసింగ్ మాస్టరీ (The [start:stop:step] Formula)</h2>
+    <p>
+      స్ట్రింగ్‌లోని ఒక భాగాన్ని (Substring) కత్తిరించి తీసుకోవడానికి <strong>స్లైసింగ్ (Slicing)</strong> సింటాక్స్‌ను ఉపయోగిస్తాము:
+    </p>
+
+    <div style="background:#0f172a; padding:14px 20px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#38bdf8; margin:14px 0;">
+      substring = string[start : stop : step]
+    </div>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>స్లైసింగ్ సింటాక్స్</th>
+            <th>వివరణ &amp; నియమం</th>
+            <th>ఫలితం (s = "PYTHON")</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>s[1:4]</code></td>
+            <td>ఇండెక్స్ 1 నుండి మొదలై <code>4 - 1 = 3</code> వరకు (stop ఎక్స్‌క్లూజివ్).</td>
+            <td><code>"YTH"</code></td>
+          </tr>
+          <tr>
+            <td><code>s[:3]</code></td>
+            <td>మొదటి నుండి ఇండెక్స్ 2 వరకు.</td>
+            <td><code>"PYT"</code></td>
+          </tr>
+          <tr>
+            <td><code>s[2:]</code></td>
+            <td>ఇండెక్స్ 2 నుండి చివరి వరకు.</td>
+            <td><code>"THON"</code></td>
+          </tr>
+          <tr>
+            <td><code>s[:]</code></td>
+            <td>మొత్తం స్ట్రింగ్ యొక్క కాపీ.</td>
+            <td><code>"PYTHON"</code></td>
+          </tr>
+          <tr>
+            <td><code>s[::2]</code></td>
+            <td>ప్రతి 2వ అక్షరాన్ని తీసుకుంటుంది (Step = 2).</td>
+            <td><code>"PTO"</code></td>
+          </tr>
+          <tr>
+            <td><code>s[::-1]</code></td>
+            <td><strong>పైథాన్ రివర్స్ ట్రిక్:</strong> స్ట్రింగ్‌ను తిరగేస్తుంది!</td>
+            <td><code>"NOHTYP"</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:8px;">💡 స్లైసింగ్ సూపర్-పవర్: No IndexError!</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        మీరు <code>s[100]</code> అని పిలిస్తే <code>IndexError</code> వస్తుంది. కానీ <code>s[1:100]</code> అని స్లైసింగ్ చేస్తే ఎర్రర్ రాదు! పైథాన్ తెలివిగా స్ట్రింగ్ ముగింపు వరకే కత్తిరించి (Bound clamping) ఇస్తుంది.
+      </p>
+    </div>
+
+    <!-- SECTION 4 -->
+    <h2 class="section-title"><span class="num">4</span> కోడ్ డెమో 1: ఇండెక్సింగ్, స్లైసింగ్ &amp; పాలిండ్రోమ్ డిటెక్షన్</h2>
+    <p>
+      ఇండెక్సింగ్, నెగటివ్ స్లైసింగ్ మరియు ఒక పదం ముందుకు చదివినా వెనుకకు చదివినా ఒకేలా ఉండే పాలిండ్రోమ్ (Palindrome) తనిఖీని క్రింది కోడ్‌లో చూడండి:
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">01_indexing_slicing_palindrome.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># స్ట్రింగ్ ఇండెక్సింగ్ & స్లైసింగ్ డెమో
+
+tech_word = "HYDERABAD"
+
+print(f"మొత్తం పదం : {tech_word}")
+print(f"మొదటి అక్షరం (Index 0)  : {tech_word[0]}")
+print(f"చివరి అక్షరం (Index -1) : {tech_word[-1]}")
+print(f"ముందు 5 అక్షరాలు [:5]    : {tech_word[:5]}")
+print(f"చివరి 3 అక్షరాలు [-3:]   : {tech_word[-3:]}")
+print(f"రివర్స్ పదం [::-1]       : {tech_word[::-1]}")
+
+# 2. పాలిండ్రోమ్ ఫంక్షన్ (Palindrome Check)
+def check_palindrome(word: str):
+    clean = word.strip().lower()
+    is_pal = (clean == clean[::-1]) # ఒకే ఒక్క లైన్ స్లైసింగ్ మ్యాజిక్!
+    status = "✅ పాలిండ్రోమ్ (సరిగ్గా సరిపోయింది)" if is_pal else "❌ పాలిండ్రోమ్ కాదు"
+    print(f"పదం: '{word}' ──▶ {status}")
+
+print("\n=== PALINDROME CHECKER ===")
+check_palindrome("MADAM")
+check_palindrome("RACECAR")
+check_palindrome("PYTHON")
+</code></pre>
+    </div>
+
+    <!-- SECTION 5 -->
+    <h2 class="section-title"><span class="num">5</span> కేస్ కన్వర్షన్ మెథడ్స్ (lower, upper, title, casefold)</h2>
+    <p>
+      టెక్స్ట్ కేస్‌ను మార్చడానికి పైథాన్‌లో సమగ్రమైన మెథడ్స్ ఉన్నాయి:
+    </p>
+
+    <ul>
+      <li><code>s.lower()</code>: అన్ని అక్షరాలను చిన్న అక్షరాలుగా మారుస్తుంది (ఉదా: <code>"HELLO" -&gt; "hello"</code>).</li>
+      <li><code>s.upper()</code>: అన్ని అక్షరాలను పెద్ద అక్షరాలుగా మారుస్తుంది (ఉదా: <code>"python" -&gt; "PYTHON"</code>).</li>
+      <li><code>s.title()</code>: ప్రతి పదం యొక్క మొదటి అక్షరాన్ని పెద్దదిగా చేస్తుంది (ఉదా: <code>"master in python" -&gt; "Master In Python"</code>).</li>
+      <li><code>s.capitalize()</code>: మొత్తం వాక్యంలో మొదటి అక్షరాన్ని మాత్రమే పెద్దదిగా చేస్తుంది.</li>
+      <li><strong><code>s.casefold()</code>:</strong> ఇది <code>lower()</code> కంటే ఎంతో శక్తివంతమైనది! జర్మన్ (<code>ß -&gt; ss</code>) మరియు అంతర్జాతీయ భాషలలో కేస్-ఇన్‌సెన్సిటివ్ పోలికల కోసం ప్రొడక్షన్‌లో ఎల్లప్పుడూ <code>casefold()</code> వాడాలి.</li>
+    </ul>
+
+    <!-- SECTION 6 -->
+    <h2 class="section-title"><span class="num">6</span> సెర్చింగ్ &amp; కౌంటింగ్ మెథడ్స్ (find, index, count, startswith)</h2>
+    <p>
+      స్ట్రింగ్‌లో ఏదైనా పదం లేదా అక్షరం ఎక్కడ ఉందో వెతకడానికి క్రింది మెథడ్స్ ఉపయోగపడతాయి:
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>మెథడ్</th>
+            <th>వివరణ</th>
+            <th>ఐటెమ్ లేకపోతే ఏమి జరుగుతుంది?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><code>s.find(sub)</code></strong></td>
+            <td>సబ్‌స్ట్రింగ్ యొక్క మొదటి ఇండెక్స్‌ను ఇస్తుంది.</td>
+            <td><strong><code>-1</code> ఇస్తుంది (సేఫ్!)</strong></td>
+          </tr>
+          <tr>
+            <td><strong><code>s.index(sub)</code></strong></td>
+            <td>సబ్‌స్ట్రింగ్ యొక్క మొదటి ఇండెక్స్‌ను ఇస్తుంది.</td>
+            <td><strong><code>ValueError</code> లేపుతుంది! (క్రాష్ అవుతుంది)</strong></td>
+          </tr>
+          <tr>
+            <td><strong><code>s.count(sub)</code></strong></td>
+            <td>సబ్‌స్ట్రింగ్ ఎన్నిసార్లు పునరావృతమైందో లెక్కిస్తుంది.</td>
+            <td><code>0</code> ఇస్తుంది.</td>
+          </tr>
+          <tr>
+            <td><strong><code>s.startswith(pre)</code></strong></td>
+            <td>స్ట్రింగ్ ఆ ప్రిఫిక్స్‌తో మొదలవుతుందో లేదో చెక్ చేస్తుంది.</td>
+            <td><code>False</code> ఇస్తుంది. టపుల్ ఇవ్వవచ్చు: <code>s.startswith(('http', 'https'))</code></td>
+          </tr>
+          <tr>
+            <td><strong><code>s.endswith(suf)</code></strong></td>
+            <td>స్ట్రింగ్ ఆ సఫిక్స్‌తో ముగుస్తుందో లేదో చెక్ చేస్తుంది.</td>
+            <td><code>False</code> ఇస్తుంది (ఉదా: ఫైల్ ఎక్స్‌టెన్షన్స్: <code>s.endswith('.pdf')</code>).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 7 -->
+    <h2 class="section-title"><span class="num">7</span> కోడ్ డెమో 2: సెర్చింగ్, ఫైల్ ఎక్స్‌టెన్షన్స్ &amp; సేఫ్ లుకప్స్</h2>
+    <p>
+      క్రాష్ అవ్వకుండా <code>find()</code> మరియు <code>startswith()</code> ద్వారా సురక్షితమైన సెర్చింగ్ చేసే విధానాన్ని పరిశీలించండి:
+    </p>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">02_string_searching_and_checks.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># సెర్చింగ్ మరియు ఫైల్ చెకర్ డెమో
+
+document_files = [
+    "annual_report_2026.pdf",
+    "employee_salaries.xlsx",
+    "architecture_diagram.png",
+    "audit_findings.PDF",
+    "server_config.yaml"
+]
+
+print("=== డాక్యుమెంట్ వెరిఫికేషన్ నివేదిక ===")
+
+for doc in document_files:
+    # 1. కేస్-ఫోల్డింగ్ మరియు ఎక్స్‌టెన్షన్ తనిఖీ
+    clean_name = doc.casefold()
+
+    if clean_name.endswith((".pdf", ".xlsx")):
+        doc_type = "ఆఫీస్ డాక్యుమెంట్"
+    elif clean_name.endswith((".png", ".jpg")):
+        doc_type = "చిత్రం (Image)"
+    else:
+        doc_type = "ఇతర కాన్ఫిగరేషన్ ఫైల్"
+
+    # 2. find() ద్వారా ఇయర్ వెతకడం
+    year_pos = clean_name.find("2026")
+    year_info = f"[2026 సంవత్సరం ఫైల్ - ఇండెక్స్: {year_pos}]" if year_pos != -1 else "[సాధారణ ఫైల్]"
+
+    print(f"ఫైల్: {doc:<28} రకం: {doc_type:<18} {year_info}")
+</code></pre>
+    </div>
+
+    <!-- SECTION 8 -->
+    <h2 class="section-title"><span class="num">8</span> మోడిఫికేషన్, ట్రిమ్మింగ్ &amp; Python 3.9+ removeprefix()</h2>
+    <p>
+      యూజర్ ఇన్‌పుట్స్‌లోని అనవసరమైన ఖాళీలను తొలగించడానికి మరియు టెక్స్ట్‌ను రీప్లేస్ చేయడానికి:
+    </p>
+
+    <ul>
+      <li><code>s.strip()</code>: ఎడమ మరియు కుడి చివర్లలోని స్పేస్‌లు, <code>
+</code> లను తొలగిస్తుంది.</li>
+      <li><code>s.replace(old, new, count)</code>: పాత పదాన్ని కొత్త పదంతో మారుస్తుంది (ఉదా: <code>s.replace("2025", "2026")</code>).</li>
+    </ul>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #8b5cf6; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#8b5cf6; margin-bottom:8px;">🚀 Python 3.9+ కొత్త సూపర్ పవర్: removeprefix() &amp; removesuffix()</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:8px;">
+        పాత పైథాన్‌లో <code>"https://example.com".lstrip("https://")</code> అని రాస్తే ఒక ప్రమాదకరమైన బగ్ ఉండేది: <code>lstrip</code> అనేది ఆ అక్షరాల సెట్ మొత్తం తొలగిస్తుంది (ఉదా: 'e' తో మొదలైనా తీసేస్తుంది!).
+      </p>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        దీనిని సరిచేయడానికి Python 3.9 లో వచ్చిన <strong><code>removeprefix()</code></strong> కేవలం ఖచ్చితమైన ఆ ప్రిఫిక్స్‌ను మాత్రమే సురక్షితంగా తొలగిస్తుంది:
+        <br/><code>url = "https://www.ourcompiler.com"</code>
+        <br/><code>clean_url = url.removeprefix("https://") # Result: "www.ourcompiler.com"</code>
+      </p>
+    </div>
+
+    <!-- SECTION 9 -->
+    <h2 class="section-title"><span class="num">9</span> స్ప్లిటింగ్ &amp; జాయినింగ్ మెథడ్స్ (split, splitlines &amp; join)</h2>
+    <p>
+      టెక్స్ట్ ప్రాసెసింగ్‌లో మరియు CSV ఫైల్స్ హ్యాండ్లింగ్‌లో <code>split()</code> మరియు <code>join()</code> జంట అత్యంత కీలకమైనవి:
+    </p>
+
+    <ul>
+      <li><strong><code>s.split(sep)</code>:</strong> స్ట్రింగ్‌ను ఇచ్చిన సెపరేటర్ ఆధారంగా ముక్కలు చేసి లిస్ట్‌గా ఇస్తుంది (ఉదా: <code>"యాపిల్,అరటి,ద్రాక్ష".split(",")</code>).</li>
+      <li><strong><code>s.splitlines()</code>:</strong> మల్టీ-లైన్ టెక్స్ట్‌లోని ప్రతి లైన్‌ను విడగొట్టి లిస్ట్‌గా ఇస్తుంది.</li>
+      <li><strong><code>sep.join(list_of_strings)</code>:</strong> ఒక లిస్ట్‌లోని అన్ని స్ట్రింగ్స్‌ను కలిపి ఒకే స్ట్రింగ్‌గా మారుస్తుంది.
+        <br/>ఉదాహరణ: <code>"-".join(["2026", "11", "02"])</code> ఫలితం: <code>"2026-11-02"</code>.
+      </li>
+    </ul>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#ef4444; margin-bottom:8px;">⚡ పెర్ఫార్మెన్స్ టిప్: లూప్‌లలో s += text వాడకండి!</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        స్ట్రింగ్స్ ఇమ్మ్యుటబుల్ కాబట్టి, లూప్‌లో పదే పదే <code>result += line</code> అని రాస్తే ప్రతిసారీ కొత్త మెమరీ అలొకేట్ అయి $O(N^2)$ టైమ్ పడుతుంది!
+        <strong>ప్రొడక్షన్ బెస్ట్ ప్రాక్టీస్:</strong> ముందుగా అన్ని ముక్కలను లిస్ట్‌లోకి అపెండ్ చేసి (<code>lines.append(x)</code>), చివరగా ఒక్కసారి <strong><code>"".join(lines)</code></strong> పిలవండి. ఇది 100 రెట్లు వేగంగా $O(N)$ లో పూర్తవుతుంది!
+      </p>
+    </div>
+
+    <!-- SECTION 10 -->
+    <h2 class="section-title"><span class="num">10</span> క్యారెక్టర్ టెస్టింగ్ &amp; వాలిడేషన్ మెథడ్స్ (isalpha, isdigit, isalnum)</h2>
+    <p>
+      యూజర్ నమోదు చేసిన సమాచారాన్ని ధృవీకరించడానికి (Input Validation):
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>మెథడ్</th>
+            <th>షరతు (ఎప్పుడు True ఇస్తుంది?)</th>
+            <th>ఉదాహరణ True</th>
+            <th>ఉదాహరణ False</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>isalpha()</code></td>
+            <td>అన్నీ కేవలం అక్షరాలు మాత్రమే ఉంటే.</td>
+            <td><code>"Python"</code></td>
+            <td><code>"Python3"</code> (నంబర్ ఉంది)</td>
+          </tr>
+          <tr>
+            <td><code>isdigit()</code></td>
+            <td>అన్నీ కేవలం సంఖ్యలే (0-9) అయితే.</td>
+            <td><code>"987654"</code></td>
+            <td><code>"₹ 500"</code> (కరెన్సీ సింబల్)</td>
+          </tr>
+          <tr>
+            <td><code>isalnum()</code></td>
+            <td>అక్షరాలు మరియు అంకెలు మాత్రమే ఉంటే (స్పేస్‌లు ఉండకూడదు).</td>
+            <td><code>"User101"</code></td>
+            <td><code>"User 101"</code> (స్పేస్ ఉంది)</td>
+          </tr>
+          <tr>
+            <td><code>isspace()</code></td>
+            <td>కేవలం ఖాళీలు (Spaces, Tabs, Newlines) మాత్రమే ఉంటే.</td>
+            <td><code>"   \n\t  "</code></td>
+            <td><code>"  a  "</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 11 -->
+    <h2 class="section-title"><span class="num">11</span> కోడ్ డెమో 3: CSV శానిటైజేషన్, removeprefix &amp; join() మాస్టరీ</h2>
+    <p>
+      ఈ పద్ధతులన్నింటినీ ఉపయోగించి కలుషితమైన CSV డేటాను క్లీన్ చేసి ప్రామాణిక రిపోర్ట్‌గా మార్చే స్క్రిప్ట్ చూడండి:
+    </p>
+
+    <!-- CODE BLOCK 3 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">03_csv_string_sanitizer.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># అడ్వాన్స్‌డ్ స్ట్రింగ్ క్లీనింగ్ & CSV ప్రాసెసింగ్ డెమో
+
+raw_csv_record = "   SKU-90812 ;  స్మార్ట్ వాచ్ ప్రో  ; ₹ 3,499.00 ; IN_STOCK   \n"
+
+# 1. strip() మరియు split()
+clean_record = raw_csv_record.strip()
+fields = [f.strip() for f in clean_record.split(";")]
+
+sku_raw, item_title, raw_price, stock_status = fields
+
+# 2. removeprefix() ద్వారా SKU ఐడిని శుభ్రం చేయడం (Python 3.9+)
+sku_id = sku_raw.removeprefix("SKU-")
+
+# 3. ధర నుండి సింబల్స్ తొలగించి ఫ్లోట్‌గా మార్చడం
+clean_price = float(raw_price.replace("₹", "").replace(",", "").strip())
+
+print("=== శానిటైజ్ చేయబడిన ప్రొడక్ట్ ఆబ్జెక్ట్ ===")
+print(f"SKU కోడ్       : {sku_id}")
+print(f"ఉత్పత్తి పేరు   : {item_title}")
+print(f"శుద్ధ ధర        : ₹ {clean_price:,.2f}")
+print(f"స్టాక్ స్థితి   : {stock_status}")
+
+# 4. join() ద్వారా స్టాండర్డ్ పైప్ డీలిమిటెడ్ ఫార్మాట్ లోకి మార్చడం
+output_line = " | ".join([sku_id, item_title, f"₹{clean_price:.2f}", stock_status])
+print(f"\nస్టాండర్డ్ ఫార్మాట్ : {output_line}")
+</code></pre>
+    </div>
+
+    <!-- SECTION 12 -->
+    <h2 class="section-title"><span class="num">12</span> కామన్ బిగినర్స్ మిస్టేక్స్ &amp; ప్రొడక్షన్ బెస్ట్ ప్రాక్టీసెస్</h2>
+    <ul>
+      <li><strong>Mistake 1: స్ట్రింగ్ ఇమ్మ్యుటబిలిటీని మర్చిపోవడం:</strong> <code>text.replace("a", "b")</code> అని రాస్తే <code>text</code> మారదు! ఎల్లప్పుడూ <strong><code>text = text.replace("a", "b")</code></strong> అని తిరిగి వేరియబుల్‌కు అసైన్ చేసుకోవాలి.</li>
+      <li><strong>Mistake 2: <code>lstrip()</code> తో URL ప్రిఫిక్స్ తీయడం:</strong> <code>"http://a.com".lstrip("http://")</code> చేస్తే మొదటి 'a' కూడా ఎగిరిపోవచ్చు! ఎల్లప్పుడూ <strong><code>removeprefix()</code></strong> వాడండి.</li>
+      <li><strong>Mistake 3: <code>find()</code> కు బదులు <code>index()</code> వాడి క్రాష్ అవ్వడం:</strong> ఐటెమ్ కచ్చితంగా ఉంటుందో లేదో తెలియనప్పుడు <code>find()</code> వాడాలి (లేదా <code>in</code> ఆపరేటర్‌తో ముందుగానే చెక్ చేయాలి).</li>
+    </ul>
+
+    <!-- SECTION 13 -->
+    <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాజెక్ట్: "Automated Clinical Prescription &amp; Patient Record NLP Parser"</h2>
+    <p>
+      ఈ తొమ్మిదవ అధ్యాయంలో నేర్చుకున్న అన్ని అంశాలను (ఇండెక్సింగ్, స్లైసింగ్, split, join, strip, removeprefix, replace, కేస్ కన్వర్షన్స్) కలగలిపి — ఒక హాస్పిటల్ క్లినికల్ ప్రిస్క్రిప్షన్ టెక్స్ట్‌ను విశ్లేషించి డిజిటల్ హెల్త్ రికార్డ్ (EHR) గా మార్చే <strong>Automated Clinical Prescription NLP Parser</strong> ప్రాజెక్ట్‌ను నిర్మిద్దాం!
+    </p>
+
+    <!-- CODE BLOCK 4: CAPSTONE MINI PROJECT -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">04_clinical_prescription_nlp_parser.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 09 మినీ ప్రాజెక్ట్: Automated Clinical Prescription NLP Parser
+# కాన్సెప్ట్స్: Slicing, removeprefix(), splitlines(), split(), join(),
+#             Sanitization, Table Formatting & Case Normalization
+# =====================================================================
+
+raw_prescription_note = """
+PATIENT_ID: PID-98421
+NAME: డా. సునీత వర్మ
+AGE: 42 | GENDER: Female
+DIAGNOSIS: Acute Bronchitis & Viral Fever
+MEDICINES:
+- Tab. Paracetamol 650mg ; Twice a day ; 5 Days
+- Syp. Ambroxol Cough ; 10ml Thrice a day ; 7 Days
+- Cap. Amoxicillin 500mg ; Morning & Night ; 5 Days
+DOCTOR_ID: DOC-APX-880
+"""
+
+def parse_clinical_prescription(raw_text: str):
+    """
+    అస్తవ్యస్తమైన క్లినికల్ టెక్స్ట్‌ను విశ్లేషించి ప్రామాణిక డిశ్చార్జ్ సమ్మరీని ముద్రిస్తుంది.
+    """
+    print("\n" + "=" * 74)
+    print(f"{'🏥 అపోలో కేర్ మల్టీ-స్పెషాలిటీ హాస్పిటల్ — డిజిటల్ ప్రిస్క్రిప్షన్':^74}")
+    print("=" * 74)
+
+    lines = [line.strip() for line in raw_text.strip().splitlines() if line.strip()]
+
+    patient_id = ""
+    patient_name = ""
+    diagnosis = ""
+    medicines = []
+    doctor_code = ""
+
+    for line in lines:
+        if line.startswith("PATIENT_ID:"):
+            patient_id = line.removeprefix("PATIENT_ID:").strip().removeprefix("PID-")
+        elif line.startswith("NAME:"):
+            patient_name = line.removeprefix("NAME:").strip()
+        elif line.startswith("DIAGNOSIS:"):
+            diagnosis = line.removeprefix("DIAGNOSIS:").strip().title()
+        elif line.startswith("DOCTOR_ID:"):
+            doctor_code = line.removeprefix("DOCTOR_ID:").strip()
+        elif line.startswith("-"):
+            # మందుల వివరాలు స్ప్లిట్ చేయడం
+            med_entry = line.removeprefix("-").strip()
+            parts = [p.strip() for p in med_entry.split(";")]
+            medicines.append(parts)
+
+    print(f"రోగి గుర్తింపు నం (PID): #{patient_id:<18} వైద్యుల కోడ్: {doctor_code}")
+    print(f"రోగి పూర్తి పేరు       : {patient_name}")
+    print(f"క్లినికల్ రోగనిర్ధారణ : {diagnosis}")
+    print("-" * 74)
+    print(f"{'క్ర.సం':<6} {'మందుల పేరు & డోసేజ్':<30} {'వాడే సమయం':<20} {'కాలపరిమితి':>12}")
+    print("-" * 74)
+
+    for idx, med in enumerate(medicines, start=1):
+        name = med[0] if len(med) > 0 else "N/A"
+        frequency = med[1] if len(med) > 1 else "N/A"
+        duration = med[2] if len(med) > 2 else "N/A"
+        print(f"{idx:<6} {name:<30} {frequency:<20} {duration:>12}")
+
+    print("=" * 74)
+    print(f"{'⚠️ దయచేసి మందులను డాక్టర్ సలహా మేరకే వేసుకోండి. సంపూర్ణ ఆరోగ్యం మీ హక్కు!':^74}")
+    print("=" * 74 + "\n")
+
+# లైవ్ రన్ టెస్ట్
+parse_clinical_prescription(raw_prescription_note)
+</code></pre>
+    </div>
+
+    <!-- 5 COLLAPSIBLE QUIZZES -->
+    <h2 class="section-title"><span class="num">★</span> ఈ అధ్యాయంపై ప్రాక్టీస్ క్విజ్ (Knowledge Check)</h2>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">1. s[::-1] సింటాక్స్ స్ట్రింగ్‌ను ఎలా రివర్స్ చేస్తుంది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> స్లైసింగ్ ఫార్ములా <code>[start:stop:step]</code> లో <code>start</code> మరియు <code>stop</code> ఇవ్వనప్పుడు మొత్తం స్ట్రింగ్‌ను తీసుకుంటుంది. <code>step = -1</code> అని ఇవ్వడం వల్ల కుడి వైపు చివరి అక్షరం నుండి ఎడమ వైపు మొదటి అక్షరం వరకు వెనుకకు అడుగులు వేస్తూ మొత్తం స్ట్రింగ్‌ను రివర్స్ చేస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">2. find() కి మరియు index() కి మధ్య వ్యత్యాసం ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> మనం వెతుకుతున్న సబ్‌స్ట్రింగ్ లేనప్పుడు <code>find()</code> ఎర్రర్ రాకుండా సురక్షితంగా <code>-1</code> ఇస్తుంది. కానీ <code>index()</code> నేరుగా <code>ValueError</code> ను లేపుతుంది, దీనివల్ల ప్రోగ్రామ్ క్రాష్ అయ్యే ప్రమాదం ఉంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">3. Python 3.9 లో వచ్చిన removeprefix() పాత lstrip() కంటే ఎందుకు మెరుగైనది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>lstrip("abc")</code> అనేది 'a', 'b', 'c' లలో ఏ అక్షరం మొదట్లో ఉన్నా తొలగిస్తుంది, ఇది కొన్నిసార్లు మనం తొలగించకూడదనుకున్న అక్షరాలను కూడా తొలగించే బగ్‌ను కలిగిస్తుంది. కానీ <code>removeprefix("abc")</code> కేవలం ఖచ్చితంగా "abc" అనే పదం మొదట్లో ఉన్నప్పుడు మాత్రమే దాన్ని తొలగిస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">4. లూప్‌లో 's += text' రాసే బదులు join() వాడటం ఎందుకు శ్రేయస్కరం?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> స్ట్రింగ్స్ ఇమ్మ్యుటబుల్ కాబట్టి <code>+=</code> చేసిన ప్రతిసారీ పాత స్ట్రింగ్ కాపీ అయి కొత్త మెమరీ అలొకేట్ అవుతుంది ($O(N^2)$ టైమ్). కానీ లిస్ట్‌లోకి అపెండ్ చేసి ఒకేసారి <code>"".join(list)</code> పిలిస్తే అవసరమైన మొత్తం మెమరీని ముందుగానే లెక్కించి ఒకేసారి కలుపుతుంది ($O(N)$ వేగం).
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">5. casefold() మెథడ్ lower() కంటే ఎందుకు శక్తివంతమైనది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>lower()</code> కేవలం ప్రాథమిక ASCII అక్షరాలను మాత్రమే మారుస్తుంది. కానీ <code>casefold()</code> పూర్తి యూనికోడ్ ప్రమాణాల ఆధారంగా అంతర్జాతీయ భాషల ప్రత్యేక అక్షరాలను (ఉదా: జర్మన్ 'ß' ను 'ss' గా) మార్చి మరింత పక్కాగా కేస్-ఇన్‌సెన్సిటివ్ పోలికను సాధ్యం చేస్తుంది.
+      </div>
+    </details>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-python/08-python-loop-control-break-continue-else.html" style="text-decoration:none; color:var(--text); font-weight:600; display:inline-flex; align-items:center; gap:8px; background:var(--bg2); padding:10px 18px; border-radius:8px; border:1px solid var(--border);">
+        ← మునుపటి అధ్యాయం: 8. లూప్ కంట్రోల్ (break, continue, else)
+      </a>
+      <a href="/blog-python/10-python-regular-expressions-regex.html" style="text-decoration:none; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; background:#10b981; padding:10px 22px; border-radius:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        తర్వాతి అధ్యాయం: 10. రెగ్యులర్ ఎక్స్‌ప్రెషన్స్ (Regex) →
+      </a>
+    </div>
+
+    <!-- INTERACTIVE COMPILER CTA CARD -->
+    <div style="margin-top:40px; background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(56,189,248,0.1) 100%); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:24px; text-align:center;">
+      <h3 style="margin-top:0; color:var(--text); font-size:20px;">ఈ Clinical Prescription NLP Parser ను లైవ్‌గా మన కంపైలర్‌లో రన్ చేయండి!</h3>
+      <p style="color:var(--text2); max-width:650px; margin:8px auto 20px; font-size:14px; line-height:1.6;">
+        ఎటువంటి లోకల్ సెటప్ లేకుండా, బ్రౌజర్‌లోనే Modern Python 3 కంపైలర్‌లో ఈ కోడ్‌ను ఎగ్జిక్యూట్ చేసి అవుట్‌పుట్ తనిఖీ చేయండి.
+      </p>
+      <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; padding:12px 28px; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Launch Python Interactive Compiler
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER / NAV SCRIPTS -->
+<script src="/site-nav.js"></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = `# =====================================================================
+# చాప్టర్ 09 మినీ ప్రాజెక్ట్: Clinical Prescription NLP Parser
+# =====================================================================
+
+raw_note = """
+PATIENT: PID-98421 ; డా. సునీత వర్మ ; Bronchitis
+MED: Tab. Paracetamol 650mg ; Twice a day ; 5 Days
+MED: Syp. Ambroxol 10ml ; Thrice a day ; 7 Days
+"""
+
+lines = [l.strip() for l in raw_note.strip().splitlines() if l.strip()]
+
+print("=" * 68)
+print(f"{'🏥 అపోలో క్లినికల్ రికార్డ్ సమ్మరీ (LIVE DEMO)':^68}")
+print("=" * 68)
+
+for l in lines:
+    if l.startswith("PATIENT:"):
+        _, pid, name, diag = [p.strip() for p in l.split(";")]
+        print(f"రోగి ID : {pid.removeprefix('PID-')} | పేరు: {name}")
+        print(f"రోగ నిర్ధారణ : {diag}")
+        print("-" * 68)
+        print(f"{'మందుల పేరు':<28} {'వాడే సమయం':<20} {'కాలపరిమితి':>14}")
+        print("-" * 68)
+    elif l.startswith("MED:"):
+        med_entry = l.removeprefix("MED:").strip()
+        name, freq, dur = [p.strip() for p in med_entry.split(";")]
+        print(f"{name:<28} {freq:<20} {dur:>14}")
+
+print("=" * 68)
+print("\n🎉 చాప్టర్ 09 ప్రాజెక్ట్ విజయవంతంగా రన్ అయ్యింది! 🚀")
+`;
+
+    try {
+      localStorage.setItem('code_python', projectCode);
+      localStorage.setItem('code_python3', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-python-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
