@@ -58,3 +58,4 @@ console.log(`Total Characters across Part 01: ${totalChars.toLocaleString()}`);
 console.log(`Overall Status: ${allPassed ? '🎉 100% PERFECT & VERIFIED' : '❌ FAILED'}`);
 
 if (!allPassed) process.exit(1);
+

@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java if, else-if, else &amp; Ternary Operator తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా డెసిషన్ మేకింగ్: if, else-if ల్యాడర్, నెస్టెడ్ కండిషన్స్, షార్ట్-సర్క్యూట్ లాజిక్, డ్యాంగ్లింగ్ ఎల్స్ సమస్య, మరియు Ternary Operator (? :) తెలుగులో సమగ్రంగా నేర్చుకోండి." />
+  <meta name="keywords" content="java if else telugu, java conditional statements telugu, java nested if else telugu, java ternary operator telugu, java decision making telugu, short circuit logic java telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/06-java-conditional-statements-if-else.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-java light-theme">
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+    <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Java Masterclass</div>
+
+    <div class="accordion">
+      <!-- Part 01: Basics & JVM -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 01</span>
+            <span class="phase-title">Basics & JVM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/01-java-introduction-features-and-jvm-architecture.html">1. Intro & JVM Architecture</a>
+        <a href="/blog-java/02-java-installation-ide-and-first-program.html">2. Setup & First Program</a>
+        <a href="/blog-java/03-java-syntax-class-structure-and-main-method.html">3. Syntax & Main Method</a>
+        <a href="/blog-java/04-java-variables-primitive-data-types-and-memory.html">4. Variables & Data Types</a>
+        <a href="/blog-java/05-java-operators-expressions-and-type-casting.html">5. Operators & Type Casting</a>
+      </div>
+
+      <!-- Part 02: Control Flow & Strings -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 02</span>
+            <span class="phase-title">Control Flow & Strings</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-java/06-java-conditional-statements-if-else.html" class="active">6. if, else-if & Ternary</a>
+        <a href="/blog-java/07-java-switch-statements-and-switch-expressions.html">7. switch Statements & Expressions</a>
+        <a href="/blog-java/08-java-loops-while-for-and-enhanced-foreach.html">8. Loops: while, for, foreach</a>
+        <a href="/blog-java/09-java-strings-memory-pool-and-immutability.html">9. Strings & Memory Pool</a>
+        <a href="/blog-java/10-java-stringbuilder-stringbuffer-and-methods.html">10. StringBuilder & StringBuffer</a>
+      </div>
+
+      <!-- Part 03: Arrays, Methods & OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 03</span>
+            <span class="phase-title">Arrays, Methods & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/11-java-arrays-multidimensional-and-algorithms.html">11. Arrays & Algorithms</a>
+        <a href="/blog-java/12-java-methods-call-stack-and-pass-by-value.html">12. Methods & Call Stack</a>
+        <a href="/blog-java/13-java-method-overloading-and-varargs.html">13. Method Overloading & Varargs</a>
+        <a href="/blog-java/14-java-oop-classes-objects-and-constructors.html">14. Classes, Objects & Heap</a>
+        <a href="/blog-java/15-java-constructors-this-keyword-and-chaining.html">15. Constructors & this Keyword</a>
+      </div>
+
+      <!-- Part 04: Core OOP & Exceptions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 04</span>
+            <span class="phase-title">Core OOP & Exceptions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/16-java-encapsulation-access-modifiers-and-records.html">16. Encapsulation & Records</a>
+        <a href="/blog-java/17-java-inheritance-super-keyword-and-object-class.html">17. Inheritance & super Keyword</a>
+        <a href="/blog-java/18-java-polymorphism-method-overriding-dynamic-binding.html">18. Polymorphism & Overriding</a>
+        <a href="/blog-java/19-java-abstract-classes-and-interfaces.html">19. Abstract Classes & Interfaces</a>
+        <a href="/blog-java/20-java-exception-handling-and-custom-exceptions.html">20. Exceptions & Custom Errors</a>
+      </div>
+
+      <!-- Part 05: Collections & Capstone -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 05</span>
+            <span class="phase-title">Collections & Capstone</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/21-java-collections-list-arraylist-linkedlist.html">21. List: ArrayList & LinkedList</a>
+        <a href="/blog-java/22-java-collections-set-and-map-deep-dive.html">22. Set & Map Deep Dive</a>
+        <a href="/blog-java/23-java-generics-and-type-safety.html">23. Generics & Type Safety</a>
+        <a href="/blog-java/24-java-lambdas-and-stream-api.html">24. Lambdas & Stream API</a>
+        <a href="/blog-java/25-java-capstone-project.html">25. Capstone: Banking Engine</a>
+      </div>
+
+    </div>
+
+    <div class="sidebar-heading">INTERACTIVE IDE</div>
+    <a href="/online-java-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Java Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">OTHER COURSES</div>
+    <a href="/blog-python.html">Python Course (25 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (25 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 06: if, else-if &amp; Ternary</span>
+    </div>
+
+    <h1 class="page-title">06. డెసిషన్ మేకింగ్ — if, else-if, else &amp; టెర్నరీ ఆపరేటర్ (Decision Making in Java)</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java (Java 21+ LTS)</span>
+      <span class="badge">🟢 Lesson 06 of 25</span>
+      <span class="badge">📂 Part 02: Control Flow &amp; Strings (Page 1 of 5)</span>
+      <span class="badge">⏱️ 22 min read</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>Railway Junction Analogy · if &amp; if-else Mechanics · else-if Ladder · Nested Conditions · Dangling-Else Ambiguity · Short-Circuit Logic (&amp;&amp;, ||) · Ternary Operator (? :) · 5 Interactive Quizzes</span>
+    </div>
+
+    <!-- Intro Box with Railway Junction Analogy -->
+    <div class="intro-box">
+      <p style="font-size: 16px; line-height: 1.8; margin-bottom: 12px;">
+        కంప్యూటర్ కేవలం లెక్కలు మాత్రమే చేయదు; క్లిష్ట పరిస్థితులలో మనుషుల కంటే వేగంగా మరియు కచ్చితంగా నిర్ణయాలు తీసుకోగలదు. యూజర్ పాస్‌వర్డ్ సరైనదా కాదా? బ్యాంక్ ఖాతాలో సరిపడా బ్యాలెన్స్ ఉందా లేదా? సరుకును డెలివరీ చేయడానికి పిన్‌కోడ్ చెల్లుబాటు అవుతుందా? ఇలాంటి వేలాది ఎంటర్‌ప్రైజ్ నిర్ణయాలు తీసుకోవడానికి జావా కంట్రోల్ ఫ్లో (Control Flow) స్టేట్‌మెంట్లను అందిస్తుంది.
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin-bottom: 12px;">
+        <strong>రైల్వే ట్రాక్ జంక్షన్ &amp; ఎయిర్‌పోర్ట్ ఇమ్మిగ్రేషన్ గేట్ల అనాలజీ (The Railway Junction &amp; Airport Gate Analogy):</strong>
+        <br>
+        1. <strong><code>if</code> Statement (ఒకే సిగ్నల్ చెక్‌పాయింట్):</strong> రైలు వెళ్లే మార్గంలో సిగ్నల్ గ్రీన్ అయితేనే ముందుకు వెళ్లనిచ్చే ఒకే ఒక చెక్‌పాయింట్. షరతు నిజమైతేనే (true) ఆ బ్లాక్ లోపలి కోడ్ నడుస్తుంది.
+        <br>
+        2. <strong><code>if-else</code> (రెండు మార్గాల జంక్షన్ - Two-Way Fork):</strong> రైల్వే ట్రాక్ రెండుగా విడిపోయే చోట — సిగ్నల్ పడితే ప్లాట్‌ఫారమ్ 1 వైపు, పడకపోతే తప్పనిసరిగా ప్లాట్‌ఫారమ్ 2 వైపు వెళ్తుంది. ఏదో ఒక మార్గం మాత్రమే ఎంపికవుతుంది.
+        <br>
+        3. <strong><code>else-if</code> Ladder (ఎయిర్‌పోర్ట్ బోర్డింగ్ లేన్లు - Multi-Tier Priority Lanes):</strong> 
+        విమానాశ్రయంలో మొదటి లేన్ ఫస్ట్ క్లాస్ పాసెంజర్లకు, రెండవ లేన్ బిజినెస్ క్లాస్‌కు, మూడవ లేన్ ఎకానమీ క్లాస్‌కు, మరియు ఎవరైనా మిగిలితే డిఫాల్ట్ గేట్ (<code>else</code>) కు పంపించినట్లే బహుళ షరతులను క్రమపద్ధతిలో పరీక్షిస్తుంది.
+        <br>
+        4. <strong>Ternary Operator <code>? :</code> (ఎక్స్‌ప్రెస్ బయోమెట్రిక్ గేట్):</strong> చిన్న చిన్న నిర్ణయాల కోసం 4 లైన్ల <code>if-else</code> కోడ్ రాసే అవసరం లేకుండా, ఒకే ఒక్క సెకనులో ఫలితాన్ని రిటర్న్ చేసే ఆధునిక స్మార్ట్ గేట్.
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin: 0;">
+        ఈ ఆరవ అధ్యాయంతో మనం <strong>Part 02: Control Flow &amp; Strings</strong> లోకి అడుగుపెడుతున్నాం! ఈ పాఠంలో షార్ట్-సర్క్యూట్ ఇవాల్యుయేషన్, డ్యాంగ్లింగ్-ఎల్స్ ప్రాబ్లమ్, మరియు పరిశ్రమ స్థాయి ప్రొడక్షన్ డెసిషన్ ఇంజిన్ల రూపకల్పనను నేర్చుకుందాం.
+      </p>
+    </div>
+
+    <!-- TABLE OF CONTENTS (ఈ page లో ఏముంది) -->
+    <div class="toc-card">
+      <div class="toc-title">📋 ఈ Page లో ఏముంది? (Contents)</div>
+      <div class="toc-grid">
+        <div class="toc-col">
+          <h4><a href="#sec-1" style="color:#10b981; text-decoration:none;">విభాగం A: కండిషనల్ ఫండమెంటల్స్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-1">1. కంట్రోల్ ఫ్లో కాన్సెప్ట్ &amp; సీక్వెన్షియల్ ఎగ్జిక్యూషన్</a></li>
+            <li><a href="#sec-2">2. if మరియు if-else స్టేట్‌మెంట్స్ అనాటమీ</a></li>
+            <li><a href="#sec-3">3. else-if ల్యాడర్: మల్టీ-కండిషన్ బ్రాంచింగ్</a></li>
+            <li><a href="#sec-4">4. నెస్టెడ్ (Nested) if-else స్టేట్‌మెంట్స్</a></li>
+          </ul>
+        </div>
+        <div class="toc-col">
+          <h4><a href="#sec-5" style="color:#38bdf8; text-decoration:none;">విభాగం B: లాజిక్ ఆప్టిమైజేషన్ &amp; టెర్నరీ</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-5">5. షార్ట్-సర్క్యూట్ లాజిక్ (&amp;&amp;, ||) తో ఎగ్జిక్యూషన్</a></li>
+            <li><a href="#sec-6">6. డ్యాంగ్లింగ్ ఎల్స్ సమస్య (Dangling-Else Ambiguity)</a></li>
+            <li><a href="#sec-7">7. Ternary Conditional Operator (? :) డీప్ డైవ్</a></li>
+            <li><a href="#sec-8">8. బూలియన్ ఫ్లాగ్స్ &amp; క్లీన్ కోడ్ బెస్ట్ ప్రాక్టీసెస్</a></li>
+          </ul>
+        </div>
+        <div class="toc-col">
+          <h4><a href="#sec-9" style="color:#f59e0b; text-decoration:none;">విభాగం C: డెమోలు, ప్రాజెక్ట్ &amp; క్విజ్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-9">9. కోడ్ డెమో 1: స్టూడెంట్ గ్రేడింగ్ ఇంజిన్</a></li>
+            <li><a href="#sec-10">10. కోడ్ డెమో 2: బ్యాంకింగ్ లోన్ ఎలిజిబిలిటీ ఎవాల్యుయేటర్</a></li>
+            <li><a href="#sec-11">11. కోడ్ డెమో 3: ATM Cash Dispenser Engine (Capstone)</a></li>
+            <li><a href="#sec-12">12. టాప్ 6 కండిషనల్ మిస్టేక్స్ &amp; 5 క్విజ్‌లు</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1 -->
+    <h2 class="section-title" id="sec-1"><span class="num">1</span> కంట్రోల్ ఫ్లో కాన్సెప్ట్ &amp; సీక్వెన్షియల్ ఎగ్జిక్యూషన్</h2>
+    <div class="section-body">
+      <p>
+        సాధారణంగా ఏదైనా కంప్యూటర్ ప్రోగ్రామ్ పై నుండి కిందికి ఒకదాని తర్వాత ఒకటి లైన్-బై-లైన్ పద్ధతిలో రన్ అవుతుంది (Sequential Execution). కానీ నిజ జీవిత పరిస్థితులలో ప్రతి పని వరుసగా జరగదు. యూజర్ ఇన్‌పుట్, సమయం, లేదా బ్యాంక్ బ్యాలెన్స్ ఆధారంగా కొన్ని కోడ్ బ్లాకులను దాటవేయడం (Skip) లేదా నిర్దిష్ట బ్లాకులను మాత్రమే రన్ చేయడం అవసరమవుతుంది. దీనినే <strong>Decision Making (కండిషనల్ బ్రాంచింగ్)</strong> అంటారు.
+      </p>
+
+      <div class="concept-card">
+        <h4>🧭 The Golden Rule of Java Conditions:</h4>
+        <p>
+          సి లేదా సి++ భాషలలో <code>if (1)</code> లేదా <code>if (0)</code> అని పూర్ణాంకాలను షరతులుగా ఇవ్వవచ్చు. కానీ <strong>జావాలో ఒక కండిషన్ ఖచ్చితంగా <code>boolean</code> (true లేదా false) గా మాత్రమే మూల్యాంకనం కావాలి!</strong> జావాలో <code>if (score = 100)</code> అని అసైన్‌మెంట్ రాస్తే కంపైలర్ తక్షణమే ఎర్రర్ ఇస్తుంది; తప్పనిసరిగా <code>if (score == 100)</code> అని రిలేషనల్ ఈక్వాలిటీ ఆపరేటర్ వాడాలి.<br><br>
+          <strong>CPU Branch Prediction &amp; Performance:</strong> ఆధునిక ప్రాసెసర్లు మీ <code>if-else</code> కోడ్ ఏ వైపు వెళ్తుందో ముందే అంచనా వేస్తాయి (Branch Prediction). తరచుగా జరిగే పరిస్థితులను (Happy Path) మొదట పెట్టడం వల్ల CPU బ్రాంచ్ మిస్-ప్రిడిక్షన్లు తగ్గి అప్లికేషన్ వేగం 15% వరకు పెరుగుతుంది!
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <h2 class="section-title" id="sec-2"><span class="num">2</span> if మరియు if-else స్టేట్‌మెంట్స్ అనాటమీ</h2>
+    <div class="section-body">
+      <p>
+        జావాలో డెసిషన్ మేకింగ్ యొక్క ప్రాథమిక భవన నిర్మాణాలు:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>స్టేట్‌మెంట్</th>
+            <th>సింటాక్స్ రూపం</th>
+            <th>పనితీరు నియమం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Simple <code>if</code></strong></td>
+            <td><code>if (condition) { // code }</code></td>
+            <td>షరతు <code>true</code> అయితేనే లోపలి కోడ్ రన్ అవుతుంది. <code>false</code> అయితే బ్లాక్ మొత్తం దాటవేయబడుతుంది.</td>
+          </tr>
+          <tr>
+            <td><strong><code>if-else</code></strong></td>
+            <td><code>if (condition) { // true } else { // false }</code></td>
+            <td>షరతు <code>true</code> అయితే మొదటి బ్లాక్, <code>false</code> అయితే రెండవ (else) బ్లాక్ రన్ అవుతుంది. ఏ ఒక్క సందర్భంలోనూ రెండు బ్లాక్‌లు కలిసి రన్ అవ్వవు!</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.8;">
+        <span style="color:#569cd6;">int</span> accountBalance = <span style="color:#b5cea8;">15000</span>;<br>
+        <span style="color:#569cd6;">int</span> withdrawalAmount = <span style="color:#b5cea8;">5000</span>;<br><br>
+
+        <span style="color:#569cd6;">if</span> (accountBalance &gt;= withdrawalAmount) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;accountBalance -= withdrawalAmount;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4ec9b0;">System</span>.<span style="color:#9cdcfe;">out</span>.<span style="color:#dcdcaa;">println</span>(<span style="color:#ce9178;">"లావాదేవీ విజయవంతం! మిగిలిన బ్యాలెన్స్: ₹"</span> + accountBalance);<br>
+        } <span style="color:#569cd6;">else</span> {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4ec9b0;">System</span>.<span style="color:#9cdcfe;">out</span>.<span style="color:#dcdcaa;">println</span>(<span style="color:#ce9178;">"ఖాతాలో సరిపడా నిధులు లేవు (Insufficient Funds)!"</span>);<br>
+        }
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <h2 class="section-title" id="sec-3"><span class="num">3</span> else-if ల్యాడర్: మల్టీ-కండిషన్ బ్రాంచింగ్</h2>
+    <div class="section-body">
+      <p>
+        రెండు కంటే ఎక్కువ ఎంపికలు లేదా బహుళ శ్రేణులు (Ranges) ఉన్నప్పుడు <strong>else-if Ladder</strong> ను ఉపయోగిస్తాం. కంపైలర్ పై నుండి కిందికి వరుసగా షరతులను పరీక్షిస్తుంది; ఏ ఒక్క షరతు <code>true</code> అయినా ఆ బ్లాక్‌ను రన్ చేసి మిగిలిన ల్యాడర్ మొత్తాన్ని దాటవేస్తుంది (Exit):
+      </p>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.8;">
+        <span style="color:#569cd6;">int</span> marks = <span style="color:#b5cea8;">85</span>;<br><br>
+
+        <span style="color:#569cd6;">if</span> (marks &gt;= <span style="color:#b5cea8;">90</span>) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4ec9b0;">System</span>.<span style="color:#9cdcfe;">out</span>.<span style="color:#dcdcaa;">println</span>(<span style="color:#ce9178;">"గ్రేడ్: A+ (అత్యున్నత ప్రతిభ)"</span>);<br>
+        } <span style="color:#569cd6;">else if</span> (marks &gt;= <span style="color:#b5cea8;">75</span>) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4ec9b0;">System</span>.<span style="color:#9cdcfe;">out</span>.<span style="color:#dcdcaa;">println</span>(<span style="color:#ce9178;">"గ్రేడ్: A (డిస్టింక్షన్)"</span>);<br>
+        } <span style="color:#569cd6;">else if</span> (marks &gt;= <span style="color:#b5cea8;">60</span>) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4ec9b0;">System</span>.<span style="color:#9cdcfe;">out</span>.<span style="color:#dcdcaa;">println</span>(<span style="color:#ce9178;">"గ్రేడ్: B (ఫస్ట్ క్లాస్)"</span>);<br>
+        } <span style="color:#569cd6;">else if</span> (marks &gt;= <span style="color:#b5cea8;">35</span>) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4ec9b0;">System</span>.<span style="color:#9cdcfe;">out</span>.<span style="color:#dcdcaa;">println</span>(<span style="color:#ce9178;">"గ్రేడ్: C (పాస్)"</span>);<br>
+        } <span style="color:#569cd6;">else</span> {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4ec9b0;">System</span>.<span style="color:#9cdcfe;">out</span>.<span style="color:#dcdcaa;">println</span>(<span style="color:#ce9178;">"గ్రేడ్: F (పునఃప్రయత్నం అవసరం)"</span>);<br>
+        }
+      </div>
+    </div>
+
+    <!-- Section 4 -->
+    <h2 class="section-title" id="sec-4"><span class="num">4</span> నెస్టెడ్ (Nested) if-else స్టేట్‌మెంట్స్</h2>
+    <div class="section-body">
+      <p>
+        ఒక <code>if</code> బ్లాక్ లేదా <code>else</code> బ్లాక్ లోపల మరొక పూర్తిస్థాయి <code>if-else</code> స్టేట్‌మెంట్‌ను రాయడాన్ని <strong>Nested if-else</strong> అంటారు. మొదటి షరతు నిజమైతేనే లోపలి రెండవ షరతును పరీక్షించాల్సిన సందర్భాలలో ఇది ఉపయోగపడుతుంది:
+      </p>
+
+      <div class="concept-card">
+        <h4>🔒 Multi-Factor Authentication Example:</h4>
+        <p>
+          యూజర్ లాగిన్ అయ్యేటప్పుడు మొదట యూజర్‌నేమ్ &amp; పాస్‌వర్డ్ సరైనదా అని చూస్తాం. అది నిజమైతేనే నెస్టెడ్ <code>if</code> లోకి వెళ్లి OTP కరెక్ట్ కాదా అని పరీక్షిస్తాం. పాస్‌వర్డే తప్పు అయితే OTP ని అసలు చెక్ చేయాల్సిన అవసరం లేదు.
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 5 -->
+    <h2 class="section-title" id="sec-5"><span class="num">5</span> షార్ట్-సర్క్యూట్ లాజిక్ (&amp;&amp;, ||) తో ఎగ్జిక్యూషన్ ఆప్టిమైజేషన్</h2>
+    <div class="section-body">
+      <p>
+        జావాలోని తార్కిక ఆపరేటర్లు <code>&amp;&amp;</code> (Logical AND) మరియు <code>||</code> (Logical OR) షార్ట్-సర్క్యూట్ మెకానిజంతో పనిచేస్తాయి. అంటే తుది ఫలితం ముందే ఖరారైతే తర్వాతి ఎక్స్‌ప్రెషన్లను JVM లెక్కించకుండా దాటవేస్తుంది:
+      </p>
+
+      <div class="concept-card">
+        <h4>⚡ Preventing NullPointerException via Short-Circuit:</h4>
+        <p>
+          జావాలో అత్యంత ప్రమాదకరమైన ఎర్రర్ <code>NullPointerException</code>. ఒక ఆబ్జెక్ట్ మెమరీలో ఉందో లేదో తెలియకుండా దాని మెథడ్‌ను కాల్ చేస్తే ప్రోగ్రామ్ క్రాష్ అవుతుంది. షార్ట్-సర్క్యూట్ ద్వారా దీనిని అందంగా నివారించవచ్చు:<br>
+          • <code>if (user != null &amp;&amp; user.getAge() &gt;= 18)</code><br>
+          ఒకవేళ <code>user == null</code> అయితే, మొదటి షరతు <code>false</code> అవుతుంది. జావా <code>&amp;&amp;</code> కాబట్టి వెంటనే ఆగిపోతుంది. కుడివైపు ఉన్న <code>user.getAge()</code> ని అసలు ముట్టుకోదు! అందువల్ల ఎలాంటి నల్-పాయింటర్ ఎర్రర్ రాదు.
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 6 -->
+    <h2 class="section-title" id="sec-6"><span class="num">6</span> డ్యాంగ్లింగ్ ఎల్స్ సమస్య (Dangling-Else Ambiguity &amp; Curly Braces)</h2>
+    <div class="section-body">
+      <p>
+        కర్లీ బ్రాకెట్లు <code>{ }</code> లేకుండా నెస్టెడ్ కండిషన్స్ రాసినప్పుడు ప్రోగ్రామింగ్ భాషల్లో ఏర్పడే ప్రసిద్ధ గందరగోళాన్ని <strong>Dangling-Else Problem</strong> అంటారు:
+      </p>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.8;">
+        <span style="color:#6a9955;">// గందరగోళమైన తప్పు కోడ్ (Curly braces లేకుండా):</span><br>
+        <span style="color:#569cd6;">if</span> (a &gt; 10)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#569cd6;">if</span> (b &gt; 20)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Both True");<br>
+        <span style="color:#569cd6;">else</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Who do I belong to?"); <span style="color:#6a9955;">// మొదటి if కా? రెండవ if కా?</span>
+      </div>
+
+      <p>
+        <strong>జావా కంపైలర్ నియమం:</strong> జావాలో ఒక <code>else</code> ఎల్లప్పుడూ తనకు అత్యంత సమీపంలో ఉన్న (Innermost) <code>if</code> కే జత చేయబడుతుంది. డెవలపర్లు కోడ్ చదివేటప్పుడు తప్పుగా అర్థం చేసుకోకుండా ఉండటానికి <strong>ఒకే లైన్ కోడ్ ఉన్నప్పటికీ ఎల్లప్పుడూ కర్లీ బ్రాకెట్స్ <code>{ }</code> రాయడం ఇండస్ట్రీ బెస్ట్ ప్రాక్టీస్!</strong>
+      </p>
+    </div>
+
+    <!-- Section 7 -->
+    <h2 class="section-title" id="sec-7"><span class="num">7</span> Ternary Conditional Operator (? :) డీప్ డైవ్</h2>
+    <div class="section-body">
+      <p>
+        ఒక వేరియబుల్‌కు షరతు ఆధారంగా విలువను కేటాయించడానికి <strong>Ternary Operator (<code>? :</code>)</strong> అత్యంత సమర్థవంతమైన షార్ట్‌కట్:
+      </p>
+
+      <div class="concept-card">
+        <h4>⚡ Ternary Operator vs if-else:</h4>
+        <p>
+          • <strong>if-else రూపం (4 లైన్లు):</strong><br>
+          <code>String message; if (score &gt;= 50) { message = "PASS"; } else { message = "FAIL"; }</code><br><br>
+          • <strong>Ternary రూపం (కేవలం 1 లైన్):</strong><br>
+          <code>String message = (score &gt;= 50) ? "PASS" : "FAIL";</code><br><br>
+          • <strong>నెస్టెడ్ టెర్నరీ (హెచ్చరిక):</strong> <code>int fee = isStudent ? (hasId ? 50 : 80) : 120;</code> అని రాయవచ్చు కానీ, కోడ్ చదవడం కష్టమయ్యే సందర్భాలలో నెస్టెడ్ టెర్నరీని నివారించి సాధారణ <code>if-else</code> వాడడమే మంచిది.
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 8 -->
+    <h2 class="section-title" id="sec-8"><span class="num">8</span> బూలియన్ ఫ్లాగ్స్ &amp; క్లీన్ కోడ్ బెస్ట్ ప్రాక్టీసెస్</h2>
+    <div class="section-body">
+      <p>
+        పరిశ్రమ ప్రమాణాలతో క్లీన్ కండిషనల్ కోడ్ రాయడానికి గూగుల్ మరియు ఒరాకిల్ ఇంజనీర్లు పాటించే సూత్రాలు:
+      </p>
+      <ul style="line-height: 2.1; margin-left: 20px; color: var(--text);">
+        <li><strong>బూలియన్‌ను true తో సరిపోల్చకండి:</strong> <code>if (isLoggedIn == true)</code> అని రాయడం బిగినర్ల తప్పు. క్లీన్‌గా <code>if (isLoggedIn)</code> అని మాత్రమే రాయండి.</li>
+        <li><strong>నెగెటివ్ కండిషన్ల కంటే పాజిటివ్ కండిషన్లకు ప్రాధాన్యత ఇవ్వండి:</strong> <code>if (!isNotAvailable)</code> వంటి డబుల్ నెగెటివ్‌లు కోడ్ చదివేవారికి తలనొప్పి తెప్పిస్తాయి. <code>if (isAvailable)</code> అని రాయండి.</li>
+        <li><strong>గార్డ్ క్లాజ్ పద్ధతి (Guard Clauses):</strong> డీప్ నెస్టెడ్ కోడ్ (ఒక దానిలో మరొకటి 5 లెవల్స్) రాసే బదులు, తప్పు జరిగితే ముందే మెథడ్ నుండి <code>return</code> అయ్యే గార్డ్ క్లాజ్‌లను వాడండి.</li>
+      </ul>
+    </div>
+
+    <!-- Section 9 -->
+    <h2 class="section-title" id="sec-9"><span class="num">9</span> కోడ్ డెమో 1: స్టూడెంట్ గ్రేడింగ్ &amp; పెర్ఫార్మెన్స్ అనలైజర్</h2>
+    <div class="section-body">
+      <p>
+        బహుళ సబ్జెక్టుల మార్కులను స్వీకరించి, సగటు లెక్కించి, ల్యాడర్ ద్వారా అకడమిక్ డిస్టింక్షన్ గ్రేడ్‌ను నిర్ణయించే లైవ్ ప్రోగ్రామ్:
+      </p>
+
+      <!-- CODE BLOCK 1 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">StudentGradeAnalyzer.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class StudentGradeAnalyzer {
+    public static void main(String[] args) {
+        String studentName = "భవాని శంకర్";
+        int mathMarks    = 92;
+        int physicsMarks = 88;
+        int chemMarks    = 85;
+
+        int totalMarks = mathMarks + physicsMarks + chemMarks;
+        double averagePercentage = totalMarks / 3.0;
+
+        System.out.println("==================================================");
+        System.out.println("       ACADEMIC PERFORMANCE &amp; GRADE REPORT       ");
+        System.out.println("==================================================");
+        System.out.println("Student Name : " + studentName);
+        System.out.printf("Total Marks  : %d / 300%n", totalMarks);
+        System.out.printf("Average %%    : %.2f%%%n", averagePercentage);
+        System.out.println("--------------------------------------------------");
+
+        // else-if Ladder Evaluation
+        String finalGrade;
+        String meritStatus;
+
+        if (averagePercentage &gt;= 90.0) {
+            finalGrade = "A+ (Distinction)";
+            meritStatus = "Gold Medal Candidate";
+        } else if (averagePercentage &gt;= 75.0) {
+            finalGrade = "A (First Class with Honors)";
+            meritStatus = "Dean's Honor List";
+        } else if (averagePercentage &gt;= 60.0) {
+            finalGrade = "B (First Class)";
+            meritStatus = "Qualified for Placement";
+        } else if (averagePercentage &gt;= 40.0) {
+            finalGrade = "C (Pass Class)";
+            meritStatus = "Eligible for Graduation";
+        } else {
+            finalGrade = "F (Failed)";
+            meritStatus = "Supplementary Required";
+        }
+
+        System.out.println("Final Grade  : " + finalGrade);
+        System.out.println("Merit Status : " + meritStatus);
+        System.out.println("==================================================");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 1 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (StudentGradeAnalyzer)</div>
+        <pre class="output-content">==================================================
+       ACADEMIC PERFORMANCE &amp; GRADE REPORT       
+==================================================
+Student Name : భవాని శంకర్
+Total Marks  : 265 / 300
+Average %    : 88.33%
+--------------------------------------------------
+Final Grade  : A (First Class with Honors)
+Merit Status : Dean's Honor List
+==================================================</pre>
+      </div>
+    </div>
+
+    <!-- Section 10 -->
+    <h2 class="section-title" id="sec-10"><span class="num">10</span> కోడ్ డెమో 2: బ్యాంకింగ్ లోన్ ఎలిజిబిలిటీ &amp; క్రెడిట్ స్కోర్ ఎవాల్యుయేటర్</h2>
+    <div class="section-body">
+      <p>
+        క్రెడిట్ స్కోర్, నెలవారీ ఆదాయం, మరియు ఇప్పటికే ఉన్న ఈఎంఐల నిష్పత్తిని విశ్లేషించే నెస్టెడ్ <code>if-else</code> డెసిషన్ ఇంజిన్:
+      </p>
+
+      <!-- CODE BLOCK 2 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">LoanApprovalEngine.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class LoanApprovalEngine {
+    public static void main(String[] args) {
+        String applicantName = "రాజేష్ వర్మ";
+        int cibilScore       = 760;
+        double monthlySalary = 65000.0;
+        double existingEmis  = 15000.0;
+        int age              = 32;
+
+        System.out.println("--------------------------------------------------");
+        System.out.println("       HOME LOAN UNDERWRITING &amp; APPROVAL         ");
+        System.out.println("--------------------------------------------------");
+        System.out.println("Applicant : " + applicantName + " (Age: " + age + ")");
+        System.out.println("CIBIL     : " + cibilScore);
+        System.out.printf("Salary    : ₹ %,.2f | Existing EMIs: ₹ %,.2f%n", monthlySalary, existingEmis);
+        System.out.println("--------------------------------------------------");
+
+        // Multi-tier Nested Decision Structure
+        if (age &gt;= 21 &amp;&amp; age &lt;= 60) {
+            if (cibilScore &gt;= 750) {
+                double maxAllowableEmi = monthlySalary * 0.50; // 50% FOIR limit
+                double disposableEmi = maxAllowableEmi - existingEmis;
+
+                if (disposableEmi &gt;= 15000.0) {
+                    System.out.println("Decision : [APPROVED] Pre-approved Loan Limit: ₹ 45,00,000");
+                    System.out.printf("Max EMI  : Up to ₹ %,.2f per month at 8.4%% ROI%n", disposableEmi);
+                } else {
+                    System.out.println("Decision : [REJECTED] High Debt-to-Income ratio (FOIR exceeded).");
+                }
+            } else if (cibilScore &gt;= 650) {
+                System.out.println("Decision : [MANUAL REVIEW] Requires Co-applicant or Collateral.");
+            } else {
+                System.out.println("Decision : [REJECTED] Low Credit Score below minimum cutoff (650).");
+            }
+        } else {
+            System.out.println("Decision : [REJECTED] Age not within allowable underwriting bracket.");
+        }
+        System.out.println("--------------------------------------------------");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 2 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (LoanApprovalEngine)</div>
+        <pre class="output-content">--------------------------------------------------
+       HOME LOAN UNDERWRITING &amp; APPROVAL         
+--------------------------------------------------
+Applicant : రాజేష్ వర్మ (Age: 32)
+CIBIL     : 760
+Salary    : ₹ 65,000.00 | Existing EMIs: ₹ 15,000.00
+--------------------------------------------------
+Decision : [APPROVED] Pre-approved Loan Limit: ₹ 45,00,000
+Max EMI  : Up to ₹ 17,500.00 per month at 8.4% ROI
+--------------------------------------------------</pre>
+      </div>
+    </div>
+
+    <!-- Section 11 -->
+    <h2 class="section-title" id="sec-11"><span class="num">11</span> కోడ్ డెమో 3: ATM Cash Dispenser &amp; PIN Verification Engine (Capstone Mini Project)</h2>
+    <div class="section-body">
+      <p>
+        ఒక పూర్తిస్థాయి ఏటీఎం మెషీన్ క్యాష్ ప్రాసెసింగ్ ఇంజిన్: పిన్ నంబర్ సరిచూడడం, కార్డ్ బ్లాక్ కౌంటర్, డైలీ విత్‌డ్రా పరిమితులు, మరియు డినామినేషన్ల లెక్కింపును సమన్వయం చేసే కాప్‌స్టోన్ ప్రాజెక్ట్:
+      </p>
+
+      <!-- CODE BLOCK 3 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">AtmCashDispenserEngine.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class AtmCashDispenserEngine {
+    public static void main(String[] args) {
+        int storedPin         = 4829;
+        int enteredPin        = 4829;
+        int accountBalance    = 42500;
+        int withdrawalRequest = 8500;
+        int dailyWithdrawLimit = 25000;
+        int dailyWithdrawnToday = 10000;
+
+        System.out.println("==================================================");
+        System.out.println("        HYDERABAD METRO BANK ATM DISPENSER        ");
+        System.out.println("==================================================");
+
+        // Security Authentication
+        if (enteredPin != storedPin) {
+            System.out.println("[SECURITY ALERT] Invalid PIN entered! Card session terminated.");
+            return;
+        }
+
+        System.out.println("[STATUS] PIN Verified. Authenticated Account Holder.");
+
+        // Checking withdrawal validations via Short-circuit &amp; Nested Logic
+        if (withdrawalRequest &lt;= 0) {
+            System.out.println("[ERROR] Invalid withdrawal amount. Must be greater than 0.");
+        } else if (withdrawalRequest % 100 != 0) {
+            System.out.println("[ERROR] Amount must be in multiples of ₹ 100 or ₹ 500.");
+        } else if (withdrawalRequest &gt; accountBalance) {
+            System.out.println("[DECLINED] Insufficient account balance! Current: ₹ " + accountBalance);
+        } else if ((dailyWithdrawnToday + withdrawalRequest) &gt; dailyWithdrawLimit) {
+            int remainingDailyLimit = dailyWithdrawLimit - dailyWithdrawnToday;
+            System.out.println("[DECLINED] Exceeds daily ATM limit! Max remaining today: ₹ " + remainingDailyLimit);
+        } else {
+            // Dispensing cash
+            accountBalance -= withdrawalRequest;
+            dailyWithdrawnToday += withdrawalRequest;
+
+            int count500 = withdrawalRequest / 500;
+            int count100 = (withdrawalRequest % 500) / 100;
+
+            System.out.println("--------------------------------------------------");
+            System.out.println("Transaction Status: [SUCCESS] Cash Dispensed!");
+            System.out.printf("  ₹ 500 Currency Notes : %d note(s)%n", count500);
+            System.out.printf("  ₹ 100 Currency Notes : %d note(s)%n", count100);
+            System.out.println("--------------------------------------------------");
+            System.out.printf("  Total Dispensed  : ₹ %,d%n", withdrawalRequest);
+            System.out.printf("  Remaining Balance: ₹ %,d%n", accountBalance);
+        }
+        System.out.println("==================================================");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 3 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (AtmCashDispenserEngine)</div>
+        <pre class="output-content">==================================================
+        HYDERABAD METRO BANK ATM DISPENSER        
+==================================================
+[STATUS] PIN Verified. Authenticated Account Holder.
+--------------------------------------------------
+Transaction Status: [SUCCESS] Cash Dispensed!
+  ₹ 500 Currency Notes : 17 note(s)
+  ₹ 100 Currency Notes : 0 note(s)
+--------------------------------------------------
+  Total Dispensed  : ₹ 8,500
+  Remaining Balance: ₹ 34,000
+==================================================</pre>
+      </div>
+    </div>
+
+    <!-- Section 12 -->
+    <h2 class="section-title" id="sec-12"><span class="num">12</span> టాప్ 6 కండిషనల్ మిస్టేక్స్ &amp; 5 క్విజ్‌లు</h2>
+    <div class="section-body">
+      <p>
+        డెసిషన్ మేకింగ్ కోడ్ రాసేటప్పుడు డెవలపర్లు ఎదుర్కొనే 6 ప్రధాన తప్పులు:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>లోపం</th>
+            <th>తప్పు కోడ్</th>
+            <th>సరిదిద్దిన సరైన విధానం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>if కండిషన్ పక్కనే సెమీకోలన్ పెట్టడం</strong></td>
+            <td><code>if (age &gt;= 18); { doSomething(); }</code> (కండిషన్ తో సంబంధం లేకుండా ఎల్లప్పుడూ రన్ అవుతుంది!)</td>
+            <td>సెమీకోలన్ తీసేయండి: <code>if (age &gt;= 18) { doSomething(); }</code></td>
+          </tr>
+          <tr>
+            <td><strong>స్ట్రింగ్స్‌ను == తో సరిపోల్చడం</strong></td>
+            <td><code>if (role == "ADMIN")</code> (మెమరీ అడ్రస్ మాత్రమే సరిపోలుస్తుంది)</td>
+            <td>కంటెంట్ సమానత్వానికి <code>if ("ADMIN".equals(role))</code> వాడాలి.</td>
+          </tr>
+          <tr>
+            <td><strong>కర్లీ బ్రాకెట్స్ మిస్ అవ్వడం</strong></td>
+            <td><code>if (flag) doA(); doB(); // doB ఎల్లప్పుడూ రన్ అవుతుంది</code></td>
+            <td>ఎల్లప్పుడూ బ్రాకెట్స్ వాడండి: <code>if (flag) { doA(); doB(); }</code></td>
+          </tr>
+          <tr>
+            <td><strong>అసైన్‌మెంట్‌ను కండిషన్‌గా వాడటం</strong></td>
+            <td><code>if (isPaid = true)</code> (ఇది ఎల్లప్పుడూ true అవుతుంది!)</td>
+            <td>కేవలం <code>if (isPaid)</code> లేదా <code>if (isPaid == true)</code> వాడాలి.</td>
+          </tr>
+          <tr>
+            <td><strong>పరిధుల తప్పు వరుస క్రమం</strong></td>
+            <td>else-if లో చిన్న పరిధిని మొదట పెట్టడం (ఉదా: <code>marks &gt; 35</code> ని <code>marks &gt; 90</code> కంటే పైన పెట్టడం)</td>
+            <td>ల్యాడర్‌లో ఎల్లప్పుడూ కఠినమైన / పెద్ద పరిధుల నుండి కిందికి రావాలి.</td>
+          </tr>
+          <tr>
+            <td><strong>షార్ట్ సర్క్యూట్ లేని బిట్‌వైజ్ ఆపరేటర్ వాడటం</strong></td>
+            <td><code>if (user != null &amp; user.isValid())</code> (NPE క్రాష్ వస్తుంది)</td>
+            <td>తప్పనిసరిగా <code>&amp;&amp;</code> వాడాలి.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- QUIZ SECTION -->
+      <h3 style="color:#10b981; margin:32px 0 16px 0;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 1: 'if (x = 5)' అని జావాలో రాస్తే ఏమి జరుగుతుంది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> కంపైల్-టైమ్ ఎర్రర్ వస్తుంది! ఎందుకంటే <code>x = 5</code> అనేది అసైన్‌మెంట్, దీని ఫలితం పూర్ణాంకం (5). జావాలోని if కండిషన్ కేవలం బూలియన్ (true/false) ను మాత్రమే అంగీకరిస్తుంది.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 2: డ్యాంగ్లింగ్ ఎల్స్ (Dangling-Else) సమస్యను ఎలా నివారించవచ్చు?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> ప్రతి <code>if</code> మరియు <code>else</code> బ్లాక్‌కు తప్పనిసరిగా కర్లీ బ్రాకెట్లను <code>{ }</code> స్పష్టంగా ఉపయోగించడం ద్వారా ఈ గందరగోళాన్ని 100% నివారించవచ్చు.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 3: '&&' ఆపరేటర్‌లో మొదటి కండిషన్ false అయితే రెండవ కండిషన్ రన్ అవుతుందా?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> రన్ అవ్వదు! దీనినే షార్ట్-సర్క్యూట్ మూల్యాంకనం (Short-Circuit Evaluation) అంటారు. ఫలితం ఎలాగూ false అని ఖరారైంది కాబట్టి సమయాన్ని ఆదా చేయడానికి JVM తర్వాతి కోడ్‌ను లెక్కించదు.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 4: టెర్నరీ ఆపరేటర్ (? :) ఎన్ని ఆపరాండ్లను తీసుకుంటుంది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> మూడు (3) ఆపరాండ్లు: 1. కండిషన్, 2. నిజమైతే వచ్చే విలువ, 3. అబద్ధమైతే వచ్చే విలువ.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 5: 'if (score >= 50); System.out.println("Pass");' రాస్తే ఏమి జరుగుతుంది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> స్కోరుతో సంబంధం లేకుండా ఎల్లప్పుడూ "Pass" ప్రింట్ అవుతుంది! ఎందుకంటే if పక్కన పెట్టిన సెమీకోలన్ <code>;</code> ఆ షరతును అక్కడితోనే ముగించేస్తుంది (Null Statement).
+        </p>
+      </details>
+    </div>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/05-java-operators-expressions-and-type-casting.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 05. Operators &amp; Type Casting
+      </a>
+      <a href="/blog-java/07-java-switch-statements-and-switch-expressions.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 07. switch Statements &amp; Expressions →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>
