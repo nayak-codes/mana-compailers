@@ -1,0 +1,763 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildPythonSidebar } = require('./python_curriculum_data.js');
+
+const currentLesson = LESSONS[12]; // Chapter 13 (0-indexed 12)
+const sidebarHtml = buildPythonSidebar(13);
+
+const chapter13Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Python 3 డిక్షనరీలు (Dictionaries) & డిక్ట్ కాంప్రహెన్షన్స్ సమగ్ర తెలుగు గైడ్: Hash Table ఆర్కిటెక్చర్, O(1) లుకప్స్, Compact Dict మెమరీ ఆప్టిమైజేషన్, get(), items(), update(), Python 3.9+ Merge ఆపరేటర్లు (|), Nested JSON Parsing, మరియు Multi-Store Inventory Audit Engine ప్రాజెక్ట్." />
+  <meta name="keywords" content="python dictionaries in telugu, dict comprehensions python telugu, hash table python, python dict get items update, learn python in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-python/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Complete Guide to Python Dictionaries and Dict Comprehensions in Telugu)",
+    "description": "Python 3 డిక్షనరీల సమగ్ర గైడ్: Key-Value Pairs, Hash Table Architecture, O(1) Lookups, Dict Comprehensions, Nested Dicts, మరియు E-Commerce Inventory Engine.",
+    "articleSection": "Phase 03: డేటా స్ట్రక్చర్స్ & కలెక్షన్స్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-01-26",
+    "dateModified": "2026-11-02"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Compiler Integration -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___PY_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/("""[\\s\\S]*?"""|'''[\\s\\S]*?'''|f?"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|f?'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'|r"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|r'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'import','from','as','def','return','class','if','elif','else','while','for','in',
+        'break','continue','pass','try','except','finally','with','lambda','global','nonlocal',
+        'and','or','not','is','yield','async','await','raise','assert','True','False','None'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'print','len','range','type','isinstance','id','input','int','float','str','list',
+        'dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted',
+        'abs','open','help','dir','filter','bool','keys','values','items','get','update','pop'
+      ];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?)\\b/g, m => pushToken('num', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split('___PY_TOK_' + idx + '___').join(tok);
+      });
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code.language-python').forEach(block => {
+        block.innerHTML = highlightPythonCode(block.innerText);
+      });
+    });
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      const code = pre.innerText;
+      try {
+        localStorage.setItem('code_python', code);
+        localStorage.setItem('code_python3', code);
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+      window.open('/online-python-compiler.html', '_blank');
+    }
+  </script>
+</head>
+<body class="lang-python light-theme">
+
+<!-- Site Navigation Placeholder -->
+<div id="site-nav-placeholder"></div>
+
+<!-- Layout Container -->
+<div class="layout">
+
+  <!-- Single Sidebar Component -->
+  ${sidebarHtml}
+
+  <!-- Main Content Area -->
+  <main class="content">
+
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb" style="display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text2); margin-bottom:16px;">
+      <a href="/" style="color:var(--text2); text-decoration:none;">Home</a>
+      <span class="sep">›</span>
+      <a href="/tutorials" style="color:var(--text2); text-decoration:none;">Tutorials</a>
+      <span class="sep">›</span>
+      <a href="/blog-python/" style="color:var(--text2); text-decoration:none;">Python Masterclass</a>
+      <span class="sep">›</span>
+      <span style="color:var(--text); font-weight:600;">Chapter 13: ${currentLesson.title}</span>
+    </div>
+
+    <!-- MAIN PAGE TITLE -->
+    <h1 class="page-title" style="font-size:32px; font-weight:800; color:var(--text); margin-bottom:14px; line-height:1.25;">
+      ${currentLesson.title}
+    </h1>
+
+    <!-- 4 PAGE META BADGES -->
+    <div class="page-meta" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; font-size:12.5px;">
+      <span style="background:rgba(16,185,129,0.12); color:#10b981; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        🌐 Modern Python 3.12+
+      </span>
+      <span style="background:rgba(59,130,246,0.12); color:#3b82f6; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        📖 Chapter 13 of 25
+      </span>
+      <span style="background:rgba(245,158,11,0.12); color:#f59e0b; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        📁 Phase 03: డేటా స్ట్రక్చర్స్ &amp; కలెక్షన్స్
+      </span>
+      <span style="background:rgba(139,92,246,0.12); color:#8b5cf6; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        🗓️ 2026 Edition
+      </span>
+    </div>
+
+    <!-- COVERED PILL -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin-bottom:24px; font-size:13.5px; color:var(--text2); line-height:1.6;">
+      <strong style="color:var(--text); font-weight:700;">📌 Covered in this chapter:</strong>
+      ${currentLesson.subtopics} · Hash Tables &amp; O(1) Average Lookup · Insertion Order Preservation · Dictionary Merge Operators (| &amp; |=) · Safe Key Access (.get) · Dictionary Comprehensions · Nested JSON Mapping · Multi-Store Inventory Audit Engine
+    </div>
+
+    <!-- WARM SOFT IVORY INTRO BOX -->
+    <div class="intro-box" style="background:#fffdf7; border:1px solid #fef3c7; border-left:4px solid #f59e0b; border-radius:10px; padding:20px 24px; margin-bottom:30px; font-size:15px; color:#451a03; line-height:1.75;">
+      మీ రోజువారీ జీవితంలో ఫోన్ కాంటాక్ట్ లిస్ట్‌లో ఒక స్నేహితుడి పేరును వెతకడం, ఆధార్ నంబర్ ద్వారా పౌరుడి వివరాలను తనిఖీ చేయడం, లేదా వెబ్‌సైట్లలో ఒక వినియోగదారుడి ఈమెయిల్ ఐడీని నమోదు చేయగానే వారి ప్రొఫైల్ వివరాలన్నీ కళ్లముందు ప్రత్యక్షమవడం చూసే ఉంటారు. ఈ అధునాతన శోధనలన్నింటి వెనుక ఉన్న మంత్రదండం ఏమిటో తెలుసా? అదే <strong>డిక్షనరీ (Dictionary)</strong>!
+      <br/><br/>
+      పైథాన్‌లో డిక్షనరీ అనేది కేవలం ఒక సాధారణ డేటా కలెక్షన్ మాత్రమే కాదు — ఇది పైథాన్ ప్రోగ్రామింగ్ లాంగ్వేజ్ యొక్క హృదయ స్పందన వంటిది. పైథాన్‌లోని క్లాస్‌లు, ఆబ్జెక్ట్‌లు, మాడ్యూల్స్, లోకల్ &amp; గ్లోబల్ వేరియబుల్ స్కోప్‌లు (<code>locals()</code>, <code>globals()</code>) అన్నీ తెరవెనుక డిక్షనరీల రూపంలోనే భద్రపరచబడతాయి! కోట్ల రికార్డులు ఉన్నప్పటికీ కేవలం రెప్పపాటులో (O(1) కాలంలో) డేటాను వెతికి తీసే <strong>హ్యాష్ టేబుల్ (Hash Table)</strong> ఆర్కిటెక్చర్ పైథాన్ డిక్షనరీల సొంతం. ఈ అధ్యాయంలో మనం కీ-వాల్యూ జంటల మ్యాజిక్ నుండి ఆధునిక డిక్ట్ కాంప్రహెన్షన్స్, పైథాన్ 3.9+ మెర్జ్ ఆపరేటర్లు, మరియు నిజ జీవిత రిటైల్ ఇన్వెంటరీ ఆడిట్ ఇంజిన్ వరకు సమగ్రంగా నేర్చుకుందాం!
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 class="section-title"><span class="num">1</span> డిక్షనరీ అంటే ఏమిటి? (What is a Dictionary in Python?)</h2>
+    <p>
+      పైథాన్‌లో <strong>డిక్షనరీ (Dictionary)</strong> అనేది <strong>కీ-వాల్యూ జంటల (Key-Value Pairs)</strong> రూపంలో డేటాను భద్రపరిచే ఒక శక్తివంతమైన, మ్యూటబుల్ (మార్చదగిన) డేటా స్ట్రక్చర్. లిస్ట్‌లలో మనం ఎలిమెంట్లను సున్నా నుండి ప్రారంభమయ్యే సంఖ్యల (0, 1, 2, ...) ద్వారా గుర్తిస్తే, డిక్షనరీలలో మనకు నచ్చిన పేర్లు లేదా గుర్తులను (Keys) ఉపయోగించి విలువలను (Values) నేరుగా యాక్సెస్ చేయవచ్చు.
+    </p>
+    <p>
+      నిజ జీవిత ఉదాహరణకు, ఒక ఆంగ్ల-తెలుగు నిఘంటువులో ఒక ఆంగ్ల పదం (Key) చూస్తే దాని అర్థం (Value) కనిపిస్తుంది. అలాగే డిక్షనరీలో ప్రతి విలువకూ ఒక ప్రత్యేకమైన కీ ఉంటుంది.
+    </p>
+    <ul>
+      <li><strong>మ్యూటబుల్ (Mutable):</strong> డిక్షనరీని సృష్టించిన తర్వాత కొత్త కీలను జోడించవచ్చు, పాత కీలకు సంబంధించిన విలువలను సవరించవచ్చు లేదా అనవసరమైన వాటిని డిలీట్ చేయవచ్చు.</li>
+      <li><strong>కీల యొక్క యూనిక్‌నెస్ (Keys Must be Unique):</strong> ఒక డిక్షనరీలో ఒకే పేరుతో రెండు కీలు ఉండకూడదు. ఒకవేళ పొరపాటున ఒకే కీని మళ్లీ రాస్తే, తాజా విలువ పాత విలువను ఓవర్‌రైట్ చేస్తుంది.</li>
+      <li><strong>కీలు తప్పనిసరిగా ఇమ్మ్యుటబుల్ &amp; హాషబుల్ అయి ఉండాలి:</strong> కీలుగా స్ట్రింగ్స్, నంబర్లు, లేదా టుపుల్స్ మాత్రమే వాడాలి. లిస్ట్‌లు లేదా ఇతర డిక్షనరీలను కీలుగా వాడటం నిషిద్ధం.</li>
+      <li><strong>విలువలు (Values) ఏదైనా కావచ్చు:</strong> విలువలకు ఎటువంటి పరిమితులు లేవు. ఒక డిక్షనరీ విలువలో లిస్ట్‌లు, టుపుల్స్, సెట్‌లు లేదా మరొక పూర్తి స్థాయి డిక్షనరీని (Nested Dict) కూడా భద్రపరచవచ్చు!</li>
+      <li><strong>ఆర్డర్ సంరక్షణ (Insertion Order Preserved):</strong> పైథాన్ 3.7+ నుండి డిక్షనరీలు తాము ఇన్సర్ట్ చేయబడిన క్రమాన్ని (Insertion Order) ఖచ్చితంగా గుర్తుపెట్టుకుంటాయి.</li>
+    </ul>
+
+    <!-- SECTION 2 -->
+    <h2 class="section-title"><span class="num">2</span> CPython Dict Architecture &amp; Hash Tables (O(1) లుకప్స్)</h2>
+    <p>
+      లక్షల కొద్దీ యూజర్ రికార్డులు ఉన్న డేటాబేస్‌లో ఒక నిర్దిష్టమైన యూజర్ వివరాలను వెతకడానికి ఒక లిస్ట్‌ను వాడితే — అది మొదటి నుండి చివరి వరకు ప్రతి ఎలిమెంట్‌ను వరుసగా తనిఖీ చేయాల్సి వస్తుంది (దీనిని <strong>O(N) లీనియర్ టైమ్</strong> అంటారు). కానీ డిక్షనరీలో కోటి రికార్డులు ఉన్నా సరే, కీని ఇచ్చిన తక్షణమే రెప్పపాటులో ఫలితాన్ని అందిస్తుంది (దీనిని <strong>O(1) కాన్స్టెంట్ టైమ్</strong> అంటారు).
+    </p>
+    <p>
+      ఈ సూపర్-ఫాస్ట్ స్పీడ్ వెనుక ఉన్న రహస్యం <strong>హ్యాష్ టేబుల్ (Hash Table)</strong> ఆర్కిటెక్చర్. CPython లోపల ఇది ఎలా పనిచేస్తుందో పరిశీలిద్దాం:
+    </p>
+
+    <div style="background:#0f172a; border:1px solid #1e293b; border-radius:8px; padding:18px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13px; color:#f8fafc; line-height:1.6;">
+      <div style="color:#10b981; font-weight:700; margin-bottom:8px;">[CPython Hash Table Lookup Flowchart]</div>
+      Key ("user_102")  ──▶  hash("user_102")  ──▶  0x5f3759df (64-bit Hash)<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼  Mask with Array Size (hash &amp; (size - 1))<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Index in Indices Table: [ 5 ]<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼  Direct Jump to Entries Array<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Entries[5] = { hash, key_ptr, value_ptr }<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Output: Value returned instantly in O(1)! ⚡
+    </div>
+
+    <p>
+      <strong>Compact Dict విప్లవం (Raymond Hettinger Architecture):</strong> పైథాన్ 3.6 కంటే ముందు ప్రతి డిక్షనరీ ఒకే పెద్ద స్పార్స్ టేబుల్‌ను ఉపయోగించేది, దీనివల్ల 20% నుండి 25% వరకు ఖాళీ మెమరీ వృధా అయ్యేది. పైథాన్ 3.6 లో ఆధునిక కాంపాక్ట్ డిక్షనరీ నిర్మాణం ప్రవేశపెట్టబడింది. ఇందులో రెండు వేర్వేరు భాగాలు ఉంటాయి:
+    </p>
+    <ul>
+      <li><strong>ఇండైసెస్ టేబుల్ (Sparse Indices Array):</strong> కేవలం బైట్ ఇండెక్స్‌లను మాత్రమే కలిగి ఉండే తేలికపాటి చిన్న టేబుల్.</li>
+      <li><strong>ఎంట్రీస్ టేబుల్ (Dense Entries Array):</strong> ఇన్సర్ట్ చేసిన వరుస క్రమంలో <code>[hash, key, value]</code> లను నిరంతరాయంగా ప్యాక్ చేసే అరే. దీనివల్ల మెమరీ 20% ఆదా అవ్వడమే కాకుండా, ఇన్సర్షన్ క్రమం స్వయంచాలకంగా భద్రపరచబడుతుంది!</li>
+    </ul>
+
+    <!-- SECTION 3 -->
+    <h2 class="section-title"><span class="num">3</span> డిక్షనరీ సృష్టి &amp; సింటాక్స్ (Creation &amp; Constructors)</h2>
+    <p>
+      పైథాన్‌లో డిక్షనరీని సృష్టించడానికి రకరకాల సౌకర్యవంతమైన పద్ధతులు ఉన్నాయి. సందర్భాన్ని బట్టి అత్యంత స్పష్టమైన పద్ధతిని ఎంచుకోవాలి:
+    </p>
+    <ul>
+      <li><strong>1. కర్లీ బ్రాకెట్స్ సింటాక్స్ (Curly Braces Literal <code>{}</code>):</strong> అత్యంత ప్రజాదరణ పొందిన మరియు వేగవంతమైన విధానం:
+        <div style="background:#0f172a; padding:10px 16px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:6px 0;">
+          student = {"roll_no": 101, "name": "సురేష్", "branch": "CSE", "cgpa": 8.95}
+        </div>
+      </li>
+      <li><strong>2. <code>dict()</code> కన్‌స్ట్రక్టర్ (Keyword Arguments):</strong> కీలు సాధారణ ఐడెంటిఫైయర్లు అయినప్పుడు కోట్స్ లేకుండా సులభంగా రాయవచ్చు:
+        <div style="background:#0f172a; padding:10px 16px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:6px 0;">
+          server_config = dict(host="127.0.0.1", port=8000, timeout=30, debug=True)
+        </div>
+      </li>
+      <li><strong>3. టుపుల్స్ లేదా లిస్ట్‌ల జంటల నుండి (List of Key-Value Tuples):</strong>
+        <div style="background:#0f172a; padding:10px 16px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:6px 0;">
+          pairs = [("IN", "భారతదేశం"), ("US", "అమెరికా"), ("JP", "జపాన్")]<br/>
+          country_map = dict(pairs)
+        </div>
+      </li>
+      <li><strong>4. <code>dict.fromkeys(iterable, default_value)</code>:</strong> బహుళ కీలకు ఒకే ప్రారంభ విలువను కేటాయించడానికి:
+        <div style="background:#0f172a; padding:10px 16px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:6px 0;">
+          sensors = ["temp_sensor", "pressure_sensor", "humidity_sensor"]<br/>
+          status_board = dict.fromkeys(sensors, "CALIBRATING")
+        </div>
+      </li>
+    </ul>
+
+    <!-- SECTION 4 -->
+    <h2 class="section-title"><span class="num">4</span> డిక్షనరీ ఎలిమెంట్స్ యాక్సెసింగ్: బ్రాకెట్స్ vs <code>.get()</code></h2>
+    <p>
+      డిక్షనరీలోని విలువను బయటకు తీయడానికి రెండు మార్గాలు ఉన్నాయి. కానీ వాటి ప్రవర్తనలో ఒక ముఖ్యమైన భద్రతా వ్యత్యాసం ఉంది:
+    </p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0;">
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+        <h4 style="margin-top:0; color:#ef4444; font-size:14.5px;">1. స్క్వేర్ బ్రాకెట్ నోటేషన్: <code>d[key]</code></h4>
+        <p style="font-size:13px; color:var(--text2); line-height:1.6; margin:6px 0;">
+          కీ తప్పనిసరిగా డిక్షనరీలో ఉండి తీరాలి. ఒకవేళ కీ లేకపోతే పైథాన్ వెంటనే <strong>KeyError</strong> విసిరి ప్రోగ్రామ్‌ను క్రాష్ చేస్తుంది!
+        </p>
+        <code style="display:block; background:#0f172a; color:#fca5a5; padding:8px 12px; border-radius:6px; font-size:12px;">
+          age = user["age"] # కీ లేకపోతే KeyError!
+        </code>
+      </div>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+        <h4 style="margin-top:0; color:#10b981; font-size:14.5px;">2. సేఫ్ యాక్సెస్ మెథడ్: <code>d.get(key, default)</code></h4>
+        <p style="font-size:13px; color:var(--text2); line-height:1.6; margin:6px 0;">
+          కీ లేకపోయినా క్రాష్ కాదు! డిఫాల్ట్‌గా <code>None</code> లేదా మీరు నిర్దేశించిన బ్యాకప్ విలువను అందిస్తుంది. ప్రొడక్షన్ కోడ్‌కు ఇదే ఉత్తమం.
+        </p>
+        <code style="display:block; background:#0f172a; color:#86efac; padding:8px 12px; border-radius:6px; font-size:12px;">
+          age = user.get("age", 18) # సురక్షితమైన యాక్సెస్!
+        </code>
+      </div>
+    </div>
+
+    <p>
+      అంతేకాకుండా ఒక కీ డిక్షనరీలో ఉందో లేదో తనిఖీ చేయడానికి <strong><code>in</code> ఆపరేటర్</strong> ను వాడవచ్చు. ఉదాహరణకు <code>if "discount_code" in cart:</code>. ఇది O(1) వేగంతో తనిఖీ చేస్తుంది!
+    </p>
+
+    <!-- SECTION 5 -->
+    <h2 class="section-title"><span class="num">5</span> డిక్షనరీ మోడిఫికేషన్స్ &amp; Modern Python 3.9+ Merge Operators (| &amp; |=)</h2>
+    <p>
+      డిక్షనరీలలో విలువలను మార్చడం మరియు బహుళ డిక్షనరీలను కలపడం నిత్యం అవసరమయ్యే పని. పైథాన్ 3.9 విడుదలైన తర్వాత ఇది మరింత సులభంగా మరియు అందంగా మారింది:
+    </p>
+    <ul>
+      <li><strong>సింగిల్ కీ జోడించడం / సవరించడం:</strong> <code>user["role"] = "Administrator"</code> — కీ ఉంటే విలువ అప్‌డేట్ అవుతుంది, లేకపోతే కొత్త కీ తయారవుతుంది.</li>
+      <li><strong><code>update()</code> మెథడ్:</strong> ఒకేసారి బహుళ కీలను అప్‌డేట్ చేయడానికి:
+        <div style="background:#0f172a; padding:10px 16px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:6px 0;">
+          profile.update({"phone": "+91-9876543210", "city": "విశాఖపట్నం"})
+        </div>
+      </li>
+      <li><strong>Modern Python 3.9+ Merge Operator (<code>|</code>):</strong> రెండు డిక్షనరీలను కలిపి ఒక నూతన డిక్షనరీని సృష్టిస్తుంది:
+        <div style="background:#0f172a; padding:10px 16px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:6px 0;">
+          default_settings = {"theme": "light", "notifications": True, "fontSize": 14}<br/>
+          user_settings = {"theme": "dark", "fontSize": 16}<br/>
+          final_settings = default_settings | user_settings<br/>
+          # final_settings లో రెండవ డిక్షనరీ విలువలు ఓవర్‌రైట్ అవుతాయి!
+        </div>
+      </li>
+      <li><strong>Update Operator (<code>|=</code>):</strong> మొదటి డిక్షనరీని ఇన్-ప్లేస్‌గా అప్‌డేట్ చేయడానికి:
+        <div style="background:#0f172a; padding:10px 16px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:6px 0;">
+          inventory |= new_shipment # inventory మెమరీలోనే అప్‌డేట్ అవుతుంది!
+        </div>
+      </li>
+    </ul>
+
+    <!-- SECTION 6 -->
+    <h2 class="section-title"><span class="num">6</span> ఎలిమెంట్స్ రిమూవల్: pop(), popitem(), del &amp; clear()</h2>
+    <p>
+      డిక్షనరీ నుండి కీ-వాల్యూ జంటలను తొలగించడానికి నాలుగు మార్గాలు ఉన్నాయి:
+    </p>
+    <ul>
+      <li><strong><code>d.pop(key, [default])</code>:</strong> పేర్కొన్న కీని తొలగించి దాని విలువను రిటర్న్ చేస్తుంది. కీ లేకపోతే KeyError రాకుండా డిఫాల్ట్ వాల్యూ అందించవచ్చు:
+        <code style="color:#10b981;">removed_score = student.pop("maths", 0)</code>
+      </li>
+      <li><strong><code>d.popitem()</code>:</strong> డిక్షనరీలో చిట్టచివరిగా ప్రవేశపెట్టిన కీ-వాల్యూ జంటను <code>(key, value)</code> టుపుల్ రూపంలో బయటకు తీసి తొలగిస్తుంది (LIFO - Last In, First Out).</li>
+      <li><strong><code>del d[key]</code>:</strong> కీ-వాల్యూ జంటను శాశ్వతంగా తొలగిస్తుంది. కీ లేకపోతే <code>KeyError</code> వస్తుంది.</li>
+      <li><strong><code>d.clear()</code>:</strong> డిక్షనరీలోని అన్ని ఎలిమెంట్లను ఖాళీ చేసి మెమరీని సిద్ధం చేస్తుంది (ఖాళీ డిక్షనరీగా <code>{}</code> మారుతుంది).</li>
+    </ul>
+
+    <!-- SECTION 7 -->
+    <h2 class="section-title"><span class="num">7</span> కోడ్ డెమో 1: లైవ్ డిక్షనరీ CRUD ఆపరేషన్స్ &amp; డైనమిక్ ఇన్వెంటరీ</h2>
+    <p>
+      పైథాన్ డిక్షనరీల ప్రాథమిక కార్యకలాపాలను ఒకే సమగ్ర ప్రోగ్రామ్‌లో క్రింద చేసి చూద్దాం:
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">01_dictionary_crud_operations.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 13 డెమో 1: డిక్షనరీ CRUD & ఆధునిక పైథాన్ 3.9+ మెర్జ్ ఆపరేటర్లు
+# =====================================================================
+
+# 1. డిక్షనరీ క్రియేషన్
+store_stock = {
+    "రైస్ బస్తా 25kg": 45,
+    "సన్‌ఫ్లవర్ ఆయిల్ 1L": 120,
+    "కందిపప్పు 1kg": 85,
+    "పంచదార 5kg": 60
+}
+
+print("=== 1. ప్రారంభ ఇన్వెంటరీ స్టాక్ ===")
+for item, qty in store_stock.items():
+    print(f"వస్తువు : {item:<22} నిల్వ : {qty} యూనిట్లు")
+
+# 2. CREATE: కొత్త వస్తువు చేర్చడం
+store_stock["టీ పౌడర్ 500g"] = 90
+
+# 3. READ: సురక్షితమైన get() పద్ధతి
+tea_qty = store_stock.get("టీ పౌడర్ 500g", 0)
+ghee_qty = store_stock.get("నెయ్యి 500ml", 0)  # కీ లేదు, కాబట్టి 0 వస్తుంది
+print(f"\\nటీ పౌడర్ స్టాక్ : {tea_qty} | నెయ్యి స్టాక్ (సురక్షితంగా) : {ghee_qty}")
+
+# 4. UPDATE: నిల్వలను సవరించడం & Modern Python 3.9+ Merge (|)
+new_shipment = {
+    "సన్‌ఫ్లవర్ ఆయిల్ 1L": 150,  # నూతన స్టాక్‌తో ఓవర్‌రైట్
+    "గోధుమ పిండి 10kg": 40     # సరికొత్త వస్తువు
+}
+
+store_stock |= new_shipment  # In-place Dictionary Merge
+
+# 5. DELETE: pop() ద్వారా సేల్ అయిన వస్తువును తొలగించడం
+cleared_qty = store_stock.pop("పంచదార 5kg", None)
+print(f"పంచదార నిల్వ స్టాక్ నుండి తొలగించబడింది (తొలగించిన పరిమాణం: {cleared_qty})")
+
+print("\\n=== తాజా ఇన్వెంటరీ నివేదిక (Updated Stock) ===")
+for idx, (item, qty) in enumerate(store_stock.items(), start=1):
+    print(f"{idx}. {item:<22} -> {qty} యూనిట్లు")
+</code></pre>
+    </div>
+
+    <!-- SECTION 8 -->
+    <h2 class="section-title"><span class="num">8</span> డిక్షనరీ ఇటరేషన్ టెక్నిక్స్: <code>.keys()</code>, <code>.values()</code>, <code>.items()</code></h2>
+    <p>
+      ఒక డిక్షనరీలోని డేటాను లూప్ చేయడానికి పైథాన్ మూడు ప్రత్యేకమైన డైనమిక్ వ్యూ ఆబ్జెక్ట్‌లను అందిస్తుంది:
+    </p>
+    <ul>
+      <li><strong>1. <code>d.keys()</code>:</strong> కేవలం కీలను మాత్రమే ఇటరేట్ చేస్తుంది. <code>for k in d:</code> అని రాసినప్పుడు స్వయంచాలకంగా <code>d.keys()</code> నే అమలవుతుంది.</li>
+      <li><strong>2. <code>d.values()</code>:</strong> కీలతో సంబంధం లేకుండా కేవలం విలువలపై మాత్రమే లూప్ చేయడానికి ఉపయోగపడుతుంది. ఉదాహరణకు మొత్తం విలువల మొత్తం (Total) లెక్కించడానికి <code>total_stock = sum(d.values())</code> అని నేరుగా రాయవచ్చు!</li>
+      <li><strong>3. <code>d.items()</code>:</strong> ప్రతి మలుపులోనూ కీ మరియు విలువ రెండింటినీ ఒక <code>(key, value)</code> టుపుల్ రూపంలో అందిస్తుంది. లూప్‌లో అన్‌ప్యాకింగ్ ద్వారా రెండింటినీ సులభంగా ప్రాసెస్ చేయవచ్చు.</li>
+    </ul>
+
+    <div style="background:rgba(59,130,246,0.08); border-left:4px solid #3b82f6; padding:14px 18px; border-radius:6px; margin:16px 0; font-size:13.5px; line-height:1.7;">
+      <strong>డైనమిక్ వ్యూస్ మ్యాజిక్:</strong> <code>.keys()</code> మరియు <code>.items()</code> అనేవి లిస్ట్‌లు కావు; అవి డిక్షనరీ యొక్క అంతర్గత మెమరీకి లైవ్ విండోస్ లాంటివి! డిక్షనరీ మారిన మరుక్షణమే ఈ వ్యూలు కూడా ఆటోమేటిక్‌గా అప్‌డేట్ అవుతాయి. అదనపు మెమరీ వృధా కాదు.
+    </div>
+
+    <!-- SECTION 9 -->
+    <h2 class="section-title"><span class="num">9</span> Dictionary Comprehensions (<code>{k: v for ...}</code>)</h2>
+    <p>
+      లిస్ట్ కాంప్రహెన్షన్ లాగే పైథాన్‌లో <strong>డిక్షనరీ కాంప్రహెన్షన్స్ (Dictionary Comprehensions)</strong> అత్యంత వేగవంతమైన, క్లీన్ సింటాక్స్‌ను అందిస్తాయి. కేవలం ఒకే ఒక్క లైన్‌లో షరతులు (filters) పెట్టి కొత్త డిక్షనరీని రూపొందించవచ్చు.
+    </p>
+    <p>
+      <strong>ప్రాథమిక సింటాక్స్:</strong><br/>
+      <code style="background:#0f172a; color:#38bdf8; padding:8px 14px; border-radius:6px; display:inline-block; margin:6px 0;">
+        new_dict = {key_expression: value_expression for item in iterable if condition}
+      </code>
+    </p>
+    <p>
+      <strong>ప్రసిద్ధ డిక్ట్ కాంప్రహెన్షన్ ప్యాటర్న్స్:</strong>
+    </p>
+    <ul>
+      <li><strong>1. స్క్వేర్ల మ్యాపింగ్:</strong> <code>squares = {x: x**2 for x in range(1, 6)}</code> &rarr; <code>{1: 1, 2: 4, 3: 9, 4: 16, 5: 25}</code></li>
+      <li><strong>2. ఫిల్టరింగ్ (షరతులు వర్తింపజేయడం):</strong>
+        <code>in_stock = {k: v for k, v in stock.items() if v &gt; 0}</code>
+      </li>
+      <li><strong>3. డిక్షనరీ ఇన్‌వర్షన్ (కీలు మరియు విలువలను తారుమారు చేయడం):</strong>
+        <div style="background:#0f172a; padding:10px 16px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:6px 0;">
+          id_to_name = {101: "రాహుల్", 102: "అంజలి", 103: "మనోజ్"}<br/>
+          name_to_id = {v: k for k, v in id_to_name.items()} # Reverse Lookup Table!
+        </div>
+      </li>
+      <li><strong>4. కరెన్సీ / వాల్యూ ట్రాన్స్‌ఫార్మేషన్:</strong> డాలర్లలో ఉన్న ధరలను రూపాయిలలోకి కన్వర్ట్ చేయడం.</li>
+    </ul>
+
+    <!-- SECTION 10 -->
+    <h2 class="section-title"><span class="num">10</span> కోడ్ డెమో 2: ఇ-కామర్స్ ఆర్డర్ మెట్రిక్స్ &amp; డిక్ట్ కాంప్రహెన్షన్స్</h2>
+    <p>
+      డిక్ట్ కాంప్రహెన్షన్స్ ద్వారా నిజ జీవిత ఈ-కామర్స్ డేటాను ఫిల్టర్ చేయడం, డిస్కౌంట్లు వర్తింపజేయడం మరియు GST ట్యాక్స్ లెక్కింపును క్రింది ఉదాహరణలో పరిశీలిద్దాం:
+    </p>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">02_ecommerce_dict_comprehensions.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 13 డెమో 2: డిక్షనరీ కాంప్రహెన్షన్స్ & బిజినెస్ అనలిటిక్స్
+# =====================================================================
+
+raw_products_usd = {
+    "ల్యాప్‌టాప్": 850.0,
+    "వైర్‌లెస్ మౌస్": 25.0,
+    "స్మార్ట్‌ఫోన్": 600.0,
+    "USB కేబుల్": 8.0,
+    "మెకానికల్ కీబోర్డ్": 95.0,
+    "స్క్రీన్ గార్డ్": 5.0
+}
+
+USD_TO_INR = 83.50
+GST_RATE = 0.18  # 18% GST
+
+# 1. డిక్ట్ కాంప్రహెన్షన్: USD నుండి INR కన్వర్షన్ (రౌండ్ ఆఫ్ చేయబడిన విలువలు)
+products_inr = {item: round(usd * USD_TO_INR, 2) for item, usd in raw_products_usd.items()}
+
+# 2. ఫిల్టరింగ్: ప్రీమియం ప్రోడక్ట్స్ మాత్రమే (ధర >= ₹5,000 ఉన్నవి)
+premium_products = {item: price for item, price in products_inr.items() if price >= 5000}
+
+# 3. ట్యాక్స్ కాలిక్యులేషన్: ధరతో పాటు GST కలిపిన మొత్తం బిల్లు మ్యాపింగ్
+final_price_with_gst = {
+    item: {
+        "బేస్ ధర": price,
+        "GST పన్ను": round(price * GST_RATE, 2),
+        "మొత్తం చెల్లింపు": round(price * (1 + GST_RATE), 2)
+    }
+    for item, price in premium_products.items()
+}
+
+print("=" * 68)
+print(f"{'🛒 ప్రీమియం ఉత్పత్తులు & GST పన్ను నివేదిక (₹)':^68}")
+print("=" * 68)
+print(f"{'వస్తువు పేరు':<22} {'బేస్ ధర (INR)':>14} {'GST (18%)':>12} {'ఫైనల్ బిల్లు':>14}")
+print("-" * 68)
+
+for name, details in final_price_with_gst.items():
+    print(f"{name:<22} ₹{details['బేస్ ధర']:>12,.2f} ₹{details['GST పన్ను']:>10,.2f} ₹{details['మొత్తం చెల్లింపు']:>12,.2f}")
+
+print("=" * 68)
+</code></pre>
+    </div>
+
+    <!-- SECTION 11 -->
+    <h2 class="section-title"><span class="num">11</span> నెస్టెడ్ డిక్షనరీలు (Nested Dictionaries) &amp; JSON మ్యాపింగ్</h2>
+    <p>
+      రియల్ వరల్డ్ వెబ్ డెవలప్‌మెంట్, మైక్రోసర్వీసెస్, మరియు క్లౌడ్ APIలలో డేటా దాదాపు ఎల్లప్పుడూ <strong>JSON (JavaScript Object Notation)</strong> ఫార్మాట్‌లో ఉంటుంది. పైథాన్‌లో JSON డేటాను డీకోడ్ చేసినప్పుడు అది అచ్చుగుద్దినట్లు <strong>నెస్టెడ్ డిక్షనరీ (Nested Dictionary)</strong> గా మారుతుంది.
+    </p>
+    <p>
+      నెస్టెడ్ డిక్షనరీలలో డేటాను యాక్సెస్ చేయడానికి చెయిన్డ్ బ్రాకెట్లను లేదా చెయిన్డ్ <code>.get()</code> ను వాడాలి:
+    </p>
+
+    <!-- CODE BLOCK 3 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">03_nested_json_data_parsing.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># నెస్టెడ్ API రెస్పాన్స్ డేటా స్ట్రక్చర్
+api_response = {
+    "status": 200,
+    "data": {
+        "user_id": "USR-9921",
+        "profile": {
+            "first_name": "వెంకటేశ్వర",
+            "last_name": "రావు",
+            "city": "విజయవాడ"
+        },
+        "subscriptions": [
+            {"service": "Cloud Pro", "plan": "Annual", "active": True},
+            {"service": "AI Assistant", "plan": "Monthly", "active": False}
+        ]
+    }
+}
+
+# 1. లోతైన విలువలను యాక్సెస్ చేయడం
+user_city = api_response["data"]["profile"]["city"]
+print("వినియోగదారుడి నగరం :", user_city)
+
+# 2. సురక్షితమైన నెస్టెడ్ get() ప్యాటర్న్ (AttributeError నివారించడానికి)
+plan_name = api_response.get("data", {}).get("profile", {}).get("city", "తెలియదు")
+print("సేఫ్ నెస్టెడ్ లుకప్ :", plan_name)
+</code></pre>
+    </div>
+
+    <!-- SECTION 12 -->
+    <h2 class="section-title"><span class="num">12</span> కామన్ బిగినర్స్ మిస్టేక్స్ &amp; ప్రొడక్షన్ బెస్ట్ ప్రాక్టీసెస్</h2>
+    <ul>
+      <li><strong>Mistake 1: లూప్ రన్ అవుతున్నప్పుడు డిక్షనరీ సైజు మార్చడం:</strong>
+        <code>for k in my_dict: if k == "bad": del my_dict[k]</code> అని రాస్తే పైథాన్ వెంటనే <code>RuntimeError: dictionary changed size during iteration</code> విసురుతుంది!
+        <strong>పరిష్కారం:</strong> డిక్షనరీ యొక్క కీలను లిస్ట్‌గా కాపీ చేసి లూప్ చేయాలి: <code>for k in list(my_dict.keys()): del my_dict[k]</code> లేదా డిక్ట్ కాంప్రహెన్షన్ వాడాలి.
+      </li>
+      <li><strong>Mistake 2: డైరెక్ట్ బ్రాకెట్లతో KeyError తెచ్చుకోవడం:</strong> ప్రొడక్షన్ APIలలో కీ తప్పనిసరిగా ఉంటుందని గుడ్డిగా నమ్మి <code>user["phone"]</code> అని రాస్తే, ఫోన్ నంబర్ ఇవ్వని యూజర్ల లాగిన్ మొత్తం ఫెయిల్ అవుతుంది. ఎల్లప్పుడూ <code>user.get("phone", None)</code> వాడాలి.</li>
+      <li><strong>Mistake 3: మ్యూటబుల్ ఆబ్జెక్టులను కీలుగా వాడటం:</strong> లిస్ట్ లేదా సెట్‌ను కీగా పెట్టడానికి ప్రయత్నిస్తే <code>TypeError: unhashable type: 'list'</code> వస్తుంది. కీలుగా ఎల్లప్పుడూ స్ట్రింగ్స్, నంబర్లు లేదా ఇమ్మ్యుటబుల్ టుపుల్స్ మాత్రమే వాడండి.</li>
+      <li><strong>Best Practice: <code>collections.defaultdict</code>:</strong> ఒకవేళ కీ లేకపోతే స్వయంచాలకంగా ఒక ఖాళీ లిస్ట్‌ను లేదా సున్నాను ప్రారంభించడానికి <code>defaultdict</code> వాడటం వల్ల కోడ్ ఎంతో శుభ్రంగా ఉంటుంది.</li>
+      <li><strong>Best Practice: Python 3.9+ Merge ఆపరేటర్లు వాడటం:</strong> పాత <code>{**d1, **d2}</code> కంటే ఆధునిక <code>d1 | d2</code> ఎంతో రీడబుల్ మరియు సమర్థవంతమైనది.</li>
+    </ul>
+
+    <!-- SECTION 13 -->
+    <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాజెక్ట్: "Multi-Store E-Commerce Inventory &amp; Discount Audit Engine"</h2>
+    <p>
+      ఈ పదమూడవ అధ్యాయంలో నేర్చుకున్న అన్ని సిద్ధాంతాలను (డిక్షనరీలు, O(1) లుకప్స్, సేఫ్ get, డిక్ట్ కాంప్రహెన్షన్స్, పైథాన్ 3.9+ Merge ఆపరేటర్లు, నెస్టెడ్ డేటా) అనుసంధానిస్తూ — బహుళ స్టోర్లలో విస్తరించి ఉన్న రిటైల్ నెట్‌వర్క్ యొక్క స్టాక్ మరియు డిస్కౌంట్లను ఆడిట్ చేసే పూర్తి స్థాయి <strong>Multi-Store E-Commerce Inventory Audit Engine</strong> ను నిర్మిద్దాం!
+    </p>
+
+    <!-- CODE BLOCK 4: CAPSTONE MINI PROJECT -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">04_multi_store_inventory_audit_engine.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 13 మినీ ప్రాజెక్ట్: Multi-Store E-Commerce Inventory & Audit Engine
+# కాన్సెప్ట్స్: Dictionaries, Safe .get(), Dict Comprehensions,
+#             Python 3.9+ Merge (|), Nested Data Aggregation, O(1) Analytics
+# =====================================================================
+
+# 1. సెంట్రల్ కేటలాగ్ (బేస్ ధరలు & కేటగిరీ)
+PRODUCT_CATALOG = {
+    "P101": {"name": "స్మార్ట్ వాచ్ AMOLED", "category": "ఎలక్ట్రానిక్స్", "price": 3499.0},
+    "P102": {"name": "బ్లూటూత్ స్పీకర్ 20W", "category": "ఆడియో", "price": 1899.0},
+    "P103": {"name": "గేమింగ్ హెడ్‌ఫోన్స్", "category": "ఆడియో", "price": 2499.0},
+    "P104": {"name": "ఎర్గోనామిక్ ఆఫీస్ చైర్", "category": "ఫర్నిచర్", "price": 6999.0},
+    "P105": {"name": "4K అల్ట్రా HD వెబ్‌క్యామ్", "category": "ఎలక్ట్రానిక్స్", "price": 4200.0}
+}
+
+# 2. వివిధ నగరాల స్టోర్లలో ప్రస్తుత ఇన్వెంటరీ స్టాక్ (Multi-Store Stock)
+HYD_STORE_STOCK = {"P101": 15, "P102": 24, "P103": 0, "P104": 8, "P105": 12}
+VIZAG_STORE_STOCK = {"P101": 10, "P102": 18, "P103": 5, "P104": 2, "P105": 0}
+VIJ_STORE_STOCK = {"P101": 8, "P102": 0, "P103": 14, "P104": 5, "P105": 6}
+
+def audit_central_inventory():
+    """అన్ని స్టోర్ల ఇన్వెంటరీని సమీకరించి సమగ్ర వ్యాపార నివేదికను రూపొందిస్తుంది."""
+    all_stores = {
+        "హైదరాబాద్ హబ్": HYD_STORE_STOCK,
+        "విశాఖపట్నం బ్రాంచ్": VIZAG_STORE_STOCK,
+        "విజయవాడ సెంటర్": VIJ_STORE_STOCK
+    }
+
+    # 1. ప్రతి ప్రోడక్ట్‌కు మొత్తం నిల్వ లెక్కింపు (Cross-Store Aggregation)
+    total_stock_by_sku = {}
+    for store_name, stock_map in all_stores.items():
+        for sku, qty in stock_map.items():
+            total_stock_by_sku[sku] = total_stock_by_sku.get(sku, 0) + qty
+
+    # 2. డిక్ట్ కాంప్రహెన్షన్: అత్యవసరంగా రీస్టాక్ చేయాల్సిన ప్రోడక్ట్స్ (మొత్తం స్టాక్ < 20 ఉన్నవి)
+    critical_restock_alerts = {
+        sku: {
+            "name": PRODUCT_CATALOG[sku]["name"],
+            "current_total": total_qty,
+            "category": PRODUCT_CATALOG[sku]["category"]
+        }
+        for sku, total_qty in total_stock_by_sku.items()
+        if total_qty < 20
+    }
+
+    # 3. డిక్ట్ కాంప్రహెన్షన్: మొత్తం ఇన్వెంటరీ విలువ (Stock * Unit Price)
+    inventory_valuation = {
+        sku: round(PRODUCT_CATALOG[sku]["price"] * total_stock_by_sku[sku], 2)
+        for sku in PRODUCT_CATALOG
+    }
+    total_enterprise_value = sum(inventory_valuation.values())
+
+    # ఆడిట్ నివేదిక ప్రింట్ చేయడం
+    print("\\n" + "=" * 78)
+    print(f"{'🏬 మన సూపర్ మార్కెట్ — సెంట్రల్ ఇన్వెంటరీ & ఆడిట్ నివేదిక 2026':^78}")
+    print("=" * 78)
+    print(f"{'SKU':<8} {'వస్తువు పేరు':<26} {'ధర (₹)':>10} {'మొత్తం స్టాక్':>14} {'మొత్తం విలువ (₹)':>16}")
+    print("-" * 78)
+
+    for sku, info in PRODUCT_CATALOG.items():
+        stock = total_stock_by_sku.get(sku, 0)
+        val = inventory_valuation.get(sku, 0.0)
+        print(f"{sku:<8} {info['name']:<26} ₹{info['price']:>8,.2f} {stock:>12} యూనిట్లు  ₹{val:>14,.2f}")
+
+    print("=" * 78)
+    print(f"మొత్తం వ్యాపార ఇన్వెంటరీ సంపద : ₹{total_enterprise_value:,.2f}")
+    print("-" * 78)
+
+    print("\\n🚨 అత్యవసర రీస్టాక్ హెచ్చరికలు (Low Stock < 20 Units):")
+    for sku, alert in critical_restock_alerts.items():
+        print(f"  • [{sku}] {alert['name']:<26} (ప్రస్తుతం: {alert['current_total']} యూనిట్లు మాత్రమే! కేటగిరీ: {alert['category']})")
+
+    print("\\n" + "=" * 78)
+    print(f"{'✅ ఇన్వెంటరీ ఆడిట్ విజయవంతంగా పూర్తయింది!':^78}")
+    print("=" * 78 + "\\n")
+
+audit_central_inventory()
+</code></pre>
+    </div>
+
+    <!-- 5 COLLAPSIBLE QUIZZES -->
+    <h2 class="section-title"><span class="num">★</span> ఈ అధ్యాయంపై ప్రాక్టీస్ క్విజ్ (Knowledge Check)</h2>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">1. పైథాన్ డిక్షనరీలలో ఎలిమెంట్ వెతకడానికి O(1) సమయం ఎందుకు పడుతుంది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> డిక్షనరీలు అంతర్గతంగా <strong>హ్యాష్ టేబుల్ (Hash Table)</strong> ఆర్కిటెక్చర్‌ను ఉపయోగిస్తాయి. కీని ఇవ్వగానే CPython దాని అంతర్గత హాష్ విలువను లెక్కించి నేరుగా ఆ మెమరీ బకెట్ ఇండెక్స్‌కు జంప్ చేస్తుంది. లిస్ట్‌ల వలె మొదటి నుండి చివరి వరకు వరుసగా వెతకాల్సిన అవసరం లేనందున ఇది O(1) కాన్స్టెంట్ సమయంలో పూర్తవుతుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">2. d['email'] మరియు d.get('email') ల మధ్య ముఖ్యమైన తేడా ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> డిక్షనరీలో ఆ కీ లేనప్పుడు <code>d['email']</code> అనేది ప్రోగ్రామ్‌ను క్రాష్ చేస్తూ <strong>KeyError</strong> విసురుతుంది. కానీ <code>d.get('email')</code> ఎటువంటి ఎర్రర్ లేకుండా సురక్షితంగా <code>None</code> ను (లేదా మనం నిర్దేశించిన డిఫాల్ట్ విలువను) అందిస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">3. డిక్షనరీ లూప్ రన్ అవుతున్నప్పుడు ఎలిమెంట్లను డిలీట్ చేస్తే ఏం జరుగుతుంది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> పైథాన్ వెంటనే <code>RuntimeError: dictionary changed size during iteration</code> విసురుతుంది. దీనిని నివారించడానికి డిక్షనరీ కీలను లిస్ట్‌గా కాపీ చేసి (<code>for k in list(d.keys()):</code>) లూప్ చేయాలి లేదా డిక్ట్ కాంప్రహెన్షన్ ఉపయోగించి సరికొత్త డిక్షనరీని రూపొందించుకోవాలి.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">4. పైథాన్ 3.9 లో ప్రవేశపెట్టిన | మరియు |= ఆపరేటర్ల ప్రయోజనం ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>d1 | d2</code> అనేది రెండు డిక్షనరీలను విలీనం చేసి (Merge) ఒక సరికొత్త డిక్షనరీని ఇస్తుంది (సాధారణ కీలు ఉంటే కుడివైపు డిక్షనరీ విలువలు ఓవర్‌రైట్ అవుతాయి). <code>d1 |= d2</code> అనేది మొదటి డిక్షనరీని ఇన్-ప్లేస్‌గా అప్‌డేట్ చేస్తుంది. ఇది పాత <code>update()</code> లేదా <code>{**d1, **d2}</code> కంటే ఎంతో స్పష్టమైన మరియు వేగవంతమైన సింటాక్స్.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">5. లిస్ట్‌ను డిక్షనరీ కీగా ఎందుకు ఉపయోగించకూడదు?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> లిస్ట్‌లు మ్యూటబుల్ (మార్చదగినవి), అంటే వాటి విలువలు మారే అవకాశం ఉంది. హాష్ టేబుల్‌లో కీ యొక్క విలువ మారితే హాష్ కోడ్ మారిపోయి లుకప్ విఫలమవుతుంది. అందువల్ల లిస్ట్‌లు హాషబుల్ కావు (<code>TypeError: unhashable type: 'list'</code>). ఎల్లప్పుడూ ఇమ్మ్యుటబుల్ అయిన స్ట్రింగ్స్, నంబర్లు లేదా టుపుల్స్ మాత్రమే కీలుగా అర్హమైనవి.
+      </div>
+    </details>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-python/12-python-tuples-and-immutability.html" style="text-decoration:none; color:var(--text); font-weight:600; display:inline-flex; align-items:center; gap:8px; background:var(--bg2); padding:10px 18px; border-radius:8px; border:1px solid var(--border);">
+        ← మునుపటి అధ్యాయం: 12. టుపుల్స్ &amp; ఇమ్మ్యుటబిలిటీ
+      </a>
+      <a href="/blog-python/14-python-sets-and-operations.html" style="text-decoration:none; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; background:#10b981; padding:10px 22px; border-radius:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        తర్వాతి అధ్యాయం: 14. సెట్స్ &amp; ఆపరేషన్స్ →
+      </a>
+    </div>
+
+    <!-- INTERACTIVE COMPILER CTA CARD -->
+    <div style="margin-top:40px; background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(56,189,248,0.1) 100%); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:24px; text-align:center;">
+      <h3 style="margin-top:0; color:var(--text); font-size:20px;">ఈ Multi-Store Inventory Audit Engine ని లైవ్‌గా మన కంపైలర్‌లో రన్ చేయండి!</h3>
+      <p style="color:var(--text2); max-width:650px; margin:8px auto 20px; font-size:14px; line-height:1.6;">
+        ఎటువంటి లోకల్ సెటప్ లేకుండా, బ్రౌజర్‌లోనే Modern Python 3 కంపైలర్‌లో ఈ కోడ్‌ను ఎగ్జిక్యూట్ చేసి అవుట్‌పుట్ తనిఖీ చేయండి.
+      </p>
+      <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; padding:12px 28px; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Launch Python Interactive Compiler
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER / NAV SCRIPTS -->
+<script src="/site-nav.js"></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`# =====================================================================
+# చాప్టర్ 13 మినీ ప్రాజెక్ట్: Multi-Store Inventory Audit (LIVE DEMO)
+# =====================================================================
+PRODUCT_CATALOG = {
+    "P101": {"name": "స్మార్ట్ వాచ్", "price": 3499.0},
+    "P102": {"name": "బ్లూటూత్ స్పీకర్", "price": 1899.0},
+    "P103": {"name": "గేమింగ్ హెడ్‌ఫోన్స్", "price": 2499.0}
+}
+
+STOCKS = {
+    "హైదరాబాద్": {"P101": 15, "P102": 20, "P103": 5},
+    "విశాఖపట్నం": {"P101": 10, "P102": 12, "P103": 8}
+}
+
+total_stock = {}
+for branch, stock in STOCKS.items():
+    for sku, qty in stock.items():
+        total_stock[sku] = total_stock.get(sku, 0) + qty
+
+print("=" * 60)
+print(f"{'🏬 సూపర్ మార్కెట్ సెంట్రల్ స్టాక్ ఆడిట్ (LIVE)':^60}")
+print("=" * 60)
+for sku, info in PRODUCT_CATALOG.items():
+    qty = total_stock.get(sku, 0)
+    total_val = qty * info['price']
+    print(f"[{sku}] {info['name']:<20} నిల్వ: {qty:>3}  విలువ: ₹{total_val:>10,.2f}")
+print("=" * 60)
+print("\\n🎉 చాప్టర్ 13 ప్రాజెక్ట్ విజయవంతంగా రన్ అయ్యింది! 🚀")
+\`;
+
+    try {
+      localStorage.setItem('code_python', projectCode);
+      localStorage.setItem('code_python3', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-python-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-python', currentLesson.file);
+fs.writeFileSync(outputPath, chapter13Content, 'utf8');
+console.log('✅ Successfully generated deep high-value Python Chapter 13 in exact HTML style!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter13Content.length, 'characters');

@@ -1,0 +1,703 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildPythonSidebar } = require('./python_curriculum_data.js');
+
+const currentLesson = LESSONS[11]; // Chapter 12 (0-indexed 11)
+const sidebarHtml = buildPythonSidebar(12);
+
+const chapter12Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Python 3 టుపుల్స్ (Tuples) & ఇమ్మ్యుటబిలిటీ సమగ్ర తెలుగు గైడ్: Tuple Memory Architecture, సింగిల్ ఎలిమెంట్ కామా ట్రాప్, Extended Tuple Unpacking (*rest), టుపుల్ వర్సెస్ లిస్ట్ మెమరీ బెంచ్‌మార్క్, Hashable Keys, collections.namedtuple, మరియు GPS Fleet Telemetry Engine ప్రాజెక్ట్." />
+  <meta name="keywords" content="python tuples in telugu, tuple unpacking python telugu, namedtuple python telugu, tuple immutability python, learn python in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-python/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Complete Guide to Python Tuples, Immutability and Unpacking in Telugu)",
+    "description": "Python 3 టుపుల్స్ పూర్తి గైడ్: Tuple Creation, Immutability, Extended Unpacking (*rest), List vs Tuple Memory, namedtuple, మరియు GPS Fleet Telemetry Engine.",
+    "articleSection": "Phase 03: డేటా స్ట్రక్చర్స్ & కలెక్షన్స్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-01-26",
+    "dateModified": "2026-11-02"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Compiler Integration -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___PY_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/("""[\\s\\S]*?"""|'''[\\s\\S]*?'''|f?"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|f?'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'|r"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|r'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'import','from','as','def','return','class','if','elif','else','while','for','in',
+        'break','continue','pass','try','except','finally','with','lambda','global','nonlocal',
+        'and','or','not','is','yield','async','await','raise','assert','True','False','None'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'print','len','range','type','isinstance','id','input','int','float','str','list',
+        'dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted',
+        'abs','open','help','dir','filter','bool','namedtuple'
+      ];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?)\\b/g, m => pushToken('num', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split('___PY_TOK_' + idx + '___').join(tok);
+      });
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code.language-python').forEach(block => {
+        block.innerHTML = highlightPythonCode(block.innerText);
+      });
+    });
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      const code = pre.innerText;
+      try {
+        localStorage.setItem('code_python', code);
+        localStorage.setItem('code_python3', code);
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+      window.open('/online-python-compiler.html', '_blank');
+    }
+  </script>
+</head>
+
+<body class="lang-python light-theme">
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="content">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a>
+      <span class="sep">›</span>
+      <a href="/blog-python.html">Python Masterclass</a>
+      <span class="sep">›</span>
+      <span>Chapter 12: ${currentLesson.title}</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">${currentLesson.title}</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge badge-tech">🐍 Modern Python (Python 3.12+)</span>
+      <span class="badge badge-chapter">🎯 Chapter 12 of 25</span>
+      <span class="badge badge-phase">📦 Phase 03: డేటా స్ట్రక్చర్స్ &amp; కలెక్షన్స్</span>
+      <span class="badge badge-edition">📅 2026 Edition</span>
+    </div>
+
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin-bottom:24px; font-size:13px; line-height:1.7;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span style="color:var(--text2); margin-left:6px;">
+        టుపుల్స్ ఆర్కిటెక్చర్ · ఇమ్మ్యుటబిలిటీ సూత్రం · సింగిల్ ఎలిమెంట్ కామా ట్రాప్ · Tuple Packing &amp; Extended Unpacking (*rest) · టుపుల్ వర్సెస్ లిస్ట్ మెమరీ బెంచ్‌మార్క్ · Hashable Dictionary Keys · collections.namedtuple · GPS Fleet Telemetry Engine ప్రాజెక్ట్!
+      </span>
+    </div>
+
+    <!-- INTRO BOX (Warm Soft Ivory HTML5 Style) -->
+    <div class="intro-box">
+      మునుపటి అధ్యాయంలో మనం లిస్ట్‌లు ఎంతటి ఫ్లెక్సిబుల్ మరియు మ్యూటబుల్ డేటా స్ట్రక్చర్లో నేర్చుకున్నాం. కానీ సాఫ్ట్‌వేర్ ఆర్కిటెక్చర్‌లో కొన్నిసార్లు డేటా ఎట్టి పరిస్థితుల్లోనూ మారకూడదు (Data Integrity &amp; Safety).
+      ఉదాహరణకు ఒక నగర భౌగోళిక అక్షాంశ రేఖాంశాలు (Latitude, Longitude), సర్వర్ డేటాబేస్ పోర్ట్ నంబర్లు, లేదా ఒక ఉద్యోగి శాశ్వత ఆధార్ నంబర్ వంటి సమాచారాన్ని పొరపాటున కూడా ఎవరూ మార్చకుండా నిరోధించడానికి పైథాన్ అందించే అద్భుతమైన ఇమ్మ్యుటబుల్ డేటా స్ట్రక్చర్ <strong>టుపుల్ (Tuple)</strong>.
+      టుపుల్స్ కేవలం డేటా భద్రతను మాత్రమే కాదు; లిస్ట్‌ల కంటే దాదాపు <strong>25% తక్కువ మెమరీని</strong> తీసుకుంటూ, సృష్టిలో 5 రెట్లు వేగంగా పనిచేస్తాయి.
+      ఈ పన్నెండవ అధ్యాయంలో — టుపుల్స్ మెమరీ నిర్మాణం, కామా ట్రాప్, Extended Unpacking (*rest), డిక్షనరీ కీలుగా టుపుల్స్, <code>collections.namedtuple</code>, మరియు వాహనాల కదలికలను ట్రాక్ చేసే పూర్తి స్థాయి <strong>GPS Fleet Telemetry &amp; Geospatial Distance Engine</strong> ప్రాజెక్ట్ ద్వారా టుపుల్స్‌పై తిరుగులేని పట్టు సాధిద్దాం!
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 class="section-title"><span class="num">1</span> టుపుల్స్ ఆర్కిటెక్చర్ &amp; ఇమ్మ్యుటబిలిటీ సూత్రం (Tuple Memory Model)</h2>
+    <p>
+      పైథాన్‌లో టుపుల్ అనేది ఒక ఆర్డర్డ్ (Ordered), ఇమ్మ్యుటబుల్ (Immutable - మార్చలేని) హెటెరోజీనియస్ కలెక్షన్.
+      CPython లో టుపుల్ అనేది <strong><code>PyTupleObject</code></strong> అనే C-స్ట్రక్చర్ ద్వారా సూచించబడుతుంది.
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ఫీచర్</th>
+            <th>లిస్ట్ (List)</th>
+            <th>టుపుల్ (Tuple)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>మ్యూటబిలిటీ (Mutability)</strong></td>
+            <td><strong>మ్యూటబుల్</strong> (ఎలిమెంట్లను జోడించవచ్చు, మార్చవచ్చు, తీసేయవచ్చు).</td>
+            <td><strong>ఇమ్మ్యుటబుల్</strong> (సృష్టించిన తర్వాత పరిమాణం లేదా అంశాలను మార్చలేము).</td>
+          </tr>
+          <tr>
+            <td><strong>మెమరీ అలొకేషన్</strong></td>
+            <td>ఓవర్-అలొకేషన్ ఉంటుంది (భవిష్యత్తు అపెండ్స్ కోసం ఖాళీ స్థలాన్ని రిజర్వ్ చేస్తుంది).</td>
+            <td>ఫిక్స్‌డ్ మెమరీ (ఖచ్చితంగా అవసరమైన బైట్లు మాత్రమే కేటాయిస్తుంది).</td>
+          </tr>
+          <tr>
+            <td><strong>హాషబిలిటీ (Hashable)</strong></td>
+            <td>Unhashable (డిక్షనరీ కీలుగా వాడలేము ❌).</td>
+            <td><strong>Hashable</strong> (డిక్షనరీ కీలుగా &amp; సెట్లలో వాడవచ్చు ✅).</td>
+          </tr>
+          <tr>
+            <td><strong>పనితీరు (Speed)</strong></td>
+            <td>కాస్త నెమ్మదిగా తయారవుతుంది.</td>
+            <td><strong>అత్యంత వేగవంతమైనది</strong> (చిన్న టుపుల్స్ CPython ఫ్రీ లిస్ట్‌లో క్యాష్ అవుతాయి).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:8px;">💡 "టుపుల్ ఇమ్మ్యుటబిలిటీ" యొక్క ఖచ్చితమైన సాంకేతిక అర్థం:</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:8px;">
+        టుపుల్ ఇమ్మ్యుటబుల్ అంటే — <strong>టుపుల్ లోపల ఉన్న మెమరీ పాయింటర్లు ఎప్పటికీ మారవు!</strong>
+        కానీ టుపుల్ లోపల ఒక మ్యూటబుల్ ఆబ్జెక్ట్ (ఉదాహరణకు లిస్ట్) ఉంటే: <code>t = (1, [10, 20], 3)</code>, మీరు ఆ లిస్ట్ లోపలి డేటాను మార్చవచ్చు (<code>t[1].append(30)</code> పనిచేస్తుంది!). ఎందుకంటే టుపుల్ కేవలం ఆ లిస్ట్ యొక్క అడ్రస్‌ను మాత్రమే పట్టుకుని ఉంది, లోపలి విలువలు మారినా అడ్రస్ మారదు.
+      </p>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        <strong>సూపర్ ఆప్టిమైజేషన్:</strong> టుపుల్స్ ఇమ్మ్యుటబుల్ కావడం వల్ల మీరు <code>copy.copy(my_tuple)</code> చేసినప్పుడు పైథాన్ కొత్త మెమరీని అస్సలు క్రియేట్ చేయదు! పాత టుపుల్ రిఫరెన్స్‌నే నేరుగా రిటర్న్ చేస్తుంది (<code>copy.copy(t) is t</code> ఎల్లప్పుడూ True అవుతుంది!). ఇది మెమరీని అద్భుతంగా ఆదా చేస్తుంది.
+      </p>
+    </div>
+
+    <!-- SECTION 2 -->
+    <h2 class="section-title"><span class="num">2</span> టుపుల్ క్రియేషన్ &amp; సింగిల్ ఎలిమెంట్ కామా ట్రాప్ (The Comma Trap)</h2>
+    <p>
+      టుపుల్స్‌ను సాధారణంగా రౌండ్ బ్రాకెట్లు <code>()</code> లో రాస్తారు:
+      <br/>
+      <code>empty_tuple = ()</code>
+      <br/>
+      <code>coords = (17.3850, 78.4867)</code>
+    </p>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#ef4444; margin-bottom:8px;">⚠️ బిగినర్స్ పడే నెంబర్ 1 ట్రాప్ (The Single-Element Comma Trap):</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:8px;">
+        మీరు <code>x = (50)</code> అని రాస్తే పైథాన్ దానిని టుపుల్ అనుకోదు! గణితంలో బ్రాకెట్ లాగా భావించి కేవలం సాధారణ ఇంటీజర్ <code>50</code> గా పరిగణిస్తుంది:
+        <br/><code>type((50))</code> =&gt; <code>&lt;class 'int'&gt;</code>!
+      </p>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        <strong>పరిష్కారం:</strong> కేవలం ఒకే ఒక్క ఎలిమెంట్ ఉన్న టుపుల్ సృష్టించాలంటే తప్పనిసరిగా దాని చివర <strong>కామా <code>,</code></strong> పెట్టాలి!
+        <br/><code>single_tuple = (50,)</code> =&gt; <code>&lt;class 'tuple'&gt;</code> ✅
+      </p>
+    </div>
+
+    <p>
+      అంతేకాకుండా బ్రాకెట్లు లేకుండా కూడా కేవలం కామా పెడితే పైథాన్ ఆటోమేటిక్‌గా దాన్ని టుపుల్‌గా ప్యాక్ చేస్తుంది (Tuple Packing):
+      <br/>
+      <code>point = 10, 20, 30</code> =&gt; <code>type(point)</code> is <code>tuple</code>.
+    </p>
+
+    <!-- SECTION 3 -->
+    <h2 class="section-title"><span class="num">3</span> టుపుల్ ఇండెక్సింగ్, స్లైసింగ్ &amp; ఇమ్మ్యుటబిలిటీ ధృవీకరణ</h2>
+    <p>
+      లిస్ట్‌ల లాగానే టుపుల్స్ కూడా ఇండెక్సింగ్ మరియు స్లైసింగ్ సపోర్ట్ చేస్తాయి:
+    </p>
+
+    <div style="background:#0f172a; padding:14px 20px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.7;">
+      server_config = ("192.168.1.1", 8080, "PRODUCTION", True)<br/><br/>
+      ip = server_config[0]        # "192.168.1.1"<br/>
+      port = server_config[1]      # 8080<br/>
+      env_info = server_config[:2] # ("192.168.1.1", 8080) స్లైసింగ్<br/><br/>
+      # మార్చడానికి ప్రయత్నిస్తే:<br/>
+      # server_config[1] = 9000<br/>
+      # ❌ TypeError: 'tuple' object does not support item assignment!
+    </div>
+
+    <!-- SECTION 4 -->
+    <h2 class="section-title"><span class="num">4</span> కోడ్ డెమో 1: టుపుల్ క్రియేషన్, కామా ట్రాప్ &amp; ఇమ్మ్యుటబిలిటీ ప్రూఫ్</h2>
+    <p>
+      టుపుల్ ప్యాకింగ్, సింగిల్ ఎలిమెంట్ కామా, మరియు లోపలి లిస్ట్ మ్యూటబిలిటీని క్రింది కోడ్‌లో పరీక్షించండి:
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">01_tuple_creation_and_mutability_proof.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># టుపుల్ ప్రాథమిక నిర్మాణం & ఇమ్మ్యుటబిలిటీ డెమో
+
+# 1. సింగిల్ ఎలిమెంట్ కామా ప్రవర్తన
+not_a_tuple = ("హైదరాబాద్")
+actual_tuple = ("హైదరాబాద్",)
+
+print(f"not_a_tuple రకం : {type(not_a_tuple).__name__} (విలువ: '{not_a_tuple}')")
+print(f"actual_tuple రకం: {type(actual_tuple).__name__} (విలువ: {actual_tuple})")
+
+# 2. ఆటోమేటిక్ టుపుల్ ప్యాకింగ్ (No parentheses)
+geo_data = 17.3850, 78.4867, "హైదరాబాద్ చార్మినార్"
+print(f"\\nప్యాక్ చేయబడిన టుపుల్: {geo_data} (Type: {type(geo_data).__name__})")
+
+# 3. టుపుల్ లోపల మ్యూటబుల్ ఆబ్జెక్ట్ ప్రవర్తన
+hybrid_tuple = ("API_GATEWAY", [200, 301], "ACTIVE")
+print(f"\\nమార్పుకు ముందు : {hybrid_tuple}")
+
+# లోపలి లిస్ట్‌కు ఎలిమెంట్‌ను చేరుస్తున్నాము (ఇది అనుమతించబడుతుంది!)
+hybrid_tuple[1].append(404)
+print(f"మార్పు తర్వాత : {hybrid_tuple}")
+</code></pre>
+    </div>
+
+    <!-- SECTION 5 -->
+    <h2 class="section-title"><span class="num">5</span> టుపుల్ అన్‌ప్యాకింగ్ &amp; ఎక్స్‌టెండెడ్ అన్‌ప్యాకింగ్ (*rest)</h2>
+    <p>
+      టుపుల్‌లోని అంశాలను వేర్వేరు వేరియబుల్స్‌లోకి ఒక్క లైన్‌లో విడగొట్టడాన్ని <strong>టుపుల్ అన్‌ప్యాకింగ్ (Tuple Unpacking)</strong> అంటారు:
+    </p>
+
+    <div style="background:#0f172a; padding:12px 18px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#38bdf8; margin:14px 0;">
+      name, age, designation = ("లావణ్య", 28, "సీనియర్ క్లౌడ్ ఆర్కిటెక్ట్")
+    </div>
+
+    <p>
+      అయితే ఎడమ వైపు ఉన్న వేరియబుల్స్ సంఖ్య, కుడి వైపు ఉన్న ఎలిమెంట్ల సంఖ్యతో సరిగ్గా సమానంగా ఉండాలి. లేకపోతే <code>ValueError</code> వస్తుంది.
+    </p>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #8b5cf6; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#8b5cf6; margin-bottom:8px;">🌟 Python 3 ఎక్స్‌టెండెడ్ అన్‌ప్యాకింగ్ (PEP 3132 - The Asterisk <code>*</code> Syntax):</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        ఒక పెద్ద టుపుల్ లేదా లిస్ట్‌లో మొదటి మరియు చివరి అంశాలను ప్రత్యేకంగా తీసుకుని, మధ్యలో ఎన్ని ఉన్నా వాటన్నింటినీ ఒక లిస్ట్‌గా ప్యాక్ చేయడానికి <strong>స్టార్ (<code>*</code>)</strong> ఆపరేటర్ ఉపయోగపడుతుంది:
+        <br/><code>first, *middle, last = (10, 20, 30, 40, 50, 60)</code>
+        <br/>ఫలితం: <code>first = 10</code>, <code>middle = [20, 30, 40, 50]</code>, <code>last = 60</code>!
+      </p>
+    </div>
+
+    <!-- SECTION 6 -->
+    <h2 class="section-title"><span class="num">6</span> కోడ్ డెమో 2: ఎక్స్‌టెండెడ్ అన్‌ప్యాకింగ్ &amp; హెడ్/టెయిల్ అనలిసిస్</h2>
+    <p>
+      స్టార్ ఆపరేటర్ ద్వారా స్టూడెంట్ మార్కులలో అత్యధిక, అత్యల్ప మరియు సగటు మార్కులను వేరు చేసే కోడ్ చూడండి:
+    </p>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">02_extended_tuple_unpacking.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># ఎక్స్‌టెండెడ్ టుపుల్ అన్‌ప్యాకింగ్ డెమో
+
+scores_record = (98, 85, 76, 92, 88, 65, 95)
+
+# సార్ట్ చేసి మొదటిది, ఆఖరిది, మధ్యలోనివి వేరు చేస్తున్నాము
+sorted_scores = tuple(sorted(scores_record))
+lowest, *average_pool, highest = sorted_scores
+
+print(f"మొత్తం స్కోర్లు : {sorted_scores}")
+print(f"అత్యల్ప స్కోరు  : {lowest}")
+print(f"అత్యధిక స్కోరు  : {highest}")
+print(f"మధ్యస్థ పూల్   : {average_pool} (సగటు: {sum(average_pool)/len(average_pool):.2f})")
+
+# 2. హెడ్ & టెయిల్ పాసింగ్ (ఫస్ట్ కమాండ్, మిగిలిన ఆర్గ్యుమెంట్లు)
+user_command = ("UPLOAD_FILE", "report.pdf", "SERVER_01", "ENCRYPTED")
+action, *params = user_command
+print(f"\\nయాక్షన్ కమాండ్ : {action}")
+print(f"పారామీటర్లు   : {params}")
+</code></pre>
+    </div>
+
+    <!-- SECTION 7 -->
+    <h2 class="section-title"><span class="num">7</span> టుపుల్ వర్సెస్ లిస్ట్ — డీప్ మెమరీ &amp; పెర్ఫార్మెన్స్ బెంచ్‌మార్క్</h2>
+    <p>
+      టుపుల్స్ లిస్ట్‌ల కంటే ఎందుకు తక్కువ మెమరీ తీసుకుంటాయి?
+    </p>
+    <div style="background:#0f172a; padding:14px 20px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.7;">
+      import sys<br/><br/>
+      lst = [1, 2, 3, 4, 5]<br/>
+      tup = (1, 2, 3, 4, 5)<br/><br/>
+      print("List సైజు :", sys.getsizeof(lst), "బైట్లు")  # 120 Bytes (Over-allocation)<br/>
+      print("Tuple సైజు:", sys.getsizeof(tup), "బైట్లు")  # 80 Bytes (Exact Allocation!)
+    </div>
+    <p>
+      అంతేకాకుండా CPython చిన్న టుపుల్స్ కోసం (పరిమాణం 20 లోపు ఉన్నవి) గ్లోబల్ <strong>ఫ్రీ లిస్ట్ (Free List)</strong> ను నిర్వహిస్తుంది.
+      దీనివల్ల ఒక చిన్న టుపుల్ డిలీట్ అయినప్పుడు దాని మెమరీ OS కి తిరిగి వెళ్లకుండా, కొత్త టుపుల్ తయారైనప్పుడు తక్షణమే రీ-యూజ్ అవుతుంది!
+    </p>
+    <p>
+      <strong>ఎగ్జిక్యూషన్ వేగం (Speed Benchmark):</strong> స్థిర పరిమాణం ఉండటం వల్ల CPU క్యాష్ లైన్లలో టుపుల్ ఎలిమెంట్లు అత్యంత వేగంగా లోడ్ అవుతాయి. పది లక్షల టుపుల్స్ సృష్టించడానికి పట్టే సమయం, అదే సంఖ్యలో లిస్ట్‌లు సృష్టించడానికి పట్టే సమయం కంటే దాదాపు <strong>5 రెట్లు తక్కువ!</strong> అందువల్ల పెద్ద డేటా ప్రాసెసింగ్ మరియు మెషిన్ లెర్నింగ్ ఫీచర్ వెక్టర్లలో టుపుల్స్ అత్యుత్తమ ఎంపిక.
+    </p>
+
+    <!-- SECTION 8 -->
+    <h2 class="section-title"><span class="num">8</span> డిక్షనరీ కీలుగా టుపుల్స్ (Tuples as Hashable Dictionary Keys &amp; Memoization)</h2>
+    <p>
+      పైథాన్‌లో ఒక ఆబ్జెక్ట్ డిక్షనరీ కీగా లేదా సెట్ (Set) ఎలిమెంట్‌గా ఉండాలంటే అది తప్పనిసరిగా <strong>హాషబుల్ (Hashable)</strong> అయి ఉండాలి. అంటే ఆ ఆబ్జెక్ట్ జీవితకాలం మొత్తం ఒకే ఒక స్థిరమైన హాష్ కోడ్ (<code>hash(obj)</code>) ను కలిగి ఉండాలి మరియు ఇతర ఆబ్జెక్టులతో సమానత్వాన్ని (<code>__eq__</code>) సరిగ్గా పోల్చగలగాలి.
+    </p>
+    <ul>
+      <li><strong>లిస్ట్‌లు హాషబుల్ కావు (Unhashable):</strong> లిస్ట్‌లు మ్యూటబుల్ కాబట్టి వాటి లోపలి విలువలు ఎప్పుడైనా మారవచ్చు. హాష్ టేబుల్‌లో కీ యొక్క విలువ మారితే దాని బకెట్ అడ్రస్ మారిపోయి డేటా కోల్పోయే ప్రమాదం ఉంది. అందుకే పైథాన్ లిస్ట్‌లను డిక్షనరీ కీలుగా అనుమతించదు — ప్రయత్నిస్తే <code>TypeError: unhashable type: 'list'</code> ఎర్రర్ వస్తుంది.</li>
+      <li><strong>టుపుల్స్ సహజసిద్ధంగా హాషబుల్:</strong> టుపుల్స్ ఇమ్మ్యుటబుల్ కాబట్టి, వాటి లోపల ఉండే ఎలిమెంట్లు కూడా ఇమ్మ్యుటబుల్ (స్ట్రింగ్స్, నంబర్లు లేదా ఇతర ఇమ్మ్యుటబుల్ టుపుల్స్) అయినంతవరకు ఆ మొత్తం టుపుల్ హాషబుల్ అవుతుంది!</li>
+      <li><strong>గోల్డెన్ రూల్ (The Composite Key Rule):</strong> భౌగోళిక కోఆర్డినేట్స్ <code>(latitude, longitude)</code>, మ్యాట్రిక్స్ గ్రిడ్ స్థానాలు <code>(row, col)</code>, లేదా సర్వర్ హోస్ట్ మరియు పోర్ట్ జంట <code>(host, port)</code> లను డిక్షనరీ కీలుగా ఉపయోగించడానికి టుపుల్స్ సరైన నిర్మాణం.</li>
+      <li><strong>హెచ్చరిక:</strong> ఒకవేళ టుపుల్ లోపల ఒక లిస్ట్ ఉంటే (ఉదాహరణకు: <code>t = (1, 2, [3, 4])</code>), ఆ టుపుల్ హాషబుల్ కాదు! దాన్ని డిక్షనరీ కీగా వాడితే <code>TypeError</code> వస్తుంది.</li>
+    </ul>
+    <div style="background:#0f172a; padding:12px 18px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:10px 0; line-height:1.6;">
+      # రియల్-వరల్డ్ మెమోయిజేషన్ (Cache) ఉదాహరణ:<br/>
+      cache = {}<br/>
+      def get_user_permissions(user_id, role, tenant_id):<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;key = (user_id, role, tenant_id)  # Composite Tuple Key!<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;if key in cache:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return cache[key]<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;# డేటాబేస్ నుండి తెచ్చి క్యాష్ చేయడం...<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;perms = query_db(user_id, role, tenant_id)<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;cache[key] = perms<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;return perms
+    </div>
+
+    <!-- SECTION 9 -->
+    <h2 class="section-title"><span class="num">9</span> collections.namedtuple &amp; typing.NamedTuple (Type Hints)</h2>
+    <p>
+      సాధారణ టుపుల్‌లో డేటాను చదవడానికి <code>point[0]</code>, <code>point[1]</code> అని ఇండెక్స్‌లు వాడాల్సి వస్తుంది.
+      కోడ్ వేల లైన్లు పెరిగినప్పుడు ఇండెక్స్ 0 అంటే ఏమిటి, ఇండెక్స్ 1 అంటే ఏమిటి అనేది గందరగోళంగా మారుతుంది.
+    </p>
+    <p>
+      దీనికి పరిష్కారంగా పైథాన్ స్టాండర్డ్ లైబ్రరీ రెండు అద్భుతమైన విధానాలను అందిస్తుంది:
+    </p>
+    <ul>
+      <li><strong>1. <code>collections.namedtuple</code>:</strong> లైట్‌వెయిట్ ఫ్యాక్టరీ ఫంక్షన్ (ఉదా: <code>Point = namedtuple('Point', ['x', 'y'])</code>).</li>
+      <li><strong>2. Modern Python 3.6+ <code>typing.NamedTuple</code>:</strong> ఆధునిక క్లాస్ సింటాక్స్ మరియు <strong>Type Hints</strong> తో కూడిన ఉన్నతమైన నిర్మాణం:
+        <div style="background:#0f172a; padding:12px 18px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:8px 0; line-height:1.6;">
+          from typing import NamedTuple<br/><br/>
+          class EmployeeRecord(NamedTuple):<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;emp_id: int<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;name: str<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;salary: float<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;department: str = "ఇంజనీరింగ్" # డిఫాల్ట్ వాల్యూస్ సపోర్ట్!
+        </div>
+        ఇది సాధారణ టుపుల్ లాగే మెమరీని ఆదా చేస్తూనే, IDEలలో కంప్లీషన్ మరియు స్టాటిక్ టైప్ చెకింగ్‌ను అద్భుతంగా సపోర్ట్ చేస్తుంది.
+      </li>
+    </ul>
+
+    <!-- SECTION 10 -->
+    <h2 class="section-title"><span class="num">10</span> కోడ్ డెమో 3: <code>namedtuple</code> ద్వారా ఫ్లీట్ వెహికల్ మోడలింగ్</h2>
+    <p>
+      <code>namedtuple</code> ను ఎలా డిక్లేర్ చేయాలి మరియు ఫీల్డ్ నేమ్స్ ద్వారా ఎలా యాక్సెస్ చేయాలో క్రింది కోడ్‌లో చూడండి:
+    </p>
+
+    <!-- CODE BLOCK 3 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">03_namedtuple_vehicle_modeling.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># collections.namedtuple డెమో
+from collections import namedtuple
+
+# 1. namedtuple టైప్ డిక్లరేషన్
+Vehicle = namedtuple("Vehicle", ["reg_no", "model", "battery_pct", "status"])
+
+# 2. ఆబ్జెక్ట్ సృష్టి
+v1 = Vehicle(reg_no="AP-09-EV-1001", model="టాటా నెక్సాన్ EV", battery_pct=88, status="RUNNING")
+v2 = Vehicle(reg_no="TS-07-EV-2045", model="మహీంద్రా XUV400", battery_pct=15, status="LOW_BATTERY")
+
+print("=== ఫ్లీట్ వెహికల్ మానిటరింగ్ నివేదిక ===")
+for v in [v1, v2]:
+    # ఇండెక్స్‌లకు బదులుగా స్పష్టమైన ఫీల్డ్ పేర్లు!
+    print(f"వాహనం నం : {v.reg_no:<16} మోడల్ : {v.model:<18} ఛార్జింగ్ : {v.battery_pct}% [{v.status}]")
+
+# 3. _asdict() ద్వారా డిక్షనరీగా మార్చడం
+print(f"\\nడిక్షనరీ రూపం: {v1._asdict()}")
+</code></pre>
+    </div>
+
+    <!-- SECTION 11 -->
+    <h2 class="section-title"><span class="num">11</span> టుపుల్ మెథడ్స్ (count, index) &amp; మోడిఫికేషన్ ట్రిక్స్</h2>
+    <p>
+      టుపుల్స్ ఇమ్మ్యుటబుల్ కాబట్టి వాటిలో ఎలిమెంట్లను చేర్చే (<code>append</code>, <code>insert</code>) లేదా తొలగించే (<code>remove</code>, <code>pop</code>) మెథడ్స్ ఉండవు. వాటిలో కేవలం <strong>రెండే రెండు</strong> రీడ్-ఓన్లీ మెథడ్స్ మాత్రమే ఉంటాయి:
+    </p>
+    <ul>
+      <li><code>t.count(val)</code>: ఆ విలువ టుపుల్‌లో ఎన్నిసార్లు పునరావృతమైందో లెక్కిస్తుంది (O(N) Time Complexity).</li>
+      <li><code>t.index(val, [start, stop])</code>: ఆ విలువ మొదటిసారి కనిపించిన సున్నా-ఆధారిత ఇండెక్స్‌ను అందిస్తుంది. విలువ లేకపోతే <code>ValueError</code> విసురుతుంది.</li>
+    </ul>
+    <p>
+      <strong>టుపుల్ మోడిఫికేషన్ ట్రిక్ (Re-allocation Strategy):</strong> ఇప్పటికే ఉన్న టుపుల్‌ను మార్చడం అసాధ్యం, కానీ వ్యాపార అవసరాల రీత్యా మార్చాల్సి వస్తే రెండు ప్రసిద్ధ మార్గాలు ఉన్నాయి:
+    </p>
+    <ol>
+      <li><strong>లిస్ట్‌గా మార్చి రీ-ప్యాకింగ్ చేయడం:</strong> <code>temp = list(t)</code> &rarr; <code>temp[0] = "కొత్త విలువ"</code> &rarr; <code>t = tuple(temp)</code>. ఇది కొత్త టుపుల్ ఆబ్జెక్ట్‌ను సృష్టిస్తుంది.</li>
+      <li><strong>కాన్‌కాటనేషన్ &amp; స్లైసింగ్:</strong> <code>t = t[:2] + ("నూతన అంశం",) + t[3:]</code>. ఇక్కడ కూడా పాత టుపుల్ మారదు; కొత్త టుపుల్ మెమరీలో రూపుదిద్దుకుంటుంది.</li>
+    </ol>
+
+    <!-- SECTION 12 -->
+    <h2 class="section-title"><span class="num">12</span> కామన్ బిగినర్స్ మిస్టేక్స్ &amp; ప్రొడక్షన్ బెస్ట్ ప్రాక్టీసెస్</h2>
+    <ul>
+      <li><strong>Mistake 1: సింగిల్ ఎలిమెంట్ టుపుల్‌లో కామా మర్చిపోవడం:</strong> <code>x = ("admin")</code> అనేది స్ట్రింగ్ అవుతుంది; <code>x = ("admin",)</code> అని కామా పెడితేనే టుపుల్ అవుతుంది. ట్రేడింగ్ సిస్టమ్స్ లేదా SQL పారామీటర్లలో ఈ తప్పు వల్ల గంటల తరబడి బగ్‌లు వెతకాల్సి వస్తుంది.</li>
+      <li><strong>Mistake 2: The Augmented Assignment Tuple Trap:</strong> టుపుల్ లోపల లిస్ట్ ఉన్నప్పుడు <code>t[0] += [1]</code> అని రాస్తే, ఇన్-ప్లేస్ ఆపరేషన్ వల్ల లిస్ట్‌లోకి ఎలిమెంట్ విజయవంతంగా చేరుతుంది కానీ, ఆ తర్వాత అసైన్‌మెంట్ జరగడానికి ప్రయత్నించినప్పుడు టుపుల్ ఇమ్మ్యుటబిలిటీ వల్ల <code>TypeError: 'tuple' object does not support item assignment</code> వచ్చి ప్రోగ్రామ్ క్రాష్ అవుతుంది! దీనికి పరిష్కారం ఎల్లప్పుడూ <code>t[0].extend([1])</code> లేదా <code>t[0].append(1)</code> వాడటం.</li>
+      <li><strong>Mistake 3: పెద్ద సంఖ్యలో ఫీల్డ్స్‌కు అన్‌ప్యాకింగ్ చేయడం:</strong> 10 కి పైగా ఎలిమెంట్స్ ఉన్న టుపుల్‌ను పొజిషనల్ అన్‌ప్యాక్ చేయడం కోడ్ రీడబిలిటీని పాడుచేస్తుంది. అటువంటి సందర్భాలలో <code>NamedTuple</code> లేదా <code>dataclasses</code> వాడటం పరిశ్రమ ప్రమాణం.</li>
+      <li><strong>Best Practice: ఫంక్షన్ మల్టిపుల్ రిటర్న్స్:</strong> పైథాన్‌లో ఒక ఫంక్షన్ నుండి బహుళ విలువలను రిటర్న్ చేసినప్పుడు (ఉదా: <code>return status_code, response_data, headers</code>) పైథాన్ తెరవెనుక వాటిని ఒక టుపుల్ రూపంలోనే రిటర్న్ చేస్తుంది. కాలర్ సైడ్ వాటిని తక్షణమే అన్‌ప్యాక్ చేసుకోవచ్చు.</li>
+      <li><strong>Best Practice: స్థిరమైన కాన్ఫిగరేషన్ డేటా:</strong> డేటాబేస్ కనెక్షన్ సెట్టింగ్స్, API ఎండ్‌పాయింట్స్, రూట్ మ్యాపింగ్స్ వంటి రన్‌టైమ్‌లో ఎట్టి పరిస్థితుల్లోనూ మారకూడని కాన్ఫిగరేషన్ డేటాను భద్రపరచడానికి ఎల్లప్పుడూ లిస్ట్‌లకు బదులుగా టుపుల్స్‌ను ఎంచుకోండి.</li>
+    </ul>
+
+    <!-- SECTION 13 -->
+    <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాజెక్ట్: "GPS Fleet Telemetry &amp; Geospatial Distance Engine"</h2>
+    <p>
+      ఈ పన్నెండవ అధ్యాయంలో నేర్చుకున్న అన్ని అంశాలను (టుపుల్స్, namedtuple, Extended Unpacking, హాషబుల్ డిక్షనరీ కీస్, ఇమ్మ్యుటబిలిటీ) కలగలిపి — డెలివరీ వాహనాల కదలికలను ట్రాక్ చేసే పూర్తి స్థాయి <strong>GPS Fleet Telemetry &amp; Distance Engine</strong> ను నిర్మిద్దాం!
+    </p>
+
+    <!-- CODE BLOCK 4: CAPSTONE MINI PROJECT -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">04_gps_fleet_telemetry_engine.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 12 మినీ ప్రాజెక్ట్: GPS Fleet Telemetry & Route Audit Engine
+# కాన్సెప్ట్స్: namedtuple, Tuple Unpacking (*rest), Hashable Coords,
+#             Immutable Geofence Checks, Speed Violation Tracking
+# =====================================================================
+from collections import namedtuple
+import math
+
+# namedtuple మోడల్స్
+Waypoint = namedtuple("Waypoint", ["lat", "lon", "location_name"])
+TelemetryPing = namedtuple("TelemetryPing", ["timestamp", "coords", "speed_kmph", "engine_temp"])
+
+# ప్రసిద్ధ నగరాల స్థిరమైన జియో-కోఆర్డినేట్స్ (Hashable Tuples as Dict Keys)
+CITY_GEOFENCES = {
+    (17.3850, 78.4867): "హైదరాబాద్ సెంట్రల్ హబ్",
+    (16.5062, 80.6480): "విజయవాడ డిస్ట్రిబ్యూషన్ సెంటర్",
+    (17.6868, 83.2185): "విశాఖపట్నం పోర్ట్ యార్డ్"
+}
+
+def calculate_haversine_approx(c1, c2):
+    """రెండు GPS కోఆర్డినేట్స్ మధ్య సుమారు దూరం (కిలోమీటర్లలో)"""
+    lat1, lon1 = c1
+    lat2, lon2 = c2
+    return round(math.sqrt((lat2 - lat1)**2 + (lon2 - lon1)**2) * 111.0, 2)
+
+def audit_vehicle_fleet_route(vehicle_id: str, pings: list):
+    """వాహనం టెలిమెట్రీ డేటాను పరిశీలించి అధికారిక రూట్ ఆడిట్ నివేదికను ఇస్తుంది."""
+    print("\\n" + "=" * 74)
+    print(f"{'🛰️ మన లాజిస్టిక్స్ — GPS ఫ్లీట్ టెలిమెట్రీ & రూట్ ఆడిట్ 2026':^74}")
+    print("=" * 74)
+    print(f"వాహనం ID : {vehicle_id:<20} మొత్తం టెలిమెట్రీ పింగ్స్: {len(pings)}")
+    print("-" * 74)
+    print(f"{'సమయం':<10} {'స్థానం (Lat, Lon)':<26} {'వేగం (KM/H)':>12} {'ఇంజిన్ (°C)':>12} {'స్థితి':^10}")
+    print("-" * 74)
+
+    total_speed_violations = 0
+
+    # Extended Unpacking ద్వారా మొదటి పింగ్, మధ్యలోనివి, చివరి పింగ్ విశ్లేషణ
+    first_ping, *enroute_pings, final_ping = pings
+
+    for ping in pings:
+        lat, lon = ping.coords
+        speed = ping.speed_kmph
+        temp = ping.engine_temp
+
+        status = "✅ సాధారణం"
+        if speed > 80:
+            status = "🚨 ఓవర్‌స్పీడ్!"
+            total_speed_violations += 1
+        elif temp > 100:
+            status = "🔥 ఓవర్‌హీట్!"
+
+        print(f"{ping.timestamp:<10} ({lat:.4f}, {lon:.4f}){' ':>7} {speed:>12.1f} {temp:>12.1f} {status:^10}")
+
+    distance_km = calculate_haversine_approx(first_ping.coords, final_ping.coords)
+
+    print("=" * 74)
+    print(f"ప్రయాణించిన సుమారు దూరం   : {distance_km} కి.మీ.")
+    print(f"గుర్తించిన వేగ ఉల్లంఘనలు : {total_speed_violations} సార్లు")
+    print(f"ప్రారంభ సమయం            : {first_ping.timestamp}  |  చేరుకున్న సమయం: {final_ping.timestamp}")
+    print("=" * 74)
+    print(f"{'✅ ఫ్లీట్ టెలిమెట్రీ రికార్డు విజయవంతంగా భద్రపరచబడింది!':^74}")
+    print("=" * 74 + "\\n")
+
+# లైవ్ టెస్ట్ డేటా
+sample_pings = [
+    TelemetryPing("08:00 AM", (17.3850, 78.4867), 45.0, 85.0),
+    TelemetryPing("09:30 AM", (17.1500, 78.9500), 88.5, 92.0), # Speed violation
+    TelemetryPing("11:15 AM", (16.8500, 79.8000), 72.0, 89.0),
+    TelemetryPing("01:00 PM", (16.5062, 80.6480), 30.0, 86.0)
+]
+
+audit_vehicle_fleet_route("TRUCK-AP-09-9081", sample_pings)
+</code></pre>
+    </div>
+
+    <!-- 5 COLLAPSIBLE QUIZZES -->
+    <h2 class="section-title"><span class="num">★</span> ఈ అధ్యాయంపై ప్రాక్టీస్ క్విజ్ (Knowledge Check)</h2>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">1. x = (10) మరియు x = (10,) ల మధ్య తేడా ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>x = (10)</code> అనేది కేవలం సాధారణ ఇంటీజర్ <code>10</code> మాత్రమే అవుతుంది (రౌండ్ బ్రాకెట్లను సాధారణ గణిత పారాంథసిస్‌గా పైథాన్ భావిస్తుంది). కానీ <code>x = (10,)</code> అని కామా పెట్టినప్పుడు మాత్రమే అది ఒక ఎలిమెంట్ కలిగిన టుపుల్ (Tuple) అవుతుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">2. లిస్ట్‌లను డిక్షనరీ కీలుగా ఎందుకు వాడలేము? టుపుల్స్‌ను ఎందుకు వాడవచ్చు?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> డిక్షనరీ కీలు తప్పనిసరిగా హాషబుల్ (Hashable) అయి ఉండాలి. లిస్ట్‌లు మ్యూటబుల్ కాబట్టి వాటి విలువలు మారిపోతాయి, అందుకే వాటికి హాష్ వాల్యూ ఉండదు (Unhashable). కానీ టుపుల్స్ ఇమ్మ్యుటబుల్ కాబట్టి వాటికి స్థిరమైన హాష్ వాల్యూ ఉంటుంది; అందువల్ల వాటిని డిక్షనరీ కీలుగా వాడవచ్చు.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">3. collections.namedtuple సాధారణ టుపుల్ కంటే ఎందుకు మెరుగైనది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> సాధారణ టుపుల్‌లో డేటాను చదవడానికి <code>t[0]</code>, <code>t[1]</code> వంటి సంఖ్యలను వాడాలి, ఇది కోడ్ రీడబిలిటీని తగ్గిస్తుంది. కానీ <code>namedtuple</code> సాధారణ టుపుల్ లాగే మెమరీని ఆదా చేస్తూనే, <code>car.speed</code> లేదా <code>emp.salary</code> లాంటి అర్థవంతమైన ఫీల్డ్ పేర్లతో డేటాను యాక్సెస్ చేసే సౌలభ్యాన్ని ఇస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">4. a, *b, c = (1, 2, 3, 4, 5) లో వేరియబుల్స్ విలువలు ఎలా ఉంటాయి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>a</code> లోకి మొదటి విలువ <code>1</code>, <code>c</code> లోకి చివరి విలువ <code>5</code> అసైన్ అవుతాయి. మధ్యలో మిగిలిన అన్ని విలువలు ఒక లిస్ట్‌గా మారి <code>b = [2, 3, 4]</code> లోకి వస్తాయి. దీనినే Extended Iterable Unpacking అంటారు.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">5. టుపుల్స్ లిస్ట్‌ల కంటే ఎందుకు తక్కువ మెమరీ తీసుకుంటాయి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> లిస్ట్‌లు భవిష్యత్తులో కొత్త ఎలిమెంట్లు వస్తాయని ముందుగానే ఓవర్-అలొకేషన్ ద్వారా అదనపు మెమరీని రిజర్వ్ చేసుకుంటాయి. కానీ టుపుల్స్ ఇమ్మ్యుటబుల్ కాబట్టి వాటికి ఖచ్చితంగా అవసరమైన బైట్లు మాత్రమే కేటాయిస్తాయి. అంతేకాకుండా CPython చిన్న టుపుల్స్‌ను ఫ్రీ లిస్ట్‌లో క్యాష్ చేస్తుంది.
+      </div>
+    </details>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-python/11-python-lists-and-comprehensions.html" style="text-decoration:none; color:var(--text); font-weight:600; display:inline-flex; align-items:center; gap:8px; background:var(--bg2); padding:10px 18px; border-radius:8px; border:1px solid var(--border);">
+        ← మునుపటి అధ్యాయం: 11. లిస్ట్స్ &amp; కాంప్రహెన్షన్స్
+      </a>
+      <a href="/blog-python/13-python-dictionaries-deep-dive.html" style="text-decoration:none; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; background:#10b981; padding:10px 22px; border-radius:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        తర్వాతి అధ్యాయం: 13. డిక్షనరీలు డీప్ డైవ్ →
+      </a>
+    </div>
+
+    <!-- INTERACTIVE COMPILER CTA CARD -->
+    <div style="margin-top:40px; background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(56,189,248,0.1) 100%); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:24px; text-align:center;">
+      <h3 style="margin-top:0; color:var(--text); font-size:20px;">ఈ GPS Fleet Telemetry Engine ని లైవ్‌గా మన కంపైలర్‌లో రన్ చేయండి!</h3>
+      <p style="color:var(--text2); max-width:650px; margin:8px auto 20px; font-size:14px; line-height:1.6;">
+        ఎటువంటి లోకల్ సెటప్ లేకుండా, బ్రౌజర్‌లోనే Modern Python 3 కంపైలర్‌లో ఈ కోడ్‌ను ఎగ్జిక్యూట్ చేసి అవుట్‌పుట్ తనిఖీ చేయండి.
+      </p>
+      <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; padding:12px 28px; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Launch Python Interactive Compiler
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER / NAV SCRIPTS -->
+<script src="/site-nav.js"></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`# =====================================================================
+# చాప్టర్ 12 మినీ ప్రాజెక్ట్: GPS Fleet Telemetry Engine (LIVE DEMO)
+# =====================================================================
+from collections import namedtuple
+
+Telemetry = namedtuple("Telemetry", ["time", "lat", "lon", "speed"])
+
+pings = [
+    Telemetry("08:00 AM", 17.3850, 78.4867, 45.0),
+    Telemetry("09:30 AM", 17.1500, 78.9500, 88.5),
+    Telemetry("11:15 AM", 16.8500, 79.8000, 72.0)
+]
+
+print("=" * 65)
+print(f"{'🛰️ GPS ఫ్లీట్ టెలిమెట్రీ ట్రాకర్ (LIVE)':^65}")
+print("=" * 65)
+print(f"{'సమయం':<12} {'అక్షాంశం, రేఖాంశం':<25} {'వేగం (KM/H)':>15}")
+print("-" * 65)
+
+for p in pings:
+    status = "🚨 OVERSPEED!" if p.speed > 80 else "OK"
+    print(f"{p.time:<12} ({p.lat:.4f}, {p.lon:.4f}){' ':>8} {p.speed:>12.1f} [{status}]")
+
+print("=" * 65)
+print("\\n🎉 చాప్టర్ 12 ప్రాజెక్ట్ విజయవంతంగా రన్ అయ్యింది! 🚀")
+\`;
+
+    try {
+      localStorage.setItem('code_python', projectCode);
+      localStorage.setItem('code_python3', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-python-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-python', currentLesson.file);
+fs.writeFileSync(outputPath, chapter12Content, 'utf8');
+console.log('✅ Successfully generated deep high-value Python Chapter 12 in exact HTML style!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter12Content.length, 'characters');

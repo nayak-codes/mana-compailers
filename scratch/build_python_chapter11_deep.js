@@ -1,0 +1,803 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildPythonSidebar } = require('./python_curriculum_data.js');
+
+const currentLesson = LESSONS[10]; // Chapter 11 (0-indexed 10)
+const sidebarHtml = buildPythonSidebar(11);
+
+const chapter11Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Python 3 లిస్ట్స్ & లిస్ట్ కాంప్రహెన్షన్స్ సమగ్ర తెలుగు గైడ్: డైనమిక్ ఎరే ఆర్కిటెక్చర్, append vs extend vs insert, pop vs remove vs del, Timsort అల్గారిథమ్, Shallow vs Deep Copy, 2D నెస్టెడ్ లిస్ట్స్, List Comprehensions, మరియు E-Commerce Inventory Engine ప్రాజెక్ట్." />
+  <meta name="keywords" content="python lists in telugu, python list comprehensions telugu, python list methods telugu, timsort python, shallow vs deep copy python, learn python in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-python/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Complete Guide to Python Lists and List Comprehensions in Telugu)",
+    "description": "Python 3 లిస్ట్‌లు మరియు లిస్ట్ కాంప్రహెన్షన్స్ పూర్తి గైడ్: Dynamic Array Memory Model, Core Methods, Timsort, Shallow vs Deep Copy, Nested 2D Lists, మరియు E-Commerce Warehouse Inventory Engine.",
+    "articleSection": "Phase 03: డేటా స్ట్రక్చర్స్ & కలెక్షన్స్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-01-25",
+    "dateModified": "2026-11-02"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Compiler Integration -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___PY_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/("""[\\s\\S]*?"""|'''[\\s\\S]*?'''|f?"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|f?'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'|r"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|r'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'import','from','as','def','return','class','if','elif','else','while','for','in',
+        'break','continue','pass','try','except','finally','with','lambda','global','nonlocal',
+        'and','or','not','is','yield','async','await','raise','assert','True','False','None'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'print','len','range','type','isinstance','id','input','int','float','str','list',
+        'dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted',
+        'abs','open','help','dir','filter','bool','append','extend','insert','pop','remove','clear','sort','reverse','copy'
+      ];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?)\\b/g, m => pushToken('num', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split('___PY_TOK_' + idx + '___').join(tok);
+      });
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code.language-python').forEach(block => {
+        block.innerHTML = highlightPythonCode(block.innerText);
+      });
+    });
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      const code = pre.innerText;
+      try {
+        localStorage.setItem('code_python', code);
+        localStorage.setItem('code_python3', code);
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+      window.open('/online-python-compiler.html', '_blank');
+    }
+  </script>
+</head>
+
+<body class="lang-python light-theme">
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="content">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a>
+      <span class="sep">›</span>
+      <a href="/blog-python.html">Python Masterclass</a>
+      <span class="sep">›</span>
+      <span>Chapter 11: ${currentLesson.title}</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">${currentLesson.title}</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge badge-tech">🐍 Modern Python (Python 3.12+)</span>
+      <span class="badge badge-chapter">🎯 Chapter 11 of 25</span>
+      <span class="badge badge-phase">📦 Phase 03: డేటా స్ట్రక్చర్స్ &amp; కలెక్షన్స్</span>
+      <span class="badge badge-edition">📅 2026 Edition</span>
+    </div>
+
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin-bottom:24px; font-size:13px; line-height:1.7;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span style="color:var(--text2); margin-left:6px;">
+        డైనమిక్ ఎరే మెమరీ ఆర్కిటెక్చర్ · ఇండెక్సింగ్ &amp; స్లైస్ అసైన్‌మెంట్ · append vs extend vs insert · pop vs remove vs del · Timsort అల్గారిథమ్ &amp; lambda కీస్ · Shallow vs Deep Copy · 2D నెస్టెడ్ లిస్ట్స్ · List Comprehensions [x for x in ...] · Big-O కాంప్లెక్సిటీ · Warehouse Inventory Engine ప్రాజెక్ట్!
+      </span>
+    </div>
+
+    <!-- INTRO BOX (Warm Soft Ivory HTML5 Style) -->
+    <div class="intro-box">
+      పైథాన్ ప్రోగ్రామింగ్ భాష ఇంతటి విపరీతమైన ప్రజాదరణ పొందడానికి గల అత్యంత ముఖ్యమైన కారణాలలో దాని అంతర్నిర్మిత డేటా స్ట్రక్చర్స్ (Built-in Data Structures) మొదటి స్థానంలో ఉంటాయి.
+      వాటిలో అన్నింటికంటే ఎక్కువగా వాడే అత్యంత శక్తివంతమైన సాధనం <strong>లిస్ట్ (List)</strong>.
+      C లేదా Java వంటి భాషల్లో ఎరే (Array) సృష్టించాలంటే ముందుగానే నిర్దిష్ట పరిమాణాన్ని (Fixed Size) కేటాయించాలి మరియు ఒకే రకమైన డేటాను మాత్రమే ఉంచాలి. కానీ పైథాన్‌లో లిస్ట్‌లు పూర్తిగా <strong>మ్యూటబుల్ (Mutable), డైనమిక్ పరిమాణం కలిగినవి, మరియు వేర్వేరు డేటా రకాలను (Heterogeneous)</strong> ఒకేచోట భద్రపరచగల అద్భుతమైన నిర్మాణాలను కలిగి ఉంటాయి.
+      ఈ పదకొండవ అధ్యాయంతో మనం <strong>Phase 03: డేటా స్ట్రక్చర్స్ &amp; కలెక్షన్స్</strong> లోకి ప్రవేశిస్తూ — లిస్ట్‌ల మెమరీ ఓవర్-అలొకేషన్ ఆర్కిటెక్చర్, Timsort అల్గారిథమ్, షాలో vs డీప్ కాపీ, మరియు కోడ్‌ను 5 రెట్లు వేగంగా మార్చే <strong>List Comprehensions</strong> తో పాటు ఒక పూర్తి స్థాయి <strong>E-Commerce Shopping Cart &amp; Warehouse Inventory Engine</strong> ప్రాజెక్ట్ ద్వారా లిస్ట్‌లపై సంపూర్ణ ఆధిపత్యం సాధిద్దాం!
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 class="section-title"><span class="num">1</span> పైథాన్ లిస్ట్స్ ఆర్కిటెక్చర్ &amp; డైనమిక్ ఎరే మెమరీ మోడల్</h2>
+    <p>
+      పైథాన్‌లో లిస్ట్ అనేది ఒక ఆర్డర్డ్ (Ordered), మ్యూటబుల్ (Mutable) సీక్వెన్స్.
+      కానీ CPython ఇంటర్‌ప్రీటర్ స్థాయిలో ఒక లిస్ట్ ఎలా నిల్వ చేయబడుతుంది?
+    </p>
+    <p>
+      CPython లో ప్రతి లిస్ట్ ఒక <strong><code>PyListObject</code></strong> అనే C-స్ట్రక్చర్. ఇది మెమరీలో నేరుగా డేటాను నిల్వ చేయదు; బదులుగా హీప్ మెమరీలోని ఇతర ఆబ్జెక్టులను పాయింట్ చేసే <strong>పాయింటర్ల శ్రేణిని (Array of Pointers)</strong> నిల్వ చేస్తుంది!
+    </p>
+
+    <!-- ARCHITECTURE DIAGRAM -->
+    <div style="background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:20px; margin:20px 0; color:#e2e8f0; font-family:'JetBrains Mono', monospace; font-size:13px; overflow-x:auto;">
+<span style="color:#38bdf8; font-weight:700;">[పైథాన్ లిస్ట్ డైనమిక్ పాయింటర్ ఎరే మెమరీ మోడల్]</span>
+
+   PyListObject (లిస్ట్ కంటైనర్)
+   ┌───────────────┬───────────────┬───────────────────────────────┐
+   │ ob_size = 3   │ allocated = 4 │ ob_item ──▶ [ P0 | P1 | P2 |  ]
+   └───────────────┴───────────────┴───────────────│────│────│─────┘
+                                                   │    │    │
+                  ┌────────────────────────────────┘    │    └────────────────┐
+                  ▼                                     ▼                     ▼
+          ┌───────────────┐                     ┌───────────────┐     ┌───────────────┐
+          │   int (10)    │                     │  str ("హలో")  │     │  float (99.5) │
+          └───────────────┘                     └───────────────┘     └───────────────┘
+    </div>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:8px;">💡 ఓవర్-అలొకేషన్ గ్రోత్ ప్యాటర్న్ (Over-Allocation Growth):</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        మీరు లిస్ట్‌కు ఒక ఎలిమెంట్‌ను <code>append()</code> చేసిన ప్రతిసారీ ఆపరేటింగ్ సిస్టమ్ వద్దకు వెళ్లి కొత్త మెమరీ అడగడం చాలా ఖరీదైన పని. అందుకే పైథాన్ ముందుగానే అవసరమైన దానికంటే ఎక్కువ స్థలాన్ని కేటాయిస్తుంది (Over-allocation: <code>0, 4, 8, 16, 24, 32, 40, 52, 64, ...</code>).
+        దీనివల్ల లిస్ట్‌లోకి ఎలిమెంట్లను చేర్చడం సగటున <strong>Amortized $O(1)$ కాన్‌స్టాంట్ టైమ్</strong> లో తక్షణమే పూర్తవుతుంది!
+      </p>
+    </div>
+
+    <!-- SECTION 2 -->
+    <h2 class="section-title"><span class="num">2</span> లిస్ట్ క్రియేషన్, ఇండెక్సింగ్ &amp; స్లైస్ అసైన్‌మెంట్</h2>
+    <p>
+      లిస్ట్‌లను స్క్వేర్ బ్రాకెట్లు <code>[]</code> ద్వారా లేదా <code>list()</code> కన్‌స్ట్రక్టర్ ద్వారా సృష్టించవచ్చు:
+    </p>
+
+    <ul>
+      <li><code>empty_list = []</code></li>
+      <li><code>numbers = [10, 20, 30, 40, 50]</code></li>
+      <li><code>mixed = [101, "రాము", 45000.50, True, None]</code> (విభిన్న డేటా రకాల కలయిక!)</li>
+    </ul>
+
+    <p>
+      స్ట్రింగ్స్ లాగానే లిస్ట్‌లు కూడా పాజిటివ్ (0 to N-1) మరియు నెగటివ్ (-1 to -N) ఇండెక్సింగ్‌ను సపోర్ట్ చేస్తాయి.
+      అయితే స్ట్రింగ్స్ ఇమ్మ్యుటబుల్ కాగా, <strong>లిస్ట్‌లు మ్యూటబుల్!</strong> అంటే ఇండెక్స్ ద్వారా లేదా స్లైసింగ్ ద్వారా నేరుగా విలువలను అక్కడికక్కడే మార్చవచ్చు:
+    </p>
+
+    <div style="background:#0f172a; padding:14px 20px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.7;">
+      items = ["టీ", "కాఫీ", "పాలు", "నీరు"]<br/>
+      items[1] = "గ్రీన్ టీ" # సింగిల్ ఇండెక్స్ మార్పు<br/>
+      items[2:4] = ["బాదం పాలు", "కొబ్బరి నీరు"] # స్లైస్ అసైన్‌మెంట్ (బహుళ అంశాల మార్పు!)
+    </div>
+
+    <!-- SECTION 3 -->
+    <h2 class="section-title"><span class="num">3</span> ఎలిమెంట్స్ జోడించడం — append() vs extend() vs insert()</h2>
+    <p>
+      లిస్ట్‌లోకి కొత్త అంశాలను చేర్చడానికి మూడు ముఖ్యమైన మెథడ్స్ ఉన్నాయి:
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>మెథడ్</th>
+            <th>పనితీరు (Mechanism)</th>
+            <th>ఆర్గ్యుమెంట్ రకం</th>
+            <th>టైమ్ కాంప్లెక్సిటీ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><code>append(x)</code></strong></td>
+            <td>ఇచ్చిన ఆబ్జెక్ట్‌ను <strong>ఒకే ఒక్క ఎలిమెంట్‌గా</strong> లిస్ట్ చివరన చేరుస్తుంది.</td>
+            <td>ఏదైనా ఆబ్జెక్ట్ (లిస్ట్ ఇస్తే నెస్టెడ్ లిస్ట్‌గా చేరుతుంది).</td>
+            <td><strong>Amortized $O(1)$</strong></td>
+          </tr>
+          <tr>
+            <td><strong><code>extend(iterable)</code></strong></td>
+            <td>ఇచ్చిన కలెక్షన్‌లోని ప్రతి అంశాన్ని విడగొట్టి (Unpack చేసి) చివర కలుపుతుంది.</td>
+            <td>తప్పనిసరిగా ఇటరబుల్ (List, Tuple, Set, etc.) ఉండాలి.</td>
+            <td><strong>$O(K)$</strong> ($K$ అంశాల సంఖ్య)</td>
+          </tr>
+          <tr>
+            <td><strong><code>insert(index, x)</code></strong></td>
+            <td>కోరుకున్న నిర్దిష్ట ఇండెక్స్ స్థానంలో ఎలిమెంట్‌ను చొప్పిస్తుంది.</td>
+            <td>ఇండెక్స్ సంఖ్య మరియు ఆబ్జెక్ట్.</td>
+            <td><strong>$O(N)$</strong> (మిగిలిన ఎలిమెంట్లను కుడికి జరపాలి)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#ef4444; margin-bottom:8px;">⚠️ బిగినర్స్ చేసే append vs extend గందరగోళం:</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        <code>a = [1, 2]; a.append([3, 4])</code> అని రాస్తే ఫలితం: <code>[1, 2, [3, 4]]</code> (లిస్ట్ లోపల లిస్ట్ వస్తుంది!).
+        కానీ <code>a = [1, 2]; a.extend([3, 4])</code> అని రాస్తే ఫలితం: <code>[1, 2, 3, 4]</code> గా ఫ్లాట్‌గా మారుతుంది.
+      </p>
+    </div>
+
+    <!-- SECTION 4 -->
+    <h2 class="section-title"><span class="num">4</span> కోడ్ డెమో 1: లిస్ట్ క్రియేషన్, append, extend &amp; స్లైస్ మోడిఫికేషన్స్</h2>
+    <p>
+      ఈ మెథడ్స్ ద్వారా లిస్ట్‌ను ఎలా డైనమిక్‌గా మార్చవచ్చో క్రింది కోడ్‌లో పరిశీలించండి:
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">01_list_operations_deep_dive.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># పైథాన్ లిస్ట్ ఆపరేషన్స్ డెమో
+
+cart = ["స్మార్ట్‌ఫోన్", "ల్యాప్‌టాప్"]
+
+# 1. append() - చివర చేర్చడం
+cart.append("బ్లూటూత్ హెడ్‌ఫోన్స్")
+print(f"append తర్వాత : {cart}")
+
+# 2. extend() - బహుళ అంశాలను విలీనం చేయడం
+new_arrivals = ["స్మార్ట్‌వాచ్", "పవర్‌బ్యాంక్"]
+cart.extend(new_arrivals)
+print(f"extend తర్వాత : {cart}")
+
+# 3. insert() - మొదటి స్థానంలో చొప్పించడం
+cart.insert(0, "4K టెలివిజన్")
+print(f"insert తర్వాత : {cart}")
+
+# 4. స్లైస్ అసైన్‌మెంట్ ద్వారా ఇన్-ప్లేస్ రీప్లేస్‌మెంట్
+cart[1:3] = ["గేమింగ్ ఫోన్", "మ్యాక్‌బుక్ ప్రో"]
+print(f"స్లైస్ తర్వాత  : {cart}")
+</code></pre>
+    </div>
+
+    <!-- SECTION 5 -->
+    <h2 class="section-title"><span class="num">5</span> ఎలిమెంట్స్ తొలగించడం — pop() vs remove() vs del vs clear()</h2>
+    <p>
+      లిస్ట్ నుండి అంశాలను తొలగించడానికి పైథాన్‌లో 4 విభిన్న పద్ధతులు ఉన్నాయి:
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>పద్ధతి</th>
+            <th>దేని ఆధారంగా తీసేస్తుంది?</th>
+            <th>రిటర్న్ విలువ</th>
+            <th>ఎలిమెంట్ లేకపోతే ఏమి జరుగుతుంది?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><code>pop(i)</code></strong></td>
+            <td><strong>ఇండెక్స్ ఆధారంగా</strong> (డిఫాల్ట్ <code>i=-1</code> చివరి ఎలిమెంట్).</td>
+            <td>తొలగించిన ఎలిమెంట్</td>
+            <td><code>IndexError</code> లేపుతుంది.</td>
+          </tr>
+          <tr>
+            <td><strong><code>remove(val)</code></strong></td>
+            <td><strong>విలువ ఆధారంగా</strong> (మొదటిసారి కనిపించిన దాన్ని).</td>
+            <td><code>None</code></td>
+            <td><code>ValueError</code> లేపుతుంది.</td>
+          </tr>
+          <tr>
+            <td><strong><code>del list[i]</code></strong></td>
+            <td>ఇండెక్స్ లేదా స్లైస్ పరిధి ఆధారంగా (<code>del a[1:3]</code>).</td>
+            <td>ఏమీ ఉండదు</td>
+            <td><code>IndexError</code> లేపుతుంది.</td>
+          </tr>
+          <tr>
+            <td><strong><code>clear()</code></strong></td>
+            <td>మొత్తం లిస్ట్‌లోని అన్ని అంశాలను ఖాళీ చేస్తుంది.</td>
+            <td><code>None</code></td>
+            <td>ఎర్రర్ రాదు, లిస్ట్ <code>[]</code> గా మిగులుతుంది.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 6 -->
+    <h2 class="section-title"><span class="num">6</span> సార్టింగ్ &amp; Timsort అల్గారిథమ్ (sort vs sorted)</h2>
+    <p>
+      పైథాన్‌లో సార్టింగ్ కోసం ప్రపంచ ప్రఖ్యాత <strong>Timsort</strong> (Tim Peters రూపొందించిన Merge Sort మరియు Insertion Sort ల హైబ్రిడ్ అల్గారిథమ్) ను ఉపయోగిస్తారు.
+      ఇది వాస్తవ ప్రపంచ డేటాపై అత్యంత సమర్థవంతంగా $O(N \log N)$ వర్స్ట్-కేస్ మరియు ఇప్పటికే సార్ట్ అయిన డేటాపై $O(N)$ బెస్ట్-కేస్ వేగాన్ని ఇస్తుంది.
+    </p>
+
+    <ul>
+      <li><strong><code>list.sort()</code>:</strong> లిస్ట్‌ను అక్కడికక్కడే (In-place) సార్ట్ చేస్తుంది. మెమరీ ఆదా అవుతుంది ($O(1)$ space), కానీ పాత ఆర్డర్ పోతుంది. ఇది <code>None</code> రిటర్న్ చేస్తుంది.</li>
+      <li><strong><code>sorted(iterable)</code>:</strong> ఒరిజినల్ లిస్ట్‌ను ఏమీ చేయకుండా, సరికొత్త సార్ట్ చేయబడిన లిస్ట్‌ను రిటర్న్ చేస్తుంది ($O(N)$ memory).</li>
+      <li><strong>కస్టమ్ కీస్ (Custom Sorting with lambda):</strong> వస్తువుల ధర లేదా పేరు పొడవు ఆధారంగా సార్ట్ చేయడానికి <code>key=lambda x: ...</code> ఉపయోగించవచ్చు.</li>
+    </ul>
+
+    <!-- SECTION 7 -->
+    <h2 class="section-title"><span class="num">7</span> కోడ్ డెమో 2: Timsort కస్టమ్ కీస్ &amp; ప్రొడక్ట్ సార్టింగ్</h2>
+    <p>
+      ఈ-కామర్స్ ప్రొడక్ట్ డిక్షనరీలను ధర మరియు రేటింగ్ ఆధారంగా సార్ట్ చేసే విధానాన్ని చూడండి:
+    </p>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">02_timsort_custom_keys.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># Timsort మరియు కస్టమ్ లాంబ్డా కీస్ డెమో
+
+products = [
+    {"name": "వైర్‌లెస్ మౌస్", "price": 899.00,  "rating": 4.5},
+    {"name": "మెకానికల్ కీబోర్డ్", "price": 3499.00, "rating": 4.8},
+    {"name": "గేమింగ్ హెడ్‌సెట్", "price": 2199.00, "rating": 4.2},
+    {"name": "USB-C హబ్",      "price": 1299.00, "rating": 4.6}
+]
+
+# 1. ధర ఆధారంగా ఆరోహణ క్రమం (Ascending by price)
+sorted_by_price = sorted(products, key=lambda p: p["price"])
+print("=== ధర ఆధారంగా సార్టింగ్ (తక్కువ నుండి ఎక్కువ) ===")
+for p in sorted_by_price:
+    print(f"{p['name']:<20} : ₹ {p['price']:>8,.2f}")
+
+# 2. రేటింగ్ ఆధారంగా అవరోహణ క్రమం (Descending by rating - In-place sort)
+products.sort(key=lambda p: p["rating"], reverse=True)
+print("\\n=== అత్యుత్తమ రేటింగ్ ఆధారంగా (Top Rated) ===")
+for p in products:
+    print(f"{p['name']:<20} : ⭐ {p['rating']} (ధర: ₹{p['price']:,.2f})")
+</code></pre>
+    </div>
+
+    <!-- SECTION 8 -->
+    <h2 class="section-title"><span class="num">8</span> షాలో కాపీ vs డీప్ కాపీ (Shallow Copy vs Deep Copy Architecture)</h2>
+    <p>
+      పైథాన్‌లో బిగినర్స్ పడే అత్యంత పెద్ద ప్రమాదం: <strong><code>b = a</code> అని రాయడం!</strong>
+      ఇలా రాసినప్పుడు కొత్త లిస్ట్ తయారవ్వదు; కేవలం <code>a</code> పాయింట్ చేస్తున్న మెమరీ అడ్రస్‌నే <code>b</code> కూడా పాయింట్ చేస్తుంది.
+      కాబట్టి <code>b[0] = 999</code> చేస్తే <code>a[0]</code> కూడా మారిపోతుంది!
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>కాపీ విధానం</th>
+            <th>ఎలా చేయాలి?</th>
+            <th>ఔటర్ లిస్ట్</th>
+            <th>లోపలి నెస్టెడ్ ఆబ్జెక్టులు</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>సాధారణ అసైన్‌మెంట్ (<code>=</code>)</strong></td>
+            <td><code>b = a</code></td>
+            <td>ఒకే మెమరీ అడ్రస్ (కాపీ కాదు!)</td>
+            <td>ఒకే మెమరీ అడ్రస్</td>
+          </tr>
+          <tr>
+            <td><strong>షాలో కాపీ (Shallow Copy)</strong></td>
+            <td><code>b = a.copy()</code> లేదా <code>b = a[:]</code></td>
+            <td>కొత్త లిస్ట్ తయారవుతుంది</td>
+            <td>లోపలి నెస్టెడ్ లిస్ట్‌లు పాత మెమరీనే పాయింట్ చేస్తాయి!</td>
+          </tr>
+          <tr>
+            <td><strong>డీప్ కాపీ (Deep Copy)</strong></td>
+            <td><code>import copy; b = copy.deepcopy(a)</code></td>
+            <td>పూర్తిగా స్వతంత్రమైన కొత్త లిస్ట్</td>
+            <td>అన్ని స్థాయిల నెస్టెడ్ ఆబ్జెక్టులు స్వతంత్రంగా క్లోన్ అవుతాయి!</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 9 -->
+    <h2 class="section-title"><span class="num">9</span> 2D నెస్టెడ్ లిస్ట్స్ &amp; మ్యాట్రిక్స్ ఆర్కిటెక్చర్</h2>
+    <p>
+      ఒక లిస్ట్ లోపల ఇతర లిస్ట్‌లను ఉంచడం ద్వారా 2D మ్యాట్రిక్స్ లేదా గ్రిడ్‌లను రూపొందించవచ్చు:
+      <br/>
+      <code>matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]</code>
+    </p>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#ef4444; margin-bottom:8px;">⚠️ ది మల్టిప్లికేషన్ ట్రాప్: <code>[[0] * 3] * 3</code> ఎందుకు రాయకూడదు?</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        మీరు <code>grid = [[0] * 3] * 3</code> అని రాస్తే, పైథాన్ 3 వేర్వేరు వరుసలను సృష్టించదు; ఒకే ఒక్క వరుస యొక్క 3 రిఫరెన్స్‌లను కాపీ చేస్తుంది!
+        ఫలితంగా మీరు <code>grid[0][0] = 5</code> అని మారిస్తే, మొత్తం మూడు వరుసలలోని మొదటి నంబర్ 5 గా మారిపోతుంది!
+        <br/><strong>సరైన విధానం:</strong> ఎల్లప్పుడూ లిస్ట్ కాంప్రహెన్షన్ వాడాలి:
+        <code>grid = [[0 for _ in range(3)] for _ in range(3)]</code>.
+      </p>
+    </div>
+
+    <!-- SECTION 10 -->
+    <h2 class="section-title"><span class="num">10</span> లిస్ట్ కాంప్రహెన్షన్స్ మాస్టరీ (List Comprehensions)</h2>
+    <p>
+      పైథాన్‌లోని అత్యంత శక్తివంతమైన మరియు సొగసైన ఫీచర్లలో <strong>లిస్ట్ కాంప్రహెన్షన్స్ (List Comprehensions)</strong> ఒకటి.
+      ఇది 4-5 లైన్ల <code>for</code> లూప్ మరియు <code>append()</code> కోడ్‌ను కేవలం ఒకే ఒక్క లైన్‌లో మరింత వేగంగా రాయడానికి వీలు కల్పిస్తుంది:
+    </p>
+
+    <div style="background:#0f172a; padding:14px 20px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#38bdf8; margin:14px 0;">
+      new_list = [expression for item in iterable if condition]
+    </div>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>సాంప్రదాయ for లూప్ శైలి</th>
+            <th>మోడరన్ లిస్ట్ కాంప్రహెన్షన్ శైలి</th>
+            <th>ప్రయోజనం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <code>squares = []</code><br/>
+              <code>for x in range(1, 6):</code><br/>
+              <code>&nbsp;&nbsp;&nbsp;&nbsp;squares.append(x ** 2)</code>
+            </td>
+            <td>
+              <code>squares = [x ** 2 for x in range(1, 6)]</code>
+            </td>
+            <td>ఒకే లైన్, క్లీన్ రీడబిలిటీ &amp; C-లెవల్ ఆప్టిమైజ్డ్ స్పీడ్!</td>
+          </tr>
+          <tr>
+            <td>
+              <code>evens = []</code><br/>
+              <code>for n in nums:</code><br/>
+              <code>&nbsp;&nbsp;&nbsp;&nbsp;if n % 2 == 0:</code><br/>
+              <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;evens.append(n)</code>
+            </td>
+            <td>
+              <code>evens = [n for n in nums if n % 2 == 0]</code>
+            </td>
+            <td>ఇన్-బిల్ట్ ఫిల్టరింగ్ (No separate filter() needed).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 11 -->
+    <h2 class="section-title"><span class="num">11</span> కోడ్ డెమో 3: అడ్వాన్స్‌డ్ లిస్ట్ కాంప్రహెన్షన్స్ &amp; మ్యాట్రిక్స్ ఫ్లాటెనింగ్</h2>
+    <p>
+      2D మ్యాట్రిక్స్‌ను సింగిల్ లిస్ట్‌గా మార్చడం (Flattening) మరియు కండిషనల్ ట్రాన్స్‌ఫార్మేషన్లను క్రింది కోడ్‌లో చూడండి:
+    </p>
+
+    <!-- CODE BLOCK 3 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">03_advanced_list_comprehensions.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># అడ్వాన్స్‌డ్ లిస్ట్ కాంప్రహెన్షన్స్ డెమో
+
+# 1. 2D మ్యాట్రిక్స్ ఫ్లాటెనింగ్ (2D to 1D)
+matrix = [
+    [10, 20, 30],
+    [40, 50, 60],
+    [70, 80, 90]
+]
+
+flattened = [val for row in matrix for val in row]
+print(f"ఫ్లాటెన్ చేయబడిన లిస్ట్: {flattened}")
+
+# 2. if-else తో కండిషనల్ ఎక్స్‌ప్రెషన్ (సరి సంఖ్యలు స్క్వేర్, బేసి సంఖ్యలు క్యూబ్)
+numbers = [1, 2, 3, 4, 5, 6]
+transformed = [x**2 if x % 2 == 0 else x**3 for x in numbers]
+print(f"ట్రాన్స్‌ఫార్మ్ అయిన నంబర్లు: {transformed}")
+
+# 3. స్ట్రింగ్స్ శానిటైజేషన్ కాంప్రహెన్షన్
+raw_tags = ["  PYTHON ", " DJANGO", "FASTAPI  ", " AI  "]
+clean_tags = [t.strip().lower() for t in raw_tags if len(t.strip()) > 2]
+print(f"క్లీన్ చేసిన ట్యాగ్‌లు: {clean_tags}")
+</code></pre>
+    </div>
+
+    <!-- SECTION 12 -->
+    <h2 class="section-title"><span class="num">12</span> కామన్ బిగినర్స్ మిస్టేక్స్ &amp; బిగ్-O కాంప్లెక్సిటీ చీట్‌షీట్</h2>
+    <p>
+      పెద్ద డేటాతో పనిచేసేటప్పుడు లిస్ట్ ఆపరేషన్ల యొక్క టైమ్ కాంప్లెక్సిటీని గుర్తుంచుకోవడం చాలా ముఖ్యం:
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ఆపరేషన్</th>
+            <th>మెథడ్ / సింటాక్స్</th>
+            <th>టైమ్ కాంప్లెక్సిటీ</th>
+            <th>వివరణ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ఇండెక్స్ ద్వారా పొందడం</td>
+            <td><code>list[i]</code></td>
+            <td><strong>$O(1)$</strong></td>
+            <td>మెమరీ అడ్రస్ డైరెక్ట్ కాలిక్యులేషన్.</td>
+          </tr>
+          <tr>
+            <td>చివరన చేర్చడం / తీసివేయడం</td>
+            <td><code>append()</code>, <code>pop()</code></td>
+            <td><strong>Amortized $O(1)$</strong></td>
+            <td>ఎటువంటి ఎలిమెంట్ షిఫ్టింగ్ ఉండదు.</td>
+          </tr>
+          <tr>
+            <td>మొదట్లో చేర్చడం / తీసివేయడం</td>
+            <td><code>insert(0, x)</code>, <code>pop(0)</code></td>
+            <td><strong>$O(N)$</strong> (నెమ్మది!)</td>
+            <td>మిగిలిన అన్ని ఎలిమెంట్లను 1 స్థానం జరపాలి.</td>
+          </tr>
+          <tr>
+            <td>విలువను వెతకడం</td>
+            <td><code>val in list</code>, <code>index()</code></td>
+            <td><strong>$O(N)$</strong></td>
+            <td>మొదటి నుండి చివరి వరకు లీనియర్ స్కాన్ చేస్తుంది.</td>
+          </tr>
+          <tr>
+            <td>సార్టింగ్</td>
+            <td><code>sort()</code>, <code>sorted()</code></td>
+            <td><strong>$O(N \log N)$</strong></td>
+            <td>ఆప్టిమైజ్డ్ Timsort అల్గారిథమ్.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 13 -->
+    <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాజెక్ట్: "E-Commerce Shopping Cart &amp; Warehouse Inventory Engine"</h2>
+    <p>
+      ఈ పదకొండవ అధ్యాయంలో నేర్చుకున్న అన్ని అంశాలను (లిస్ట్ మెథడ్స్, Timsort, లిస్ట్ కాంప్రహెన్షన్స్, డీప్ కాపీ, బిగ్-O ఆప్టిమైజేషన్) కలగలిపి — ఒక పూర్తి స్థాయి <strong>E-Commerce Shopping Cart &amp; Warehouse Inventory Optimization Engine</strong> ను నిర్మిద్దాం!
+    </p>
+
+    <!-- CODE BLOCK 4: CAPSTONE MINI PROJECT -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">04_ecommerce_warehouse_inventory_engine.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 11 మినీ ప్రాజెక్ట్: Warehouse Inventory & Cart Optimization Engine
+# కాన్సెప్ట్స్: Lists, List Comprehensions, Timsort (lambda keys),
+#             Deepcopy Rollbacks, Filtering & Formatted Ledger
+# =====================================================================
+import copy
+
+warehouse_inventory = [
+    {"sku": "SKU-101", "name": "4K గేమింగ్ మానిటర్", "price": 28999.00, "stock": 14, "cat": "ఎలక్ట్రానిక్స్"},
+    {"sku": "SKU-102", "name": "వైర్‌లెస్ కీబోర్డ్",   "price": 2499.00,  "stock": 0,  "cat": "యాక్సెసరీస్"},
+    {"sku": "SKU-103", "name": "ఎర్గోనామిక్ చైర్",     "price": 14500.00, "stock": 8,  "cat": "ఫర్నిచర్"},
+    {"sku": "SKU-104", "name": "USB-C డాకింగ్ స్టేషన్", "price": 4999.00,  "stock": 25, "cat": "ఎలక్ట్రానిక్స్"},
+    {"sku": "SKU-105", "name": "బ్లూటూత్ స్పీకర్",    "price": 1899.00,  "stock": 0,  "cat": "ఆడియో"}
+]
+
+def optimize_and_bill_inventory(inventory: list):
+    """
+    ఇన్వెంటరీని విశ్లేషించి, స్టాక్ ఉన్న వస్తువులను సార్ట్ చేసి బిల్లింగ్ సమ్మరీ ఇస్తుంది.
+    """
+    # 1. డీప్ కాపీ ద్వారా ఒరిజినల్ డేటాకు సేఫ్టీ బ్యాకప్
+    backup_inventory = copy.deepcopy(inventory)
+
+    print("\\n" + "=" * 74)
+    print(f"{'🛒 అపెక్స్ వేర్‌హౌస్ — ఇన్వెంటరీ & స్టాక్ ఆప్టిమైజేషన్ 2026':^74}")
+    print("=" * 74)
+
+    # 2. లిస్ట్ కాంప్రహెన్షన్ ద్వారా స్టాక్ ఉన్న వస్తువుల ఫిల్టరింగ్ (In-stock only)
+    available_items = [item for item in inventory if item["stock"] > 0]
+    out_of_stock_count = len(inventory) - len(available_items)
+
+    # 3. Timsort ద్వారా అత్యధిక విలువ కలిగిన వస్తువుల క్రమంలో సార్ట్ చేయడం
+    available_items.sort(key=lambda x: x["price"], reverse=True)
+
+    print(f"{'SKU కోడ్':<10} {'ఉత్పత్తి పేరు':<24} {'విభాగం':<15} {'స్టాక్':^8} {'ధర (₹)':>12}")
+    print("-" * 74)
+
+    total_warehouse_value = 0.0
+
+    for item in available_items:
+        total_val = item["price"] * item["stock"]
+        total_warehouse_value += total_val
+        print(f"{item['sku']:<10} {item['name']:<24} {item['cat']:<15} {item['stock']:^8} {item['price']:>12,.2f}")
+
+    print("=" * 74)
+    print(f"మొత్తం అందుబాటులో ఉన్న వస్తువులు : {len(available_items)} రకాలు")
+    print(f"స్టాక్ ముగిసిన వస్తువులు (Reorder): {out_of_stock_count} రకాలు")
+    print(f"{'గోడౌన్ మొత్తం స్టాక్ విలువ:':<40} ₹ {total_warehouse_value:>30,.2f}")
+    print("=" * 74)
+    print(f"{'✅ ఇన్వెంటరీ ఆడిట్ విజయవంతంగా పూర్తయింది!':^74}")
+    print("=" * 74 + "\\n")
+
+# లైవ్ టెస్ట్ రన్
+optimize_and_bill_inventory(warehouse_inventory)
+</code></pre>
+    </div>
+
+    <!-- 5 COLLAPSIBLE QUIZZES -->
+    <h2 class="section-title"><span class="num">★</span> ఈ అధ్యాయంపై ప్రాక్టీస్ క్విజ్ (Knowledge Check)</h2>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">1. append() కి మరియు extend() కి మధ్య కీలక తేడా ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>append()</code> ఇచ్చిన ఆబ్జెక్ట్‌ను ఒకే ఒక్క అంశంగా లిస్ట్ చివర చేరుస్తుంది (మరొక లిస్ట్ ఇస్తే నెస్టెడ్ లిస్ట్‌గా మారుతుంది). కానీ <code>extend()</code> ఇచ్చిన కలెక్షన్‌లోని అంశాలన్నింటినీ అన్‌ప్యాక్ చేసి విడివిడిగా లిస్ట్ చివరన విలీనం చేస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">2. sort() కి మరియు sorted() కి మధ్య వ్యత్యాసం ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>list.sort()</code> ఒరిజినల్ లిస్ట్‌ను అక్కడికక్కడే (In-place) సార్ట్ చేసి <code>None</code> రిటర్న్ చేస్తుంది. కానీ <code>sorted(list)</code> ఒరిజినల్ లిస్ట్‌ను ఏమీ మార్చకుండా, సరికొత్త సార్టెడ్ లిస్ట్‌ను సృష్టించి రిటర్న్ చేస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">3. b = a మరియు b = copy.deepcopy(a) ల మధ్య తేడా ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>b = a</code> అనేది కేవలం పాయింటర్‌ను కాపీ చేస్తుంది; <code>b</code> లో విలువలు మారిస్తే <code>a</code> లో కూడా మారుతాయి. కానీ <code>deepcopy()</code> మెమరీలో లిస్ట్‌తో పాటు దానిలోని అన్ని నెస్టెడ్ లిస్ట్‌లను కూడా పూర్తిగా స్వతంత్రంగా నకలు (Clone) చేస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">4. లిస్ట్ కాంప్రహెన్షన్ సాధారణ for లూప్ కంటే ఎందుకు వేగవంతమైనది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> సాధారణ <code>for</code> లూప్‌లో ప్రతి రౌండ్‌లోనూ <code>append()</code> మెథడ్‌ను పైథాన్ స్థాయి నుండి వెతికి పిలవాలి (Method lookup overhead). కానీ లిస్ట్ కాంప్రహెన్షన్ అంతర్గతంగా C-లెవల్ ఆప్టిమైజ్డ్ <code>LIST_APPEND</code> బైట్‌కోడ్ ఇన్‌స్ట్రక్షన్ ద్వారా నేరుగా మెమరీలోకి రాయడం వల్ల గణనీయంగా వేగంగా పనిచేస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">5. లిస్ట్‌లో insert(0, x) ఎందుకు నెమ్మదిగా ($O(N)$) పనిచేస్తుంది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> లిస్ట్ అనేది ఒక కంటిగ్యువస్ పాయింటర్ ఎరే. ఇండెక్స్ 0 వద్ద కొత్త ఎలిమెంట్‌ను చేర్చినప్పుడు, అప్పటికే ఉన్న $N$ ఎలిమెంట్లను మెమరీలో ఒక స్థానం కుడివైపుకి జరపాల్సి (Shift) ఉంటుంది. అందువల్ల ఇది $O(N)$ లీనియర్ టైమ్ తీసుకుంటుంది.
+      </div>
+    </details>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-python/10-python-regular-expressions-regex.html" style="text-decoration:none; color:var(--text); font-weight:600; display:inline-flex; align-items:center; gap:8px; background:var(--bg2); padding:10px 18px; border-radius:8px; border:1px solid var(--border);">
+        ← మునుపటి అధ్యాయం: 10. రెగ్యులర్ ఎక్స్‌ప్రెషన్స్ (Regex)
+      </a>
+      <a href="/blog-python/12-python-tuples-and-immutability.html" style="text-decoration:none; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; background:#10b981; padding:10px 22px; border-radius:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        తర్వాతి అధ్యాయం: 12. టుపుల్స్ &amp; ఇమ్మ్యుటబిలిటీ →
+      </a>
+    </div>
+
+    <!-- INTERACTIVE COMPILER CTA CARD -->
+    <div style="margin-top:40px; background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(56,189,248,0.1) 100%); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:24px; text-align:center;">
+      <h3 style="margin-top:0; color:var(--text); font-size:20px;">ఈ Warehouse Inventory Engine ని లైవ్‌గా మన కంపైలర్‌లో రన్ చేయండి!</h3>
+      <p style="color:var(--text2); max-width:650px; margin:8px auto 20px; font-size:14px; line-height:1.6;">
+        ఎటువంటి లోకల్ సెటప్ లేకుండా, బ్రౌజర్‌లోనే Modern Python 3 కంపైలర్‌లో ఈ కోడ్‌ను ఎగ్జిక్యూట్ చేసి అవుట్‌పుట్ తనిఖీ చేయండి.
+      </p>
+      <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; padding:12px 28px; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Launch Python Interactive Compiler
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER / NAV SCRIPTS -->
+<script src="/site-nav.js"></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`# =====================================================================
+# చాప్టర్ 11 మినీ ప్రాజెక్ట్: Warehouse Inventory Engine (LIVE DEMO)
+# =====================================================================
+
+inventory = [
+    {"sku": "SKU-101", "name": "4K గేమింగ్ మానిటర్", "price": 28999.00, "stock": 14},
+    {"sku": "SKU-102", "name": "వైర్‌లెస్ కీబోర్డ్",   "price": 2499.00,  "stock": 0},
+    {"sku": "SKU-103", "name": "ఎర్గోనామిక్ చైర్",     "price": 14500.00, "stock": 8},
+    {"sku": "SKU-104", "name": "USB-C డాక్",         "price": 4999.00,  "stock": 25}
+]
+
+# 1. స్టాక్ ఉన్నవి మాత్రమే ఫిల్టర్ చేయడం (List Comprehension)
+in_stock = [item for item in inventory if item["stock"] > 0]
+
+# 2. ధర ఆధారంగా సార్టింగ్ (Timsort)
+in_stock.sort(key=lambda x: x["price"], reverse=True)
+
+print("=" * 65)
+print(f"{'🛒 అపెక్స్ వేర్‌హౌస్ — ఇన్వెంటరీ సమ్మరీ (LIVE)':^65}")
+print("=" * 65)
+print(f"{'SKU':<10} {'వస్తువు పేరు':<22} {'స్టాక్':^8} {'ధర (₹)':>16}")
+print("-" * 65)
+
+total_val = 0.0
+for it in in_stock:
+    val = it["price"] * it["stock"]
+    total_val += val
+    print(f"{it['sku']:<10} {it['name']:<22} {it['stock']:^8} {it['price']:>16,.2f}")
+
+print("=" * 65)
+print(f"{'మొత్తం గోడౌన్ నిల్వల విలువ:':<35} ₹ {total_val:>26,.2f}")
+print("=" * 65)
+print("\\n🎉 చాప్టర్ 11 ప్రాజెక్ట్ విజయవంతంగా రన్ అయ్యింది! 🚀")
+\`;
+
+    try {
+      localStorage.setItem('code_python', projectCode);
+      localStorage.setItem('code_python3', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-python-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-python', currentLesson.file);
+fs.writeFileSync(outputPath, chapter11Content, 'utf8');
+console.log('✅ Successfully generated deep high-value Python Chapter 11 in exact HTML style!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter11Content.length, 'characters');

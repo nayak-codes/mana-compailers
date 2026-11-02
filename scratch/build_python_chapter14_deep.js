@@ -1,0 +1,670 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildPythonSidebar } = require('./python_curriculum_data.js');
+
+const currentLesson = LESSONS[13]; // Chapter 14 (0-indexed 13)
+const sidebarHtml = buildPythonSidebar(14);
+
+const chapter14Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Python 3 సెట్స్ (Sets) & సెట్ మ్యాథమెటికల్ ఆపరేషన్స్ సమగ్ర తెలుగు గైడ్: Hash Set ఆర్కిటెక్చర్, O(1) లుకప్స్, యూనిక్ ఎలిమెంట్స్, Union (|), Intersection (&), Difference (-), Symmetric Difference (^), frozenset, మరియు Cybersecurity Threat Firewall Engine ప్రాజెక్ట్." />
+  <meta name="keywords" content="python sets in telugu, set operations python telugu, frozenset python telugu, python set union intersection difference, learn python in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-python/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Complete Guide to Python Sets and Set Operations in Telugu)",
+    "description": "Python 3 సెట్స్ పూర్తి గైడ్: Unique Collections, Hash Set Architecture, O(1) Lookups, Mathematical Set Operations, frozenset, మరియు Cybersecurity Threat Firewall Engine.",
+    "articleSection": "Phase 03: డేటా స్ట్రక్చర్స్ & కలెక్షన్స్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-01-26",
+    "dateModified": "2026-11-02"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Compiler Integration -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___PY_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/("""[\\s\\S]*?"""|'''[\\s\\S]*?'''|f?"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|f?'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'|r"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|r'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'import','from','as','def','return','class','if','elif','else','while','for','in',
+        'break','continue','pass','try','except','finally','with','lambda','global','nonlocal',
+        'and','or','not','is','yield','async','await','raise','assert','True','False','None'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'print','len','range','type','isinstance','id','input','int','float','str','list',
+        'dict','set','frozenset','tuple','sum','min','max','round','map','zip','enumerate','sorted',
+        'abs','open','help','dir','filter','bool','add','remove','discard','pop','clear',
+        'union','intersection','difference','symmetric_difference','issubset','issuperset','isdisjoint'
+      ];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?)\\b/g, m => pushToken('num', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split('___PY_TOK_' + idx + '___').join(tok);
+      });
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code.language-python').forEach(block => {
+        block.innerHTML = highlightPythonCode(block.innerText);
+      });
+    });
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      const code = pre.innerText;
+      try {
+        localStorage.setItem('code_python', code);
+        localStorage.setItem('code_python3', code);
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+      window.open('/online-python-compiler.html', '_blank');
+    }
+  </script>
+</head>
+<body class="lang-python light-theme">
+
+<!-- Site Navigation Placeholder -->
+<div id="site-nav-placeholder"></div>
+
+<!-- Layout Container -->
+<div class="layout">
+
+  <!-- Single Sidebar Component -->
+  ${sidebarHtml}
+
+  <!-- Main Content Area -->
+  <main class="content">
+
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb" style="display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text2); margin-bottom:16px;">
+      <a href="/" style="color:var(--text2); text-decoration:none;">Home</a>
+      <span class="sep">›</span>
+      <a href="/tutorials" style="color:var(--text2); text-decoration:none;">Tutorials</a>
+      <span class="sep">›</span>
+      <a href="/blog-python/" style="color:var(--text2); text-decoration:none;">Python Masterclass</a>
+      <span class="sep">›</span>
+      <span style="color:var(--text); font-weight:600;">Chapter 14: ${currentLesson.title}</span>
+    </div>
+
+    <!-- MAIN PAGE TITLE -->
+    <h1 class="page-title" style="font-size:32px; font-weight:800; color:var(--text); margin-bottom:14px; line-height:1.25;">
+      ${currentLesson.title}
+    </h1>
+
+    <!-- 4 PAGE META BADGES -->
+    <div class="page-meta" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; font-size:12.5px;">
+      <span style="background:rgba(16,185,129,0.12); color:#10b981; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        🌐 Modern Python 3.12+
+      </span>
+      <span style="background:rgba(59,130,246,0.12); color:#3b82f6; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        📖 Chapter 14 of 25
+      </span>
+      <span style="background:rgba(245,158,11,0.12); color:#f59e0b; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        📁 Phase 03: డేటా స్ట్రక్చర్స్ &amp; కలెక్షన్స్
+      </span>
+      <span style="background:rgba(139,92,246,0.12); color:#8b5cf6; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        🗓️ 2026 Edition
+      </span>
+    </div>
+
+    <!-- COVERED PILL -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin-bottom:24px; font-size:13.5px; color:var(--text2); line-height:1.6;">
+      <strong style="color:var(--text); font-weight:700;">📌 Covered in this chapter:</strong>
+      ${currentLesson.subtopics} · Hash Set Architecture &amp; O(1) Membership Testing · Empty Set Syntax Trap (set() vs {}) · add(), remove(), discard(), pop() · Mathematical Operations (Union, Intersection, Difference, Symmetric Difference) · Subset &amp; Superset Audits · frozenset Immutability · Cybersecurity Firewall Mini Project
+    </div>
+
+    <!-- WARM SOFT IVORY INTRO BOX -->
+    <div class="intro-box" style="background:#fffdf7; border:1px solid #fef3c7; border-left:4px solid #f59e0b; border-radius:10px; padding:20px 24px; margin-bottom:30px; font-size:15px; color:#451a03; line-height:1.75;">
+      మీకు లక్షల మంది వినియోగదారుల ఫోన్ నంబర్లు లేదా సర్వర్‌లోకి వచ్చిన కోట్లాది నెట్‌వర్క్ ఐపీ అడ్రస్‌లు ఉన్నాయనుకోండి. అందులో డూప్లికేట్లను (నకలు రికార్డులను) తొలగించి కేవలం విశిష్టమైన (Unique) అంశాలను మాత్రమే నిలుపుకోవాలంటే ఏం చేస్తారు? లేదా ఒక యూజర్ యొక్క అనుమతులు (Permissions) మరియు రోల్స్ మధ్య ఉమ్మడి అంశాలు (Common Access) ఏమున్నాయో రెప్పపాటులో లెక్కించాలంటే?
+      <br/><br/>
+      గణిత శాస్త్రంలో మనం నేర్చుకున్న <strong>సెట్ సిద్ధాంతం (Set Theory)</strong> కి పైథాన్ అందించే హై-పెర్ఫార్మెన్స్ సమాధానమే <strong>సెట్స్ (Sets)</strong>! సాధారణ లిస్ట్‌లలో ఒక ఎలిమెంట్ ఉందో లేదో వెతకడానికి O(N) సమయం పడుతుండగా, సెట్స్‌లో హ్యాష్ టేబుల్ బలం వల్ల కోటి అంశాలు ఉన్నా సరే O(1) కాన్స్టెంట్ సమయంలో మెరుపు వేగంతో సభ్యత్వాన్ని (Membership) తనిఖీ చేయవచ్చు. ఈ అధ్యాయంలో మనం సెట్స్ సృష్టి, యూనియన్, ఇంటర్‌సెక్షన్, డిఫరెన్స్, ఇమ్మ్యుటబుల్ <code>frozenset</code> మరియు సైబర్‌సెక్యూరిటీ నెట్‌వర్క్ ఫైర్‌వాల్ ఆడిట్ ఇంజిన్ వరకు సమగ్రంగా నేర్చుకుందాం!
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 class="section-title"><span class="num">1</span> సెట్ అంటే ఏమిటి? (What is a Set in Python?)</h2>
+    <p>
+      పైథాన్‌లో <strong>సెట్ (Set)</strong> అనేది <strong>యూనిక్ (విశిష్టమైన)</strong> మరియు <strong>అన్‌ఆర్డర్డ్ (వరుస క్రమం లేని)</strong> ఎలిమెంట్లను భద్రపరిచే ఒక మ్యూటబుల్ డేటా స్ట్రక్చర్. గణిత శాస్త్రంలోని వెన్ డయాగ్రమ్స్ (Venn Diagrams) మరియు సెట్ ఆపరేషన్లకు పైథాన్ అందించిన ప్రోగ్రామింగ్ రూపమిది.
+    </p>
+    <p>
+      సెట్ యొక్క ప్రాథమిక లక్షణాలు:
+    </p>
+    <ul>
+      <li><strong>నకలు ఎలిమెంట్లకు తావులేదు (No Duplicates Allowed):</strong> మీరు ఒక సెట్‌లోకి ఒకే విలువను ఎన్నిసార్లు చొప్పించినప్పటికీ, అది కేవలం ఒకే ఒక్కసారి మాత్రమే నిల్వ చేయబడుతుంది. డూప్లికేట్స్ స్వయంచాలకంగా తొలగించబడతాయి.</li>
+      <li><strong>అన్‌ఆర్డర్డ్ కలెక్షన్ (Unordered):</strong> సెట్‌లోని ఎలిమెంట్లకు ఇండెక్స్ (0, 1, 2, ...) ఉండదు. అందువల్ల <code>s[0]</code> లేదా <code>s[1:3]</code> అని స్లైసింగ్ చేయడానికి ప్రయత్నిస్తే పైథాన్ <code>TypeError: 'set' object is not subscriptable</code> ఎర్రర్‌ను ఇస్తుంది.</li>
+      <li><strong>ఎలిమెంట్లు తప్పనిసరిగా ఇమ్మ్యుటబుల్ &amp; హాషబుల్ అయి ఉండాలి:</strong> సెట్‌లో ఇంటీజర్లు, ఫ్లోట్లు, స్ట్రింగ్స్, మరియు టుపుల్స్ మాత్రమే భద్రపరచవచ్చు. లిస్ట్‌లు, డిక్షనరీలు, లేదా ఇతర సెట్లను సెట్ లోపల నేరుగా పెట్టలేము.</li>
+      <li><strong>మ్యూటబుల్ డేటా స్ట్రక్చర్:</strong> సెట్‌ను సృష్టించిన తర్వాత కొత్త ఎలిమెంట్లను జోడించవచ్చు (<code>add()</code>), అనవసరమైన వాటిని తొలగించవచ్చు (<code>discard()</code>).</li>
+    </ul>
+
+    <!-- SECTION 2 -->
+    <h2 class="section-title"><span class="num">2</span> CPython Set Internals &amp; Hash Architecture (O(1) లుకప్స్)</h2>
+    <p>
+      సెట్స్ మరియు డిక్షనరీలు తెరవెనుక దాదాపు ఒకే విధమైన ఆర్కిటెక్చర్‌ను పంచుకుంటాయి. నిజానికి, సెట్ అనేది విలువలు లేని ఒక <strong>Keys-only Hash Table</strong>!
+    </p>
+    <p>
+      <strong>సభ్యత్వ శోధన వేగం (Membership Testing Benchmark):</strong><br/>
+      మీరు <code>if item in collection:</code> అని రాసినప్పుడు:
+    </p>
+    <ul>
+      <li><strong>లిస్ట్‌లలో (O(N) Linear Time):</strong> CPU మొదటి ఎలిమెంట్ నుండి చివరి వరకు ప్రతి అంశాన్ని వరుసగా పోల్చాలి. 10 లక్షల ఎలిమెంట్లు ఉంటే సగటున 5 లక్షల పోలికలు జరగాలి!</li>
+      <li><strong>సెట్స్‌లో (O(1) Constant Time):</strong> CPU నేరుగా <code>hash(item)</code> విలువను లెక్కించి, నిర్దిష్ట మెమరీ బకెట్‌కు ఒకే ఒక్క జంప్‌తో వెళ్లి చూస్తుంది. 10 అంశాలు ఉన్నా, 10 కోట్ల అంశాలు ఉన్నా ఫలితం తక్షణమే (మైక్రోసెకన్లలో) లభిస్తుంది!</li>
+    </ul>
+
+    <div style="background:#0f172a; border:1px solid #1e293b; border-radius:8px; padding:18px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13px; color:#f8fafc; line-height:1.6;">
+      <div style="color:#10b981; font-weight:700; margin-bottom:8px;">[CPython Set Table Lookup]</div>
+      Query: "admin_ip" in blocked_ips<br/>
+      1. hash("admin_ip") ──▶ 0xa4b19c<br/>
+      2. Bucket Index = 0xa4b19c &amp; (table_size - 1) ──▶ Bucket #7<br/>
+      3. Bucket #7 Check: Key matches? ──▶ YES! Found in O(1) Instant Time! ⚡
+    </div>
+
+    <!-- SECTION 3 -->
+    <h2 class="section-title"><span class="num">3</span> సెట్ సృష్టి &amp; ఎంప్టీ సెట్ సింటాక్స్ ట్రాప్ (set() vs {})</h2>
+    <p>
+      పైథాన్ బిగినర్స్ ఎదుర్కొనే అత్యంత సాధారణ మరియు ప్రమాదకరమైన సింటాక్స్ ట్రాప్ <strong>ఖాళీ సెట్ (Empty Set)</strong> ను సృష్టించడం:
+    </p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0;">
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+        <h4 style="margin-top:0; color:#ef4444; font-size:14.5px;">⚠️ ప్రమాదకరమైన ట్రాప్: <code>{}</code></h4>
+        <p style="font-size:13px; color:var(--text2); line-height:1.6; margin:6px 0;">
+          ఖాళీ కర్లీ బ్రాకెట్లను రాస్తే పైథాన్ దానిని <strong>ఖాళీ డిక్షనరీ (Empty Dict)</strong> గా భావిస్తుంది, సెట్‌గా కాదు!
+        </p>
+        <code style="display:block; background:#0f172a; color:#fca5a5; padding:8px 12px; border-radius:6px; font-size:12px;">
+          x = {}<br/>
+          print(type(x)) # &lt;class 'dict'&gt;!
+        </code>
+      </div>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+        <h4 style="margin-top:0; color:#10b981; font-size:14.5px;">✅ సరైన విధానం: <code>set()</code></h4>
+        <p style="font-size:13px; color:var(--text2); line-height:1.6; margin:6px 0;">
+          ఖాళీ సెట్‌ను సృష్టించడానికి ఎల్లప్పుడూ <code>set()</code> కన్‌స్ట్రక్టర్‌ను మాత్రమే ఉపయోగించాలి!
+        </p>
+        <code style="display:block; background:#0f172a; color:#86efac; padding:8px 12px; border-radius:6px; font-size:12px;">
+          x = set()<br/>
+          print(type(x)) # &lt;class 'set'&gt;!
+        </code>
+      </div>
+    </div>
+
+    <p><strong>సెట్ క్రియేషన్ పద్ధతులు:</strong></p>
+    <ul>
+      <li><strong>కర్లీ బ్రాకెట్స్ లిటరల్:</strong> <code>primes = {2, 3, 5, 7, 11}</code></li>
+      <li><strong>లిస్ట్ నుండి డూప్లికేట్స్ తొలగింపు (Deduplication):</strong> <code>unique_ids = set([101, 102, 101, 105, 102])</code> &rarr; <code>{101, 102, 105}</code></li>
+      <li><strong>స్ట్రింగ్ నుండి అక్షరాల సెట్:</strong> <code>chars = set("mississippi")</code> &rarr; <code>{'m', 'i', 's', 'p'}</code></li>
+    </ul>
+
+    <!-- SECTION 4 -->
+    <h2 class="section-title"><span class="num">4</span> సెట్ ఎలిమెంట్స్ జోడించడం &amp; తొలగించడం (<code>add</code>, <code>discard</code>, <code>remove</code>)</h2>
+    <p>
+      సెట్లలో ఎలిమెంట్లను నిర్వహించడానికి ఉపయోగపడే కోర్ మెథడ్స్:
+    </p>
+    <ul>
+      <li><strong><code>s.add(elem)</code>:</strong> ఒకే ఒక ఎలిమెంట్‌ను సెట్‌లో చేరుస్తుంది. ఎలిమెంట్ ఇప్పటికే ఉంటే ఎటువంటి ఎర్రర్ రాదు, సెట్ మారదు.</li>
+      <li><strong><code>s.update(iterable)</code>:</strong> బహుళ ఎలిమెంట్లను (మరొక లిస్ట్ లేదా సెట్ నుండి) ఒకేసారి జోడిస్తుంది.</li>
+      <li><strong><code>s.remove(elem)</code>:</strong> పేర్కొన్న ఎలిమెంట్‌ను సెట్ నుండి తొలగిస్తుంది. <strong>హెచ్చరిక:</strong> ఆ ఎలిమెంట్ సెట్‌లో లేకపోతే ఇది వెంటనే <code>KeyError</code> విసిరి ప్రోగ్రామ్‌ను ఆపేస్తుంది!</li>
+      <li><strong><code>s.discard(elem)</code> (సేఫ్ మెథడ్):</strong> ఎలిమెంట్‌ను తొలగిస్తుంది. ఒకవేళ ఆ ఎలిమెంట్ సెట్‌లో లేకపోయినా <strong>ఎటువంటి ఎర్రర్ రాదు!</strong> ప్రొడక్షన్ సిస్టమ్స్‌లో దీనిని వాడటం ఎంతో సురక్షితం.</li>
+      <li><strong><code>s.pop()</code>:</strong> సెట్ నుండి యాదృచ్ఛికంగా (Random/Arbitrary) ఒక ఎలిమెంట్‌ను తొలగించి రిటర్న్ చేస్తుంది. ఖాళీ సెట్‌పై pop చేస్తే <code>KeyError</code> వస్తుంది.</li>
+      <li><strong><code>s.clear()</code>:</strong> సెట్‌లోని అన్ని ఎలిమెంట్లను ఖాళీ చేసి ఖాళీ సెట్ <code>set()</code> గా మారుస్తుంది.</li>
+    </ul>
+
+    <!-- SECTION 5 -->
+    <h2 class="section-title"><span class="num">5</span> మ్యాథమెటికల్ సెట్ ఆపరేషన్: యూనియన్ (Union <code>|</code> &amp; <code>union()</code>)</h2>
+    <p>
+      <strong>యూనియన్ (Union)</strong> అనేది రెండు లేదా అంతకంటే ఎక్కువ సెట్లలోని అన్ని విశిష్ట ఎలిమెంట్లను కలిపి ఒక నూతన సెట్‌ను రూపొందిస్తుంది.
+    </p>
+    <ul>
+      <li><strong>ఆపరేటర్ సింటాక్స్:</strong> <code>set_a | set_b</code></li>
+      <li><strong>మెథడ్ సింటాక్స్:</strong> <code>set_a.union(set_b)</code></li>
+    </ul>
+    <p>
+      <strong>తేడా:</strong> <code>|</code> ఆపరేటర్ వాడేటప్పుడు ఇరువైపులా తప్పనిసరిగా సెట్స్ అయి ఉండాలి. కానీ <code>.union()</code> మెథడ్‌లోకి ఏదైనా ఇటరబుల్‌ను (ఉదాహరణకు లిస్ట్ లేదా టుపుల్) నేరుగా పాస్ చేయవచ్చు (ఉదా: <code>a.union([10, 20])</code>).
+    </p>
+
+    <!-- SECTION 6 -->
+    <h2 class="section-title"><span class="num">6</span> ఇంటర్‌సెక్షన్ (Intersection <code>&amp;</code> &amp; <code>intersection()</code>)</h2>
+    <p>
+      <strong>ఇంటర్‌సెక్షన్ (Intersection)</strong> అనేది రెండు లేదా అంతకంటే ఎక్కువ సెట్లలో <strong>ఉమ్మడిగా (Common)</strong> ఉన్న ఎలిమెంట్లను మాత్రమే ఎంపిక చేసి నూతన సెట్‌ను అందిస్తుంది.
+    </p>
+    <ul>
+      <li><strong>ఆపరేటర్ సింటాక్స్:</strong> <code>set_a &amp; set_b</code></li>
+      <li><strong>మెథడ్ సింటాక్స్:</strong> <code>set_a.intersection(set_b)</code></li>
+      <li><strong>ఇన్-ప్లేస్ అప్‌డేట్:</strong> <code>set_a.intersection_update(set_b)</code> లేదా <code>set_a &amp;= set_b</code> మొదటి సెట్‌ను ఉమ్మడి ఎలిమెంట్లతో మాత్రమే మిగిలి ఉండేలా మారుస్తుంది.</li>
+    </ul>
+
+    <!-- SECTION 7 -->
+    <h2 class="section-title"><span class="num">7</span> డిఫరెన్స్ (<code>-</code>) &amp; సిమెట్రిక్ డిఫరెన్స్ (<code>^</code>)</h2>
+    <p>
+      డేటాసెట్ల మధ్య వ్యత్యాసాలను గుర్తించడానికి ఈ రెండు ఆపరేషన్లు అత్యంత విలువైనవి:
+    </p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0;">
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+        <h4 style="margin-top:0; color:#3b82f6; font-size:14.5px;">1. డిఫరెన్స్: <code>A - B</code></h4>
+        <p style="font-size:13px; color:var(--text2); line-height:1.6; margin:6px 0;">
+          సెట్ A లో మాత్రమే ఉండి, సెట్ B లో లేని ఎలిమెంట్లను అందిస్తుంది (A exclusive).
+        </p>
+        <code style="display:block; background:#0f172a; color:#93c5fd; padding:8px 12px; border-radius:6px; font-size:12px;">
+          a = {1, 2, 3}<br/>
+          b = {2, 3, 4}<br/>
+          print(a - b) # {1}
+        </code>
+      </div>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+        <h4 style="margin-top:0; color:#8b5cf6; font-size:14.5px;">2. సిమెట్రిక్ డిఫరెన్స్: <code>A ^ B</code></h4>
+        <p style="font-size:13px; color:var(--text2); line-height:1.6; margin:6px 0;">
+          సెట్ A లేదా B లో ఉంటూ, రెండింటిలోనూ ఉమ్మడిగా లేని ఎలిమెంట్లను అందిస్తుంది (Non-overlapping elements).
+        </p>
+        <code style="display:block; background:#0f172a; color:#c4b5fd; padding:8px 12px; border-radius:6px; font-size:12px;">
+          print(a ^ b) # {1, 4}
+        </code>
+      </div>
+    </div>
+
+    <!-- SECTION 8 -->
+    <h2 class="section-title"><span class="num">8</span> సబ్‌సెట్, సూపర్‌సెట్ &amp; డిస్‌జాయింట్ టెస్టింగ్</h2>
+    <p>
+      అనుమతుల తనిఖీ మరియు సెక్యూరిటీ ఆడిట్‌లలో ఈ బూలియన్ టెస్టింగ్ మెథడ్స్ కీలక పాత్ర పోషిస్తాయి:
+    </p>
+    <ul>
+      <li><strong><code>A.issubset(B)</code> లేదా <code>A &lt;= B</code>:</strong> A లోని ప్రతి ఎలిమెంట్ B లో కూడా ఉంటే <code>True</code> ఇస్తుంది.</li>
+      <li><strong><code>A.issuperset(B)</code> లేదా <code>A &gt;= B</code>:</strong> B లోని ప్రతి ఎలిమెంట్ A లో ఉంటే <code>True</code> ఇస్తుంది.</li>
+      <li><strong><code>A.isdisjoint(B)</code>:</strong> A మరియు B ల మధ్య ఒక్క ఉమ్మడి ఎలిమెంట్ కూడా లేకపోతే (వాటి ఇంటర్‌సెక్షన్ ఖాళీగా ఉంటే) <code>True</code> ఇస్తుంది.</li>
+    </ul>
+
+    <!-- SECTION 9 -->
+    <h2 class="section-title"><span class="num">9</span> కోడ్ డెమో 1: లైవ్ సెట్ మ్యాథమెటికల్ ఆపరేషన్స్ &amp; పర్మిషన్స్ ఆడిట్</h2>
+    <p>
+      పై అన్ని గణిత ఆపరేషన్లను ఒకే యూజర్ యాక్సెస్ కంట్రోల్ స్క్రిప్ట్‌లో లైవ్‌గా పరిశీలిద్దాం:
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">01_set_operations_and_permissions.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 14 డెమో 1: సెట్ మ్యాథమెటికల్ ఆపరేషన్స్ & రోల్ బేస్డ్ యాక్సెస్
+# =====================================================================
+
+# రెండు యూజర్ గ్రూపుల సెక్యూరిటీ పర్మిషన్లు
+admin_permissions = {"READ", "WRITE", "DELETE", "AUDIT", "DEPLOY"}
+developer_permissions = {"READ", "WRITE", "DEBUG", "TEST", "DEPLOY"}
+
+print("=== సెట్ మ్యాథమెటికల్ ఆపరేషన్స్ డెమో ===")
+
+# 1. UNION: మొత్తం లభ్యమయ్యే అనుమతులు (|)
+all_perms = admin_permissions | developer_permissions
+print(f"1. యూనియన్ (మొత్తం అనుమతులు) : {sorted(list(all_perms))}")
+
+# 2. INTERSECTION: ఉమ్మడి అనుమతులు (&)
+common_perms = admin_permissions & developer_permissions
+print(f"2. ఇంటర్‌సెక్షన్ (ఉమ్మడి హక్కులు) : {sorted(list(common_perms))}")
+
+# 3. DIFFERENCE: అడ్మిన్‌కు మాత్రమే ప్రత్యేకం (-)
+admin_exclusive = admin_permissions - developer_permissions
+print(f"3. అడ్మిన్ ప్రత్యేక అధికారాలు   : {sorted(list(admin_exclusive))}")
+
+# 4. SYMMETRIC DIFFERENCE: ఎవరికైనా ఒక్కరికి మాత్రమే ఉన్నవి (^)
+unique_to_each = admin_permissions ^ developer_permissions
+print(f"4. సిమెట్రిక్ డిఫరెన్స్         : {sorted(list(unique_to_each))}")
+
+# 5. SUBSET: డెవలపర్ హక్కులు అడ్మిన్ హక్కుల సబ్‌సెట్ అవునా?
+print(f"5. Developer <= Admin?         : {developer_permissions <= admin_permissions}")
+</code></pre>
+    </div>
+
+    <!-- SECTION 10 -->
+    <h2 class="section-title"><span class="num">10</span> Set Comprehensions (<code>{expr for ... if ...}</code>)</h2>
+    <p>
+      లిస్ట్ మరియు డిక్షనరీ కాంప్రహెన్షన్ల లాగే, పైథాన్‌లో <strong>సెట్ కాంప్రహెన్షన్స్ (Set Comprehensions)</strong> ద్వారా అతి తక్కువ కోడ్‌తో, స్వయంచాలకంగా డూప్లికేట్లను ఫిల్టర్ చేస్తూ నూతన సెట్‌ను నిర్మించవచ్చు.
+    </p>
+    <p>
+      <strong>ప్రాథమిక సింటాక్స్:</strong><br/>
+      <code style="background:#0f172a; color:#38bdf8; padding:8px 14px; border-radius:6px; display:inline-block; margin:6px 0;">
+        unique_set = {expression for item in iterable if condition}
+      </code>
+    </p>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">02_set_comprehensions_normalization.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># అపరిశుభ్రమైన రా డేటా (రకరకాల కేసింగ్ & డూప్లికేట్స్)
+raw_emails = [
+    "Kiran@Google.com", "SURESH@OUTLOOK.COM", "kiran@google.com",
+    "admin@test.org", "suresh@outlook.com", "ANJALI@GMAIL.COM", "info@test.org"
+]
+
+# సెట్ కాంప్రహెన్షన్: అన్నీ లోయర్‌కేస్‌గా మార్చి, డూప్లికేట్స్ తీసివేసి, .org కానివి మాత్రమే ఎంపిక
+clean_active_domains = {
+    email.strip().lower().split("@")[1]
+    for email in raw_emails
+    if not email.endswith(".org")
+}
+
+print("పరిశుభ్రమైన యూజర్ డొమైన్స్ సెట్ :", clean_active_domains)
+</code></pre>
+    </div>
+
+    <!-- SECTION 11 -->
+    <h2 class="section-title"><span class="num">11</span> frozenset — ఇమ్మ్యుటబుల్ సెట్స్ (Immutable Sets)</h2>
+    <p>
+      సాధారణ సెట్స్ మ్యూటబుల్ కావడం వల్ల వాటికి స్థిరమైన హాష్ కోడ్ ఉండదు. అందువల్ల వాటిని డిక్షనరీ కీలుగా లేదా మరొక సెట్ లోపల ఎలిమెంట్లుగా ఉపయోగించలేము.
+    </p>
+    <p>
+      ఈ సమస్యకు పైథాన్ అందించే పరిష్కారమే <strong><code>frozenset</code></strong>!
+    </p>
+    <ul>
+      <li><strong>మార్చలేని సెట్ (Immutable):</strong> ఒక్కసారి frozenset ను సృష్టించిన తర్వాత అందులో <code>add()</code>, <code>remove()</code> వంటి మెథడ్స్ పనిచేయవు.</li>
+      <li><strong>హాషబుల్ (Hashable):</strong> దీనికి స్థిరమైన హాష్ విలువ ఉంటుంది కాబట్టి, frozenset ను నేరుగా <strong>డిక్షనరీ కీగా</strong> లేదా మరొక సెట్‌లో ఎలిమెంట్‌గా నిశ్చింతగా వాడవచ్చు!</li>
+    </ul>
+
+    <!-- CODE BLOCK 3 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">03_frozenset_as_dict_key.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># frozenset ను డిక్షనరీ కీగా ఉపయోగించడం
+# ఒక యూజర్ రోల్ సమూహానికి కేటాయించిన సెక్యూరిటీ లెవెల్ మ్యాపింగ్
+tier_policy = {
+    frozenset(["READ", "WRITE"]): "Standard Editor",
+    frozenset(["READ", "WRITE", "DELETE", "ADMIN"]): "Super Admin",
+    frozenset(["READ"]): "Guest Viewer"
+}
+
+user_roles = frozenset(["READ", "WRITE"])
+print("ఈ రోల్స్ యొక్క సెక్యూరిటీ టైటిల్ :", tier_policy[user_roles])
+</code></pre>
+    </div>
+
+    <!-- SECTION 12 -->
+    <h2 class="section-title"><span class="num">12</span> కామన్ బిగినర్స్ మిస్టేక్స్ &amp; ప్రొడక్షన్ బెస్ట్ ప్రాక్టీసెస్</h2>
+    <ul>
+      <li><strong>Mistake 1: సెట్‌ను ఇండెక్సింగ్ చేయాలని చూడటం:</strong> <code>s[0]</code> అని రాస్తే <code>TypeError</code> వస్తుంది. సెట్‌లో మొదటి ఎలిమెంట్ కావాలంటే <code>next(iter(s))</code> వాడాలి లేదా లిస్ట్‌గా మార్చాలి.</li>
+      <li><strong>Mistake 2: ఖాళీ సెట్‌ను <code>{}</code> తో డిక్లేర్ చేయడం:</strong> ముందే చెప్పినట్లు <code>{}</code> అనేది డిక్షనరీ అవుతుంది. ఎల్లప్పుడూ <code>set()</code> వాడాలి.</li>
+      <li><strong>Mistake 3: <code>remove()</code> వాడుతూ KeyError బారిన పడటం:</strong> ఎలిమెంట్ ఉందో లేదో ఖచ్చితంగా తెలియనప్పుడు <code>remove()</code> వాడితే క్రాష్ అవుతుంది. ఎల్లప్పుడూ <code>discard()</code> వాడటం ప్రొడక్షన్ బెస్ట్ ప్రాక్టీస్.</li>
+      <li><strong>Best Practice: లిస్ట్ డూప్లికేట్స్ తొలగించడం:</strong> పెద్ద లిస్ట్‌లో డూప్లికేట్స్ తీసేయడానికి <code>set(my_list)</code> కంటే వేగవంతమైన పద్ధతి మరొకటి లేదు. కానీ గుర్తుంచుకోండి, ఇది ఆర్డర్‌ను సంరక్షించదు! ఆర్డర్ కూడా కావాలంటే <code>list(dict.fromkeys(my_list))</code> వాడాలి.</li>
+      <li><strong>Best Practice: O(1) లుకప్స్ కోసం సెట్స్ వాడటం:</strong> లక్షల రికార్డులపై <code>if id in container:</code> అని చెక్ చేయాల్సి వచ్చినప్పుడు <code>container</code> ను తప్పనిసరిగా సెట్‌గా మార్చండి. ఇది ప్రోగ్రామ్ వేగాన్ని 1,000 రెట్లు పెంచుతుంది!</li>
+    </ul>
+
+    <!-- SECTION 13 -->
+    <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాజెక్ట్: "Cybersecurity Threat Intelligence &amp; Firewall Engine"</h2>
+    <p>
+      ఈ పద్నాలుగవ అధ్యాయంలో నేర్చుకున్న అన్ని సెట్ కాన్సెప్టులను (యూనియన్, ఇంటర్‌సెక్షన్, డిఫరెన్స్, O(1) మెంబర్‌షిప్, frozenset) సమగ్రంగా అనుసంధానిస్తూ — అనుమానాస్పద IP అడ్రస్‌లను గుర్తించి, బ్లాక్‌లిస్ట్ చేసి సర్వర్‌ను కాపాడే పూర్తి స్థాయి <strong>Cybersecurity Threat Intelligence Firewall Engine</strong> ను నిర్మిద్దాం!
+    </p>
+
+    <!-- CODE BLOCK 4: CAPSTONE MINI PROJECT -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">04_cybersecurity_firewall_engine.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 14 మినీ ప్రాజెక్ట్: Cybersecurity Threat Intelligence Engine
+# కాన్సెప్ట్స్: Sets, O(1) Lookups, Mathematical Operations (&, |, -),
+#             Deduplication, frozenset Whitelists, Attack Surface Audit
+# =====================================================================
+
+# 1. ఇమ్మ్యుటబుల్ వైట్‌లిస్ట్ IP అడ్రస్‌లు (frozenset - ఎట్టి పరిస్థితుల్లోనూ బ్లాక్ చేయకూడదు)
+TRUSTED_WHITELIST = frozenset([
+    "127.0.0.1",
+    "192.168.1.1",
+    "10.0.0.50"
+])
+
+# 2. వివిధ గ్లోబల్ థ్రెట్ ఇంటెలిజెన్స్ ఫీడ్స్ నుండి వచ్చిన మాల్వేర్ IP సెట్స్
+FEED_ALPHA_MALWARE = {"185.220.101.5", "45.154.255.88", "198.51.100.12", "192.168.1.1"} # 192.168.1.1 Whitelist Conflict!
+FEED_BETA_BOTNET   = {"45.154.255.88", "103.203.57.18", "185.190.140.22", "198.51.100.12"}
+
+# 3. సర్వర్ లోకల్ నెట్‌వర్క్ లాగ్‌లలో గత 1 గంటలో వచ్చిన ఇన్‌కమింగ్ కనెక్షన్స్
+INCOMING_TRAFFIC_LOGS = [
+    "103.203.57.18", "127.0.0.1", "45.154.255.88", "10.0.0.50",
+    "185.220.101.5", "103.203.57.18", "10.0.0.99"
+]
+
+def run_firewall_threat_audit():
+    """నెట్‌వర్క్ ట్రాఫిక్‌ను పరిశీలించి, మాల్వేర్ IP లను ఫైర్‌వాల్‌లో నిరోధిస్తుంది."""
+    # డూప్లికేట్స్ తొలగించి విశిష్టమైన ఇన్‌కమింగ్ IP సెట్‌గా మార్చడం
+    active_incoming_ips = set(INCOMING_TRAFFIC_LOGS)
+
+    # రెండు థ్రెట్ ఫీడ్స్ యొక్క యూనియన్ (|) ద్వారా సమగ్ర బ్లాక్‌లిస్ట్
+    raw_threat_feed = FEED_ALPHA_MALWARE | FEED_BETA_BOTNET
+
+    # వైట్‌లిస్ట్ లో ఉన్న ఐపీలను మినహాయించడం (Difference -)
+    enforced_blacklist = raw_threat_feed - TRUSTED_WHITELIST
+
+    # రెండు థ్రెట్ ఫీడ్స్ లోనూ ఉమ్మడిగా నిర్ధారించబడిన హై-రిస్క్ IP లు (Intersection &)
+    high_confidence_threats = FEED_ALPHA_MALWARE & FEED_BETA_BOTNET
+
+    # క్రియాశీల ట్రాఫిక్‌లో చొరబడిన ప్రమాదకర IP లు (Intersection &)
+    detected_intrusions = active_incoming_ips & enforced_blacklist
+
+    # సురక్షితమైన క్లీన్ ట్రాఫిక్ (Difference -)
+    clean_traffic = active_incoming_ips - enforced_blacklist
+
+    print("\\n" + "=" * 76)
+    print(f"{'🛡️ మన సైబర్‌సెక్యూరిటీ — ఫైర్‌వాల్ థ్రెట్ ఆడిట్ ఇంజిన్ 2026':^76}")
+    print("=" * 76)
+    print(f"మొత్తం ఇన్‌కమింగ్ కనెక్షన్స్   : {len(INCOMING_TRAFFIC_LOGS):<5} (విశిష్ట IPలు: {len(active_incoming_ips)})")
+    print(f"గ్లోబల్ బ్లాక్‌లిస్ట్ IPల సంఖ్య : {len(enforced_blacklist)}")
+    print(f"హై-కాన్ఫిడెన్స్ థ్రెట్ IPలు   : {len(high_confidence_threats)} (రెండు ఫీడ్లలోనూ గుర్తించబడినవి)")
+    print("-" * 76)
+
+    print(f"{'IP అడ్రస్':<20} {'ట్రాఫిక్ కేటగిరీ':<24} {'ఫైర్‌వాల్ చర్య':^16}")
+    print("-" * 76)
+
+    for ip in sorted(list(active_incoming_ips)):
+        if ip in TRUSTED_WHITELIST:
+            status = "విశ్వసనీయ వైట్‌లిస్ట్"
+            action = "🟢 ALLOW (BYPASS)"
+        elif ip in detected_intrusions:
+            status = "🚨 మాల్వేర్ దాడి గుర్తింపు!"
+            action = "🔴 DROP & BAN"
+        else:
+            status = "సాధారణ ఇంటర్నెట్ ట్రాఫిక్"
+            action = "✅ ALLOW"
+
+        print(f"{ip:<20} {status:<24} {action:^16}")
+
+    print("=" * 76)
+    print(f"నిరోధించబడిన హానికర చొరబాట్లు : {len(detected_intrusions)} IPలు తక్షణమే బ్లాక్ చేయబడ్డాయి!")
+    print(f"అనుమతించబడిన సురక్షిత IPలు  : {len(clean_traffic)} IPలు")
+    print("=" * 76)
+    print(f"{'✅ ఫైర్‌వాల్ నిబంధనలు విజయవంతంగా అమలు చేయబడ్డాయి!':^76}")
+    print("=" * 76 + "\\n")
+
+run_firewall_threat_audit()
+</code></pre>
+    </div>
+
+    <!-- 5 COLLAPSIBLE QUIZZES -->
+    <h2 class="section-title"><span class="num">★</span> ఈ అధ్యాయంపై ప్రాక్టీస్ క్విజ్ (Knowledge Check)</h2>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">1. సెట్స్‌లో సభ్యత్వ శోధన (item in set) ఎందుకు O(1) వేగంతో జరుగుతుంది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> సెట్ అనేది అంతర్గతంగా హ్యాష్ టేబుల్‌ను ఉపయోగిస్తుంది. ఎలిమెంట్‌ను శోధించేటప్పుడు CPython దాని హాష్ కోడ్‌ను లెక్కించి నేరుగా ఆ మెమరీ బకెట్‌కు వెళ్తుంది. లిస్ట్‌ల వలె అన్ని అంశాలను వరుసగా వెతకాల్సిన అవసరం లేనందున ఇది O(1) కాన్స్టెంట్ సమయంలో పూర్తవుతుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">2. s = {} అని రాస్తే పైథాన్ దానిని సెట్‌గా ఎందుకు పరిగణించదు?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> పైథాన్ చరిత్రలో డిక్షనరీలు సెట్స్ కంటే ముందే ప్రవేశపెట్టబడ్డాయి. అందువల్ల ఖాళీ కర్లీ బ్రాకెట్లను <code>{}</code> డిక్షనరీకి రిజర్వ్ చేశారు. ఖాళీ సెట్ కావాలంటే తప్పనిసరిగా <code>s = set()</code> అని రాయాలి.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">3. remove() మరియు discard() మెథడ్స్ మధ్య తేడా ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> తొలగించాల్సిన ఎలిమెంట్ సెట్‌లో లేనప్పుడు <code>remove()</code> అనేది ప్రోగ్రామ్‌ను ఆపేస్తూ <strong>KeyError</strong> విసురుతుంది. కానీ <code>discard()</code> ఎటువంటి ఎర్రర్ ఇవ్వకుండా సైలెంట్‌గా కొనసాగుతుంది. అందువల్ల ప్రొడక్షన్‌లో <code>discard()</code> వాడటం శ్రేయస్కరం.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">4. frozenset అంటే ఏమిటి? దానిని ఎప్పుడు వాడాలి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>frozenset</code> అనేది సెట్ యొక్క ఇమ్మ్యుటబుల్ (మార్చలేని) వెర్షన్. సాధారణ సెట్స్ మ్యూటబుల్ కావడం వల్ల వాటిని డిక్షనరీ కీలుగా లేదా ఇతర సెట్లలో ఎలిమెంట్లుగా వాడలేము. కానీ <code>frozenset</code> హాషబుల్ కాబట్టి డిక్షనరీ కీలుగా లేదా సెట్‌ల సెట్‌గా నిశ్చింతగా వాడవచ్చు.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">5. సెట్ సిమెట్రిక్ డిఫరెన్స్ (A ^ B) దేనిని సూచిస్తుంది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>A ^ B</code> అనేది సెట్ A లేదా సెట్ B లో ఉంటూ, రెండింటిలోనూ ఉమ్మడిగా లేని (Non-overlapping) ఎలిమెంట్లను అందిస్తుంది. అంటే ఇది <code>(A | B) - (A &amp; B)</code> కి సమానం.
+      </div>
+    </details>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-python/13-python-dictionaries-deep-dive.html" style="text-decoration:none; color:var(--text); font-weight:600; display:inline-flex; align-items:center; gap:8px; background:var(--bg2); padding:10px 18px; border-radius:8px; border:1px solid var(--border);">
+        ← మునుపటి అధ్యాయం: 13. డిక్షనరీలు డీప్ డైవ్
+      </a>
+      <a href="/blog-python/15-python-collections-advanced-structures.html" style="text-decoration:none; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; background:#10b981; padding:10px 22px; border-radius:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        తర్వాతి అధ్యాయం: 15. అడ్వాన్స్‌డ్ కలెక్షన్స్ →
+      </a>
+    </div>
+
+    <!-- INTERACTIVE COMPILER CTA CARD -->
+    <div style="margin-top:40px; background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(56,189,248,0.1) 100%); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:24px; text-align:center;">
+      <h3 style="margin-top:0; color:var(--text); font-size:20px;">ఈ Cybersecurity Threat Firewall Engine ని లైవ్‌గా మన కంపైలర్‌లో రన్ చేయండి!</h3>
+      <p style="color:var(--text2); max-width:650px; margin:8px auto 20px; font-size:14px; line-height:1.6;">
+        ఎటువంటి లోకల్ సెటప్ లేకుండా, బ్రౌజర్‌లోనే Modern Python 3 కంపైలర్‌లో ఈ కోడ్‌ను ఎగ్జిక్యూట్ చేసి అవుట్‌పుట్ తనిఖీ చేయండి.
+      </p>
+      <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; padding:12px 28px; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Launch Python Interactive Compiler
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER / NAV SCRIPTS -->
+<script src="/site-nav.js"></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`# =====================================================================
+# చాప్టర్ 14 మినీ ప్రాజెక్ట్: Firewall Threat Engine (LIVE DEMO)
+# =====================================================================
+WHITELIST = {"127.0.0.1", "192.168.1.1"}
+THREAT_FEED = {"45.154.255.88", "185.220.101.5", "192.168.1.1"}
+
+ACTIVE_TRAFFIC = ["45.154.255.88", "127.0.0.1", "10.0.0.99"]
+
+blacklist = THREAT_FEED - WHITELIST
+intrusions = set(ACTIVE_TRAFFIC) & blacklist
+
+print("=" * 60)
+print(f"{'🛡️ సైబర్‌సెక్యూరిటీ ఫైర్‌వాల్ మానిటర్ (LIVE)':^60}")
+print("=" * 60)
+for ip in ACTIVE_TRAFFIC:
+    if ip in intrusions:
+        print(f"[{ip:<16}] 🚨 BLOCK! (గుర్తించబడిన మాల్వేర్ IP)")
+    else:
+        print(f"[{ip:<16}] ✅ ALLOW  (సురక్షిత ట్రాఫిక్)")
+print("=" * 60)
+print("\\n🎉 చాప్టర్ 14 ప్రాజెక్ట్ విజయవంతంగా రన్ అయ్యింది! 🚀")
+\`;
+
+    try {
+      localStorage.setItem('code_python', projectCode);
+      localStorage.setItem('code_python3', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-python-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-python', currentLesson.file);
+fs.writeFileSync(outputPath, chapter14Content, 'utf8');
+console.log('✅ Successfully generated deep high-value Python Chapter 14 in exact HTML style!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter14Content.length, 'characters');

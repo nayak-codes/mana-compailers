@@ -37,3 +37,4 @@ for (let i = 0; i < lines.length; i++) {
 
 fs.writeFileSync(targetFile, lines.join('\n'), 'utf8');
 console.log('Cleaned backticks in', targetFile);
+
