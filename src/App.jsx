@@ -3045,12 +3045,13 @@ function HomePage({ selectLanguage, theme, setTheme, isMobile }) {
         </div>
 
         {/* Main grid */}
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '64px 40px 40px' }}>
+        <div style={{ maxWidth: '1440px', margin: '0 auto', padding: isMobile ? '40px 16px 24px' : '56px 36px 36px' }}>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '36px',
-            marginBottom: '56px'
+            gridTemplateColumns: isMobile ? '1fr' : 'minmax(240px, 1.3fr) minmax(130px, 1fr) minmax(130px, 1fr) minmax(140px, 1.1fr) minmax(230px, 1.3fr)',
+            gap: isMobile ? '32px' : '24px',
+            marginBottom: '48px',
+            alignItems: 'start'
           }}>
 
             {/* Col 1 — Brand */}
