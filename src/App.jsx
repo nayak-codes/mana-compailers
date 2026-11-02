@@ -3025,7 +3025,7 @@ function HomePage({ selectLanguage, theme, setTheme, isMobile }) {
           padding: '14px 40px',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px'
         }}>
-          
+          <span style={{ fontSize: '12px', color: '#cbd5e1', fontWeight: '600', letterSpacing: '1.5px', textTransform: 'uppercase' }}>Built by</span>
           <a href="https://balanju-solutions.vercel.app/" target="_blank" rel="noopener noreferrer"
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',

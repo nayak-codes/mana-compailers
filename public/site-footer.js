@@ -4,7 +4,7 @@
   var FOOTER_HTML =
     '<div class="footer-accent"></div>' +
     '<div class="footer-banner">' +
-      
+      '<span class="banner-title">Built by</span>' +
       '<a href="https://balanju-solutions.vercel.app/" target="_blank" rel="noopener noreferrer" class="banner-badge">' +
         '<img src="/balanju-logo.jpg" alt="Balanju Solutions" style="height: 20px; width: 20px; object-fit: contain; border-radius: 4px;" />' +
         '<span class="badge-text">Balanju Solutions</span>' +
