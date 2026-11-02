@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Operators, Expressions &amp; Type Casting తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా ఆపరేటర్లు (Arithmetic, Relational, Logical, Bitwise), ఆపరేటర్ ప్రిసిడెన్స్, షార్ట్-సర్క్యూట్ మూల్యాంకనం, ఇంప్లిసిట్ వైడనింగ్ vs ఎక్స్‌ప్లిసిట్ నారోయింగ్ టైప్ కాస్టింగ్ తెలుగులో సమగ్రంగా నేర్చుకోండి." />
+  <meta name="keywords" content="java operators telugu, java type casting telugu, widening narrowing casting java telugu, short circuit logic java telugu, java bitwise operators telugu, arithmetic relational operators java telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/05-java-operators-expressions-and-type-casting.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-java light-theme">
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+    <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Java Masterclass</div>
+
+    <div class="accordion">
+      <!-- Part 01: Basics & JVM -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 01</span>
+            <span class="phase-title">Basics & JVM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-java/01-java-introduction-features-and-jvm-architecture.html">1. Intro & JVM Architecture</a>
+        <a href="/blog-java/02-java-installation-ide-and-first-program.html">2. Setup & First Program</a>
+        <a href="/blog-java/03-java-syntax-class-structure-and-main-method.html">3. Syntax & Main Method</a>
+        <a href="/blog-java/04-java-variables-primitive-data-types-and-memory.html">4. Variables & Data Types</a>
+        <a href="/blog-java/05-java-operators-expressions-and-type-casting.html" class="active">5. Operators & Type Casting</a>
+      </div>
+
+      <!-- Part 02: Control Flow & Strings -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 02</span>
+            <span class="phase-title">Control Flow & Strings</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/06-java-conditional-statements-if-else.html">6. if, else-if & Ternary</a>
+        <a href="/blog-java/07-java-switch-statements-and-switch-expressions.html">7. switch Statements & Expressions</a>
+        <a href="/blog-java/08-java-loops-while-for-and-enhanced-foreach.html">8. Loops: while, for, foreach</a>
+        <a href="/blog-java/09-java-strings-memory-pool-and-immutability.html">9. Strings & Memory Pool</a>
+        <a href="/blog-java/10-java-stringbuilder-stringbuffer-and-methods.html">10. StringBuilder & StringBuffer</a>
+      </div>
+
+      <!-- Part 03: Arrays, Methods & OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 03</span>
+            <span class="phase-title">Arrays, Methods & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/11-java-arrays-multidimensional-and-algorithms.html">11. Arrays & Algorithms</a>
+        <a href="/blog-java/12-java-methods-call-stack-and-pass-by-value.html">12. Methods & Call Stack</a>
+        <a href="/blog-java/13-java-method-overloading-and-varargs.html">13. Method Overloading & Varargs</a>
+        <a href="/blog-java/14-java-oop-classes-objects-and-constructors.html">14. Classes, Objects & Heap</a>
+        <a href="/blog-java/15-java-constructors-this-keyword-and-chaining.html">15. Constructors & this Keyword</a>
+      </div>
+
+      <!-- Part 04: Core OOP & Exceptions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 04</span>
+            <span class="phase-title">Core OOP & Exceptions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/16-java-encapsulation-access-modifiers-and-records.html">16. Encapsulation & Records</a>
+        <a href="/blog-java/17-java-inheritance-super-keyword-and-object-class.html">17. Inheritance & super Keyword</a>
+        <a href="/blog-java/18-java-polymorphism-method-overriding-dynamic-binding.html">18. Polymorphism & Overriding</a>
+        <a href="/blog-java/19-java-abstract-classes-and-interfaces.html">19. Abstract Classes & Interfaces</a>
+        <a href="/blog-java/20-java-exception-handling-and-custom-exceptions.html">20. Exceptions & Custom Errors</a>
+      </div>
+
+      <!-- Part 05: Collections & Capstone -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 05</span>
+            <span class="phase-title">Collections & Capstone</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/21-java-collections-list-arraylist-linkedlist.html">21. List: ArrayList & LinkedList</a>
+        <a href="/blog-java/22-java-collections-set-and-map-deep-dive.html">22. Set & Map Deep Dive</a>
+        <a href="/blog-java/23-java-generics-and-type-safety.html">23. Generics & Type Safety</a>
+        <a href="/blog-java/24-java-lambdas-and-stream-api.html">24. Lambdas & Stream API</a>
+        <a href="/blog-java/25-java-capstone-project.html">25. Capstone: Banking Engine</a>
+      </div>
+
+    </div>
+
+    <div class="sidebar-heading">INTERACTIVE IDE</div>
+    <a href="/online-java-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Java Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">OTHER COURSES</div>
+    <a href="/blog-python.html">Python Course (25 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (25 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 05: Operators &amp; Type Casting</span>
+    </div>
+
+    <h1 class="page-title">05. ఆపరేటర్లు, ఎక్స్‌ప్రెషన్స్ &amp; టైప్ కాస్టింగ్ (Operators, Expressions &amp; Type Casting)</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java (Java 21+ LTS)</span>
+      <span class="badge">🟢 Lesson 05 of 25</span>
+      <span class="badge">📂 Part 01: Basics &amp; JVM (Page 5 of 5)</span>
+      <span class="badge">⏱️ 24 min read</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>Math Tools &amp; Currency Exchange Analogy · Arithmetic &amp; Modulo Quirks · Pre vs Post Increment (++i vs i++) · Short-Circuit Logic (&amp;&amp;, ||) · Bitwise Operations · Widening vs Narrowing Casting · Overflow Pitfalls · 5 Interactive Quizzes</span>
+    </div>
+
+    <!-- Intro Box with Math Calculator & Currency Exchange Analogy -->
+    <div class="intro-box">
+      <p style="font-size: 16px; line-height: 1.8; margin-bottom: 12px;">
+        డేటాను కేవలం వేరియబుల్స్‌లో నిల్వ చేయడం మాత్రమే సరిపోదు; ఆ డేటా ఆధారంగా లెక్కలు కట్టడం, షరతులను పరీక్షించడం, మరియు వివిధ రకాల డేటాను ఒకదానితో ఒకటి అనుసంధానించడం నిజమైన సాఫ్ట్‌వేర్ పవర్‌ను వెలికితీస్తుంది. జావాలో ఆపరేటర్లు మరియు టైప్ కాస్టింగ్ అనేవి సాఫ్ట్‌వేర్ ఇంజిన్ యొక్క శక్తివంతమైన గేర్లు లాంటివి.
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin-bottom: 12px;">
+        <strong>గణిత పనిముట్లు &amp; కరెన్సీ ఎక్స్ఛేంజ్ కౌంటర్ అనాలజీ (The Math Tools &amp; Currency Exchange Analogy):</strong>
+        <br>
+        1. <strong>Operators (ప్రాసెసింగ్ పనిముట్లు - Processing Tools):</strong> ముడి ఇనుమును యంత్రాలుగా మార్చే సుత్తి, రంపం మరియు స్క్రూడ్రైవర్ లాంటివే జావా ఆపరేటర్లు (+, -, *, /, %, &amp;&amp;, ||, !). ఇవి వేరియబుల్స్ మధ్య విలువలను సృష్టించడానికి ఉపయోగపడే ప్రధాన పరికరాలు.
+        <br>
+        2. <strong>Widening Type Casting (చిన్న గ్లాసులోని నీటిని పెద్ద బకెట్‌లో పోయడం - Safe &amp; Automatic):</strong> ఒక చిన్న <code>int</code> వేరియబుల్‌ను పెద్ద <code>double</code> పాత్రలోకి మార్చడం చాలా సులభం. నీరు ఒక్క చుక్క కూడా కింద పడదు, ఎందుకంటే బకెట్ కెపాసిటీ చాలా పెద్దది. దీనిని కంపైలర్ స్వయంచాలకంగా (Implicitly) చేస్తుంది.
+        <br>
+        3. <strong>Narrowing Type Casting (పెద్ద బకెట్‌లోని నీటిని చిన్న గ్లాసులోకి కుదించడం - Manual &amp; Risky):</strong> ఒక 8-బైట్ల <code>double</code> సంఖ్యను బలవంతంగా 4-బైట్ల <code>int</code> గ్లాసులోకి కుదిస్తే దశాంశాలు నేలపాలైపోతాయి (Data Truncation). అందుకే డెవలపర్ రిస్క్ తీసుకుని చేతులారా <code>(int) 99.85</code> అని రాస్తేనే జావా అనుమతిస్తుంది.
+        <br>
+        4. <strong>Short-Circuit Logic (ఫాస్ట్ సేఫ్టీ సర్క్యూట్ బ్రేకర్):</strong> ఇంట్లో మెయిన్ స్విచ్ ఆఫ్ అయితే మిగిలిన స్విచ్‌లను చూడనవసరం లేనట్లే, <code>&amp;&amp;</code> ఆపరేటర్‌లో మొదటి కండిషన్ ఫెయిల్ అయితే రెండో కండిషన్‌ను అసలు లెక్కించకుండా సమయాన్ని ఆదా చేస్తుంది.
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin: 0;">
+        ఈ ఐదవ అధ్యాయంతో మనం <strong>Part 01: Basics &amp; JVM</strong> ను దిగ్విజయంగా పూర్తి చేస్తాము! ఈ పాఠంలో ఆపరేటర్ల ప్రిసిడెన్స్, ఇంక్రిమెంట్ సూక్ష్మాలు, మరియు టైప్ కాస్టింగ్ యొక్క లోతైన ఎంటర్‌ప్రైజ్ పద్ధతులను నేర్చుకుందాం.
+      </p>
+    </div>
+
+    <!-- TABLE OF CONTENTS (ఈ page లో ఏముంది) -->
+    <div class="toc-card">
+      <div class="toc-title">📋 ఈ Page లో ఏముంది? (Contents)</div>
+      <div class="toc-grid">
+        <div class="toc-col">
+          <h4><a href="#sec-1" style="color:#10b981; text-decoration:none;">విభాగం A: ఆపరేటర్లు &amp; ప్రాధాన్యత</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-1">1. ఆపరేటర్ల వర్గీకరణ &amp; Precedence టేబుల్</a></li>
+            <li><a href="#sec-2">2. అంకగణిత ఆపరేటర్లు &amp; Modulo (%) విశిష్టత</a></li>
+            <li><a href="#sec-3">3. ఇంక్రిమెంట్ &amp; డిక్రిమెంట్: pre (++i) vs post (i++)</a></li>
+            <li><a href="#sec-4">4. అసైన్‌మెంట్ &amp; కాంపౌండ్ ఆపరేటర్లు (+=, -=, *=)</a></li>
+          </ul>
+        </div>
+        <div class="toc-col">
+          <h4><a href="#sec-5" style="color:#38bdf8; text-decoration:none;">విభాగం B: లాజిక్, బిట్‌వైజ్ &amp; కాస్టింగ్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-5">5. రిలేషనల్ &amp; కంపారిజన్ ఆపరేటర్లు</a></li>
+            <li><a href="#sec-6">6. లాజికల్ ఆపరేటర్లు &amp; Short-Circuit మూల్యాంకనం</a></li>
+            <li><a href="#sec-7">7. బిట్‌వైజ్ ఆపరేటర్లు (&amp;, |, ^, ~, &lt;&lt;, &gt;&gt;)</a></li>
+            <li><a href="#sec-8">8. టైప్ కాస్టింగ్: Implicit Widening vs Explicit Narrowing</a></li>
+          </ul>
+        </div>
+        <div class="toc-col">
+          <h4><a href="#sec-9" style="color:#f59e0b; text-decoration:none;">విభాగం C: డెమోలు, ప్రాజెక్ట్ &amp; క్విజ్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-9">9. కోడ్ డెమో 1: కాంప్లెక్స్ ఎక్స్‌ప్రెషన్స్ ఎవాల్యుయేటర్</a></li>
+            <li><a href="#sec-10">10. కోడ్ డెమో 2: టైప్ కాస్టింగ్ &amp; ఓవర్‌ఫ్లో డిటెక్టర్</a></li>
+            <li><a href="#sec-11">11. కోడ్ డెమో 3: E-Commerce Discount &amp; Tax Engine (Capstone)</a></li>
+            <li><a href="#sec-12">12. టాప్ 6 ఆపరేటర్ మిస్టేక్స్ &amp; 5 క్విజ్‌లు</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1 -->
+    <h2 class="section-title" id="sec-1"><span class="num">1</span> ఆపరేటర్ల వర్గీకరణ &amp; Precedence టేబుల్</h2>
+    <div class="section-body">
+      <p>
+        ఒక ఎక్స్‌ప్రెషన్‌లో బహుళ ఆపరేటర్లు ఉన్నప్పుడు ఏ ఆపరేషన్ ముందు జరగాలో నిర్ణయించే సూత్రాలనే <strong>Operator Precedence &amp; Associativity</strong> అంటారు. గణితంలో BODMAS సూత్రం లాంటిదే ఇది:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>ప్రాధాన్యత (Precedence)</th>
+            <th>ఆపరేటర్ రకం</th>
+            <th>చిహ్నాలు (Symbols)</th>
+            <th>దిశ (Associativity)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1 (అత్యున్నత)</strong></td>
+            <td>Postfix &amp; బ్రాకెట్స్</td>
+            <td><code>() [] . expr++ expr--</code></td>
+            <td>ఎడమ నుండి కుడికి (Left to Right)</td>
+          </tr>
+          <tr>
+            <td><strong>2</strong></td>
+            <td>Unary (ఏకపక్ష)</td>
+            <td><code>++expr --expr +expr -expr ! ~</code></td>
+            <td>కుడి నుండి ఎడమకు (Right to Left)</td>
+          </tr>
+          <tr>
+            <td><strong>3</strong></td>
+            <td>గుణకారం &amp; భాగహారం</td>
+            <td><code>* / %</code></td>
+            <td>ఎడమ నుండి కుడికి</td>
+          </tr>
+          <tr>
+            <td><strong>4</strong></td>
+            <td>కూడిక &amp; తీసివేత</td>
+            <td><code>+ -</code></td>
+            <td>ఎడమ నుండి కుడికి</td>
+          </tr>
+          <tr>
+            <td><strong>5</strong></td>
+            <td>షిఫ్ట్ ఆపరేటర్లు</td>
+            <td><code>&lt;&lt; &gt;&gt; &gt;&gt;&gt;</code></td>
+            <td>ఎడమ నుండి కుడికి</td>
+          </tr>
+          <tr>
+            <td><strong>6</strong></td>
+            <td>రిలేషనల్ &amp; టైప్ చెక్</td>
+            <td><code>&lt; &gt; &lt;= &gt;= instanceof</code></td>
+            <td>ఎడమ నుండి కుడికి</td>
+          </tr>
+          <tr>
+            <td><strong>7</strong></td>
+            <td>ఈక్వాలిటీ (సమానత్వం)</td>
+            <td><code>== !=</code></td>
+            <td>ఎడమ నుండి కుడికి</td>
+          </tr>
+          <tr>
+            <td><strong>8</strong></td>
+            <td>లాజికల్ షార్ట్-సర్క్యూట్</td>
+            <td><code>&amp;&amp; ||</code></td>
+            <td>ఎడమ నుండి కుడికి</td>
+          </tr>
+          <tr>
+            <td><strong>9 (కనిష్ట)</strong></td>
+            <td>అసైన్‌మెంట్</td>
+            <td><code>= += -= *= /= %= &amp;= |=</code></td>
+            <td>కుడి నుండి ఎడమకు (Right to Left)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 2 -->
+    <h2 class="section-title" id="sec-2"><span class="num">2</span> అంకగణిత ఆపరేటర్లు &amp; Modulo (%) విశిష్టత</h2>
+    <div class="section-body">
+      <p>
+        జావాలో 5 ప్రాథమిక అంకగణిత ఆపరేటర్లు ఉన్నాయి: <code>+</code> (కూడిక), <code>-</code> (తీసివేత), <code>*</code> (గుణకారం), <code>/</code> (భాగహారం), మరియు <code>%</code> (శేషం - Modulo). వీటితో పాటు స్ట్రింగ్ కాన్‌క్యాటనేషన్ (String Concatenation) లో <code>+</code> ఆపరేటర్ ప్రవర్తన అత్యంత ఆసక్తికరంగా ఉంటుంది:
+      </p>
+
+      <div class="concept-card">
+        <h4>⚡ String Concatenation vs Arithmetic Addition:</h4>
+        <p>
+          జావాలో <code>+</code> ఆపరేటర్ ముందు లేదా తర్వాత ఏదైనా ఒక స్ట్రింగ్ ఉంటే, మొత్తం ఆపరేషన్ కాన్‌క్యాటనేషన్ (పదాలను కలపడం) గా మారుతుంది:<br>
+          • <code>System.out.println("Result: " + 10 + 20);</code> &rarr; ప్రింట్ అయ్యేది: <strong>Result: 1020</strong> (ఎందుకంటే ఎడమ నుండి కుడికి లెక్కించినప్పుడు మొదట "Result: 10" స్ట్రింగ్ అవుతుంది, తర్వాత 20 కలుస్తుంది).<br>
+          • <code>System.out.println("Result: " + (10 + 20));</code> &rarr; ప్రింట్ అయ్యేది: <strong>Result: 30</strong> (బ్రాకెట్లకు ప్రాధాన్యత ఉండటం వల్ల మొదట కూడిక జరుగుతుంది).<br>
+          • <code>System.out.println(10 + 20 + " is the sum");</code> &rarr; ప్రింట్ అయ్యేది: <strong>30 is the sum</strong> (ముందుగా రెండు పూర్ణాంకాలు కూడబడి తర్వాత స్ట్రింగ్‌కు కలుస్తాయి).
+        </p>
+      </div>
+
+      <div class="concept-card">
+        <h4>⚡ Integer Division vs Modulo Trap:</h4>
+        <p>
+          1. <strong>ఇంటిజర్ డివిజన్:</strong> రెండు పూర్ణాంకాలను భాగించినప్పుడు ఫలితం కూడా పూర్ణాంకమే వస్తుంది. దశాంశాలు పూర్తిగా రద్దు చేయబడతాయి (Truncation):<br>
+          &nbsp;&nbsp;• <code>int res = 10 / 4;</code> &rarr; ఫలితం <strong>2</strong> వస్తుంది (2.5 కాదు!).<br>
+          &nbsp;&nbsp;• దశాంశాలతో కావాలంటే కనీసం ఒక ఆపరాండ్ డబుల్ అయి ఉండాలి: <code>double res = 10.0 / 4;</code> &rarr; ఫలితం <strong>2.5</strong>.<br><br>
+          2. <strong>మోడ్యులో (%) శేషం:</strong> భాగించగా మిగిలిన శేషాన్ని ఇస్తుంది. ఒక సంఖ్య సరిసంఖ్యో (Even) లేదా బేసిసంఖ్యో (Odd) కనుగొనడానికి మరియు సైక్లిక్ ఇండెక్సింగ్ కోసం మోడ్యులో అత్యంత ప్రసిద్ధి:<br>
+          &nbsp;&nbsp;• <code>10 % 3 = 1</code><br>
+          &nbsp;&nbsp;• <code>14 % 2 = 0</code> (Even Number).<br>
+          &nbsp;&nbsp;• నెగెటివ్ సంఖ్యల మోడ్యులో: <code>-10 % 3 = -1</code> (జావాలో శేషం గుర్తు ఎల్లప్పుడూ మొదటి సంఖ్య యొక్క గుర్తునే అనుసరిస్తుంది).
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <h2 class="section-title" id="sec-3"><span class="num">3</span> ఇంక్రిమెంట్ &amp; డిక్రిమెంట్: pre (++i) vs post (i++)</h2>
+    <div class="section-body">
+      <p>
+        జావా ఇంటర్వ్యూలలో తరచుగా అడిగే ట్రిక్కీ కాన్సెప్ట్ — ప్రీ-ఇంక్రిమెంట్ మరియు పోస్ట్-ఇంక్రిమెంట్ మధ్య గల తేడా:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>రకం</th>
+            <th>సింటాక్స్</th>
+            <th>పనితీరు సూత్రం</th>
+            <th>ఎగ్జాంపుల్</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Pre-Increment (ముందు పెంచడం)</strong></td>
+            <td><code>++i</code></td>
+            <td><strong>"First Increment, Then Use"</strong> — ముందుగా వేరియబుల్ విలువ 1 పెరుగుతుంది, ఆ తర్వాతే ఆ విలువ ప్రస్తుత ఎక్స్‌ప్రెషన్‌లో వాడబడుతుంది.</td>
+            <td><code>int i = 5; int a = ++i; // a = 6, i = 6</code></td>
+          </tr>
+          <tr>
+            <td><strong>Post-Increment (తర్వాత పెంచడం)</strong></td>
+            <td><code>i++</code></td>
+            <td><strong>"First Use, Then Increment"</strong> — ముందుగా ఉన్న పాత విలువ ప్రస్తుత ఎక్స్‌ప్రెషన్‌లో వాడబడుతుంది, ఆ స్టేట్‌మెంట్ ముగిసిన తర్వాత మాత్రమే విలువ 1 పెరుగుతుంది.</td>
+            <td><code>int i = 5; int b = i++; // b = 5, i = 6</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 4 -->
+    <h2 class="section-title" id="sec-4"><span class="num">4</span> అసైన్‌మెంట్ &amp; కాంపౌండ్ ఆపరేటర్లు (+=, -=, *=)</h2>
+    <div class="section-body">
+      <p>
+        ఒక వేరియబుల్‌లోని విలువను నవీకరించడానికి కాంపౌండ్ అసైన్‌మెంట్ ఆపరేటర్లు కోడ్‌ను ఎంతో కాంపాక్ట్‌గా మారుస్తాయి. అంతేకాకుండా వీటిలో ఒక రహస్యమైన <strong>అంతర్గత టైప్ కాస్టింగ్</strong> దాగి ఉంటుంది:
+      </p>
+
+      <div class="concept-card">
+        <h4>💡 The Secret Casting of Compound Operators:</h4>
+        <p>
+          సాధారణంగా <code>byte b = 10; b = b + 1;</code> అని రాస్తే జావా కంపైల్-టైమ్ ఎర్రర్ ఇస్తుంది (ఎందుకంటే <code>b + 1</code> అనేది ఆటోమేటిక్‌గా <code>int</code> గా మారుతుంది).<br>
+          కానీ <code>b += 1;</code> అని రాస్తే ఎర్రర్ రాదు! ఎందుకంటే కాంపౌండ్ ఆపరేటర్ అంతర్గతంగా <code>b = (byte)(b + 1);</code> అని ఆటోమేటిక్ కాస్ట్ చేస్తుంది.
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 5 -->
+    <h2 class="section-title" id="sec-5"><span class="num">5</span> రిలేషనల్ ఆపరేటర్లు &amp; టెర్నరీ ఆపరేటర్ (? :)</h2>
+    <div class="section-body">
+      <p>
+        రెండు విలువల మధ్య సంబంధాన్ని పరీక్షించి ఎల్లప్పుడూ <code>true</code> లేదా <code>false</code> బూలియన్ విలువను అందించే ఆపరేటర్లు:
+      </p>
+      <ul style="line-height: 2; margin-left: 20px; color: var(--text);">
+        <li><code>==</code> (Equal to): రెండు ప్రిమిటివ్ విలువలు సమానమా అని చూస్తుంది. (హెచ్చరిక: ఆబ్జెక్టులు &amp; స్ట్రింగ్స్‌కి <code>.equals()</code> వాడాలి).</li>
+        <li><code>!=</code> (Not equal to): సమానం కాదా?</li>
+        <li><code>&gt;</code>, <code>&lt;</code> (Greater than, Less than): ఎక్కువ లేదా తక్కువ.</li>
+        <li><code>&gt;=</code>, <code>&lt;=</code> (Greater than or equal, Less than or equal).</li>
+      </ul>
+
+      <div class="concept-card">
+        <h4>🎯 The Ternary Operator (? :) — Inline Decision Making:</h4>
+        <p>
+          జావాలో మూడు ఆపరాండ్లు తీసుకునే ఏకైక ఆపరేటర్ <strong>Ternary Operator (షరతు ఆధారిత ఆపరేటర్)</strong>. ఇది 4 లైన్ల <code>if-else</code> కోడ్‌ను ఒకే లైన్‌లోకి కుదిస్తుంది:<br>
+          • <strong>సింటాక్స్:</strong> <code>variable = (condition) ? valueIfTrue : valueIfFalse;</code><br>
+          • <strong>ఉదాహరణ:</strong> <code>int max = (a &gt; b) ? a : b;</code><br>
+          • <strong>ప్రాక్టికల్ వినియోగం:</strong> యూజర్ స్టేటస్ నిర్ణయించడం: <code>String status = (userAge &gt;= 18) ? "MAJOR" : "MINOR";</code>. దీని వల్ల కోడ్ ఎంతో క్లీన్‌గా మరియు వేగవంతంగా మారుతుంది.
+        </p>
+      </div>
+
+      <div class="concept-card">
+        <h4>🧮 Java Math క్లాస్ యుటిలిటీస్:</h4>
+        <p>
+          క్లిష్టమైన గణిత శాస్త్ర లెక్కలను సులభతరం చేయడానికి జావా <code>java.lang.Math</code> క్లాస్‌ను అందిస్తుంది. దీనిలోని అన్ని మెథడ్స్ స్టాటిక్:<br>
+          • <code>Math.max(a, b)</code> / <code>Math.min(a, b)</code>: గరిష్ట మరియు కనిష్ట విలువలు.<br>
+          • <code>Math.sqrt(25)</code>: వర్గమూలం (Square root &rarr; 5.0).<br>
+          • <code>Math.pow(2, 8)</code>: ఘాతాంకం (Power &rarr; 256.0).<br>
+          • <code>Math.abs(-50)</code>: సంపూర్ణ ధన విలువ (Absolute &rarr; 50).<br>
+          • <code>Math.round(45.75)</code>: సమీప పూర్ణాంకానికి రౌండ్ చేయడం (46).
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 6 -->
+    <h2 class="section-title" id="sec-6"><span class="num">6</span> లాజికల్ ఆపరేటర్లు &amp; Short-Circuit మూల్యాంకనం</h2>
+    <div class="section-body">
+      <p>
+        బహుళ షరతులను కలపడానికి వాడే తార్కిక ఆపరేటర్లు:
+      </p>
+
+      <div class="concept-card">
+        <h4>⚡ Short-Circuit Evaluation Mechanics:</h4>
+        <p>
+          1. <strong>Logical AND (<code>&amp;&amp;</code>):</strong> రెండు షరతులూ true అయితేనే true. ఒకవేళ మొదటి శరతు <code>false</code> అయితే, రెండవ శరతును JVM అసలు ముట్టుకోదు! (ఫలితం ఎలాగూ false కాబట్టి). దీని వల్ల <code>NullPointerException</code> రాకుండా నిరోధించవచ్చు: <code>if (user != null &amp;&amp; user.isActive())</code>.<br><br>
+          2. <strong>Logical OR (<code>||</code>):</strong> ఏదో ఒక శరతు true అయినా true. ఒకవేళ మొదటి శరతు <code>true</code> అయితే, రెండవ శరతును లెక్కించకుండానే ఫలితం true గా నిర్ణయిస్తుంది.<br><br>
+          3. <strong>Logical NOT (<code>!</code>):</strong> ఫలితాన్ని తిరగవేస్తుంది (true ని false గా, false ని true గా).
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 7 -->
+    <h2 class="section-title" id="sec-7"><span class="num">7</span> బిట్‌వైజ్ ఆపరేటర్లు (&amp;, |, ^, ~, &lt;&lt;, &gt;&gt;)</h2>
+    <div class="section-body">
+      <p>
+        హార్డ్‌వేర్ లెవల్ డేటా, నెట్‌వర్క్ ప్యాకెట్లు, మరియు ఎన్‌క్రిప్షన్ ప్రోగ్రామింగ్‌లో పూర్ణాంకాల బైనరీ బిట్స్ (0s &amp; 1s) పై నేరుగా పనిచేసే ఆపరేటర్లు:
+      </p>
+      <ul style="line-height: 2; margin-left: 20px; color: var(--text);">
+        <li><code>&amp;</code> (Bitwise AND): రెండు బిట్లు 1 అయితేనే 1.</li>
+        <li><code>|</code> (Bitwise OR): ఏదో ఒక బిట్ 1 అయినా 1.</li>
+        <li><code>^</code> (Bitwise XOR): రెండు బిట్లు వేర్వేరు అయితేనే 1 (1^0=1, 1^1=0).</li>
+        <li><code>~</code> (Bitwise Complement): బిట్లను తిరగవేస్తుంది (1 ని 0, 0 ని 1 గా).</li>
+        <li><code>&lt;&lt;</code> (Left Shift): బిట్లను ఎడమవైపుకి జరుపుతుంది (సంఖ్యను 2 యొక్క ఘాతాలతో గుణించినట్లే: <code>x &lt;&lt; 1</code> అంటే <code>x * 2</code>).</li>
+        <li><code>&gt;&gt;</code> (Signed Right Shift): బిట్లను కుడివైపుకి జరుపుతుంది (సంఖ్యను 2 తో భాగించినట్లే: <code>x &gt;&gt; 1</code> అంటే <code>x / 2</code>).</li>
+      </ul>
+    </div>
+
+    <!-- Section 8 -->
+    <h2 class="section-title" id="sec-8"><span class="num">8</span> టైప్ కాస్టింగ్: Implicit Widening vs Explicit Narrowing</h2>
+    <div class="section-body">
+      <p>
+        ఒక డేటా టైప్‌లోని విలువను మరొక డేటా టైప్‌లోకి మార్చడాన్ని <strong>Type Casting</strong> అంటారు. జావాలో రెండు ప్రాథమిక మార్గాలు ఉన్నాయి:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>రకం</th>
+            <th>మార్పిడి క్రమం</th>
+            <th>ఎలా జరుగుతుంది?</th>
+            <th>డేటా నష్టం?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Widening Casting (Implicit / ఆటోమేటిక్)</strong></td>
+            <td><code>byte &rarr; short &rarr; char &rarr; int &rarr; long &rarr; float &rarr; double</code></td>
+            <td>జావా కంపైలర్ స్వయంచాలకంగా మార్పిడి చేస్తుంది.</td>
+            <td><strong>0% నష్టం</strong> (సురక్షితమైనది). చిన్న పాత్రలోని నీరు పెద్ద పాత్రలోకి సులభంగా సర్దుకుంటుంది.</td>
+          </tr>
+          <tr>
+            <td><strong>Narrowing Casting (Explicit / మ్యాన్యువల్)</strong></td>
+            <td><code>double &rarr; float &rarr; long &rarr; int &rarr; char &rarr; short &rarr; byte</code></td>
+            <td>డెవలపర్ స్వయంగా బ్రాకెట్లలో టైప్ పేర్కొనాలి: <code>(int) myDouble</code></td>
+            <td><strong>అధిక నష్టం</strong> (దశాంశాలు కోల్పోవడం లేదా విలువ సైజును మించిపోతే ఓవర్‌ఫ్లో జరగడం).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="concept-card">
+        <h4>🔬 Type Promotion in Expressions (ఎక్స్‌ప్రెషన్లలో ఆటోమేటిక్ ప్రమోషన్):</h4>
+        <p>
+          జావాలో అంకగణిత గణనలు జరిగేటప్పుడు కంపైలర్ కొన్ని అంతర్గత ప్రమోషన్ నిబంధనలను పాటిస్తుంది:<br>
+          1. <code>byte</code>, <code>short</code>, మరియు <code>char</code> వేరియబుల్స్ ఏదైనా గణనలో పాల్గొన్నప్పుడు అవి ఆటోమేటిక్‌గా <code>int</code> గా ప్రమోట్ అవుతాయి. ఉదాహరణకు: <code>byte a = 10, b = 20; byte c = a + b;</code> ❌ (ఎర్రర్ వస్తుంది, ఎందుకంటే a + b ఫలితం int. దీనిని <code>byte c = (byte)(a + b);</code> అని రాయాలి).<br>
+          2. ఒక ఎక్స్‌ప్రెషన్‌లో ఏదైనా ఒక ఆపరాండ్ <code>long</code> అయితే మొత్తం ఎక్స్‌ప్రెషన్ <code>long</code> గా మారుతుంది.<br>
+          3. ఏదైనా ఒక ఆపరాండ్ <code>float</code> అయితే మొత్తం ఫలితం <code>float</code> గా, ఏదైనా ఒకటి <code>double</code> అయితే మొత్తం ఫలితం <code>double</code> గా ప్రమోట్ చేయబడుతుంది.
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 9 -->
+    <h2 class="section-title" id="sec-9"><span class="num">9</span> కోడ్ డెమో 1: కాంప్లెక్స్ ఎక్స్‌ప్రెషన్స్ &amp; ప్రిసిడెన్స్ ఎవాల్యుయేటర్</h2>
+    <div class="section-body">
+      <p>
+        ఆపరేటర్ ప్రిసిడెన్స్ మరియు పోస్ట్/ప్రీ ఇంక్రిమెంట్ల ఆధారంగా కాంప్లెక్స్ ఎక్స్‌ప్రెషన్స్ ఎలా రన్ అవుతాయో స్టెప్-బై-స్టెప్ విశ్లేషించే ప్రోగ్రామ్:
+      </p>
+
+      <!-- CODE BLOCK 1 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">ExpressionEvaluator.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class ExpressionEvaluator {
+    public static void main(String[] args) {
+        System.out.println("==================================================");
+        System.out.println("     COMPLEX EXPRESSION &amp; PRECEDENCE EVALUATOR   ");
+        System.out.println("==================================================");
+
+        int a = 10;
+        int b = 5;
+        int c = 2;
+
+        // Expression without parenthesis
+        int result1 = a + b * c; // Multiplied first: 10 + 10 = 20
+        // Expression with parenthesis overriding precedence
+        int result2 = (a + b) * c; // Added first: 15 * 2 = 30
+
+        System.out.printf("  10 + 5 * 2   = %d (Multiplication precedence)%n", result1);
+        System.out.printf("  (10 + 5) * 2 = %d (Parentheses override)%n", result2);
+        System.out.println("--------------------------------------------------");
+
+        // Increment quirks demonstration
+        int x = 5;
+        int y = x++ + ++x; // 5 + 7 = 12, x becomes 7
+        System.out.printf("  x = 5; x++ + ++x = %d (Final x = %d)%n", y, x);
+
+        // Integer division vs floating division
+        int intDiv = 10 / 4;
+        double floatDiv = 10.0 / 4;
+        System.out.printf("  10 / 4   (Integer)  = %d%n", intDiv);
+        System.out.printf("  10.0 / 4 (Floating) = %.1f%n", floatDiv);
+        System.out.println("==================================================");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 1 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (ExpressionEvaluator)</div>
+        <pre class="output-content">==================================================
+     COMPLEX EXPRESSION &amp; PRECEDENCE EVALUATOR   
+==================================================
+  10 + 5 * 2   = 20 (Multiplication precedence)
+  (10 + 5) * 2 = 30 (Parentheses override)
+--------------------------------------------------
+  x = 5; x++ + ++x = 12 (Final x = 7)
+  10 / 4   (Integer)  = 2
+  10.0 / 4 (Floating) = 2.5
+==================================================</pre>
+      </div>
+    </div>
+
+    <!-- Section 10 -->
+    <h2 class="section-title" id="sec-10"><span class="num">10</span> కోడ్ డెమో 2: సురక్షితమైన టైప్ కాస్టింగ్ &amp; ఓవర్‌ఫ్లో డిటెక్టర్</h2>
+    <div class="section-body">
+      <p>
+        వైడనింగ్ మరియు నారోయింగ్ కాస్టింగ్ ఫలితాలు మరియు ఒక వేరియబుల్ తన పరిమితిని దాటినప్పుడు వచ్చే ఓవర్‌ఫ్లోను గుర్తించే డయాగ్నోస్టిక్ ప్రోగ్రామ్:
+      </p>
+
+      <!-- CODE BLOCK 2 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">TypeCastingInspector.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class TypeCastingInspector {
+    public static void main(String[] args) {
+        System.out.println("--------------------------------------------------");
+        System.out.println("       TYPE CASTING &amp; OVERFLOW INSPECTION         ");
+        System.out.println("--------------------------------------------------");
+
+        // 1. Widening Casting (int to double) - 100% Safe
+        int smallNumber = 450;
+        double wideDouble = smallNumber;
+        System.out.println("Widening (int &rarr; double): " + wideDouble);
+
+        // 2. Narrowing Casting (double to int) - Truncates decimal part
+        double productPrice = 1299.85;
+        int truncatedPrice = (int) productPrice;
+        System.out.println("Narrowing (1299.85 &rarr; int): " + truncatedPrice + " (Lost .85)");
+
+        // 3. Overflow demonstration (byte range is -128 to 127)
+        int largeVal = 130;
+        byte overflowByte = (byte) largeVal; // Wraps around to negative!
+        System.out.println("Overflow (130 &rarr; byte)    : " + overflowByte + " (Wrap-around!)");
+
+        // 4. Bitwise Shift for ultra-fast multiplication and division
+        int baseVal = 8;
+        int multipliedByFour = baseVal &lt;&lt; 2; // 8 * (2^2) = 32
+        int dividedByTwo    = baseVal &gt;&gt; 1; // 8 / (2^1) = 4
+        System.out.printf("Bitwise Shift: 8 &lt;&lt; 2 = %d | 8 &gt;&gt; 1 = %d%n", multipliedByFour, dividedByTwo);
+        System.out.println("--------------------------------------------------");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 2 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (TypeCastingInspector)</div>
+        <pre class="output-content">--------------------------------------------------
+       TYPE CASTING &amp; OVERFLOW INSPECTION         
+--------------------------------------------------
+Widening (int &rarr; double): 450.0
+Narrowing (1299.85 &rarr; int): 1299 (Lost .85)
+Overflow (130 &rarr; byte)    : -126 (Wrap-around!)
+Bitwise Shift: 8 &lt;&lt; 2 = 32 | 8 &gt;&gt; 1 = 4
+--------------------------------------------------</pre>
+      </div>
+    </div>
+
+    <!-- Section 11 -->
+    <h2 class="section-title" id="sec-11"><span class="num">11</span> కోడ్ డెమో 3: E-Commerce Discount, Tax &amp; Currency Converter Engine (Capstone Mini Project)</h2>
+    <div class="section-body">
+      <p>
+        ఆధునిక ఇ-కామర్స్ పోర్టల్ కోసం ఆర్డర్ సారాంశం, కూపన్ డిస్కౌంట్లు, జీఎస్టీ పన్నులు మరియు కరెన్సీ మార్పిడిని సమర్థవంతంగా గణించే <strong>E-Commerce Pricing &amp; Billing Engine</strong>:
+      </p>
+
+      <!-- CODE BLOCK 3 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">EcommerceBillingEngine.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class EcommerceBillingEngine {
+    public static void main(String[] args) {
+        String itemName       = "Dell UltraSharp 27-inch 4K Monitor";
+        int itemQuantity      = 2;
+        double unitPriceUSD   = 350.00;
+        double usdToInrRate   = 83.25;
+
+        double discountPercentage = 15.0; // 15% Promotional Coupon
+        double gstTaxPercentage   = 18.0; // 18% GST
+
+        // Core Financial Equations
+        double subtotalUSD = itemQuantity * unitPriceUSD;
+        double discountUSD = (subtotalUSD * discountPercentage) / 100.0;
+        double discountedUSD = subtotalUSD - discountUSD;
+        double gstAmountUSD  = (discountedUSD * gstTaxPercentage) / 100.0;
+        double finalTotalUSD = discountedUSD + gstAmountUSD;
+
+        // Currency Conversion to INR via Type Casting
+        double finalTotalINR = finalTotalUSD * usdToInrRate;
+        long roundedTotalINR = Math.round(finalTotalINR);
+
+        System.out.println("==================================================");
+        System.out.println("      E-COMMERCE ORDER INVOICE &amp; BILLING         ");
+        System.out.println("==================================================");
+        System.out.printf("  Item Name    : %s%n", itemName);
+        System.out.printf("  Quantity     : %d units @ $%.2f USD each%n", itemQuantity, unitPriceUSD);
+        System.out.println("--------------------------------------------------");
+        System.out.printf("  Subtotal     : $%,10.2f USD%n", subtotalUSD);
+        System.out.printf("  Discount 15%% : -$%,9.2f USD%n", discountUSD);
+        System.out.printf("  GST Tax  18%% : +$%,9.2f USD%n", gstAmountUSD);
+        System.out.println("--------------------------------------------------");
+        System.out.printf("  TOTAL (USD)  : $%,10.2f USD%n", finalTotalUSD);
+        System.out.printf("  EXCHANGE RATE: 1 USD = ₹ %.2f INR%n", usdToInrRate);
+        System.out.printf("  TOTAL (INR)  : ₹ %,10d (Rounded)%n", roundedTotalINR);
+        System.out.println("==================================================");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 3 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (EcommerceBillingEngine)</div>
+        <pre class="output-content">=================================================="
+      E-COMMERCE ORDER INVOICE &amp; BILLING         
+==================================================
+  Item Name    : Dell UltraSharp 27-inch 4K Monitor
+  Quantity     : 2 units @ $350.00 USD each
+--------------------------------------------------
+  Subtotal     : $    700.00 USD
+  Discount 15% : -$    105.00 USD
+  GST Tax  18% : +$    107.10 USD
+--------------------------------------------------
+  TOTAL (USD)  : $    702.10 USD
+  EXCHANGE RATE: 1 USD = ₹ 83.25 INR
+  TOTAL (INR)  : ₹     58,450 (Rounded)
+==================================================</pre>
+      </div>
+    </div>
+
+    <!-- Section 12 -->
+    <h2 class="section-title" id="sec-12"><span class="num">12</span> టాప్ 6 ఆపరేటర్ మిస్టేక్స్ &amp; 5 క్విజ్‌లు</h2>
+    <div class="section-body">
+      <p>
+        ఆపరేటర్లు మరియు టైప్ కాస్టింగ్‌లో కొత్త ప్రోగ్రామర్లు తరచుగా చేసే 6 ప్రధాన తప్పులు:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>లోపం</th>
+            <th>తప్పు కోడ్</th>
+            <th>సరిదిద్దిన సరైన విధానం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ఇంటిజర్ డివిజన్ డెసిమల్స్ కోల్పోవడం</strong></td>
+            <td><code>double d = 5 / 2; // 2.0 వస్తుంది</code></td>
+            <td><code>double d = 5.0 / 2; // 2.5 వస్తుంది</code></td>
+          </tr>
+          <tr>
+            <td><strong>ఈక్వాలిటీ (==) vs అసైన్‌మెంట్ (=) గందరగోళం</strong></td>
+            <td><code>if (x = 10) // కంపైల్ ఎర్రర్</code></td>
+            <td><code>if (x == 10)</code></td>
+          </tr>
+          <tr>
+            <td><strong>ఆబ్జెక్ట్స్ మరియు స్ట్రింగ్స్‌కి == వాడటం</strong></td>
+            <td><code>if (str1 == str2)</code> (మెమరీ అడ్రస్ చూస్తుంది)</td>
+            <td>కంటెంట్ సమానత్వానికి <code>if (str1.equals(str2))</code> వాడాలి.</td>
+          </tr>
+          <tr>
+            <td><strong>షార్ట్-సర్క్యూట్ మిస్ అవ్వడం (&amp; vs &amp;&amp;)</strong></td>
+            <td><code>if (user != null &amp; user.isValid())</code> (NullPointerException వస్తుంది)</td>
+            <td>షార్ట్-సర్క్యూట్ కోసం <code>&amp;&amp;</code> వాడాలి: <code>if (user != null &amp;&amp; user.isValid())</code></td>
+          </tr>
+          <tr>
+            <td><strong>నారోయింగ్ కాస్టింగ్‌లో బ్రాకెట్స్ మర్చిపోవడం</strong></td>
+            <td><code>int x = (int) a + b; // కేవలం a మాత్రమే కాస్ట్ అవుతుంది</code></td>
+            <td>మొత్తం రిజల్ట్ కాస్ట్ కావాలంటే: <code>int x = (int) (a + b);</code></td>
+          </tr>
+          <tr>
+            <td><strong>పోస్ట్ ఇంక్రిమెంట్ అసైన్‌మెంట్ ట్రాప్</strong></td>
+            <td><code>int i = 0; i = i++; // i ఎప్పటికీ 0 గానే ఉంటుంది</code></td>
+            <td>కేవలం <code>i++;</code> అని మాత్రమే రాయాలి.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- QUIZ SECTION -->
+      <h3 style="color:#10b981; margin:32px 0 16px 0;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 1: జావాలో '10 % 3' మరియు '-10 % 3' ల ఫలితాలు ఎంత?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>10 % 3 = 1</code>, మరియు <code>-10 % 3 = -1</code>. జావాలో మోడ్యులో ఫలితం ఎల్లప్పుడూ మొదటి ఆపరాండ్ (లబ్ధం) యొక్క చిహ్నాన్ని (Sign) అనుసరిస్తుంది.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 2: '&&' మరియు '&' ఆపరేటర్ల మధ్య గల ప్రధాన తేడా ఏమిటి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>&amp;&amp;</code> షార్ట్-సర్క్యూట్ లాజికల్ ఆపరేటర్ (మొదటిది false అయితే రెండోది రన్ చేయదు). <code>&amp;</code> అనేది బిట్‌వైజ్ ఆపరేటర్ (రెండు వైపులా తప్పనిసరిగా లెక్కించబడుతుంది).
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 3: 'int' ను 'double' గా మార్చడానికి ఎక్స్‌ప్లిసిట్ కాస్టింగ్ అవసరమా?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> అవసరం లేదు! ఇది వైడనింగ్ (Widening Casting) కాబట్టి జావా కంపైలర్ ఆటోమేటిక్‌గా ఇంప్లిసిట్‌గా మారుస్తుంది.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 4: 'x << 1' చేయడం వల్ల గణితపరంగా సంఖ్యకు ఏమి జరుగుతుంది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> ఆ సంఖ్య 2 తో గుణించబడుతుంది (Multiplied by 2).
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 5: 'byte b = 127; b++;' రన్ చేస్తే b విలువ ఎంత అవుతుంది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> -128! ఎందుకంటే బైట్ యొక్క గరిష్ట పరిమితి 127. అది దాటినప్పుడు బైనరీ సైకిల్ ప్రకారం కనీస నెగెటివ్ విలువ -128 కు చేరుకుంటుంది (Integer Overflow Wrap-around).
+        </p>
+      </details>
+    </div>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/04-java-variables-primitive-data-types-and-memory.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 04. Variables &amp; Data Types
+      </a>
+      <a href="/blog-java/06-java-conditional-statements-if-else.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 06. if, else-if &amp; Ternary →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>

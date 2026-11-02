@@ -64,3 +64,4 @@ if (failedKeys.length === 0) {
   console.error('❌ FAILED CHECKS:', failedKeys.join(', '));
   process.exit(1);
 }
+

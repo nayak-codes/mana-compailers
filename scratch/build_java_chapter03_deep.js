@@ -746,3 +746,4 @@ fs.writeFileSync(outPath, chapter03Content, 'utf8');
 console.log('✅ Successfully generated Java Chapter 03 in exact JavaScript HTML style!');
 console.log('Target file:', outPath);
 console.log('Target file size:', chapter03Content.length, 'characters');
+

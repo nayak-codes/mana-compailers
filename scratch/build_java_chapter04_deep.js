@@ -1,0 +1,713 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildJavaSidebar } = require('./java_curriculum_data.js');
+
+const currentLesson = LESSONS.find(l => l.num === 4);
+
+const chapter04Content = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Variables, Primitive Data Types &amp; Memory Model తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా వేరియబుల్స్, 8 ప్రిమిటివ్ డేటా టైప్స్ (byte to double), మెమరీ సైజులు &amp; పరిధులు, Stack vs Heap మెమరీ ఆర్కిటెక్చర్, మరియు Modern Java 'var' టైప్ ఇన్ఫరెన్స్ తెలుగులో సమగ్రంగా నేర్చుకోండి." />
+  <meta name="keywords" content="java variables telugu, java primitive data types telugu, java 8 data types telugu, java byte short int long float double char boolean telugu, java stack vs heap telugu, java var keyword telugu, java memory model telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/04-java-variables-primitive-data-types-and-memory.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-java light-theme">
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+  ${buildJavaSidebar(4)}
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 04: Variables &amp; Data Types</span>
+    </div>
+
+    <h1 class="page-title">04. వేరియబుల్స్, 8 ప్రిమిటివ్ డేటా టైప్స్ &amp; మెమరీ మోడల్ (Variables, Primitive Data Types &amp; Memory Model)</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java (Java 21+ LTS)</span>
+      <span class="badge">🟢 Lesson 04 of 25</span>
+      <span class="badge">📂 Part 01: Basics &amp; JVM (Page 4 of 5)</span>
+      <span class="badge">⏱️ 22 min read</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>Warehouse Storage Analogy · Variable Declaration &amp; Initialization · 8 Primitive Types (byte to double) · Precision &amp; IEEE 754 Floating Points · Stack vs Heap Allocation · Modern Java 'var' Local Variable Type Inference · 5 Interactive Quizzes</span>
+    </div>
+
+    <!-- Intro Box with Warehouse Storage Analogy -->
+    <div class="intro-box">
+      <p style="font-size: 16px; line-height: 1.8; margin-bottom: 12px;">
+        సాఫ్ట్‌వేర్ అప్లికేషన్లు చేసే ముఖ్యమైన పని — డేటాను భద్రపరచడం, దానిపై లెక్కలు చేయడం మరియు ఫలితాలను యూజర్లకు చూపించడం. కంప్యూటర్ యొక్క తాత్కాలిక జ్ఞాపకశక్తి అయిన RAM (Random Access Memory) లో డేటాను క్రమపద్ధతిలో నిర్వహించడానికి జావా ఒక బలమైన టైప్-సేఫ్ ఆర్కిటెక్చర్‌ను అందిస్తుంది. ఇక్కడ ప్రతి డేటా అంశానికి ఒక నిర్దిష్టమైన రకం (Data Type) మరియు నిర్ణీత మెమరీ పరిమాణం ఉంటాయి.
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin-bottom: 12px;">
+        <strong>గోదాము పెట్టెలు &amp; బ్యాంక్ లాకర్ల అనాలజీ (The Warehouse Boxes &amp; Bank Locker Analogy):</strong>
+        <br>
+        1. <strong>Variables (లేబుల్ అంటించిన స్టోరేజ్ పెట్టెలు - Labelled Storage Boxes):</strong> ఒక పెద్ద గోదాములో వస్తువులను పడేయకుండా, ప్రతి పెట్టెపై "బియ్యం", "చక్కెర", లేదా "బట్టలు" అని పేరు రాసి భద్రపరిచినట్లే — RAM మెమరీ చిరునామాకు మనం పెట్టుకునే సులభమైన పేరే వేరియబుల్ (Variable).
+        <br>
+        2. <strong>8 Primitive Data Types (నిర్దిష్ట సైజు గల ప్యాకింగ్ యూనిట్లు - Standard Size Units):</strong>
+        <br>
+        &nbsp;&nbsp;• చిన్న మేకు కోసం అగ్గిపెట్టె (<code>byte</code> — 1 Byte)
+        <br>
+        &nbsp;&nbsp;• పుస్తకాల కోసం మీడియం బాక్స్ (<code>short</code> — 2 Bytes)
+        <br>
+        &nbsp;&nbsp;• రోజువారీ సామాను కోసం స్టాండర్డ్ కార్టన్ (<code>int</code> — 4 Bytes)
+        <br>
+        &nbsp;&nbsp;• భారీ మెషీన్ల కోసం ఎక్స్‌ట్రా లార్జ్ కంటైనర్ (<code>long</code> — 8 Bytes)
+        <br>
+        &nbsp;&nbsp;• ద్రవాలు పోసేందుకు లీటర్ బాటిల్ (<code>float</code> — 4 Bytes, <code>double</code> — 8 Bytes)
+        <br>
+        &nbsp;&nbsp;• ఒక్క అక్షరం ముద్రించే యూనికోడ్ స్టాంప్ (<code>char</code> — 2 Bytes)
+        <br>
+        &nbsp;&nbsp;• లైట్ స్విచ్ ON లేదా OFF స్థితి (<code>boolean</code> — 1 Bit).
+        <br>
+        3. <strong>Stack vs Heap (డెస్క్ పై ఫైళ్లు vs సెంట్రల్ స్టోరేజ్ రూమ్):</strong> ప్రిమిటివ్ విలువలు మీ వర్కింగ్ డెస్క్ (Stack) పై వేగంగా అందుబాటులో ఉంటాయి; పెద్ద పెద్ద ఆబ్జెక్టులు మరియు స్ట్రింగ్స్ సెంట్రల్ లాకర్ (Heap) లో నిల్వ చేయబడి వాటి కీలు మాత్రమే డెస్క్ పై ఉంటాయి.
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin: 0;">
+        ఈ నాల్గవ పాఠంలో 8 ప్రిమిటివ్ డేటా టైప్స్, వాటి కనీస-గరిష్ట పరిధులు (Ranges), Stack vs Heap మెమరీ కేటాయింపు, మరియు Modern Java 10+ లో వచ్చిన విప్లవాత్మక <strong>'var' లోకల్ వేరియబుల్ టైప్ ఇన్ఫరెన్స్</strong> ను సమగ్రంగా నేర్చుకుందాం!
+      </p>
+    </div>
+
+    <!-- TABLE OF CONTENTS (ఈ page లో ఏముంది) -->
+    <div class="toc-card">
+      <div class="toc-title">📋 ఈ Page లో ఏముంది? (Contents)</div>
+      <div class="toc-grid">
+        <div class="toc-col">
+          <h4><a href="#sec-1" style="color:#10b981; text-decoration:none;">విభాగం A: వేరియబుల్స్ &amp; ఇంటిజర్ టైప్స్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-1">1. వేరియబుల్ డిక్లరేషన్, ఇనిషియలైజేషన్ &amp; స్కోప్</a></li>
+            <li><a href="#sec-2">2. 8 ప్రిమిటివ్ డేటా టైప్స్ మాస్టర్ టేబుల్</a></li>
+            <li><a href="#sec-3">3. పూర్ణాంకాలు: byte, short, int, long &amp; 'L' సఫిక్స్</a></li>
+            <li><a href="#sec-4">4. ఫ్లోటింగ్ పాయింట్స్: float vs double &amp; IEEE 754</a></li>
+          </ul>
+        </div>
+        <div class="toc-col">
+          <h4><a href="#sec-5" style="color:#38bdf8; text-decoration:none;">విభాగం B: char, boolean &amp; మెమరీ</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-5">5. char డేటా టైప్ (16-bit Unicode &amp; ASCII)</a></li>
+            <li><a href="#sec-6">6. boolean డేటా టైప్ &amp; లాజికల్ ఫ్లాగ్స్</a></li>
+            <li><a href="#sec-7">7. Stack vs Heap మెమరీ ఆర్కిటెక్చర్</a></li>
+            <li><a href="#sec-8">8. Modern Java 10+ 'var' టైప్ ఇన్ఫరెన్స్</a></li>
+          </ul>
+        </div>
+        <div class="toc-col">
+          <h4><a href="#sec-9" style="color:#f59e0b; text-decoration:none;">విభాగం C: డెమోలు, ప్రాజెక్ట్ &amp; క్విజ్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-9">9. కోడ్ డెమో 1: 8 ప్రిమిటివ్ టైప్స్ రేంజ్ ఇన్స్పెక్టర్</a></li>
+            <li><a href="#sec-10">10. కోడ్ డెమో 2: Modern Java 'var' వాలిడేటర్</a></li>
+            <li><a href="#sec-11">11. కోడ్ డెమో 3: Employee Salary Engine (Capstone)</a></li>
+            <li><a href="#sec-12">12. టాప్ 6 మెమరీ మిస్టేక్స్ &amp; 5 క్విజ్‌లు</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1 -->
+    <h2 class="section-title" id="sec-1"><span class="num">1</span> వేరియబుల్ డిక్లరేషన్, ఇనిషియలైజేషన్ &amp; స్కోప్</h2>
+    <div class="section-body">
+      <p>
+        జావా ఒక <strong>Statically-Typed Language</strong>. అంటే ఒక వేరియబుల్‌ను ఉపయోగించడానికి ముందే దాని డేటా టైప్‌ను కంపైలర్‌కు స్పష్టంగా తెలియజేయాలి. వేరియబుల్ అనేది కంప్యూటర్ RAM మెమరీలో డేటాను భద్రపరిచే ఒక నిర్దిష్టమైన ప్రదేశానికి మనం ఇచ్చే గుర్తింపు పేరు (Identifier).
+      </p>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.8;">
+        <span style="color:#6a9955;">// దశ 1: డిక్లరేషన్ (Declaration) - మెమరీ స్పేస్ రిజర్వ్ అవుతుంది కానీ విలువ ఉండదు</span><br>
+        <span style="color:#569cd6;">int</span> employeeId;<br><br>
+
+        <span style="color:#6a9955;">// దశ 2: ఇనిషియలైజేషన్ (Initialization) - మొదటిసారి విలువ కేటాయింపు</span><br>
+        employeeId = <span style="color:#b5cea8;">101</span>;<br><br>
+
+        <span style="color:#6a9955;">// ఒకే లైన్‌లో డిక్లరేషన్ &amp; ఇనిషియలైజేషన్ (Industry Best Practice)</span><br>
+        <span style="color:#569cd6;">double</span> basicSalary = <span style="color:#b5cea8;">75000.50</span>;<br><br>
+
+        <span style="color:#6a9955;">// ఒకే టైప్ గల బహుళ వేరియబుల్స్ ఒకేసారి డిక్లేర్ చేయడం</span><br>
+        <span style="color:#569cd6;">int</span> x = <span style="color:#b5cea8;">10</span>, y = <span style="color:#b5cea8;">20</span>, z = <span style="color:#b5cea8;">30</span>;
+      </div>
+
+      <div class="concept-card">
+        <h4>🔍 Variable Scope &amp; Lifecycle (వేరియబుల్ పరిధి):</h4>
+        <p>
+          జావాలో వేరియబుల్స్ వాటి స్కోప్ ఆధారంగా మూడు వర్గాలుగా విభజించబడతాయి:<br>
+          1. <strong>Local Variables:</strong> మెథడ్ లేదా బ్లాక్ <code>{ }</code> లోపల డిక్లేర్ చేయబడినవి. ఇవి స్టాక్ మెమరీలో జీవిస్తాయి. వీటికి ఎలాంటి డిఫాల్ట్ విలువలు ఉండవు. ఇనిషియలైజ్ చేయకుండా ఉపయోగిస్తే కంపైలర్ ఎర్రర్ ఇస్తుంది.<br>
+          2. <strong>Instance Variables (Fields):</strong> క్లాస్ లోపల, మెథడ్ల బయట డిక్లేర్ చేయబడినవి. ఇవి హీప్ మెమరీలో ఆబ్జెక్ట్‌తో పాటు జీవిస్తాయి. వీటికి జావా ఆటోమేటిక్‌గా డిఫాల్ట్ విలువలను (0, 0.0, false, null) కేటాయిస్తుంది.<br>
+          3. <strong>Static Variables (Class Variables):</strong> <code>static</code> కీవర్డ్‌తో డిక్లేర్ చేయబడినవి. ఇవి మెటాస్పేస్ లేదా మెథడ్ ఏరియాలో క్లాస్ లోడ్ అయినప్పుడు ఒకేసారి క్రియేట్ చేయబడి అన్ని ఆబ్జెక్టులచే పంచుకోబడతాయి.
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <h2 class="section-title" id="sec-2"><span class="num">2</span> 8 ప్రిమిటివ్ డేటా టైప్స్ మాస్టర్ టేబుల్</h2>
+    <div class="section-body">
+      <p>
+        జావా భాషలో పునాది రాళ్ళు లాంటి 8 ప్రిమిటివ్ డేటా టైప్స్ సమగ్ర పోలిక పట్టిక:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>డేటా టైప్</th>
+            <th>సైజు (Bits / Bytes)</th>
+            <th>డిఫాల్ట్ వాల్యూ</th>
+            <th>కనీస మరియు గరిష్ట పరిధి (Range)</th>
+            <th>ఉదాహరణ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>byte</code></td>
+            <td>8 bits (1 byte)</td>
+            <td><code>0</code></td>
+            <td>-128 నుండి 127 వరకు</td>
+            <td><code>byte age = 28;</code></td>
+          </tr>
+          <tr>
+            <td><code>short</code></td>
+            <td>16 bits (2 bytes)</td>
+            <td><code>0</code></td>
+            <td>-32,768 నుండి 32,767 వరకు</td>
+            <td><code>short year = 2026;</code></td>
+          </tr>
+          <tr>
+            <td><code>int</code></td>
+            <td>32 bits (4 bytes)</td>
+            <td><code>0</code></td>
+            <td>-2,147,483,648 నుండి 2,147,483,647 (సుమారు 2 బిలియన్లు)</td>
+            <td><code>int count = 500000;</code></td>
+          </tr>
+          <tr>
+            <td><code>long</code></td>
+            <td>64 bits (8 bytes)</td>
+            <td><code>0L</code></td>
+            <td>-9 క్వాడ్రిలియన్ల నుండి +9 క్వాడ్రిలియన్లు</td>
+            <td><code>long aadhaar = 987654321012L;</code></td>
+          </tr>
+          <tr>
+            <td><code>float</code></td>
+            <td>32 bits (4 bytes)</td>
+            <td><code>0.0f</code></td>
+            <td>~6-7 డెసిమల్ డిజిట్స్ ప్రిసిషన్</td>
+            <td><code>float rating = 4.8f;</code></td>
+          </tr>
+          <tr>
+            <td><code>double</code></td>
+            <td>64 bits (8 bytes)</td>
+            <td><code>0.0d</code></td>
+            <td>~15-16 డెసిమల్ డిజిట్స్ ప్రిసిషన్ (Standard)</td>
+            <td><code>double pi = 3.1415926535;</code></td>
+          </tr>
+          <tr>
+            <td><code>char</code></td>
+            <td>16 bits (2 bytes)</td>
+            <td><code>'\\u0000'</code></td>
+            <td>0 నుండి 65,535 (యూనికోడ్ అక్షరాలు)</td>
+            <td><code>char grade = 'A';</code></td>
+          </tr>
+          <tr>
+            <td><code>boolean</code></td>
+            <td>1 bit (JVM డిపెండెంట్)</td>
+            <td><code>false</code></td>
+            <td>కేవలం <code>true</code> లేదా <code>false</code></td>
+            <td><code>boolean isActive = true;</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 3 -->
+    <h2 class="section-title" id="sec-3"><span class="num">3</span> పూర్ణాంకాలు: byte, short, int, long &amp; 'L' సఫిక్స్</h2>
+    <div class="section-body">
+      <p>
+        దశాంశాలు లేని సంఖ్యలను నిల్వ చేయడానికి జావా 4 ఇంటిజర్ టైప్స్‌ను అందిస్తుంది. జావాలో మీరు రాసే ఏదైనా సాధారణ సంఖ్య (ఉదా: <code>100</code>) బై-డిఫాల్ట్‌గా <code>int</code> గానే పరిగణించబడుతుంది.
+      </p>
+
+      <div class="concept-card">
+        <h4>⚠️ The Crucial 'L' Suffix for Long:</h4>
+        <p>
+          మీరు ఒక సంఖ్య 2 బిలియన్లు దాటినప్పుడు (<code>int</code> రేంజ్ దాటినప్పుడు), చివర తప్పనిసరిగా <code>L</code> లేదా <code>l</code> సఫిక్స్ చేర్చాలి:
+          <br>
+          • <code>long population = 8000000000;</code> ❌ (కంపైల్ ఎర్రర్: integer number too large)<br>
+          • <code>long population = 8000000000L;</code> ✅ (సరైన విధానం - కంపైలర్ దీనిని 64-bit లిటరల్‌గా గుర్తిస్తుంది).<br>
+          • పెద్ద సంఖ్యలను చదవడానికి వీలుగా అండర్‌స్కోర్స్ వాడవచ్చు: <code>long balance = 1_00_00_000L;</code> (Java 7+ ఫీచర్).
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 4 -->
+    <h2 class="section-title" id="sec-4"><span class="num">4</span> ఫ్లోటింగ్ పాయింట్స్: float vs double &amp; IEEE 754</h2>
+    <div class="section-body">
+      <p>
+        దశాంశ బిందువు (Decimal Point) గల సంఖ్యల కోసం <code>float</code> మరియు <code>double</code> వాడతాం. జావాలో డెసిమల్ సంఖ్యలు బై-డిఫాల్ట్‌గా <code>double</code> (Double Precision, 64-bit) గా పరిగణించబడతాయి:
+      </p>
+      <ul style="line-height: 2.1; margin-left: 20px; color: var(--text);">
+        <li><code>float</code> వాడేటప్పుడు చివర తప్పనిసరిగా <code>f</code> లేదా <code>F</code> సఫిక్స్ పెట్టాలి: <code>float temp = 98.6f;</code>. లేకపోతే కంపైలర్ <code>possible lossy conversion from double to float</code> ఎర్రర్ ఇస్తుంది.</li>
+        <li><code>double</code> అత్యంత ఖచ్చితమైన గణనల కోసం పరిశ్రమలో 95% సందర్భాలలో ప్రామాణికంగా వాడబడుతుంది (సుమారు 15-16 దశాంశ స్థానాల కచ్చితత్వం).</li>
+        <li><strong>IEEE 754 బైనరీ ఫ్లోటింగ్ పాయింట్ స్టాండర్డ్:</strong> కంప్యూటర్లు దశాంశ సంఖ్యలను బైనరీ (0s &amp; 1s) రూపంలో నిల్వ చేస్తాయి. అందువల్ల కొన్ని దశాంశాలు (ఉదాహరణకు 0.1) బైనరీలో అనంతమైన రికరింగ్ ఫ్రాక్షన్లుగా మారతాయి. ఫలితంగా <code>0.1 + 0.2</code> కూడితే గణితంలో <code>0.3</code> వచ్చినప్పటికీ, కంప్యూటర్‌లో <code>0.30000000000000004</code> వస్తుంది!</li>
+        <li><strong>బ్యాంకింగ్ &amp; ఫైనాన్స్ గోల్డెన్ రూల్:</strong> ఈ రౌండింగ్ ఎర్రర్ల కారణంగా బ్యాంకింగ్, ఇ-కామర్స్ పేమెంట్స్ మరియు కరెన్సీ లెక్కలకు <code>float</code> లేదా <code>double</code> ఎట్టిపరిస్థితుల్లోనూ వాడకూడదు! వీటికి బదులుగా <code>java.math.BigDecimal</code> క్లాస్‌ను మాత్రమే ఉపయోగించాలి.</li>
+      </ul>
+    </div>
+
+    <!-- Section 5 -->
+    <h2 class="section-title" id="sec-5"><span class="num">5</span> char డేటా టైప్ (16-bit Unicode &amp; ASCII)</h2>
+    <div class="section-body">
+      <p>
+        C భాషలో <code>char</code> కేవలం 1 బైట్ (ASCII — 128 అక్షరాలు) మాత్రమే. కానీ జావా ప్రపంచ భాషలన్నింటినీ (తెలుగు, హిందీ, చైనీస్, అరబిక్, ఎమోజీలు) సమర్ధించడానికి <strong>16-bit Unicode (UTF-16)</strong> ను ఉపయోగిస్తుంది:
+      </p>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.8;">
+        <span style="color:#569cd6;">char</span> letter = <span style="color:#ce9178;">'A'</span>;         <span style="color:#6a9955;">// ఇంగ్లీష్ అక్షరం (ASCII 65)</span><br>
+        <span style="color:#569cd6;">char</span> teluguLetter = <span style="color:#ce9178;">'అ'</span>;   <span style="color:#6a9955;">// తెలుగు అక్షరం (Unicode \\u0C05)</span><br>
+        <span style="color:#569cd6;">char</span> unicodeSymbol = <span style="color:#ce9178;">'\\u20B9'</span>; <span style="color:#6a9955;">// భారతీయ రూపాయి చిహ్నం (₹)</span>
+      </div>
+    </div>
+
+    <!-- Section 6 -->
+    <h2 class="section-title" id="sec-6"><span class="num">6</span> boolean డేటా టైప్ &amp; లాజికల్ ఫ్లాగ్స్</h2>
+    <div class="section-body">
+      <p>
+        జావాలో <code>boolean</code> కేవలం రెండు విలువలనే అనుమతిస్తుంది: <code>true</code> లేదా <code>false</code>.
+      </p>
+      <div class="concept-card">
+        <h4>⚡ C vs Java Boolean Difference:</h4>
+        <p>
+          C లేదా C++ లో <code>1</code> అంటే true, <code>0</code> అంటే false గా వాడవచ్చు. కానీ జావాలో పూర్ణాంకాలను (<code>1</code> లేదా <code>0</code>) బూలియన్‌గా పరిగణించడం ఖచ్చితంగా నిషేధం! <code>if (1)</code> అని రాస్తే జావా కంపైలర్ <code>incompatible types: int cannot be converted to boolean</code> అని ఎర్రర్ ఇస్తుంది.
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 7 -->
+    <h2 class="section-title" id="sec-7"><span class="num">7</span> Stack vs Heap మెమరీ ఆర్కిటెక్చర్</h2>
+    <div class="section-body">
+      <p>
+        జావా రన్‌టైమ్ మెమరీలో వేరియబుల్స్ ఎలా భద్రపరచబడతాయో స్పష్టంగా అర్థం చేసుకోవడం ఎంతో ముఖ్యం:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>ఫీచర్</th>
+            <th>Stack మెమరీ</th>
+            <th>Heap మెమరీ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ఏమి నిల్వ ఉంటాయి?</strong></td>
+            <td>ప్రిమిటివ్ వేరియబుల్స్ (<code>int</code>, <code>double</code>) మరియు ఆబ్జెక్ట్ రిఫరెన్స్ పాయింటర్లు.</td>
+            <td>అన్ని అసలైన ఆబ్జెక్టులు (Objects), అర్రేలు (Arrays), మరియు స్ట్రింగ్స్ (Strings).</td>
+          </tr>
+          <tr>
+            <td><strong>వేగం &amp; ఆర్డర్</strong></td>
+            <td>అత్యంత వేగవంతమైనది (LIFO — Last In First Out ఆర్డర్).</td>
+            <td>స్టాక్ కంటే కాస్త నెమ్మదిగా కేటాయించబడుతుంది.</td>
+          </tr>
+          <tr>
+            <td><strong>లైఫ్‌టైమ్</strong></td>
+            <td>మెథడ్ ఎగ్జిక్యూషన్ ముగియగానే మెమరీ తక్షణమే క్లియర్ అవుతుంది.</td>
+            <td>గార్బేజ్ కలెక్టర్ (GC) ద్వారా ఆటోమేటిక్‌గా రీక్లెయిమ్ చేయబడుతుంది.</td>
+          </tr>
+          <tr>
+            <td><strong>ఎర్రర్</strong></td>
+            <td>పరిమితి దాటితే <code>StackOverflowError</code> వస్తుంది.</td>
+            <td>మెమరీ సరిపోకపోతే <code>OutOfMemoryError</code> వస్తుంది.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 8 -->
+    <h2 class="section-title" id="sec-8"><span class="num">8</span> Modern Java 10+ 'var' లోకల్ వేరియబుల్ టైప్ ఇన్ఫరెన్స్</h2>
+    <div class="section-body">
+      <p>
+        జావా 10 లో ప్రవేశపెట్టిన <strong>Local Variable Type Inference (<code>var</code>)</strong> ద్వారా డెవలపర్లు ఎడమవైపు డేటా టైప్‌ను మాటిమాటికీ రాయాల్సిన అవసరం లేకుండా కోడ్‌ను క్లీన్‌గా ఉంచవచ్చు:
+      </p>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.8;">
+        <span style="color:#6a9955;">// పాత లెగసీ పద్ధతి:</span><br>
+        <span style="color:#4ec9b0;">String</span> message = <span style="color:#ce9178;">"Hello Java 21"</span>;<br>
+        <span style="color:#569cd6;">double</span> taxRate = <span style="color:#b5cea8;">0.18</span>;<br><br>
+
+        <span style="color:#6a9955;">// Modern Java 10+ 'var' పద్ధతి (కంపైలర్ ఆటోమేటిక్‌గా టైప్ గుర్తిస్తుంది):</span><br>
+        <span style="color:#569cd6;">var</span> message = <span style="color:#ce9178;">"Hello Java 21"</span>; <span style="color:#6a9955;">// కంపైలర్ String గా నిర్ణయిస్తుంది</span><br>
+        <span style="color:#569cd6;">var</span> taxRate = <span style="color:#b5cea8;">0.18</span>;             <span style="color:#6a9955;">// కంపైలర్ double గా నిర్ణయిస్తుంది</span>
+      </div>
+
+      <div class="concept-card">
+        <h4>⚠️ Rules for using 'var':</h4>
+        <p>
+          1. <code>var</code> కేవలం మెథడ్ లోపల ఉండే <strong>Local Variables</strong> కు మాత్రమే వర్తిస్తుంది.<br>
+          2. <code>var</code> ను డిక్లేర్ చేసేటప్పుడే తప్పనిసరిగా ఇనిషియలైజ్ చేయాలి: <code>var x;</code> ❌ (ఎర్రర్: cannot infer type for local variable).<br>
+          3. క్లాస్ ఫీల్డ్స్‌గా లేదా మెథడ్ పారామీటర్లుగా <code>var</code> వాడకూడదు.<br>
+          4. <code>var</code> వాడినప్పటికీ జావా ఇప్పటికీ స్టాటికల్లీ టైప్డ్ భాషగానే ఉంటుంది (జావాస్క్రిప్ట్ లాగా డైనమిక్ టైపింగ్ కాదు).
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 9 -->
+    <h2 class="section-title" id="sec-9"><span class="num">9</span> కోడ్ డెమో 1: 8 ప్రిమిటివ్ టైప్స్ రేంజ్ &amp; మెమరీ ఇన్స్పెక్టర్</h2>
+    <div class="section-body">
+      <p>
+        జావాలోని 8 ప్రిమిటివ్ డేటా టైప్స్ యొక్క కనీస, గరిష్ట పరిధులు మరియు బైట్ పరిమాణాలను రాపర్ క్లాస్ కాన్‌స్టాంట్స్ ద్వారా ప్రింట్ చేసే లైవ్ ప్రోగ్రామ్:
+      </p>
+
+      <!-- CODE BLOCK 1 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">PrimitiveRangeInspector.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class PrimitiveRangeInspector {
+    public static void main(String[] args) {
+        System.out.println("==================================================");
+        System.out.println("       JAVA 8 PRIMITIVE DATA TYPES TELEMETRY      ");
+        System.out.println("==================================================");
+
+        System.out.printf("  %-8s : %d bytes | Range: %d to %d%n", 
+                          "byte", Byte.BYTES, Byte.MIN_VALUE, Byte.MAX_VALUE);
+        System.out.printf("  %-8s : %d bytes | Range: %d to %d%n", 
+                          "short", Short.BYTES, Short.MIN_VALUE, Short.MAX_VALUE);
+        System.out.printf("  %-8s : %d bytes | Range: %d to %d%n", 
+                          "int", Integer.BYTES, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        System.out.printf("  %-8s : %d bytes | Range: %d to %d%n", 
+                          "long", Long.BYTES, Long.MIN_VALUE, Long.MAX_VALUE);
+        System.out.printf("  %-8s : %d bytes | Range: %e to %e%n", 
+                          "float", Float.BYTES, Float.MIN_VALUE, Float.MAX_VALUE);
+        System.out.printf("  %-8s : %d bytes | Range: %e to %e%n", 
+                          "double", Double.BYTES, Double.MIN_VALUE, Double.MAX_VALUE);
+        System.out.printf("  %-8s : %d bytes | Range: %d to %d (Unicode)%n", 
+                          "char", Character.BYTES, (int) Character.MIN_VALUE, (int) Character.MAX_VALUE);
+        System.out.println("  boolean  : 1 bit   | Values: true or false");
+
+        System.out.println("--------------------------------------------------");
+        System.out.println("Status: Primitive memory boundaries verified!");
+        System.out.println("==================================================");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 1 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (PrimitiveRangeInspector)</div>
+        <pre class="output-content">==================================================
+       JAVA 8 PRIMITIVE DATA TYPES TELEMETRY      
+==================================================
+  byte     : 1 bytes | Range: -128 to 127
+  short    : 2 bytes | Range: -32768 to 32767
+  int      : 4 bytes | Range: -2147483648 to 2147483647
+  long     : 8 bytes | Range: -9223372036854775808 to 9223372036854775807
+  float    : 4 bytes | Range: 1.401298e-45 to 3.402823e+38
+  double   : 8 bytes | Range: 4.900000e-324 to 1.797693e+308
+  char     : 2 bytes | Range: 0 to 65535 (Unicode)
+  boolean  : 1 bit   | Values: true or false
+--------------------------------------------------
+Status: Primitive memory boundaries verified!
+==================================================</pre>
+      </div>
+    </div>
+
+    <!-- Section 10 -->
+    <h2 class="section-title" id="sec-10"><span class="num">10</span> కోడ్ డెమో 2: Modern Java 'var' టైప్ ఇన్ఫరెన్స్ &amp; స్కోప్ వ్యాలిడేటర్</h2>
+    <div class="section-body">
+      <p>
+        ఆధునిక <code>var</code> సింటాక్స్ ఎలా పని చేస్తుందో మరియు కంపైలర్ రన్‌టైమ్‌లో డేటా టైప్‌లను ఎలా లాక్ చేస్తుందో నిరూపించే ప్రోగ్రామ్:
+      </p>
+
+      <!-- CODE BLOCK 2 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">ModernVarInferenceApp.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class ModernVarInferenceApp {
+    public static void main(String[] args) {
+        System.out.println("--------------------------------------------------");
+        System.out.println("       MODERN JAVA 10+ 'var' INFERENCE DEMO       ");
+        System.out.println("--------------------------------------------------");
+
+        // Type inferred automatically at compile time
+        var projectName = "Hyderabad Metro Smart Ticketing";
+        var passengerCount = 450000;
+        var ticketPrice = 55.75;
+        var isSystemOnline = true;
+        var currencySymbol = '₹';
+
+        System.out.println("Project   : " + projectName + " (" + projectName.getClass().getSimpleName() + ")");
+        System.out.println("Passengers: " + passengerCount);
+        System.out.println("Ticket    : " + currencySymbol + ticketPrice);
+        System.out.println("Live Status: " + (isSystemOnline ? "ONLINE" : "OFFLINE"));
+
+        // Calculating total revenue using inferred variables
+        var totalDailyRevenue = passengerCount * ticketPrice;
+        System.out.printf("Total Est. Revenue: %c %,.2f%n", currencySymbol, totalDailyRevenue);
+        System.out.println("--------------------------------------------------");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 2 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (ModernVarInferenceApp)</div>
+        <pre class="output-content">--------------------------------------------------
+       MODERN JAVA 10+ 'var' INFERENCE DEMO       
+--------------------------------------------------
+Project   : Hyderabad Metro Smart Ticketing (String)
+Passengers: 450000
+Ticket    : ₹55.75
+Live Status: ONLINE
+Total Est. Revenue: ₹ 25,087,500.00
+--------------------------------------------------</pre>
+      </div>
+    </div>
+
+    <!-- Section 11 -->
+    <h2 class="section-title" id="sec-11"><span class="num">11</span> కోడ్ డెమో 3: Employee Salary &amp; Financial Tax Computation Engine (Capstone Mini Project)</h2>
+    <div class="section-body">
+      <p>
+        ఒక పూర్తిస్థాయి కార్పొరేట్ సాలరీ కాలిక్యులేషన్ సిస్టమ్: వివిధ ప్రిమిటివ్ డేటా టైప్స్ (<code>int</code>, <code>double</code>, <code>char</code>, <code>boolean</code>) ను సమన్వయం చేస్తూ జీతం, అలవెన్సులు మరియు పన్నులను లెక్కించే కాప్‌స్టోన్ ప్రాజెక్ట్:
+      </p>
+
+      <!-- CODE BLOCK 3 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">PayrollComputationEngine.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class PayrollComputationEngine {
+    public static void main(String[] args) {
+        // Employee Information using accurate primitive types
+        int employeeId        = 84201;
+        String employeeName   = "సురేష్ వర్మ";
+        char performanceGrade = 'A';
+        boolean isPfEligible  = true;
+
+        double basicSalary    = 85000.00;
+        double hraPercentage  = 20.0; // 20% House Rent Allowance
+        double daPercentage   = 10.0; // 10% Dearness Allowance
+        double taxRate        = 12.5; // 12.5% Income Tax
+
+        // Financial Computations
+        double hraAmount     = (basicSalary * hraPercentage) / 100.0;
+        double daAmount      = (basicSalary * daPercentage) / 100.0;
+        double grossSalary   = basicSalary + hraAmount + daAmount;
+        double taxDeduction  = (grossSalary * taxRate) / 100.0;
+        double pfDeduction   = isPfEligible ? (basicSalary * 12.0) / 100.0 : 0.0;
+        double netTakeHome   = grossSalary - (taxDeduction + pfDeduction);
+
+        System.out.println("==================================================");
+        System.out.println("       ENTERPRISE EMPLOYEE PAYSLIP ENGINE        ");
+        System.out.println("==================================================");
+        System.out.printf("  Emp ID   : #%d | Name: %s%n", employeeId, employeeName);
+        System.out.printf("  Rating   : Grade %c | PF Status: %s%n", 
+                          performanceGrade, isPfEligible ? "Enrolled" : "Exempt");
+        System.out.println("--------------------------------------------------");
+        System.out.printf("  Basic Pay     : ₹ %,10.2f%n", basicSalary);
+        System.out.printf("  HRA (20%%)    : ₹ %,10.2f%n", hraAmount);
+        System.out.printf("  DA  (10%%)    : ₹ %,10.2f%n", daAmount);
+        System.out.printf("  Gross Salary  : ₹ %,10.2f%n", grossSalary);
+        System.out.println("--------------------------------------------------");
+        System.out.printf("  Tax (12.5%%)  : -₹ %,9.2f%n", taxDeduction);
+        System.out.printf("  PF (12%%)     : -₹ %,9.2f%n", pfDeduction);
+        System.out.println("--------------------------------------------------");
+        System.out.printf("  NET TAKE HOME : ₹ %,10.2f%n", netTakeHome);
+        System.out.println("==================================================");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 3 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (PayrollComputationEngine)</div>
+        <pre class="output-content">==================================================
+       ENTERPRISE EMPLOYEE PAYSLIP ENGINE        
+==================================================
+  Emp ID   : #84201 | Name: సురేష్ వర్మ
+  Rating   : Grade A | PF Status: Enrolled
+--------------------------------------------------
+  Basic Pay     : ₹  85,000.00
+  HRA (20%)    : ₹  17,000.00
+  DA  (10%)    : ₹   8,500.00
+  Gross Salary  : ₹ 110,500.00
+--------------------------------------------------
+  Tax (12.5%)  : -₹ 13,812.50
+  PF (12%)     : -₹ 10,200.00
+--------------------------------------------------
+  NET TAKE HOME : ₹  86,487.50
+==================================================</pre>
+      </div>
+    </div>
+
+    <!-- Section 12 -->
+    <h2 class="section-title" id="sec-12"><span class="num">12</span> టాప్ 6 మెమరీ మిస్టేక్స్ &amp; 5 క్విజ్‌లు</h2>
+    <div class="section-body">
+      <p>
+        డేటా టైప్స్ మరియు మెమరీ వినియోగంలో డెవలపర్లు ఎదుర్కొనే 6 ప్రధాన సమస్యలు:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>సమస్య</th>
+            <th>తప్పు కోడ్</th>
+            <th>సరిదిద్దిన సరైన విధానం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ఇంటిజర్ ఓవర్‌ఫ్లో</strong></td>
+            <td><code>int x = 2147483647 + 1;</code> (నెగెటివ్ సంఖ్యగా మారుతుంది)</td>
+            <td>పెద్ద విలువలకు <code>long</code> వాడాలి: <code>long x = 2147483647L + 1;</code></td>
+          </tr>
+          <tr>
+            <td><strong>లాంగ్ లిటరల్‌కు 'L' మర్చిపోవడం</strong></td>
+            <td><code>long val = 5000000000;</code></td>
+            <td><code>long val = 5000000000L;</code></td>
+          </tr>
+          <tr>
+            <td><strong>ఫ్లోట్ లిటరల్‌కు 'f' మిస్ అవ్వడం</strong></td>
+            <td><code>float f = 3.14;</code> (డబుల్ నుండి ఫ్లోట్‌కు కాస్ట్ కాదు)</td>
+            <td><code>float f = 3.14f;</code></td>
+          </tr>
+          <tr>
+            <td><strong>ఇనిషియలైజ్ చేయకుండా లోకల్ వేరియబుల్ వాడటం</strong></td>
+            <td><code>int x; System.out.println(x);</code></td>
+            <td>ముందే డిఫాల్ట్ విలువ ఇవ్వాలి: <code>int x = 0;</code></td>
+          </tr>
+          <tr>
+            <td><strong>var ను ఇనిషియలైజ్ చేయకపోవడం</strong></td>
+            <td><code>var count;</code></td>
+            <td>డిక్లరేషన్ సమయంలోనే విలువ ఇవ్వాలి: <code>var count = 10;</code></td>
+          </tr>
+          <tr>
+            <td><strong>కరెన్సీ లెక్కలకు double వాడటం</strong></td>
+            <td><code>double diff = 1.0 - 0.9; // 0.09999999999999998</code></td>
+            <td>ఆర్థిక లావాదేవీలకు <code>BigDecimal</code> క్లాస్ వాడాలి.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- QUIZ SECTION -->
+      <h3 style="color:#10b981; margin:32px 0 16px 0;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 1: జావాలో 'byte' డేటా టైప్ యొక్క గరిష్ట విలువ ఎంత?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> 127. (byte పరిధి -128 నుండి +127 వరకు ఉంటుంది).
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 2: 'char' డేటా టైప్ జావాలో ఎన్ని బైట్ల మెమరీని తీసుకుంటుంది మరియు ఎందుకు?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> 2 బైట్లు (16 bits). ఎందుకంటే జావా అంతర్జాతీయ 16-bit Unicode (UTF-16) అక్షరాల వ్యవస్థను సమర్ధిస్తుంది.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 3: 'var' ను క్లాస్ లెవెల్ వేరియబుల్ (ఇన్‌స్టాన్స్ ఫీల్డ్) గా ఉపయోగించవచ్చా?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> లేదు! <code>var</code> కేవలం మెథడ్ లోపల ఉండే Local Variables కు మాత్రమే పరిమితం.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 4: ప్రిమిటివ్ వేరియబుల్స్ మెమరీలో ఎక్కడ నిల్వ చేయబడతాయి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> లోకల్ ప్రిమిటివ్ వేరియబుల్స్ నేరుగా <strong>Stack మెమరీ</strong> లో మెరుపు వేగంతో కేటాయించబడతాయి.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 5: జావాలో 'boolean' విలువగా 1 లేదా 0 ఇవ్వవచ్చా?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> ఖచ్చితంగా ఇవ్వకూడదు! జావాలో boolean కేవలం <code>true</code> లేదా <code>false</code> లిటరల్స్‌ను మాత్రమే అంగీకరిస్తుంది.
+        </p>
+      </details>
+    </div>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/03-java-syntax-class-structure-and-main-method.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 03. Syntax &amp; Main Method
+      </a>
+      <a href="/blog-java/05-java-operators-expressions-and-type-casting.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 05. Operators &amp; Type Casting →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>`;
+
+const outPath = path.join(__dirname, '..', 'public', 'blog-java', '04-java-variables-primitive-data-types-and-memory.html');
+fs.writeFileSync(outPath, chapter04Content, 'utf8');
+
+console.log('✅ Successfully generated Java Chapter 04 in exact JavaScript HTML style!');
+console.log('Target file:', outPath);
+console.log('Target file size:', chapter04Content.length, 'characters');
