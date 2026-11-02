@@ -300,3 +300,4 @@ console.log('✅ Successfully wrote clean, new 25-chapter Java index to:');
 console.log('   - public/blog-java.html');
 console.log('   - public/blog-java/index.html');
 console.log('Target file size:', htmlContent.length, 'characters');
+
