@@ -1,0 +1,775 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildPythonSidebar } = require('./python_curriculum_data.js');
+
+const currentLesson = LESSONS[9]; // Chapter 10 (0-indexed 9)
+const sidebarHtml = buildPythonSidebar(10);
+
+const chapter10Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Python 3 రెగ్యులర్ ఎక్స్‌ప్రెషన్స్ (Regex — re మాడ్యూల్) సమగ్ర తెలుగు గైడ్: Raw strings r'', మెటాక్యారెక్టర్లు, re.search vs match vs findall vs finditer, Capturing Groups, Named Groups, Regex Flags, ReDoS నివారణ, మరియు Enterprise KYC Verification Engine ప్రాజెక్ట్." />
+  <meta name="keywords" content="python regex in telugu, python re module telugu, regular expressions python telugu, email validation regex python, pan card regex python, learn python in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-python/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Complete Guide to Python Regular Expressions and re Module in Telugu)",
+    "description": "Python 3 రెగ్యులర్ ఎక్స్‌ప్రెషన్స్ పూర్తి గైడ్: Meta-characters, re module functions (search, match, findall, sub), Named Groups, Regex Flags, మరియు Enterprise KYC Verification Engine.",
+    "articleSection": "Phase 02: కంట్రోల్ ఫ్లో, లూప్స్ & స్ట్రింగ్స్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-01-24",
+    "dateModified": "2026-11-02"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Compiler Integration -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___PY_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/("""[\\s\\S]*?"""|'''[\\s\\S]*?'''|f?"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|f?'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'|r"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|r'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'import','from','as','def','return','class','if','elif','else','while','for','in',
+        'break','continue','pass','try','except','finally','with','lambda','global','nonlocal',
+        'and','or','not','is','yield','async','await','raise','assert','True','False','None'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'print','len','range','type','isinstance','id','input','int','float','str','list',
+        'dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted',
+        'abs','open','help','dir','filter','bool'
+      ];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?)\\b/g, m => pushToken('num', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split('___PY_TOK_' + idx + '___').join(tok);
+      });
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code.language-python').forEach(block => {
+        block.innerHTML = highlightPythonCode(block.innerText);
+      });
+    });
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      const code = pre.innerText;
+      try {
+        localStorage.setItem('code_python', code);
+        localStorage.setItem('code_python3', code);
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+      window.open('/online-python-compiler.html', '_blank');
+    }
+  </script>
+</head>
+
+<body class="lang-python light-theme">
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="content">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a>
+      <span class="sep">›</span>
+      <a href="/blog-python.html">Python Masterclass</a>
+      <span class="sep">›</span>
+      <span>Chapter 10: ${currentLesson.title}</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">${currentLesson.title}</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge badge-tech">🐍 Modern Python (Python 3.12+)</span>
+      <span class="badge badge-chapter">🎯 Chapter 10 of 25</span>
+      <span class="badge badge-phase">⚙️ Phase 02: కంట్రోల్ ఫ్లో, లూప్స్ &amp; స్ట్రింగ్స్</span>
+      <span class="badge badge-edition">📅 2026 Edition</span>
+    </div>
+
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin-bottom:24px; font-size:13px; line-height:1.7;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span style="color:var(--text2); margin-left:6px;">
+        Regex ఆర్కిటెక్చర్ · Raw strings r"" · మెటాక్యారెక్టర్లు (^, $, ., *, +, ?, [], {}) · re.search vs match vs findall · Capturing &amp; Named Groups · re.compile() ఆప్టిమైజేషన్ · Regex Flags (IGNORECASE, MULTILINE, VERBOSE) · ReDoS నివారణ · Enterprise KYC Verification Engine ప్రాజెక్ట్!
+      </span>
+    </div>
+
+    <!-- INTRO BOX (Warm Soft Ivory HTML5 Style) -->
+    <div class="intro-box">
+      సాధారణ స్ట్రింగ్ మెథడ్స్ <code>find()</code> లేదా <code>startswith()</code> ఒక నిర్దిష్ట పదాన్ని వెతకడానికి సరిపోతాయి. కానీ "ఒక టెక్స్ట్‌లో ఉన్న అన్ని 10-అంకెల ఫోన్ నంబర్లను లేదా అధికారిక ఈమెయిల్ ఐడీలను వెతకండి" అన్నప్పుడు సాధారణ కోడింగ్ వందల లైన్లు పడుతుంది!
+      ఇలాంటి సంక్లిష్టమైన టెక్స్ట్ ప్యాటర్న్‌లను కేవలం ఒకే ఒక్క లైన్‌లో వెతకడానికి, ధృవీకరించడానికి మరియు మార్చడానికి కంప్యూటర్ సైన్స్ అందించిన అద్భుతమైన గణిత సాధనమే <strong>రెగ్యులర్ ఎక్స్‌ప్రెషన్స్ (Regular Expressions / Regex)</strong>.
+      పైథాన్‌లోని <strong><code>re</code></strong> మాడ్యూల్ C-లెవల్ ఆప్టిమైజ్డ్ ఇంజిన్‌తో పనిచేస్తూ, అత్యంత వేగంగా డేటాను ఫిల్టర్ చేస్తుంది.
+      ఈ పదవ అధ్యాయంతో మనం <strong>Phase 02: కంట్రోల్ ఫ్లో, లూప్స్ &amp; స్ట్రింగ్స్</strong> ను పరిపూర్ణంగా ముగిస్తూ — ఈమెయిల్, మొబైల్, పాన్‌కార్డ్, మరియు ఆధార్ నంబర్లను స్వయంచాలకంగా ధృవీకరించే పూర్తి స్థాయి <strong>Enterprise KYC &amp; Multi-Document Verification Engine</strong> ప్రాజెక్ట్ ద్వారా Regex పై సంపూర్ణ ప్రావీణ్యాన్ని సాధిద్దాం!
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 class="section-title"><span class="num">1</span> రెగ్యులర్ ఎక్స్‌ప్రెషన్స్ అంటే ఏమిటి? (Regex Engine Architecture)</h2>
+    <p>
+      రెగ్యులర్ ఎక్స్‌ప్రెషన్ అనేది టెక్స్ట్‌లోని ఒక నిర్దిష్ట అమరికను (Text Pattern) వివరించడానికి ఉపయోగించే ఒక సంక్షిప్త సంకేత భాష.
+      పైథాన్‌లో Regex సపోర్ట్ కోసం ఇన్-బిల్ట్ <strong><code>re</code></strong> మాడ్యూల్ ఉంది.
+    </p>
+
+    <!-- ARCHITECTURE DIAGRAM -->
+    <div style="background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:20px; margin:20px 0; color:#e2e8f0; font-family:'JetBrains Mono', monospace; font-size:13px; overflow-x:auto;">
+<span style="color:#38bdf8; font-weight:700;">[పైథాన్ Regex ఇంజిన్ ఎగ్జిక్యూషన్ పైప్‌లైన్]</span>
+
+       ప్యాటర్న్ స్ట్రింగ్               టార్గెట్ టెక్స్ట్
+       r"^[6-9]\d{9}$"                "9876543210"
+              │                              │
+              ▼                              │
+       ┌──────────────┐                      │
+       │  re.compile  │ (C-Level DFA/NFA)    │
+       │ ప్యాటర్న్ బైట్‌కోడ్│                     │
+       └──────┬───────┘                      │
+              │                              │
+              ▼                              ▼
+       ┌─────────────────────────────────────────┐
+       │         పైథాన్ re Matching Engine        │
+       └────────────────────┬────────────────────┘
+                            │
+                            ▼
+              ┌───────────────────────────┐
+              │    Match Object (or None) │
+              │ .group(), .start(), .end()│
+              └───────────────────────────┘
+    </div>
+
+    <!-- SECTION 2 -->
+    <h2 class="section-title"><span class="num">2</span> రా స్ట్రింగ్స్ ప్రాముఖ్యత (Why Raw Strings <code>r""</code> are Mandatory)</h2>
+    <p>
+      సాధారణ పైథాన్ స్ట్రింగ్స్‌లో బ్యాక్‌స్లాష్ <code>\</code> అనేది ఒక ఎస్కేప్ క్యారెక్టర్ (ఉదా: <code>\n</code> అంటే న్యూలైన్, <code>\t</code> అంటే ట్యాబ్).
+      కానీ రెగ్యులర్ ఎక్స్‌ప్రెషన్స్‌లో కూడా <code>\d</code>, <code>\w</code>, <code>\s</code> లాంటి బ్యాక్‌స్లాష్ సింబల్స్ వాడతాము.
+    </p>
+    <p>
+      సాధారణ స్ట్రింగ్ వాడితే బ్యాక్‌స్లాష్‌ను డబుల్ ఎస్కేప్ <code>"\\d"</code> చేయాల్సి వస్తుంది. దీనివల్ల కోడ్ చదవడానికి వికృతంగా మారుతుంది.
+      <strong>పరిష్కారం:</strong> స్ట్రింగ్ ముందు <strong><code>r</code></strong> (Raw String) పెట్టడం!
+      <br/>
+      <code>pattern = r"\d{3}-\d{4}"</code>
+      <br/>
+      రా స్ట్రింగ్ వాడినప్పుడు పైథాన్ బ్యాక్‌స్లాష్‌లను ఎస్కేప్ చేయకుండా యాజిటీజ్‌గా Regex ఇంజిన్‌కు అందజేస్తుంది.
+    </p>
+
+    <!-- SECTION 3 -->
+    <h2 class="section-title"><span class="num">3</span> ప్రాథమిక మెటాక్యారెక్టర్లు (Meta-Characters: ^, $, ., [], |)</h2>
+    <p>
+      రెగ్యులర్ ఎక్స్‌ప్రెషన్స్‌లో అక్షరాలకు ప్రత్యేక అర్థాన్ని ఇచ్చే చిహ్నాలను <strong>మెటాక్యారెక్టర్లు (Meta-characters)</strong> అంటారు:
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>చిహ్నం</th>
+            <th>పేరు</th>
+            <th>అర్థం &amp; ప్రవర్తన</th>
+            <th>ఉదాహరణ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>.</code></td>
+            <td>చుక్క (Dot / Wildcard)</td>
+            <td>న్యూలైన్ తప్ప ఏదైనా ఒక్క క్యారెక్టర్‌ను మ్యాచ్ చేస్తుంది.</td>
+            <td><code>r"p.n"</code> matches <code>"pan"</code>, <code>"pin"</code>, <code>"pen"</code></td>
+          </tr>
+          <tr>
+            <td><code>^</code></td>
+            <td>క్యారెట్ (Caret)</td>
+            <td>స్ట్రింగ్ లేదా లైన్ <strong>ప్రారంభాన్ని</strong> సూచిస్తుంది.</td>
+            <td><code>r"^Hello"</code> ("Hello" తో మొదలవ్వాలి)</td>
+          </tr>
+          <tr>
+            <td><code>$</code></td>
+            <td>డాలర్ (Dollar)</td>
+            <td>స్ట్రింగ్ లేదా లైన్ <strong>ముగింపును</strong> సూచిస్తుంది.</td>
+            <td><code>r"End$"</code> ("End" తో ముగియాలి)</td>
+          </tr>
+          <tr>
+            <td><code>[abc]</code></td>
+            <td>క్యారెక్టర్ సెట్</td>
+            <td>బ్రాకెట్ లోపల ఉన్న అక్షరాలలో ఏ ఒక్కటైనా మ్యాచ్ అవుతుంది.</td>
+            <td><code>r"[aeiou]"</code> (అచ్చులు మాత్రమే)</td>
+          </tr>
+          <tr>
+            <td><code>[^abc]</code></td>
+            <td>నెగేటివ్ సెట్</td>
+            <td>బ్రాకెట్ లోపల లేని మిగిలిన ఏ అక్షరమైనా మ్యాచ్ అవుతుంది.</td>
+            <td><code>r"[^0-9]"</code> (సంఖ్యలు కానివి)</td>
+          </tr>
+          <tr>
+            <td><code>A | B</code></td>
+            <td>పైప్ (Alternation / OR)</td>
+            <td>A లేదా B లలో ఏ ఒక్క ప్యాటర్న్ అయినా సరిపోలుతుంది.</td>
+            <td><code>r"cat|dog"</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 4 -->
+    <h2 class="section-title"><span class="num">4</span> స్పెషల్ సీక్వెన్సెస్ (\d, \D, \w, \W, \s, \S, \b)</h2>
+    <p>
+      పదే పదే <code>[0-9]</code> లేదా <code>[a-zA-Z0-9_]</code> అని పెద్ద పెద్ద రేంజెస్ రాయకుండా పైథాన్ షార్ట్‌కట్ సీక్వెన్సులను అందిస్తుంది:
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>సీక్వెన్స్</th>
+            <th>సమానమైన సెట్</th>
+            <th>అర్థం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>\d</code></td>
+            <td><code>[0-9]</code></td>
+            <td>ఏదైనా ఒక అంకె (Digit).</td>
+          </tr>
+          <tr>
+            <td><code>\D</code></td>
+            <td><code>[^0-9]</code></td>
+            <td>అంకె కాని ఏదైనా అక్షరం (Non-digit).</td>
+          </tr>
+          <tr>
+            <td><code>\w</code></td>
+            <td><code>[a-zA-Z0-9_]</code></td>
+            <td>ఆల్ఫాన్యూమరిక్ అక్షరం లేదా అండర్‌స్కోర్ (Word character).</td>
+          </tr>
+          <tr>
+            <td><code>\W</code></td>
+            <td><code>[^a-zA-Z0-9_]</code></td>
+            <td>స్పెషల్ క్యారెక్టర్ లేదా స్పేస్ (Non-word).</td>
+          </tr>
+          <tr>
+            <td><code>\s</code></td>
+            <td><code>[ \t\n\r\f\v]</code></td>
+            <td>స్పేస్, ట్యాబ్ లేదా న్యూలైన్ (Whitespace).</td>
+          </tr>
+          <tr>
+            <td><code>\S</code></td>
+            <td><code>[^ \t\n\r\f\v]</code></td>
+            <td>ఖాళీ లేని అక్షరం (Non-whitespace).</td>
+          </tr>
+          <tr>
+            <td><code>\b</code></td>
+            <td>Word boundary</td>
+            <td>పదం ప్రారంభంలో లేదా ముగింపులో ఉండే సరిహద్దు.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 5 -->
+    <h2 class="section-title"><span class="num">5</span> క్వాంటిఫైయర్స్ — పునరావృతం నియంత్రణ (*, +, ?, {m,n})</h2>
+    <p>
+      ఒక అక్షరం ఎన్నిసార్లు రావాలో నిర్ణయించడానికి క్వాంటిఫైయర్లను ఉపయోగిస్తాము:
+    </p>
+
+    <ul>
+      <li><code>*</code>: 0 లేదా అంతకంటే ఎక్కువ సార్లు (ఉదా: <code>\d*</code>).</li>
+      <li><code>+</code>: <strong>కనీసం 1 సారి</strong> లేదా అంతకంటే ఎక్కువ సార్లు తప్పనిసరిగా ఉండాలి (ఉదా: <code>\d+</code>).</li>
+      <li><code>?</code>: 0 లేదా 1 సారి మాత్రమే (ఐచ్ఛికం - Optional: ఉదా: <code>https?</code> అనేది "http" మరియు "https" రెండింటినీ మ్యాచ్ చేస్తుంది).</li>
+      <li><code>{n}</code>: ఖచ్చితంగా $n$ సార్లు మాత్రమే ఉండాలి (ఉదా: <code>\d{10}</code> అంటే ఖచ్చితంగా 10 అంకెలు).</li>
+      <li><code>{min,max}</code>: కనీసం min నుండి గరిష్టంగా max సార్లు (ఉదా: <code>\w{4,12}</code> పాస్‌వర్డ్ పొడవు 4 నుండి 12).</li>
+    </ul>
+
+    <!-- SECTION 6 -->
+    <h2 class="section-title"><span class="num">6</span> కోడ్ డెమో 1: ప్రాథమిక మెటాక్యారెక్టర్లు &amp; మొబైల్ నంబర్ వాలిడేటర్</h2>
+    <p>
+      భారతీయ 10-అంకెల మొబైల్ నంబర్ (6, 7, 8, 9 తో ప్రారంభమయ్యేవి) ని Regex ద్వారా ఎలా ధృవీకరించవచ్చో పరిశీలించండి:
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">01_indian_mobile_validator.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># భారతీయ మొబైల్ నంబర్ వాలిడేషన్ డెమో
+import re
+
+# Regex ప్యాటర్న్ విశ్లేషణ:
+# ^          -> ప్రారంభం
+# (\\+91[\\-\\s]?)? -> ఐచ్ఛిక +91 కంట్రీ కోడ్
+# [6-9]      -> మొదటి అంకె 6, 7, 8 లేదా 9 మాత్రమే ఉండాలి
+# \\d{9}      -> మిగిలిన 9 అంకెలు (0-9)
+# $          -> ముగింపు
+mobile_pattern = r"^(\\+91[\\-\\s]?)?[6-9]\\d{9}$"
+
+test_numbers = [
+    "9876543210",       # ✅ సరైన నంబర్
+    "+91 9123456789",   # ✅ కంట్రీ కోడ్‌తో సరైన నంబర్
+    "5123456789",       # ❌ 5 తో ప్రారంభమైంది (చెల్లదు)
+    "98765432",         # ❌ కేవలం 8 అంకెలు మాత్రమే
+    "987654321099"      # ❌ 12 అంకెలు (చాలా పొడవు)
+]
+
+print("=== భారతీయ మొబైల్ నంబర్ ధృవీకరణ నివేదిక ===")
+for num in test_numbers:
+    is_valid = bool(re.match(mobile_pattern, num.strip()))
+    status = "✅ సరైన మొబైల్ నంబర్" if is_valid else "❌ చెల్లని మొబైల్ నంబర్"
+    print(f"నంబర్: {num:<18} ──▶ {status}")
+</code></pre>
+    </div>
+
+    <!-- SECTION 7 -->
+    <h2 class="section-title"><span class="num">7</span> పైథాన్ <code>re</code> మాడ్యూల్ ఫంక్షన్లు (search, match, findall, sub)</h2>
+    <p>
+      <code>re</code> మాడ్యూల్‌లో అత్యంత ఎక్కువగా ఉపయోగించే 5 ప్రధాన ఫంక్షన్లు:
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ఫంక్షన్</th>
+            <th>ఎక్కడ వెతుకుతుంది?</th>
+            <th>రిటర్న్ విలువ</th>
+            <th>ఉపయోగ సందర్భం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><code>re.match()</code></strong></td>
+            <td>కేవలం స్ట్రింగ్ <strong>ప్రారంభం నుండి మాత్రమే</strong>.</td>
+            <td>Match ఆబ్జెక్ట్ లేదా <code>None</code></td>
+            <td>ఫారమ్ ఫీల్డ్ కచ్చితంగా ఆ ప్యాటర్న్‌లో ఉందో లేదో చూడటానికి.</td>
+          </tr>
+          <tr>
+            <td><strong><code>re.search()</code></strong></td>
+            <td>మొత్తం స్ట్రింగ్‌లో <strong>ఎక్కడైనా మొదటి మ్యాచ్</strong>.</td>
+            <td>Match ఆబ్జెక్ట్ లేదా <code>None</code></td>
+            <td>పారాగ్రాఫ్‌లో నిర్దిష్ట కీవర్డ్ ఎక్కడ ఉందో కనుగొనడానికి.</td>
+          </tr>
+          <tr>
+            <td><strong><code>re.findall()</code></strong></td>
+            <td>మొత్తం స్ట్రింగ్‌లోని అన్ని మ్యాచ్‌లను వెతుకుతుంది.</td>
+            <td><strong>లిస్ట్ ఆఫ్ స్ట్రింగ్స్ (List)</strong></td>
+            <td>ఒక పెద్ద డాక్యుమెంట్‌లో ఉన్న అన్ని ఈమెయిళ్లను వెలికితీయడానికి.</td>
+          </tr>
+          <tr>
+            <td><strong><code>re.finditer()</code></strong></td>
+            <td>అన్ని మ్యాచ్‌ల ఇటరేటర్‌ను ఇస్తుంది.</td>
+            <td><strong>Iterator of Match objects</strong></td>
+            <td>ప్రతి మ్యాచ్ యొక్క ప్రారంభ/ముగింపు స్థానాలను ట్రాక్ చేయడానికి.</td>
+          </tr>
+          <tr>
+            <td><strong><code>re.sub()</code></strong></td>
+            <td>సరిపోలిన ప్యాటర్న్‌లను కొత్త పదంతో మారుస్తుంది.</td>
+            <td>కొత్త స్ట్రింగ్</td>
+            <td>పాస్‌వర్డ్‌లు, ఆధార్ నంబర్లను మాస్కింగ్ చేయడానికి (XXXX-XXXX-1234).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 8 -->
+    <h2 class="section-title"><span class="num">8</span> క్యాప్చరింగ్ గ్రూప్స్ &amp; నేమ్డ్ గ్రూప్స్ (Capturing &amp; Named Groups)</h2>
+    <p>
+      ప్యాటర్న్ లోపల రౌండ్ బ్రాకెట్లు <code>(...)</code> పెట్టి నిర్దిష్ట భాగాలను ప్రత్యేకంగా సేకరించవచ్చు:
+    </p>
+
+    <ul>
+      <li><strong>ప్రాథమిక గ్రూప్స్:</strong> <code>r"(\d{2})-(\d{2})-(\d{4})"</code>
+        <br/><code>match.group(1)</code> -&gt; రోజు, <code>match.group(2)</code> -&gt; నెల, <code>match.group(3)</code> -&gt; సంవత్సరం.
+      </li>
+      <li><strong>నేమ్డ్ గ్రూప్స్ (Python Named Groups):</strong> గ్రూప్‌లకు పేర్లు పెట్టడం:
+        <br/><code>r"(?P&lt;day&gt;\d{2})-(?P&lt;month&gt;\d{2})-(?P&lt;year&gt;\d{4})"</code>
+        <br/><code>match.group("year")</code> లేదా <code>match.groupdict()</code> ద్వారా డిక్షనరీగా పొందవచ్చు!
+      </li>
+    </ul>
+
+    <!-- SECTION 9 -->
+    <h2 class="section-title"><span class="num">9</span> కోడ్ డెమో 2: నేమ్డ్ గ్రూప్స్ &amp; లాగ్ రికార్డ్ పార్సింగ్</h2>
+    <p>
+      సర్వర్ లాగ్ లైన్ నుండి నేమ్డ్ గ్రూప్స్ ద్వారా IP, టైమ్‌స్టాంప్, మరియు స్టేటస్ కోడ్‌ను సంగ్రహించే కోడ్ చూడండి:
+    </p>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">02_named_groups_log_parser.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># నేమ్డ్ గ్రూప్స్ (Named Capturing Groups) డెమో
+import re
+
+log_entry = "2026-11-02 10:45:12 | IP: 192.168.1.105 | STATUS: 200 | URL: /api/v1/checkout"
+
+log_regex = r"(?P<date>\\d{4}-\\d{2}-\\d{2})\\s(?P<time>\\d{2}:\\d{2}:\\d{2})\\s\\|\\sIP:\\s(?P<ip>\\d+\\.\\d+\\.\\d+\\.\\d+)\\s\\|\\sSTATUS:\\s(?P<status>\\d+)\\s\\|\\sURL:\\s(?P<endpoint>\\S+)"
+
+match = re.search(log_regex, log_entry)
+
+if match:
+    data = match.groupdict() # అన్ని గ్రూప్‌లను డిక్షనరీగా ఇస్తుంది!
+    print("=== విశ్లేషించబడిన లాగ్ డేటా (Structured Dictionary) ===")
+    for key, val in data.items():
+        print(f"{key:<12} : {val}")
+else:
+    print("లాగ్ ఫార్మాట్ సరిపోలలేదు.")
+</code></pre>
+    </div>
+
+    <!-- SECTION 10 -->
+    <h2 class="section-title"><span class="num">10</span> కాంపిలేషన్ ఫ్లాగ్స్ (re.IGNORECASE, re.MULTILINE, re.VERBOSE)</h2>
+    <p>
+      Regex ఇంజిన్ ప్రవర్తనను మార్చడానికి ఫ్లాగ్‌లను రెండవ లేదా మూడవ ఆర్గ్యుమెంట్‌గా పంపుతాము:
+    </p>
+
+    <ul>
+      <li><strong><code>re.IGNORECASE</code> (లేదా <code>re.I</code>):</strong> అప్పర్ మరియు లోయర్ కేస్ తేడా లేకుండా వెతుకుతుంది.</li>
+      <li><strong><code>re.MULTILINE</code> (లేదా <code>re.M</code>):</strong> <code>^</code> మరియు <code>$</code> లు మొత్తం టెక్స్ట్ ప్రారంభం/ముగింపు కాకుండా ప్రతి లైన్ ప్రారంభం/ముగింపుకు వర్తిస్తాయి.</li>
+      <li><strong><code>re.DOTALL</code> (లేదా <code>re.S</code>):</strong> చుక్క <code>.</code> న్యూలైన్ <code>\n</code> ను కూడా మ్యాచ్ చేస్తుంది.</li>
+      <li><strong><code>re.VERBOSE</code> (లేదా <code>re.X</code>):</strong> అతిపెద్ద సంక్లిష్టమైన Regex లో కామెంట్స్ మరియు స్పేస్‌లు పెట్టి అందంగా రాయడానికి అనుమతిస్తుంది!</li>
+    </ul>
+
+    <!-- SECTION 11 -->
+    <h2 class="section-title"><span class="num">11</span> ప్రముఖ రియల్-వరల్డ్ రెగెక్స్ ప్యాటర్న్స్ (Email, PAN Card, Strong Password)</h2>
+    <p>
+      భారతదేశంలో మరియు అంతర్జాతీయంగా సాఫ్ట్‌వేర్ డెవలప్‌మెంట్‌లో అత్యధికంగా వాడే అధికారిక Regex ప్యాటర్న్స్:
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ఫీల్డ్ పేరు</th>
+            <th>ప్రామాణిక Regex ప్యాటర్న్</th>
+            <th>వివరణ &amp; నియమాలు</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ఈమెయిల్ (Email)</strong></td>
+            <td><code>r"^[\w\.-]+@[\w\.-]+\.\w{2,}$"</code></td>
+            <td>యూజర్‌నేమ్, @ గుర్తు, డొమైన్ పేరు మరియు కనీసం 2 అక్షరాల TLD (.com, .in).</td>
+          </tr>
+          <tr>
+            <td><strong>పాన్‌కార్డ్ (Indian PAN)</strong></td>
+            <td><code>r"^[A-Z]{5}[0-9]{4}[A-Z]$"</code></td>
+            <td>మొదటి 5 పెద్ద అక్షరాలు, తర్వాత 4 అంకెలు, చివరగా 1 పెద్ద అక్షరం.</td>
+          </tr>
+          <tr>
+            <td><strong>ఆధార్ కార్డ్ (Aadhaar)</strong></td>
+            <td><code>r"^[2-9]{1}\d{3}\s\d{4}\s\d{4}$"</code></td>
+            <td>0 లేదా 1 తో మొదలుకాకూడదు; 4-4-4 అంకెలతో స్పేస్ ఇచ్చి ఉండాలి.</td>
+          </tr>
+          <tr>
+            <td><strong>స్ట్రాంగ్ పాస్‌వర్డ్ (Strong Password)</strong></td>
+            <td><code>r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"</code></td>
+            <td>కనీసం ఒక చిన్న అక్షరం, ఒక పెద్ద అక్షరం, ఒక అంకె, ఒక స్పెషల్ సింబల్ మరియు కనీసం 8 అక్షరాల పొడవు.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #38bdf8; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#38bdf8; margin-bottom:8px;">🔬 అడ్వాన్స్‌డ్ లుక్‌అహెడ్ &amp; లుక్‌బిహైండ్ అసెర్షన్స్ (Lookahead &amp; Lookbehind):</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:8px;">
+        టెక్స్ట్‌ను కన్స్యూమ్ చేయకుండా (క్యారెక్టర్లను ముందుకు తీసుకెళ్లకుండా) కేవలం ముందు లేదా వెనుక ఒక నిర్దిష్ట పదం ఉందో లేదో తనిఖీ చేయడానికి జీరో-విడ్త్ అసెర్షన్స్ ఉపయోగిస్తాము:
+      </p>
+      <ul style="font-size:13px; color:var(--text2); line-height:1.8; margin-left:20px; margin-bottom:0;">
+        <li><strong>పాజిటివ్ లుక్‌అహెడ్ <code>(?=...)</code>:</strong> తర్వాతి స్థానంలో ఆ పదం తప్పనిసరిగా ఉండాలి (ఉదా: <code>r"\d+(?=px)"</code> కేవలం <code>"100px"</code> లోని <code>100</code> ను మాత్రమే మ్యాచ్ చేస్తుంది).</li>
+        <li><strong>నెగటివ్ లుక్‌అహెడ్ <code>(?!...)</code>:</strong> తర్వాతి స్థానంలో ఆ పదం ఉండకూడదు.</li>
+        <li><strong>పాజిటివ్ లుక్‌బిహైండ్ <code>(?&lt;=...)</code>:</strong> మునుపటి స్థానంలో ఆ పదం ఉండాలి (ఉదా: <code>r"(?&lt;=₹)\d+"</code> కరెన్సీ సింబల్ పక్కన ఉన్న సంఖ్యను మాత్రమే లాగుతుంది).</li>
+        <li><strong>నెగటివ్ లుక్‌బిహైండ్ <code>(?&lt;!...)</code>:</strong> మునుపటి స్థానంలో ఆ పదం ఉండకూడదు.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 12 -->
+    <h2 class="section-title"><span class="num">12</span> కామన్ బిగినర్స్ మిస్టేక్స్ &amp; ReDoS సైబర్ వాలనరబిలిటీ</h2>
+    <ul>
+      <li><strong>Mistake 1: Raw String ప్రిఫిక్స్ <code>r""</code> మర్చిపోవడం:</strong> దీనివల్ల <code>\b</code> అంటే బ్యాక్‌స్పేస్ గా మారి ప్యాటర్న్ ఫెయిల్ అవుతుంది.</li>
+      <li><strong>Mistake 2: <code>re.match()</code> మరియు <code>re.search()</code> గందరగోళం:</strong> మధ్యలో ఉన్న పదాన్ని వెతకాలంటే <code>search()</code> వాడాలి; <code>match()</code> కేవలం మొదట్లో మాత్రమే చూస్తుంది.</li>
+      <li><strong>Security Alert: ReDoS (Regular Expression Denial of Service):</strong> నెస్టెడ్ క్వాంటిఫైయర్స్ (ఉదా: <code>(a+)+$</code>) రాసినప్పుడు, మ్యాచ్ అవ్వని పొడవైన స్ట్రింగ్ వస్తే ఇంజిన్ బిలియన్ల కొద్దీ కాంబినేషన్లను బ్యాక్‌ట్రాక్ చేసి CPU ని 100% చేసి సర్వర్‌ను క్రాష్ చేస్తుంది! ఎల్లప్పుడూ నెస్టెడ్ ప్లస్/స్టార్ ప్యాటర్న్స్ నివారించాలి.</li>
+    </ul>
+
+    <!-- SECTION 13 -->
+    <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాజెక్ట్: "Enterprise Multi-Document KYC Verification Engine"</h2>
+    <p>
+      ఈ పదవ అధ్యాయంలో నేర్చుకున్న అన్ని అంశాలను (మెటాక్యారెక్టర్లు, క్వాంటిఫైయర్స్, re.search, findall, sub, నేమ్డ్ గ్రూప్స్, మాస్కింగ్) కలగలిపి — ఒక బ్యాంకింగ్ కస్టమర్ యొక్క ఈమెయిల్, మొబైల్, పాన్‌కార్డ్, ఆధార్ నంబర్లను తనిఖీ చేసి సురక్షితమైన డిజిటల్ KYC సర్టిఫికెట్ తయారుచేసే <strong>Enterprise Multi-Document KYC Verification Engine</strong> ను నిర్మిద్దాం!
+    </p>
+
+    <!-- CODE BLOCK 3: CAPSTONE MINI PROJECT -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">03_enterprise_kyc_verification_engine.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 10 మినీ ప్రాజెక్ట్: Enterprise Multi-Document KYC Engine
+# కాన్సెప్ట్స్: re.compile(), re.match(), re.sub() Masking,
+#             Email, PAN, Mobile, Aadhaar Validation & Compliance Audit
+# =====================================================================
+import re
+
+# ప్రీ-కంపైల్డ్ Regex ప్యాటర్న్స్ (గరిష్ట వేగం కోసం)
+PATTERNS = {
+    "email": re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"),
+    "mobile": re.compile(r"^(\\+91[\\-\\s]?)?[6-9]\\d{9}$"),
+    "pan": re.compile(r"^[A-Z]{5}[0-9]{4}[A-Z]$"),
+    "aadhaar": re.compile(r"^[2-9]\\d{3}\\s\\d{4}\\s\\d{4}$")
+}
+
+def verify_customer_kyc(profile: dict):
+    """
+    కస్టమర్ పత్రాలను ధృవీకరించి అధికారిక KYC నివేదికను రూపొందిస్తుంది.
+    """
+    print("\\n" + "=" * 74)
+    print(f"{'🏛️ మన డిజిటల్ బ్యాంక్ — ఆటోమేటెడ్ KYC ధృవీకరణ నివేదిక 2026':^74}")
+    print("=" * 74)
+    print(f"దరఖాస్తుదారుని పేరు : {profile['name']}")
+    print("-" * 74)
+    print(f"{'డాక్యుమెంట్ రకం':<20} {'నమోదైన విలువ':<22} {'ధృవీకరణ ఫలితం':<28}")
+    print("-" * 74)
+
+    all_verified = True
+
+    # 1. ఈమెయిల్ చెక్
+    email_ok = bool(PATTERNS["email"].match(profile["email"].strip()))
+    status_email = "✅ అధీకృత ఈమెయిల్" if email_ok else "❌ చెల్లని ఈమెయిల్ ఫార్మాట్"
+    print(f"{'ఈమెయిల్ (Email)':<20} {profile['email']:<22} {status_email:<28}")
+    if not email_ok: all_verified = False
+
+    # 2. మొబైల్ చెక్
+    mobile_ok = bool(PATTERNS["mobile"].match(profile["mobile"].strip()))
+    status_mobile = "✅ సరైన భారతీయ మొబైల్" if mobile_ok else "❌ చెల్లని మొబైల్ నంబర్"
+    print(f"{'మొబైల్ నంబర్':<20} {profile['mobile']:<22} {status_mobile:<28}")
+    if not mobile_ok: all_verified = False
+
+    # 3. పాన్‌కార్డ్ చెక్
+    pan_ok = bool(PATTERNS["pan"].match(profile["pan"].strip().upper()))
+    status_pan = "✅ NSDL వెరిఫైడ్ PAN" if pan_ok else "❌ చెల్లని PAN కార్డ్ నంబర్"
+    print(f"{'పాన్‌కార్డ్ (PAN)':<20} {profile['pan'].upper():<22} {status_pan:<28}")
+    if not pan_ok: all_verified = False
+
+    # 4. ఆధార్ చెక్ & మాస్కింగ్ (UIDAI నిబంధనల ప్రకారం మొదటి 8 అంకెలు దాచాలి)
+    aadhaar_raw = profile["aadhaar"].strip()
+    aadhaar_ok = bool(PATTERNS["aadhaar"].match(aadhaar_raw))
+    masked_aadhaar = re.sub(r"^\\d{4}\\s\\d{4}", "XXXX XXXX", aadhaar_raw) if aadhaar_ok else aadhaar_raw
+    status_aadhaar = "✅ UIDAI వెరిఫైడ్ & మాస్క్డ్" if aadhaar_ok else "❌ చెల్లని ఆధార్ నంబర్"
+    print(f"{'ఆధార్ కార్డ్':<20} {masked_aadhaar:<22} {status_aadhaar:<28}")
+    if not aadhaar_ok: all_verified = False
+
+    print("=" * 74)
+    if all_verified:
+        print(f"{'🎉 అభినందనలు! మీ KYC విజయవంతంగా ఆమోదించబడింది (KYC_STATUS: APPROVED)':^74}")
+    else:
+        print(f"{'⚠️ హెచ్చరిక: కొన్ని పత్రాలు చెల్లవు. దయచేసి వివరాలను సరిచూసుకోండి (REJECTED)':^74}")
+    print("=" * 74 + "\\n")
+
+# లైవ్ రన్ టెస్ట్
+test_profile = {
+    "name": "బాలాజీ రావు",
+    "email": "balaji.tech@ourcompiler.com",
+    "mobile": "+91 9876543210",
+    "pan": "ABCDE1234F",
+    "aadhaar": "4521 8901 2345"
+}
+
+verify_customer_kyc(test_profile)
+</code></pre>
+    </div>
+
+    <!-- 5 COLLAPSIBLE QUIZZES -->
+    <h2 class="section-title"><span class="num">★</span> ఈ అధ్యాయంపై ప్రాక్టీస్ క్విజ్ (Knowledge Check)</h2>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">1. Regex లో Raw String (r"...") ప్రిఫిక్స్ ఎందుకు తప్పనిసరిగా వాడాలి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> సాధారణ స్ట్రింగ్స్‌లో బ్యాక్‌స్లాష్ <code>\</code> ఎస్కేప్ క్యారెక్టర్‌గా పనిచేస్తుంది. రా స్ట్రింగ్ <code>r""</code> వాడకపోతే <code>\n</code> లేదా <code>\b</code> వంటి Regex సీక్వెన్సులను పైథాన్ తన సాధారణ ఎస్కేప్ కోడ్‌లుగా భావించి గందరగోళానికి గురవుతుంది. రా స్ట్రింగ్ బ్యాక్‌స్లాష్‌లను యాజిటీజ్‌గా Regex ఇంజిన్‌కు చేరుస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">2. re.match() కి మరియు re.search() కి మధ్య తేడా ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>re.match()</code> అనేది కేవలం స్ట్రింగ్ యొక్క <strong>మొదటి అక్షరం నుండి మాత్రమే</strong> ప్యాటర్న్ సరిపోతుందో లేదో చూస్తుంది. కానీ <code>re.search()</code> మొత్తం స్ట్రింగ్‌లో ఎక్కడైనా మొదటి మ్యాచ్‌ను వెతికి పట్టుకుంటుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">3. re.compile() ఫంక్షన్‌ను ఎప్పుడు వాడాలి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> ఒకే Regex ప్యాటర్న్‌ను లూప్‌లో పదే పదే లక్షలాది లైన్లపై పరీక్షించాల్సి వచ్చినప్పుడు <code>re.compile()</code> ద్వారా ప్యాటర్న్‌ను ముందుగానే బైట్‌కోడ్‌గా మార్చుకుంటే, ప్రతి రౌండ్‌లో ప్యాటర్న్‌ను మళ్లీ పార్స్ చేయాల్సిన అవసరం లేకుండా ఎగ్జిక్యూషన్ వేగం గణనీయంగా పెరుగుతుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">4. Regex లో నేమ్డ్ గ్రూప్స్ (?P<name>...) వల్ల కలిగే ప్రయోజనం ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> సంఖ్యల ద్వారా (ఉదా: <code>group(1)</code>, <code>group(2)</code>) డేటాను పొందడం కంటే, అర్థవంతమైన పేర్లతో (ఉదా: <code>group("year")</code>) పొందడం వల్ల కోడ్ రీడబిలిటీ పెరుగుతుంది. అంతేకాకుండా <code>match.groupdict()</code> ద్వారా అన్ని గ్రూప్‌లను నేరుగా ఒక పైథాన్ డిక్షనరీగా సులభంగా పొందవచ్చు.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">5. ReDoS అంటే ఏమిటి? దీనిని ఎలా నివారించవచ్చు?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> Regular Expression Denial of Service (ReDoS) అనేది ఒక సైబర్ ముప్పు. నెస్టెడ్ క్వాంటిఫైయర్స్ ఉన్నప్పుడు సరిపోలని డేటా వస్తే Regex ఇంజిన్ ఎక్స్‌పోనెన్షియల్ బ్యాక్‌ట్రాకింగ్ లోకి వెళ్లి సర్వర్ CPU ని 100% చేసి క్రాష్ చేస్తుంది. దీనిని నివారించడానికి నెస్టెడ్ లూపింగ్ ప్యాటర్న్స్ నివారించాలి మరియు స్ట్రింగ్ పొడవుపై పరిమితులు విధించాలి.
+      </div>
+    </details>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-python/09-python-strings-deep-dive-slicing.html" style="text-decoration:none; color:var(--text); font-weight:600; display:inline-flex; align-items:center; gap:8px; background:var(--bg2); padding:10px 18px; border-radius:8px; border:1px solid var(--border);">
+        ← మునుపటి అధ్యాయం: 9. స్ట్రింగ్స్ డీప్ డైవ్ &amp; స్లైసింగ్
+      </a>
+      <a href="/blog-python/11-python-lists-indexing-methods.html" style="text-decoration:none; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; background:#10b981; padding:10px 22px; border-radius:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        తర్వాతి అధ్యాయం: 11. లిస్ట్‌లు &amp; లిస్ట్ మెథడ్స్ →
+      </a>
+    </div>
+
+    <!-- INTERACTIVE COMPILER CTA CARD -->
+    <div style="margin-top:40px; background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(56,189,248,0.1) 100%); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:24px; text-align:center;">
+      <h3 style="margin-top:0; color:var(--text); font-size:20px;">ఈ Enterprise KYC Engine ని లైవ్‌గా మన కంపైలర్‌లో రన్ చేయండి!</h3>
+      <p style="color:var(--text2); max-width:650px; margin:8px auto 20px; font-size:14px; line-height:1.6;">
+        ఎటువంటి లోకల్ సెటప్ లేకుండా, బ్రౌజర్‌లోనే Modern Python 3 కంపైలర్‌లో ఈ కోడ్‌ను ఎగ్జిక్యూట్ చేసి అవుట్‌పుట్ తనిఖీ చేయండి.
+      </p>
+      <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; padding:12px 28px; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Launch Python Interactive Compiler
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER / NAV SCRIPTS -->
+<script src="/site-nav.js"></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`# =====================================================================
+# చాప్టర్ 10 మినీ ప్రాజెక్ట్: Enterprise KYC Verification Engine
+# =====================================================================
+import re
+
+email_re = re.compile(r"^[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,}$")
+mobile_re = re.compile(r"^(\\+91[\\-\\s]?)?[6-9]\\d{9}$")
+pan_re = re.compile(r"^[A-Z]{5}[0-9]{4}[A-Z]$")
+
+user = {
+    "name": "బాలాజీ రావు",
+    "email": "balaji.tech@ourcompiler.com",
+    "mobile": "+91 9876543210",
+    "pan": "ABCDE1234F",
+    "aadhaar": "4521 8901 2345"
+}
+
+print("=" * 65)
+print(f"{'🏛️ MANA APEX KYC VERIFICATION (LIVE DEMO)':^65}")
+print("=" * 65)
+print(f"దరఖాస్తుదారుని పేరు : {user['name']}")
+print("-" * 65)
+
+print(f"ఈమెయిల్   : {user['email']:<30} [MATCH: {bool(email_re.match(user['email']))}]")
+print(f"మొబైల్    : {user['mobile']:<30} [MATCH: {bool(mobile_re.match(user['mobile']))}]")
+print(f"పాన్‌కార్డ్ : {user['pan']:<30} [MATCH: {bool(pan_re.match(user['pan']))}]")
+
+masked = re.sub(r"^\\d{4}\\s\\d{4}", "XXXX XXXX", user["aadhaar"])
+print(f"ఆధార్     : {masked:<30} [VERIFIED & MASKED]")
+print("=" * 65)
+print("\\n🎉 చాప్టర్ 10 ప్రాజెక్ట్ విజయవంతంగా రన్ అయ్యింది! Phase 02 పూర్తయింది! 🚀")
+\`;
+
+    try {
+      localStorage.setItem('code_python', projectCode);
+      localStorage.setItem('code_python3', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-python-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-python', currentLesson.file);
+fs.writeFileSync(outputPath, chapter10Content, 'utf8');
+console.log('✅ Successfully generated deep high-value Python Chapter 10 in exact HTML style!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter10Content.length, 'characters');
