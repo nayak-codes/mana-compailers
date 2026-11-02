@@ -1,0 +1,683 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildJavaSidebar } = require('./java_curriculum_data.js');
+
+const currentLesson = LESSONS.find(l => l.num === 8);
+
+const chapter08Content = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Loops: while, do-while, for &amp; Enhanced for-each తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా లూప్స్: for, while, do-while, Enhanced for-each లూప్, break &amp; continue, లేబుల్డ్ లూప్స్, ప్యాటర్న్ ప్రోగ్రామింగ్ మరియు లూప్ పెర్ఫార్మెన్స్ ఆప్టిమైజేషన్ తెలుగులో సమగ్రంగా నేర్చుకోండి." />
+  <meta name="keywords" content="java loops telugu, java for loop telugu, java while loop telugu, java do while loop telugu, java enhanced for loop telugu, java break continue telugu, java labeled loops telugu, java pattern programs telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/08-java-loops-while-for-and-enhanced-foreach.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-java light-theme">
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+  ${buildJavaSidebar(8)}
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 08: Loops Mastery</span>
+    </div>
+
+    <h1 class="page-title">08. లూప్స్ మాస్టరీ — while, do-while, for &amp; ఎన్‌హాన్స్‌డ్ for-each (Loops Mastery in Java)</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java (Java 21+ LTS)</span>
+      <span class="badge">🟢 Lesson 08 of 25</span>
+      <span class="badge">📂 Part 02: Control Flow &amp; Strings (Page 3 of 5)</span>
+      <span class="badge">⏱️ 24 min read</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>Running Track Analogy · Entry vs Exit Controlled Loops · for, while, do-while Mechanics · break &amp; continue Statements · Labeled Loops Navigation · Enhanced for-each Loop · Pattern Generation · 5 Interactive Quizzes</span>
+    </div>
+
+    <!-- Intro Box with Running Track Analogy -->
+    <div class="intro-box">
+      <p style="font-size: 16px; line-height: 1.8; margin-bottom: 12px;">
+        కంప్యూటర్లకు మనుషుల లాగా అలసట ఉండదు; ఒకే పనిని మిలియన్ల సార్లు పదే పదే ఎలాంటి తప్పులు లేకుండా మెరుపు వేగంతో చేయడంలో అవి దిట్ట. డేటాబేస్ నుండి లక్షల రికార్డులను ఫిల్టర్ చేయడం, నెట్‌వర్క్ ప్యాకెట్లను వరుసగా రీడ్ చేయడం, లేదా గ్రాఫిక్స్ స్క్రీన్‌ను 60 FPS వేగంతో రీఫ్రెష్ చేయడం — వీటన్నింటి వెనుక ఉన్న మూల స్తంభాలే <strong>పునరావృత చర్యలు (Loops / Iterations)</strong>.
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin-bottom: 12px;">
+        <strong>రన్నింగ్ ట్రాక్ ల్యాప్స్ &amp; ఆటోమేటిక్ అసెంబ్లీ లైన్ అనాలజీ (The Running Track &amp; Conveyor Belt Analogy):</strong>
+        <br>
+        1. <strong><code>for</code> Loop (ముందే తెలిసిన 400 మీటర్ల రన్నింగ్ ల్యాప్స్):</strong> అథ్లెట్ గ్రౌండ్‌లో ఎన్ని రౌండ్లు కొట్టాలో ముందే స్పష్టంగా తెలిసినప్పుడు (ఉదా: 10 ల్యాప్స్). లూప్ ప్రారంభం (Start), ముగింపు షరతు (Condition), మరియు ప్రతి రౌండ్‌కు కౌంట్ పెంచడం (Step) అన్నీ ఒకే లైన్‌లో పక్కాగా ఉంటాయి.
+        <br>
+        2. <strong><code>while</code> Loop (వర్షం ఆగేంత వరకు గొడుగు పట్టుకోవడం - Event-Driven):</strong> పని ఎప్పుడు ముగుస్తుందో ముందే తెలియదు. వర్షం పడుతున్నంత కాలం (షరతు true ఉన్నంత వరకు) గొడుగు పట్టుకుంటూనే ఉంటాం. డేటాబేస్‌లో రికార్డులు అయిపోయేంత వరకు లూప్ నడవడానికి ఇది అనుకూలం.
+        <br>
+        3. <strong><code>do-while</code> Loop (మొదటి షో ఫ్రీ ప్రివ్యూ - Post-Condition Check):</strong> టికెట్ లేకపోయినా మొదటి ట్రైలర్ ఫ్రీగా చూసి, నచ్చితేనే టికెట్ తీసుకున్నట్లు — షరతుతో సంబంధం లేకుండా <strong>కనీసం ఒక్కసారి ఖచ్చితంగా నడిచే</strong> ఏకైక లూప్.
+        <br>
+        4. <strong>Enhanced <code>for-each</code> (కన్వేయర్ బెల్ట్ నావిగేషన్):</strong> ఇండెక్స్‌లు (0, 1, 2) మరియు సైజులతో పనిలేకుండా ఒక అరేలోని ప్రతి వస్తువునూ వరుసగా చేతుల్లోకి తీసుకునే ఆధునిక క్లీన్ లూప్.
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin: 0;">
+        ఈ ఎనిమిదవ పాఠంలో జావాలోని 4 రకాల లూప్‌ల అంతర్గత పనితీరు, <code>break</code> &amp; <code>continue</code> లూప్ కంట్రోల్, లేబుల్డ్ లూప్స్ ద్వారా మల్టీ-లెవల్ జంపింగ్, మరియు ఇన్వెంటరీ స్కానర్ కాప్‌స్టోన్ ప్రాజెక్ట్‌ను లోతుగా నేర్చుకుందాం!
+      </p>
+    </div>
+
+    <!-- TABLE OF CONTENTS (ఈ page లో ఏముంది) -->
+    <div class="toc-card">
+      <div class="toc-title">📋 ఈ Page లో ఏముంది? (Contents)</div>
+      <div class="toc-grid">
+        <div class="toc-col">
+          <h4><a href="#sec-1" style="color:#10b981; text-decoration:none;">విభాగం A: క్లాసిక్ లూప్స్ &amp; అనాటమీ</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-1">1. లూపింగ్ కాన్సెప్ట్: Entry vs Exit Controlled</a></li>
+            <li><a href="#sec-2">2. for లూప్ మెకానిక్స్ &amp; 3 ఎక్స్‌ప్రెషన్స్</a></li>
+            <li><a href="#sec-3">3. while లూప్ &amp; ఇన్ఫినిట్ లూప్ నివారణ</a></li>
+            <li><a href="#sec-4">4. do-while లూప్: కనీసం ఒక్కసారి రన్ అయ్యే నియమం</a></li>
+          </ul>
+        </div>
+        <div class="toc-col">
+          <h4><a href="#sec-5" style="color:#38bdf8; text-decoration:none;">విభాగం B: జంప్ స్టేట్‌మెంట్స్ &amp; ఫర్-ఈచ్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-5">5. break మరియు continue స్టేట్‌మెంట్స్</a></li>
+            <li><a href="#sec-6">6. లేబుల్డ్ లూప్స్ (Labeled Loops)</a></li>
+            <li><a href="#sec-7">7. Enhanced for-each లూప్ (అరేల కోసం)</a></li>
+            <li><a href="#sec-8">8. నెస్టెడ్ లూప్స్ &amp; టైమ్ కాంప్లెక్సిటీ (O(N^2))</a></li>
+          </ul>
+        </div>
+        <div class="toc-col">
+          <h4><a href="#sec-9" style="color:#f59e0b; text-decoration:none;">విభాగం C: డెమోలు, ప్రాజెక్ట్ &amp; క్విజ్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-9">9. కోడ్ డెమో 1: లూప్స్ పెర్ఫార్మెన్స్ &amp; బ్రేక్/కంటిన్యూ</a></li>
+            <li><a href="#sec-10">10. కోడ్ డెమో 2: పిరమిడ్ ప్యాటర్న్ ప్రింటింగ్ ఇంజిన్</a></li>
+            <li><a href="#sec-11">11. కోడ్ డెమో 3: Inventory Batch Scanner (Capstone)</a></li>
+            <li><a href="#sec-12">12. టాప్ 6 కామన్ లూప్ మిస్టేక్స్ &amp; 5 క్విజ్‌లు</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1 -->
+    <h2 class="section-title" id="sec-1"><span class="num">1</span> లూపింగ్ కాన్సెప్ట్: Entry vs Exit Controlled ఆర్కిటెక్చర్</h2>
+    <div class="section-body">
+      <p>
+        కంప్యూటర్ సైన్స్‌లో లూప్‌లు వాటి షరతును ఎప్పుడు తనిఖీ చేస్తాయనే దాన్ని బట్టి రెండు ప్రాథమిక వర్గాలుగా విభజించబడ్డాయి:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>వర్గం (Category)</th>
+            <th>లూప్‌లు</th>
+            <th>షరతు తనిఖీ సమయం</th>
+            <th>కనిష్ట ఎగ్జిక్యూషన్ కౌంట్</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Entry-Controlled Loops (ముందే తనిఖీ)</strong></td>
+            <td><code>for</code>, <code>while</code></td>
+            <td>లూప్ బాడీ లోపలికి అడుగుపెట్టడానికి ముందే షరతు తనిఖీ చేయబడుతుంది.</td>
+            <td><strong>0 సార్లు</strong> (మొదటిసారే false అయితే ఒక్కసారి కూడా రన్ అవ్వదు).</td>
+          </tr>
+          <tr>
+            <td><strong>Exit-Controlled Loops (చివరన తనిఖీ)</strong></td>
+            <td><code>do-while</code></td>
+            <td>కోడ్ బాడీ ఒకసారి రన్ అయిన తర్వాత మాత్రమే చివరన షరతు తనిఖీ చేయబడుతుంది.</td>
+            <td><strong>కనీసం 1 సారి</strong> (షరతు మొదటి నుంచీ false అయినా సరే).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 2 -->
+    <h2 class="section-title" id="sec-2"><span class="num">2</span> for లూప్ మెకానిక్స్ &amp; 3 ఎక్స్‌ప్రెషన్స్</h2>
+    <div class="section-body">
+      <p>
+        ఎన్ని సార్లు పునరావృతం కావాలో ముందే ఖచ్చితమైన సంఖ్య తెలిసినప్పుడు <strong>for లూప్</strong> ప్రపంచంలోనే అత్యంత విస్తృతంగా ఉపయోగించబడుతుంది. దీని హెడర్‌లో ఉండే 3 భాగాలు:
+      </p>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.8;">
+        <span style="color:#569cd6;">for</span> (<span style="color:#569cd6;">int</span> i = <span style="color:#b5cea8;">1</span>; i &lt;= <span style="color:#b5cea8;">5</span>; i++) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4ec9b0;">System</span>.<span style="color:#9cdcfe;">out</span>.<span style="color:#dcdcaa;">println</span>(<span style="color:#ce9178;">"ల్యాప్ సంఖ్య: "</span> + i);<br>
+        }
+      </div>
+
+      <div class="concept-card">
+        <h4>🔬 The 4-Step Lifecycle of a for Loop:</h4>
+        <p>
+          1. <strong>Initialization (<code>int i = 1</code>):</strong> లూప్ ప్రారంభంలో ఒకే ఒక్కసారి మాత్రమే రన్ అవుతుంది. ఇక్కడ ఒకే రకం గల బహుళ వేరియబుల్స్‌ను కూడా ఇనిషియలైజ్ చేయవచ్చు: <code>for (int i = 0, j = 10; ...)</code>.<br>
+          2. <strong>Condition Check (<code>i &lt;= 5</code>):</strong> ప్రతి రౌండ్ ప్రారంభంలోనూ తనిఖీ చేయబడుతుంది. <code>true</code> అయితే బాడీ లోపలికి వెళ్తుంది, <code>false</code> అయితే లూప్ ముగుస్తుంది.<br>
+          3. <strong>Body Execution:</strong> కర్లీ బ్రాకెట్ల లోపలి స్టేట్‌మెంట్స్ రన్ అవుతాయి.<br>
+          4. <strong>Update / Increment (<code>i++</code>):</strong> బాడీ ముగిసిన వెంటనే వేరియబుల్ అప్‌డేట్ అవుతుంది, ఆపై తిరిగి స్టెప్ 2 కు వెళ్తుంది.<br><br>
+          <strong>ఐచ్ఛిక భాగాలు (Optional Parts):</strong> for లూప్‌లో ఏ భాగాన్నీ తప్పనిసరిగా రాయాలనే నిబంధన లేదు. <code>for (;;)</code> అని రాస్తే అది ఎప్పటికీ ఆగని అనంత లూప్ అవుతుంది.
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <h2 class="section-title" id="sec-3"><span class="num">3</span> while లూప్ &amp; ఇన్ఫినిట్ లూప్ నివారణ</h2>
+    <div class="section-body">
+      <p>
+        పునరావృతాల సంఖ్య ముందే తెలియనప్పుడు, ఒక నిర్దిష్ట ఈవెంట్ లేదా షరతు మారేంత వరకు కోడ్ రన్ చేయడానికి <code>while</code> లూప్ ఉపయోగపడుతుంది:
+      </p>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.8;">
+        <span style="color:#569cd6;">int</span> batteryPercent = <span style="color:#b5cea8;">100</span>;<br><br>
+
+        <span style="color:#569cd6;">while</span> (batteryPercent &gt; <span style="color:#b5cea8;">20</span>) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4ec9b0;">System</span>.<span style="color:#9cdcfe;">out</span>.<span style="color:#dcdcaa;">println</span>(<span style="color:#ce9178;">"ఫోన్ ఆక్టివ్: బ్యాటరీ "</span> + batteryPercent + <span style="color:#ce9178;">"%"</span>);<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;batteryPercent -= <span style="color:#b5cea8;">25</span>; <span style="color:#6a9955;">// ఈ అప్‌డేట్ లేకపోతే లూప్ ఆగదు!</span><br>
+        }
+      </div>
+
+      <div class="concept-card">
+        <h4>📂 Industry Use Case: Reading Database Streams &amp; Sockets:</h4>
+        <p>
+          రియల్ టైమ్ అప్లికేషన్లలో ఫైల్స్ చదవడం లేదా నెట్‌వర్క్ సాకెట్ నుండి డేటా ప్యాకెట్లను అందుకోవడం <code>while</code> లూప్ ద్వారానే జరుగుతుంది:<br>
+          • <code>while ((line = bufferedReader.readLine()) != null) { ... }</code> (ఫైల్‌లో లైన్లు ఉన్నంత వరకూ చదవడం).<br>
+          • <code>while (resultSet.next()) { ... }</code> (డేటాబేస్ నుండి ప్రతి అకౌంట్ రికార్డును వరుసగా తీసుకోవడం).<br>
+          • <strong>Sentinel-controlled loop:</strong> యూజర్ ఒక ప్రత్యేక విలువను (ఉదా: -1 లేదా 'QUIT') నమోదు చేసేంత వరకు ఇన్‌పుట్లను ప్రాసెస్ చేయడానికి <code>while</code> లూప్ ప్రామాణికం.
+        </p>
+      </div>
+
+      <div class="concept-card">
+        <h4>🔢 Fibonacci Sequence Generation with while loop:</h4>
+        <p>
+          గణితంలో ప్రసిద్ధి చెందిన ఫిబొనాక్సీ సిరీస్ (0, 1, 1, 2, 3, 5, 8...) ను నిర్దిష్ట పరిమితి వరకు లెక్కించడానికి <code>while</code> లూప్ అద్భుతంగా సరిపోతుంది: ముందున్న రెండు సంఖ్యలను కూడుతూ మూడవ సంఖ్యను కనుగొని పాయింటర్లను ముందుకు జరపడం.
+        </p>
+      </div>
+
+      <div class="concept-card">
+        <h4>⚠️ Infinite Loop Danger (అనంత లూప్ ప్రమాదం):</h4>
+        <p>
+          లూప్ లోపల కండిషన్ వేరియబుల్‌ను అప్‌డేట్ చేయడం మర్చిపోతే (ఉదా: <code>batteryPercent -= 25</code> మిస్ అయితే), షరతు ఎప్పటికీ <code>true</code> గానే ఉండి కంప్యూటర్ CPU 100% వినియోగానికి చేరుకుని అప్లికేషన్ స్తంభించిపోతుంది (Hang/Freeze).
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 4 -->
+    <h2 class="section-title" id="sec-4"><span class="num">4</span> do-while లూప్: కనీసం ఒక్కసారి రన్ అయ్యే నియమం</h2>
+    <div class="section-body">
+      <p>
+        యూజర్ నుండి పాస్‌వర్డ్ అడగడం లేదా మెనూ స్క్రీన్ చూపించడం వంటి సందర్భాలలో — షరతుతో సంబంధం లేకుండా మొదట ఒకసారి స్క్రీన్ చూపించి, ఆ తర్వాతే యూజర్ ఎంపికను సరిచూడాలి. దీనికి <code>do-while</code> సరైన ఎంపిక:
+      </p>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.8;">
+        <span style="color:#569cd6;">int</span> pinAttempts = <span style="color:#b5cea8;">0</span>;<br>
+        <span style="color:#569cd6;">do</span> {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4ec9b0;">System</span>.<span style="color:#9cdcfe;">out</span>.<span style="color:#dcdcaa;">println</span>(<span style="color:#ce9178;">"దయచేసి మీ 4-అంకెల ATM పిన్ ఎంటర్ చేయండి..."</span>);<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;pinAttempts++;<br>
+        } <span style="color:#569cd6;">while</span> (pinAttempts &lt; <span style="color:#b5cea8;">1</span>); <span style="color:#6a9955;">// గమనిక: do-while చివర సెమీకోలన్ తప్పనిసరి!</span>
+      </div>
+
+      <div class="concept-card">
+        <h4>📱 Terminal Interactive Menu Pattern:</h4>
+        <p>
+          కమాండ్ లైన్ అప్లికేషన్లలో మెనూను డిస్‌ప్లే చేసి, యూజర్ '0' లేదా 'EXIT' ఎంపిక చేసుకునేంత వరకు మళ్లీ మళ్లీ చూపించడానికి <code>do-while</code> సర్వసాధారణం:<br>
+          <code>do { displayMenu(); choice = readInput(); processChoice(choice); } while (choice != 0);</code>
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 5 -->
+    <h2 class="section-title" id="sec-5"><span class="num">5</span> break మరియు continue స్టేట్‌మెంట్స్</h2>
+    <div class="section-body">
+      <p>
+        లూప్ యొక్క సాధారణ ప్రవాహాన్ని నియంత్రించడానికి రెండు కీలక జంప్ కీవర్డ్స్ ఉన్నాయి. ఇవి లూప్ ఎగ్జిక్యూషన్‌ను మధ్యలోనే ఆపడానికి లేదా నిర్దిష్ట రౌండ్‌లను మాత్రమే దాటవేయడానికి డెవలపర్లకు పూర్తి స్వేచ్ఛను ఇస్తాయి:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>కీవర్డ్</th>
+            <th>పనితీరు సూత్రం</th>
+            <th>ఉపయోగపడే సందర్భం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>break</code></td>
+            <td>లూప్‌ను తక్షణమే <strong>శాశ్వతంగా ముగించి (Terminate)</strong> బయటకు తెస్తుంది.</td>
+            <td>ఒక లిస్ట్‌లో కావాల్సిన రికార్డు కనిపించగానే మిగిలిన లక్ష రికార్డులను వెతకకుండా ఆపడానికి.</td>
+          </tr>
+          <tr>
+            <td><code>continue</code></td>
+            <td>ప్రస్తుత రౌండ్‌లోని మిగిలిన కోడ్‌ను దాటవేసి (Skip), <strong>తర్వాతి ఇటరేషన్‌కు దూకుతుంది</strong>.</td>
+            <td>నెగెటివ్ నంబర్లను లేదా అవాంఛిత డేటాను ప్రాసెస్ చేయకుండా దాటవేయడానికి.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 6 -->
+    <h2 class="section-title" id="sec-6"><span class="num">6</span> లేబుల్డ్ లూప్స్ (Labeled Loops) తో నెస్టెడ్ నావిగేషన్</h2>
+    <div class="section-body">
+      <p>
+        ఒక లూప్ లోపల మరొక లూప్ ఉన్నప్పుడు (Nested Loops), లోపలి లూప్ నుండి సాధారణ <code>break</code> వేస్తే కేవలం లోపలి లూప్ మాత్రమే ఆగుతుంది. కానీ నేరుగా బయటి లూప్‌ను కూడా ఒకేసారి ముగించాలంటే జావా <strong>Labeled Loops</strong> సదుపాయాన్ని అందిస్తుంది:
+      </p>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.8;">
+        outerLoop: <span style="color:#6a9955;">// లేబుల్ పేరు మరియు కోలన్</span><br>
+        <span style="color:#569cd6;">for</span> (<span style="color:#569cd6;">int</span> r = <span style="color:#b5cea8;">1</span>; r &lt;= <span style="color:#b5cea8;">5</span>; r++) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#569cd6;">for</span> (<span style="color:#569cd6;">int</span> c = <span style="color:#b5cea8;">1</span>; c &lt;= <span style="color:#b5cea8;">5</span>; c++) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#569cd6;">if</span> (r == <span style="color:#b5cea8;">3</span> &amp;&amp; c == <span style="color:#b5cea8;">3</span>) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#569cd6;">break</span> outerLoop; <span style="color:#6a9955;">// నేరుగా బయటి outerLoop ను కూడా ఆపేస్తుంది!</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        }
+      </div>
+    </div>
+
+    <!-- Section 7 -->
+    <h2 class="section-title" id="sec-7"><span class="num">7</span> Enhanced for-each లూప్ &amp; Iterable ఇంటర్‌ఫేస్</h2>
+    <div class="section-body">
+      <p>
+        జావా 5 లో ప్రవేశపెట్టిన <strong>Enhanced for-each loop</strong> అరేలు (Arrays) మరియు కలెక్షన్స్ (Lists, Sets) లోని విలువలను చదవడానికి అత్యంత సురక్షితమైన మరియు క్లీన్ మార్గం. ఇందులో ఇండెక్స్ బౌండరీ ఎర్రర్స్ (<code>ArrayIndexOutOfBoundsException</code>) వచ్చే అవకాశమే లేదు:
+      </p>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.8;">
+        <span style="color:#4ec9b0;">String</span>[] techCities = {<span style="color:#ce9178;">"హైదరాబాద్"</span>, <span style="color:#ce9178;">"బెంగళూరు"</span>, <span style="color:#ce9178;">"పూణే"</span>, <span style="color:#ce9178;">"చెన్నై"</span>};<br><br>
+
+        <span style="color:#569cd6;">for</span> (<span style="color:#4ec9b0;">String</span> city : techCities) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4ec9b0;">System</span>.<span style="color:#9cdcfe;">out</span>.<span style="color:#dcdcaa;">println</span>(<span style="color:#ce9178;">"ఐటీ హబ్: "</span> + city);<br>
+        }
+      </div>
+
+      <div class="concept-card">
+        <h4>🔬 How for-each Works Internally (Compiler Transformation):</h4>
+        <p>
+          1. <strong>అరేల కోసం (For Arrays):</strong> కంపైలర్ ఈ ఫర్-ఈచ్ లూప్‌ను అంతర్గతంగా ఒక సాధారణ ఇండెక్స్ ఆధారిత <code>for (int i = 0; i &lt; array.length; i++)</code> లూప్‌గా మారుస్తుంది.<br>
+          2. <strong>కలెక్షన్స్ కోసం (For Collections / ArrayList):</strong> <code>java.lang.Iterable</code> ఇంటర్‌ఫేస్ అమలుచేసిన కలెక్షన్స్ కోసం కంపైలర్ దీనిని <code>Iterator&lt;T&gt; it = list.iterator(); while(it.hasNext()) { ... }</code> గా మారుస్తుంది.<br>
+          3. <strong>పరిమితి:</strong> లూప్ తిరుగుతున్న సమయంలో ఎలిమెంట్లను తొలగించడం (Remove) లేదా ఇన్సర్ట్ చేయడం సాధ్యం కాదు (అలా చేస్తే <code>ConcurrentModificationException</code> వస్తుంది).
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 8 -->
+    <h2 class="section-title" id="sec-8"><span class="num">8</span> నెస్టెడ్ లూప్స్, ప్యాటర్న్ ప్రోగ్రామింగ్ &amp; పెర్ఫార్మెన్స్</h2>
+    <div class="section-body">
+      <p>
+        ఒక లూప్ లోపల మరొక లూప్ రాసినప్పుడు కంప్యూటర్ చేయాల్సిన పనుల సంఖ్య ఘాతాంక రూపంలో పెరుగుతుంది. బయటి లూప్ N సార్లు, లోపలి లూప్ M సార్లు తిరిగితే మొత్తం ఎగ్జిక్యూషన్లు <strong>N * M</strong> అవుతాయి:
+      </p>
+
+      <div class="concept-card">
+        <h4>📐 Matrix &amp; 2D Array Navigation Pattern:</h4>
+        <p>
+          నెస్టెడ్ లూప్స్‌లో బయటి లూప్ సాధారణంగా అడ్డు వరుసలను (Rows), లోపలి లూప్ నిలువు వరుసలను (Columns) సూచిస్తుంది:<br>
+          • <strong>Floyd's Triangle:</strong> వరుసగా సంఖ్యలను 1, 2 3, 4 5 6 రూపంలో ప్రింట్ చేయడం.<br>
+          • <strong>Matrix Multiplication:</strong> 3 నెస్టెడ్ లూప్స్ (O(N^3)) అవసరమవుతాయి.<br>
+          • <strong>JIT Loop Unrolling:</strong> చాలా వేగంగా తిరిగే చిన్న లూప్‌లను JVM జస్ట్-ఇన్-టైమ్ కంపైలర్ 'అన్‌రోల్' చేసి జంప్ ఓవర్‌హెడ్‌ను పూర్తిగా నిర్మూలిస్తుంది.
+        </p>
+      </div>
+
+      <div class="concept-card">
+        <h4>⚡ Software Engineering Tip on Nested Loops:</h4>
+        <p>
+          రెండు లూప్‌లు కలిస్తే టైమ్ కాంప్లెక్సిటీ <strong>O(N^2)</strong> అవుతుంది. 10,000 ఎలిమెంట్స్ ఉన్నప్పుడు N^2 అంటే 10,00,00,000 (10 కోట్ల) ఆపరేషన్లు జరుగుతాయి! అందువల్ల ఎంటర్‌ప్రైజ్ ప్రొడక్షన్ సిస్టమ్స్‌లో 3 కంటే ఎక్కువ లోతైన నెస్టెడ్ లూప్స్ రాయడం నిషేధం. డేటాను ఫాస్ట్‌గా శోధించడానికి HashMaps లేదా బైనరీ సెర్చ్ వాడాలి.
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 9 -->
+    <h2 class="section-title" id="sec-9"><span class="num">9</span> కోడ్ డెమో 1: లూప్స్ పెర్ఫార్మెన్స్ &amp; జంప్ స్టేట్‌మెంట్స్ డెమో</h2>
+    <div class="section-body">
+      <p>
+        <code>for</code>, <code>while</code> లూప్స్ మరియు <code>break</code>, <code>continue</code> ల ప్రవర్తనను ప్రత్యక్షంగా పరీక్షించే లైవ్ ప్రోగ్రామ్:
+      </p>
+
+      <!-- CODE BLOCK 1 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">LoopControlMechanics.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class LoopControlMechanics {
+    public static void main(String[] args) {
+        System.out.println("==================================================");
+        System.out.println("      LOOP CONTROL &amp; JUMP MECHANICS ENGINE        ");
+        System.out.println("==================================================");
+
+        // 1. continue statement skipping odd numbers
+        System.out.print("Even numbers (1 to 10): ");
+        for (int i = 1; i &lt;= 10; i++) {
+            if (i % 2 != 0) {
+                continue; // Skip odds
+            }
+            System.out.print(i + " ");
+        }
+        System.out.println();
+
+        // 2. break statement terminating loop on target search
+        int target = 42;
+        int[] sensorData = {12, 28, 35, 42, 59, 64, 88};
+        int searchSteps = 0;
+        boolean found = false;
+
+        for (int reading : sensorData) {
+            searchSteps++;
+            if (reading == target) {
+                found = true;
+                break; // Stop immediately upon finding
+            }
+        }
+
+        System.out.println("--------------------------------------------------");
+        System.out.printf("Sensor Target %d Found? : %s (Found in %d steps)%n", 
+                          target, found ? "YES" : "NO", searchSteps);
+        System.out.println("==================================================");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 1 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (LoopControlMechanics)</div>
+        <pre class="output-content">==================================================
+      LOOP CONTROL &amp; JUMP MECHANICS ENGINE        
+==================================================
+Even numbers (1 to 10): 2 4 6 8 10 
+--------------------------------------------------
+Sensor Target 42 Found? : YES (Found in 4 steps)
+==================================================</pre>
+      </div>
+    </div>
+
+    <!-- Section 10 -->
+    <h2 class="section-title" id="sec-10"><span class="num">10</span> కోడ్ డెమో 2: పిరమిడ్ ప్యాటర్న్ ప్రింటింగ్ ఇంజిన్</h2>
+    <div class="section-body">
+      <p>
+        నెస్టెడ్ లూప్స్ ద్వారా స్పేసులు మరియు స్టార్స్ (*) సమన్వయంతో పిరమిడ్ ఆకారాన్ని రూపొందించే క్లాసిక్ ప్రోగ్రామ్:
+      </p>
+
+      <!-- CODE BLOCK 2 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">PyramidPatternEngine.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class PyramidPatternEngine {
+    public static void main(String[] args) {
+        System.out.println("--------------------------------------------------");
+        System.out.println("       NESTED LOOPS PYRAMID PATTERN ENGINE        ");
+        System.out.println("--------------------------------------------------");
+
+        int totalRows = 5;
+
+        for (int r = 1; r &lt;= totalRows; r++) {
+            // Print leading spaces
+            for (int s = 1; s &lt;= totalRows - r; s++) {
+                System.out.print("  ");
+            }
+            // Print asterisks
+            for (int k = 1; k &lt;= (2 * r - 1); k++) {
+                System.out.print("* ");
+            }
+            System.out.println();
+        }
+        System.out.println("--------------------------------------------------");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 2 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (PyramidPatternEngine)</div>
+        <pre class="output-content">--------------------------------------------------
+       NESTED LOOPS PYRAMID PATTERN ENGINE        
+--------------------------------------------------
+        * 
+      * * * 
+    * * * * * 
+  * * * * * * * 
+* * * * * * * * * 
+--------------------------------------------------</pre>
+      </div>
+    </div>
+
+    <!-- Section 11 -->
+    <h2 class="section-title" id="sec-11"><span class="num">11</span> కోడ్ డెమో 3: Inventory Batch Scanner &amp; Defective Item Rejector Engine (Capstone Mini Project)</h2>
+    <div class="section-body">
+      <p>
+        ఒక పూర్తిస్థాయి గిడ్డంగి అసెంబ్లీ లైన్ స్కానర్: వేలాది ప్రాడక్ట్ బ్యాచ్‌లను స్కాన్ చేస్తూ, నాణ్యతా లోపం ఉన్న వస్తువులను <code>continue</code> తో తిరస్కరిస్తూ, అత్యవసర ఎర్రర్ రాగానే <code>break</code> తో కన్వేయర్ బెల్ట్‌ను ఆపే కాప్‌స్టోన్ ప్రాజెక్ట్:
+      </p>
+
+      <!-- CODE BLOCK 3 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">InventoryBatchScannerEngine.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class InventoryBatchScannerEngine {
+    public static void main(String[] args) {
+        String[] batchSkus = {
+            "SKU-OK-101", "SKU-OK-102", "SKU-DEFECT-103", 
+            "SKU-OK-104", "SKU-CRITICAL-CORRUPT", "SKU-OK-105"
+        };
+
+        int approvedCount = 0;
+        int rejectedCount = 0;
+
+        System.out.println("==================================================");
+        System.out.println("      AUTOMATED WAREHOUSE BATCH INSPECTOR         ");
+        System.out.println("==================================================");
+
+        batchLoop:
+        for (int i = 0; i &lt; batchSkus.length; i++) {
+            String currentSku = batchSkus[i];
+
+            // Emergency stop trigger
+            if (currentSku.contains("CRITICAL")) {
+                System.out.printf("[EMERGENCY STOP] Severe hazard at item #%d (%s)!%n", i + 1, currentSku);
+                System.out.println("Conveyor motor shut down immediately.");
+                break batchLoop;
+            }
+
+            // Quality assurance defect skip
+            if (currentSku.contains("DEFECT")) {
+                System.out.printf("[REJECTED] Item #%d (%s) failed quality control. Skipped.%n", i + 1, currentSku);
+                rejectedCount++;
+                continue;
+            }
+
+            System.out.printf("  Item #%d: %s [PASSED &amp; PACKAGED]%n", i + 1, currentSku);
+            approvedCount++;
+        }
+
+        System.out.println("--------------------------------------------------");
+        System.out.printf("  Approved for Shipment : %d unit(s)%n", approvedCount);
+        System.out.printf("  Defective Discarded   : %d unit(s)%n", rejectedCount);
+        System.out.println("==================================================");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 3 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (InventoryBatchScannerEngine)</div>
+        <pre class="output-content">=================================================="
+      AUTOMATED WAREHOUSE BATCH INSPECTOR         
+==================================================
+  Item #1: SKU-OK-101 [PASSED &amp; PACKAGED]
+  Item #2: SKU-OK-102 [PASSED &amp; PACKAGED]
+[REJECTED] Item #3 (SKU-DEFECT-103) failed quality control. Skipped.
+  Item #4: SKU-OK-104 [PASSED &amp; PACKAGED]
+[EMERGENCY STOP] Severe hazard at item #5 (SKU-CRITICAL-CORRUPT)!
+Conveyor motor shut down immediately.
+--------------------------------------------------
+  Approved for Shipment : 3 unit(s)
+  Defective Discarded   : 1 unit(s)
+==================================================</pre>
+      </div>
+    </div>
+
+    <!-- Section 12 -->
+    <h2 class="section-title" id="sec-12"><span class="num">12</span> టాప్ 6 కామన్ లూప్ మిస్టేక్స్ &amp; 5 క్విజ్‌లు</h2>
+    <div class="section-body">
+      <p>
+        లూప్స్ రాసేటప్పుడు డెవలపర్లు తరచుగా చేసే 6 ప్రధాన సమస్యలు:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>సమస్య</th>
+            <th>తప్పు కోడ్</th>
+            <th>సరిదిద్దిన సరైన విధానం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ఆఫ్-బై-వన్ ఎర్రర్ (Off-by-One)</strong></td>
+            <td><code>for (int i = 0; i &lt;= arr.length; i++)</code> (IndexOutOfBoundsException వస్తుంది)</td>
+            <td>అరే సైజు కంటే 1 తక్కువ ఉండాలి: <code>i &lt; arr.length</code></td>
+          </tr>
+          <tr>
+            <td><strong>లూప్ హెడర్ పక్కన సెమీకోలన్</strong></td>
+            <td><code>for (int i = 0; i &lt; 5; i++); { doWork(); }</code> (కేవలం ఒక్కసారి మాత్రమే రన్ అవుతుంది!)</td>
+            <td>సెమీకోలన్ తీసేయాలి: <code>for (int i = 0; i &lt; 5; i++) { doWork(); }</code></td>
+          </tr>
+          <tr>
+            <td><strong>అప్‌డేట్ స్టేట్‌మెంట్ మిస్ అవ్వడం</strong></td>
+            <td>while లూప్‌లో కౌంటర్ పెంచడం మర్చిపోవడం (CPU 100% Hang)</td>
+            <td>బాడీ చివర తప్పనిసరిగా ఇంక్రిమెంట్ <code>i++</code> ఉండాలి.</td>
+          </tr>
+          <tr>
+            <td><strong>do-while చివర సెమీకోలన్ మర్చిపోవడం</strong></td>
+            <td><code>do { } while(cond) // కంపైల్ ఎర్రర్</code></td>
+            <td>చివర తప్పనిసరిగా <code>while(cond);</code> సెమీకోలన్ ఉండాలి.</td>
+          </tr>
+          <tr>
+            <td><strong>ఫర్-ఈచ్ లో ఎలిమెంట్స్ మార్చడానికి ప్రయత్నించడం</strong></td>
+            <td><code>for (int x : arr) { x = x * 2; }</code> (ఒరిజినల్ అరే మారదు!)</td>
+            <td>అరే వాల్యూస్ మోడిఫై చేయడానికి ఇండెక్స్డ్ ఫర్ లూప్ వాడాలి: <code>arr[i] = arr[i] * 2;</code></td>
+          </tr>
+          <tr>
+            <td><strong>కండిషన్‌లో ఫ్లోటింగ్ పాయింట్స్ వాడటం</strong></td>
+            <td><code>for (double d = 0.0; d != 1.0; d += 0.1)</code> (రౌండింగ్ వల్ల ఎప్పటికీ ఆగదు!)</td>
+            <td>లూప్ కౌంటర్లుగా ఎల్లప్పుడూ <code>int</code> మాత్రమే వాడాలి.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- QUIZ SECTION -->
+      <h3 style="color:#10b981; margin:32px 0 16px 0;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 1: షరతు మొదటి నుంచీ false అయినా కనీసం ఒక్కసారి రన్ అయ్యే లూప్ ఏది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>do-while</code> లూప్. ఎందుకంటే ఇది Exit-controlled లూప్ (షరతును బాడీ రన్ అయిన తర్వాత మాత్రమే తనిఖీ చేస్తుంది).
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 2: 'break' మరియు 'continue' ల మధ్య ప్రధాన వ్యత్యాసం ఏమిటి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>break</code> మొత్తం లూప్‌ను శాశ్వతంగా ముగించి బయటకు తెస్తుంది; <code>continue</code> కేవలం ప్రస్తుత రౌండ్‌ను మాత్రమే దాటవేసి తర్వాతి రౌండ్‌కు వెళ్తుంది.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 3: నెస్టెడ్ లూప్స్ లో లోపలి నుండి బయటి లూప్‌ను ఆపడానికి ఏమి వాడాలి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> లేబుల్డ్ బ్రేక్ (Labeled break, ఉదా: <code>break outerLoop;</code>) వాడాలి.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 4: Enhanced for-each లూప్ లో ఒరిజినల్ అరేలోని ఎలిమెంట్ విలువను మార్చవచ్చా?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> మార్చలేము! ఫర్-ఈచ్ లూప్ కేవలం కాపీ విలువను మాత్రమే ఇస్తుంది (Read-only access). ఒరిజినల్ అరే ఎలిమెంట్స్ మార్చడానికి ఇండెక్స్ ఆధారిత <code>arr[i]</code> లూప్ వాడాలి.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 5: 'for(;;)' అని రాస్తే ఏమి జరుగుతుంది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> ఇది ఒక అనంత లూప్ (Infinite Loop) గా మారుతుంది! <code>while(true)</code> కు ఇది సమానం.
+        </p>
+      </details>
+    </div>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/07-java-switch-statements-and-switch-expressions.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 07. switch Statements &amp; Expressions
+      </a>
+      <a href="/blog-java/09-java-strings-memory-pool-and-immutability.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 09. Strings &amp; Memory Pool →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>`;
+
+const outPath = path.join(__dirname, '..', 'public', 'blog-java', '08-java-loops-while-for-and-enhanced-foreach.html');
+fs.writeFileSync(outPath, chapter08Content, 'utf8');
+
+console.log('✅ Successfully generated Java Chapter 08 in exact JavaScript HTML style!');
+console.log('Target file:', outPath);
+console.log('Target file size:', chapter08Content.length, 'characters');

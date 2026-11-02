@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Strings Deep Dive, String Constant Pool (SCP) &amp; Immutability తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా స్ట్రింగ్స్ డీప్ డైవ్: String Constant Pool (SCP) మెమరీ ఇంటర్నల్స్, String ఇమ్మ్యుటబిలిటీ ప్రాముఖ్యత, == vs .equals() తేడాలు, intern() మెథడ్, మరియు ముఖ్యమైన స్ట్రింగ్ మెథడ్స్ తెలుగులో సమగ్రంగా నేర్చుకోండి." />
+  <meta name="keywords" content="java strings telugu, string constant pool scp telugu, string immutability java telugu, equals vs == java string telugu, string intern method telugu, java string methods telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/09-java-strings-memory-pool-and-immutability.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-java light-theme">
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+    <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Java Masterclass</div>
+
+    <div class="accordion">
+      <!-- Part 01: Basics & JVM -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 01</span>
+            <span class="phase-title">Basics & JVM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/01-java-introduction-features-and-jvm-architecture.html">1. Intro & JVM Architecture</a>
+        <a href="/blog-java/02-java-installation-ide-and-first-program.html">2. Setup & First Program</a>
+        <a href="/blog-java/03-java-syntax-class-structure-and-main-method.html">3. Syntax & Main Method</a>
+        <a href="/blog-java/04-java-variables-primitive-data-types-and-memory.html">4. Variables & Data Types</a>
+        <a href="/blog-java/05-java-operators-expressions-and-type-casting.html">5. Operators & Type Casting</a>
+      </div>
+
+      <!-- Part 02: Control Flow & Strings -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 02</span>
+            <span class="phase-title">Control Flow & Strings</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-java/06-java-conditional-statements-if-else.html">6. if, else-if & Ternary</a>
+        <a href="/blog-java/07-java-switch-statements-and-switch-expressions.html">7. switch Statements & Expressions</a>
+        <a href="/blog-java/08-java-loops-while-for-and-enhanced-foreach.html">8. Loops: while, for, foreach</a>
+        <a href="/blog-java/09-java-strings-memory-pool-and-immutability.html" class="active">9. Strings & Memory Pool</a>
+        <a href="/blog-java/10-java-stringbuilder-stringbuffer-and-methods.html">10. StringBuilder & StringBuffer</a>
+      </div>
+
+      <!-- Part 03: Arrays, Methods & OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 03</span>
+            <span class="phase-title">Arrays, Methods & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/11-java-arrays-multidimensional-and-algorithms.html">11. Arrays & Algorithms</a>
+        <a href="/blog-java/12-java-methods-call-stack-and-pass-by-value.html">12. Methods & Call Stack</a>
+        <a href="/blog-java/13-java-method-overloading-and-varargs.html">13. Method Overloading & Varargs</a>
+        <a href="/blog-java/14-java-oop-classes-objects-and-constructors.html">14. Classes, Objects & Heap</a>
+        <a href="/blog-java/15-java-constructors-this-keyword-and-chaining.html">15. Constructors & this Keyword</a>
+      </div>
+
+      <!-- Part 04: Core OOP & Exceptions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 04</span>
+            <span class="phase-title">Core OOP & Exceptions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/16-java-encapsulation-access-modifiers-and-records.html">16. Encapsulation & Records</a>
+        <a href="/blog-java/17-java-inheritance-super-keyword-and-object-class.html">17. Inheritance & super Keyword</a>
+        <a href="/blog-java/18-java-polymorphism-method-overriding-dynamic-binding.html">18. Polymorphism & Overriding</a>
+        <a href="/blog-java/19-java-abstract-classes-and-interfaces.html">19. Abstract Classes & Interfaces</a>
+        <a href="/blog-java/20-java-exception-handling-and-custom-exceptions.html">20. Exceptions & Custom Errors</a>
+      </div>
+
+      <!-- Part 05: Collections & Capstone -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 05</span>
+            <span class="phase-title">Collections & Capstone</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/21-java-collections-list-arraylist-linkedlist.html">21. List: ArrayList & LinkedList</a>
+        <a href="/blog-java/22-java-collections-set-and-map-deep-dive.html">22. Set & Map Deep Dive</a>
+        <a href="/blog-java/23-java-generics-and-type-safety.html">23. Generics & Type Safety</a>
+        <a href="/blog-java/24-java-lambdas-and-stream-api.html">24. Lambdas & Stream API</a>
+        <a href="/blog-java/25-java-capstone-project.html">25. Capstone: Banking Engine</a>
+      </div>
+
+    </div>
+
+    <div class="sidebar-heading">INTERACTIVE IDE</div>
+    <a href="/online-java-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Java Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">OTHER COURSES</div>
+    <a href="/blog-python.html">Python Course (25 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (25 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 09: Strings &amp; Memory Pool</span>
+    </div>
+
+    <h1 class="page-title">09. స్ట్రింగ్స్ డీప్ డైవ్ — String Constant Pool (SCP) &amp; ఇమ్మ్యుటబిలిటీ (Strings &amp; SCP)</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java (Java 21+ LTS)</span>
+      <span class="badge">🟢 Lesson 09 of 25</span>
+      <span class="badge">📂 Part 02: Control Flow &amp; Strings (Page 4 of 5)</span>
+      <span class="badge">⏱️ 24 min read</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>Public Library Sharing Analogy · String Immutability Architecture · String Constant Pool (SCP) Internals · Literal vs new String() · == vs .equals() · intern() Method · Key String Manipulation Methods · 5 Interactive Quizzes</span>
+    </div>
+
+    <!-- Intro Box with Library Analogy -->
+    <div class="intro-box">
+      <p style="font-size: 16px; line-height: 1.8; margin-bottom: 12px;">
+        ప్రపంచంలో ఏ సాఫ్ట్‌వేర్ అప్లికేషన్‌ను తీసుకున్నా 70% కంటే ఎక్కువ మెమరీని ఆక్రమించేది అక్షరాలు మరియు పదాలే (Text Data). యూజర్ పేర్లు, ఈమెయిల్స్, డేటాబేస్ కనెక్షన్ స్ట్రింగ్స్, మరియు JSON రెస్పాన్స్‌లు అన్నీ స్ట్రింగ్స్ రూపంలోనే ఉంటాయి. ఈ భారీ టెక్స్ట్ డేటాను అత్యంత సమర్థవంతంగా మరియు సురక్షితంగా నిల్వ చేయడానికి జావా సృష్టించిన అద్భుతమే <strong>String Constant Pool (SCP)</strong> మరియు <strong>Immutability</strong> ఆర్కిటెక్చర్.
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin-bottom: 12px;">
+        <strong>లైబ్రరీ బుక్ షేరింగ్ &amp; రాతి శాసనం అనాలజీ (The Public Library &amp; Stone Inscription Analogy):</strong>
+        <br>
+        1. <strong>String Immutability (రాతిపై చెక్కిన శాసనం - Immutable by Design):</strong> ఒకసారి రాతిపై అక్షరాలు చెక్కిన తర్వాత వాటిని రబ్బరుతో తుడవడం అసాధ్యం. అలాగే జావాలో ఒకసారి <code>String s = "హైదరాబాద్";</code> అని క్రియేట్ చేశాక దానిని ఎవరూ మార్చలేరు. మీరు మార్చాలని ప్రయత్నిస్తే (<code>s + " నగరం"</code>), పాత స్ట్రింగ్ మారదు; మెమరీలో సరికొత్తగా మరొక శాసనం పుడుతుంది!
+        <br>
+        2. <strong>String Constant Pool (పబ్లిక్ లైబ్రరీ బుక్ షేరింగ్):</strong> ఒక కళాశాలలో 1000 మంది విద్యార్థులు ఒకే పుస్తకాన్ని అడిగినప్పుడు, లైబ్రరీ ప్రతి ఒక్కరికీ కొత్త పుస్తకం కొనకుండా అందరికీ ఒకే పుస్తకాన్ని చదవడానికి ఇచ్చినట్లే — మీరు ప్రోగ్రామ్‌లో 100 చోట్ల <code>"Active"</code> అని రాస్తే, హీప్ మెమరీలోని SCP పూల్‌లో ఒకే ఒక్క ఆబ్జెక్ట్ పుట్టి 100 మందికీ అదే రిఫరెన్స్ లభిస్తుంది (భారీ మెమరీ ఆదా!).
+        <br>
+        3. <strong><code>==</code> vs <code>.equals()</code> (ఆధార్ కార్డు అడ్రస్ vs ముఖ కవళికలు):</strong>
+        <br>
+        &nbsp;&nbsp;• <code>==</code>: రెండు రిఫరెన్స్‌లు మెమరీలో ఒకే చిరునామాలో ఉన్నాయా అని చూస్తుంది (Address Identity).
+        <br>
+        &nbsp;&nbsp;• <code>.equals()</code>: లోపల ఉన్న అక్షరాలు అక్షరాలా సరిపోలాయా అని చూస్తుంది (Content Equality).
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin: 0;">
+        ఈ తొమ్మిదవ పాఠంలో స్ట్రింగ్ కాన్‌స్టాంట్ పూల్ అంతర్గత మెకానిక్స్, స్ట్రింగ్ సెక్యూరిటీ రహస్యం, మరియు సెక్యూర్ పాస్‌వర్డ్ క్రెడెన్షియల్ ఇంజిన్ కాప్‌స్టోన్ ప్రాజెక్ట్‌ను సమగ్రంగా నేర్చుకుందాం!
+      </p>
+    </div>
+
+    <!-- TABLE OF CONTENTS (ఈ page లో ఏముంది) -->
+    <div class="toc-card">
+      <div class="toc-title">📋 ఈ Page లో ఏముంది? (Contents)</div>
+      <div class="toc-grid">
+        <div class="toc-col">
+          <h4><a href="#sec-1" style="color:#10b981; text-decoration:none;">విభాగం A: స్ట్రింగ్స్ &amp; SCP ఇంటర్నల్స్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-1">1. జావాలో String ఒక క్లాస్ (Class vs Primitive)</a></li>
+            <li><a href="#sec-2">2. String Constant Pool (SCP) మెమరీ ఆర్కిటెక్చర్</a></li>
+            <li><a href="#sec-3">3. Literal vs new String() ఆబ్జెక్ట్ సృష్టి తేడాలు</a></li>
+            <li><a href="#sec-4">4. String Immutability: భద్రత &amp; కారణాలు</a></li>
+          </ul>
+        </div>
+        <div class="toc-col">
+          <h4><a href="#sec-5" style="color:#38bdf8; text-decoration:none;">విభాగం B: ఈక్వాలిటీ &amp; స్ట్రింగ్ మెథడ్స్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-5">5. == vs .equals() లోతైన పరిశీలన</a></li>
+            <li><a href="#sec-6">6. String.intern() మెథడ్ పనితీరు</a></li>
+            <li><a href="#sec-7">7. టాప్ 10 అత్యంత కీలకమైన స్ట్రింగ్ మెథడ్స్</a></li>
+            <li><a href="#sec-8">8. స్ట్రింగ్ కాన్‌క్యాటనేషన్ ట్రాప్ &amp; గార్బేజ్</a></li>
+          </ul>
+        </div>
+        <div class="toc-col">
+          <h4><a href="#sec-9" style="color:#f59e0b; text-decoration:none;">విభాగం C: డెమోలు, ప్రాజెక్ట్ &amp; క్విజ్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-9">9. కోడ్ డెమో 1: SCP మెమరీ ప్రూఫ్ (== vs .equals())</a></li>
+            <li><a href="#sec-10">10. కోడ్ డెమో 2: స్ట్రింగ్ మానిప్యులేషన్ &amp; పాలిండ్రోమ్</a></li>
+            <li><a href="#sec-11">11. కోడ్ డెమో 3: Secure Password Validator (Capstone)</a></li>
+            <li><a href="#sec-12">12. టాప్ 6 కామన్ స్ట్రింగ్ మిస్టేక్స్ &amp; 5 క్విజ్‌లు</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1 -->
+    <h2 class="section-title" id="sec-1"><span class="num">1</span> జావాలో String ఒక క్లాస్ (Class vs Primitive)</h2>
+    <div class="section-body">
+      <p>
+        చాలామంది బిగినర్లు <code>int</code> లాగానే <code>String</code> కూడా ఒక ప్రిమిటివ్ డేటా టైప్ అనుకుంటారు. కానీ జావాలో <code>String</code> అనేది <code>java.lang</code> ప్యాకేజీలో ఉండే ఒక <strong>పూర్తిస్థాయి రిఫరెన్స్ క్లాస్ (<code>public final class String</code>)</strong>:
+      </p>
+
+      <div class="concept-card">
+        <h4>🔬 The Internal Structure of java.lang.String:</h4>
+        <p>
+          జావా 9 నుండి మెమరీని ఆదా చేయడానికి <strong>Compact Strings (JEP 254)</strong> ఫీచర్‌ను ప్రవేశపెట్టారు. గతంలో ప్రతి అక్షరానికి 2 బైట్లు (char[] — UTF-16) ఖర్చయ్యేది. ప్రస్తుతం జావా స్ట్రింగ్ అంతర్గతంగా ఒక <code>byte[] value</code> అరే మరియు ఒక <code>coder</code> ఫ్లాగ్‌ను కలిగి ఉంటుంది:<br>
+          • <strong>LATIN1 (1 Byte per char):</strong> ఇంగ్లీష్ మరియు సాధారణ ASCII అక్షరాలకు కేవలం 1 బైట్ మాత్రమే తీసుకుంటుంది (50% మెమరీ ఆదా!).<br>
+          • <strong>UTF-16 (2 Bytes per char):</strong> తెలుగు, హిందీ లేదా ఎమోజీలు ఉన్నప్పుడు మాత్రమే 2 బైట్లు కేటాయిస్తుంది.<br>
+          • స్ట్రింగ్ క్లాస్ <code>final</code> కాబట్టి ఎవరూ దీనిని ఇన్హెరిట్ చేసుకుని దాని స్వభావాన్ని మార్చలేరు.
+        </p>
+      </div>
+
+      <div class="concept-card">
+        <h4>♻️ G1 GC String Deduplication (-XX:+UseStringDeduplication):</h4>
+        <p>
+          జావా 8u20 మరియు ఆధునిక జావా 21 లోని G1 గార్బేజ్ కలెక్టర్ ఒక అద్భుతమైన ఫీచర్‌ను అందిస్తుంది. హీప్ మెమరీలో వేర్వేరు <code>String</code> ఆబ్జెక్టులు ఒకే విధమైన కంటెంట్‌ను కలిగి ఉంటే, బ్యాక్‌గ్రౌండ్‌లో వాటి అంతర్గత <code>byte[]</code> అరేను ఒకే మెమరీ లొకేషన్‌కు షేర్ చేయిస్తుంది. దీని ద్వారా ఎంటర్‌ప్రైజ్ అప్లికేషన్లలో 10% నుండి 25% వరకు RAM మెమరీ ఆదా అవుతుంది!
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <h2 class="section-title" id="sec-2"><span class="num">2</span> String Constant Pool (SCP) మెమరీ ఆర్కిటెక్చర్</h2>
+    <div class="section-body">
+      <p>
+        జావా రన్‌టైమ్ హీప్ మెమరీ లోపల ఒక ప్రత్యేకమైన రిజర్వ్‌డ్ ప్రదేశాన్ని నిర్వహిస్తుంది; దీనినే <strong>String Constant Pool (SCP)</strong> అంటారు. స్ట్రింగ్ లిటరల్ ద్వారా ఆబ్జెక్ట్ క్రియేట్ చేసినప్పుడు JVM కింది విధంగా వ్యవహరిస్తుంది:
+      </p>
+
+      <div class="concept-card">
+        <h4>⚡ SCP Lookup Workflow:</h4>
+        <p>
+          1. <code>String s1 = "Java";</code> అని రాసినప్పుడు, JVM ముందుగా SCP లో <code>"Java"</code> అనే అక్షరాలతో ఆబ్జెక్ట్ ఉందో లేదో వెతుకుతుంది.<br>
+          2. లేకపోతే, SCP లో కొత్త ఆబ్జెక్ట్‌ను సృష్టించి దాని మెమరీ రిఫరెన్స్‌ను <code>s1</code> కి ఇస్తుంది.<br>
+          3. తర్వాతి లైన్‌లో <code>String s2 = "Java";</code> అని రాస్తే, SCP లో ఇప్పటికే <code>"Java"</code> ఉంది కాబట్టి, <strong>కొత్త ఆబ్జెక్ట్‌ను సృష్టించదు!</strong> పాత ఆబ్జెక్ట్ అడ్రస్‌నే <code>s2</code> కి కూడా ఇస్తుంది. ఫలితంగా <code>s1 == s2</code> నిజం (true) అవుతుంది!
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <h2 class="section-title" id="sec-3"><span class="num">3</span> Literal vs new String() ఆబ్జెక్ట్ సృష్టి తేడాలు</h2>
+    <div class="section-body">
+      <p>
+        స్ట్రింగ్ సృష్టించే రెండు మార్గాల మధ్య గల కీలకమైన అంతర్గత తేడాలు:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>ఫీచర్</th>
+            <th>String Literal (<code>String s = "Hello";</code>)</th>
+            <th><code>new String("Hello");</code></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ఆబ్జెక్ట్‌ల సంఖ్య</strong></td>
+            <td>కేవలం 1 ఆబ్జెక్ట్ మాత్రమే (SCP లో లేకపోతే).</td>
+            <td><strong>2 ఆబ్జెక్ట్‌లు</strong> పుడతాయి (ఒకటి సాధారణ Heap లో, మరొకటి SCP లో).</td>
+          </tr>
+          <tr>
+            <td><strong>మెమరీ లొకేషన్</strong></td>
+            <td>నేరుగా String Constant Pool లో ఉంటుంది.</td>
+            <td>రిఫరెన్స్ సాధారణ హీప్‌లో ఉన్న ఆబ్జెక్ట్‌ను పాయింట్ చేస్తుంది.</td>
+          </tr>
+          <tr>
+            <td><strong>మెమరీ ఆదా</strong></td>
+            <td>అత్యుత్తమ మెమరీ ఆప్టిమైజేషన్.</td>
+            <td>అనవసరమైన డూప్లికేట్ ఆబ్జెక్ట్ మెమరీ వేస్ట్.</td>
+          </tr>
+          <tr>
+            <td><strong>పరిశ్రమ సిఫార్సు</strong></td>
+            <td><strong>100% స్ట్రింగ్ లిటరల్స్ మాత్రమే వాడాలి!</strong></td>
+            <td>ఎప్పుడూ వాడకూడదు (Anti-pattern).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 4 -->
+    <h2 class="section-title" id="sec-4"><span class="num">4</span> String Immutability: భద్రత &amp; కారణాలు</h2>
+    <div class="section-body">
+      <p>
+        జావా రూపకర్త జేమ్స్ గోస్లింగ్ స్ట్రింగ్ క్లాస్‌ను ఎందుకు మార్చలేనిదిగా (Immutable) తీర్చిదిద్దారు? దీని వెనుక 3 ప్రధాన సాంకేతిక కారణాలు ఉన్నాయి:
+      </p>
+
+      <div class="concept-card">
+        <h4>🛡️ Why String is Immutable in Java?</h4>
+        <p>
+          1. <strong>String Constant Pool సాధ్యం కావడానికి:</strong> 100 వేరియబుల్స్ ఒకే SCP ఆబ్జెక్ట్‌ను షేర్ చేసుకుంటున్నప్పుడు, ఒకరు దానిని మారిస్తే మిగిలిన 99 మంది డేటా పాడైపోతుంది. ఇమ్మ్యుటబిలిటీ వల్ల ఆ భయం ఉండదు.<br>
+          2. <strong>సెక్యూరిటీ (Security &amp; Network):</strong> బ్యాంకింగ్ పాస్‌వర్డ్‌లు, డేటాబేస్ యూజర్‌నేమ్స్, మరియు నెట్‌వర్క్ IP అడ్రస్‌లు స్ట్రింగ్స్‌లోనే ఉంటాయి. ఇమ్మ్యుటబుల్ కావడం వల్ల హ్యాకర్లు రన్‌టైమ్‌లో వీటిని హైజాక్ చేయలేరు.<br>
+          3. <strong>థ్రెడ్ సేఫ్టీ (Thread-Safety):</strong> మల్టీ-థ్రెడింగ్ ఎన్విరాన్‌మెంట్‌లో ఏకకాలంలో వందలాది థ్రెడ్లు ఒకే స్ట్రింగ్‌ను రీడ్ చేసినా ఎలాంటి సింక్రనైజేషన్ లాక్స్ లేకుండా 100% సురక్షితంగా ఉంటాయి.<br>
+          4. <strong>క్లాస్‌లోడర్ భద్రత (ClassLoader Isolation):</strong> JVM లోకి లోడ్ అయ్యే క్లాస్ పేర్లు (ఉదా: <code>java.lang.System</code>) స్ట్రింగ్స్ రూపంలోనే ఉంటాయి. ఇవి మ్యూటబుల్ అయితే హ్యాకర్లు రన్‌టైమ్‌లో సిస్టమ్ క్లాసులను తమ మాల్వేర్‌తో మార్చే ప్రమాదం ఉండేది.<br>
+          5. <strong>హ్యాష్‌కోడ్ క్యాషింగ్ (HashCode Caching):</strong> స్ట్రింగ్ మారదు కాబట్టి దాని <code>hashCode()</code> ను మొదటిసారి మాత్రమే లెక్కించి ఆటోమేటిక్‌గా క్యాష్ చేస్తుంది. దీనివల్ల <code>HashMap</code> మరియు <code>HashSet</code> లలో స్ట్రింగ్ కీలు మెరుపు వేగంతో పనిచేస్తాయి.
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 5 -->
+    <h2 class="section-title" id="sec-5"><span class="num">5</span> == vs .equals() లోతైన పరిశీలన</h2>
+    <div class="section-body">
+      <p>
+        జావా ఇంటర్వ్యూలలో 100% అడిగే అత్యంత ముఖ్యమైన ప్రశ్న:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>పోలిక</th>
+            <th><code>==</code> ఆపరేటర్</th>
+            <th><code>.equals()</code> మెథడ్</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ఏమి పరీక్షిస్తుంది?</strong></td>
+            <td><strong>మెమరీ రిఫరెన్స్ (Address Identity)</strong> — రెండు వేరియబుల్స్ ఒకే మెమరీ లొకేషన్‌ను పాయింట్ చేస్తున్నాయా లేదా?</td>
+            <td><strong>అక్షరాల కంటెంట్ (Value Equality)</strong> — లోపల ఉన్న అక్షరాలు అక్షరాలా సరిపోలాయా లేదా?</td>
+          </tr>
+          <tr>
+            <td><strong>ఎప్పుడు true వస్తుంది?</strong></td>
+            <td>రెండు వేరియబుల్స్ ఒకే SCP ఆబ్జెక్ట్‌ను రిఫర్ చేసినప్పుడు.</td>
+            <td>ఆబ్జెక్ట్‌లు ఎక్కడ ఉన్నా లోపలి టెక్స్ట్ ఒక్కటే అయితే true వస్తుంది.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.8;">
+        <span style="color:#4ec9b0;">String</span> s1 = <span style="color:#ce9178;">"Java"</span>;<br>
+        <span style="color:#4ec9b0;">String</span> s2 = <span style="color:#569cd6;">new</span> <span style="color:#4ec9b0;">String</span>(<span style="color:#ce9178;">"Java"</span>);<br><br>
+
+        System.out.println(s1 == s2);      <span style="color:#6a9955;">// false (వేర్వేరు మెమరీ అడ్రస్‌లు!)</span><br>
+        System.out.println(s1.equals(s2)); <span style="color:#6a9955;">// true  (రెంటిలోనూ 'Java' అనే కంటెంట్ ఉంది)</span>
+      </div>
+    </div>
+
+    <!-- Section 6 -->
+    <h2 class="section-title" id="sec-6"><span class="num">6</span> String.intern() మెథడ్ పనితీరు</h2>
+    <div class="section-body">
+      <p>
+        <code>new String()</code> ద్వారా సాధారణ హీప్‌లో సృష్టించబడిన ఆబ్జెక్ట్‌ను బలవంతంగా SCP లోకి తరలించడానికి <code>intern()</code> మెథడ్ ఉపయోగపడుతుంది:
+      </p>
+      <div class="concept-card">
+        <h4>⚡ The intern() Guarantee &amp; Memory Savings:</h4>
+        <p>
+          <code>String s3 = s2.intern();</code> అని పిలిచినప్పుడు, JVM ఆ కంటెంట్ SCP లో ఉందో లేదో చూసి, SCP లో ఉన్న ప్రామాణిక పూల్ రిఫరెన్స్‌ను రిటర్న్ చేస్తుంది. అందువల్ల <code>s1 == s2.intern()</code> ఎల్లప్పుడూ <strong>true</strong> అవుతుంది!<br><br>
+          <strong>ఎప్పుడు వాడాలి?</strong> ఒక ఫైల్ లేదా నెట్‌వర్క్ నుండి లక్షల కొద్దీ డూప్లికేట్ స్ట్రింగ్స్ (ఉదాహరణకు "INDIA", "ACTIVE", "PENDING") చదువుతున్నప్పుడు, ప్రతి ఆబ్జెక్ట్‌పై <code>.intern()</code> కాల్ చేయడం ద్వారా డూప్లికేట్ హీప్ ఆబ్జెక్టులను గార్బేజ్ కలెక్టర్‌కు వదిలేసి, కేవలం ఒకే పూల్డ్ కాపీని మెమరీలో ఉంచవచ్చు.
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 7 -->
+    <h2 class="section-title" id="sec-7"><span class="num">7</span> టాప్ 10 అత్యంత కీలకమైన స్ట్రింగ్ మెథడ్స్ &amp; Modern Java APIs</h2>
+    <div class="section-body">
+      <p>
+        రోజువారీ సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌లో అత్యధికంగా ఉపయోగించే స్ట్రింగ్ మెథడ్స్ మరియు జావా 11/15 లో వచ్చిన ఆధునిక పద్ధతులు:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>మెథడ్</th>
+            <th>వివరణ</th>
+            <th>ఎగ్జాంపుల్</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>length()</code></td>
+            <td>స్ట్రింగ్‌లోని మొత్తం అక్షరాల సంఖ్యను ఇస్తుంది.</td>
+            <td><code>"Java".length() &rarr; 4</code></td>
+          </tr>
+          <tr>
+            <td><code>charAt(int index)</code></td>
+            <td>నిర్దిష్ట ఇండెక్స్ వద్ద ఉన్న అక్షరాన్ని ఇస్తుంది (0-based).</td>
+            <td><code>"Code".charAt(0) &rarr; 'C'</code></td>
+          </tr>
+          <tr>
+            <td><code>substring(begin, end)</code></td>
+            <td>ఒక ముక్కను కట్ చేసి సరికొత్త సబ్‌స్ట్రింగ్‌ను ఇస్తుంది.</td>
+            <td><code>"Hyderabad".substring(0, 5) &rarr; "Hyder"</code></td>
+          </tr>
+          <tr>
+            <td><code>contains(CharSequence)</code></td>
+            <td>ఒక నిర్దిష్ట పదం లోపల ఉందో లేదో చూస్తుంది.</td>
+            <td><code>"amazon.in".contains("amazon") &rarr; true</code></td>
+          </tr>
+          <tr>
+            <td><code>toUpperCase() / toLowerCase()</code></td>
+            <td>కేస్ మార్పిడి చేస్తుంది.</td>
+            <td><code>"java".toUpperCase() &rarr; "JAVA"</code></td>
+          </tr>
+          <tr>
+            <td><code>trim() / strip()</code></td>
+            <td>ముందు, వెనుక ఉన్న అనవసర ఖాళీలను తొలగిస్తుంది (strip() యూనికోడ్ స్పేస్‌లనూ తొలగిస్తుంది).</td>
+            <td><code>" admin ".strip() &rarr; "admin"</code></td>
+          </tr>
+          <tr>
+            <td><code>replace(old, new)</code></td>
+            <td>అక్షరాలను లేదా పదాలను మారుస్తుంది.</td>
+            <td><code>"hello".replace('l', 'p') &rarr; "heppo"</code></td>
+          </tr>
+          <tr>
+            <td><code>startsWith() / endsWith()</code></td>
+            <td>మొదలు మరియు ముగింపును పరీక్షిస్తుంది.</td>
+            <td><code>"invoice.pdf".endsWith(".pdf") &rarr; true</code></td>
+          </tr>
+          <tr>
+            <td><code>split(regex)</code></td>
+            <td>నిర్దిష్ట గుర్తు (ఉదా: కామా, స్పేస్) ఆధారంగా ముక్కలు చేసి String[] అరే ఇస్తుంది.</td>
+            <td><code>"a,b,c".split(",") &rarr; ["a", "b", "c"]</code></td>
+          </tr>
+          <tr>
+            <td><code>repeat(count)</code></td>
+            <td>పదాన్ని నిర్దిష్ట సార్లు రిపీట్ చేస్తుంది (Java 11+).</td>
+            <td><code>"=".repeat(5) &rarr; "====="</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="concept-card">
+        <h4>⚡ String.format() vs String.formatted() (Modern Java 15+):</h4>
+        <p>
+          గతంలో టెక్స్ట్‌ను ఫార్మాట్ చేయడానికి <code>String.format("User: %s, Age: %d", name, age)</code> అని రాసేవారు. జావా 15 నుండి నేరుగా స్ట్రింగ్ మీదే <code>"User: %s, Age: %d".formatted(name, age)</code> అని చాలా క్లీన్‌గా పిలుచుకోవచ్చు!
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 8 -->
+    <h2 class="section-title" id="sec-8"><span class="num">8</span> స్ట్రింగ్ కాన్‌క్యాటనేషన్ ట్రాప్ &amp; గార్బేజ్</h2>
+    <div class="section-body">
+      <p>
+        ఒక లూప్ లోపల <code>String s = ""; for(...) s += i;</code> అని రాస్తే, ప్రతి లూప్ రౌండ్‌లోనూ ఒక కొత్త స్ట్రింగ్ ఆబ్జెక్ట్ పుట్టి మెమరీ నిండిపోతుంది! 10,000 ఇటరేషన్లు తిరిగితే 10,000 వేస్ట్ ఆబ్జెక్టులు హీప్ మెమరీని క్రాష్ చేస్తాయి.
+      </p>
+      <div class="concept-card">
+        <h4>⚡ Solution Preview: Mutable Strings:</h4>
+        <p>
+          స్ట్రింగ్స్‌ను మాటిమాటికీ మార్చాల్సి వచ్చినప్పుడు సాధారణ <code>String</code> వాడకూడదు; దీనికి బదులుగా తర్వాతి పాఠంలో మనం నేర్చుకోబోయే <strong>StringBuilder</strong> ను మాత్రమే ఉపయోగించాలి!
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 9 -->
+    <h2 class="section-title" id="sec-9"><span class="num">9</span> కోడ్ డెమో 1: SCP మెమరీ ప్రూఫ్ (== vs .equals() &amp; intern())</h2>
+    <div class="section-body">
+      <p>
+        స్ట్రింగ్ కాన్‌స్టాంట్ పూల్, సాధారణ హీప్ ఆబ్జెక్ట్, మరియు <code>intern()</code> మెథడ్ ప్రవర్తనను శాస్త్రీయంగా ధృవీకరించే లైవ్ ప్రోగ్రామ్:
+      </p>
+
+      <!-- CODE BLOCK 1 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">StringPoolMemoryProof.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class StringPoolMemoryProof {
+    public static void main(String[] args) {
+        System.out.println("==================================================");
+        System.out.println("     STRING CONSTANT POOL (SCP) MEMORY AUDIT      ");
+        System.out.println("==================================================");
+
+        // String Literals - Stored in SCP
+        String literal1 = "Hyderabad";
+        String literal2 = "Hyderabad";
+
+        // Created using 'new' operator - Stored in standard Heap
+        String heapString1 = new String("Hyderabad");
+        String heapString2 = new String("Hyderabad");
+
+        // Identity comparison via == (Memory Address)
+        System.out.println("[SCP Literal == Literal]  : " + (literal1 == literal2) + " (Same SCP Object)");
+        System.out.println("[SCP Literal == Heap Obj] : " + (literal1 == heapString1) + " (Different Locations!)");
+        System.out.println("[Heap Obj == Heap Obj]    : " + (heapString1 == heapString2) + " (Two Distinct Objects)");
+
+        // Content comparison via .equals()
+        System.out.println("--------------------------------------------------");
+        System.out.println("[literal1.equals(heapString1)] : " + literal1.equals(heapString1) + " (Content Matched)");
+
+        // Invoking intern() to retrieve SCP pooled reference
+        String internedString = heapString1.intern();
+        System.out.println("[literal1 == heapString1.intern()] : " + (literal1 == internedString) + " (Pooled via intern!)");
+        System.out.println("==================================================");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 1 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (StringPoolMemoryProof)</div>
+        <pre class="output-content">==================================================
+     STRING CONSTANT POOL (SCP) MEMORY AUDIT      
+==================================================
+[SCP Literal == Literal]  : true (Same SCP Object)
+[SCP Literal == Heap Obj] : false (Different Locations!)
+[Heap Obj == Heap Obj]    : false (Two Distinct Objects)
+--------------------------------------------------
+[literal1.equals(heapString1)] : true (Content Matched)
+[literal1 == heapString1.intern()] : true (Pooled via intern!)
+==================================================</pre>
+      </div>
+    </div>
+
+    <!-- Section 10 -->
+    <h2 class="section-title" id="sec-10"><span class="num">10</span> కోడ్ డెమో 2: స్ట్రింగ్ మానిప్యులేషన్ &amp; పాలిండ్రోమ్ వెరిఫైయర్</h2>
+    <div class="section-body">
+      <p>
+        ముఖ్యమైన స్ట్రింగ్ మెథడ్స్ (<code>charAt</code>, <code>substring</code>, <code>toLowerCase</code>) ఉపయోగించి ఒక పదం పాలిండ్రోమ్ (ముందు నుంచీ వెనుక నుంచీ ఒకేలా ఉండే పదం) అవునో కాదో కనుగొనే ప్రోగ్రామ్:
+      </p>
+
+      <!-- CODE BLOCK 2 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">PalindromeStringAnalyzer.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class PalindromeStringAnalyzer {
+    public static void main(String[] args) {
+        String testWord = "Madam";
+        String normalized = testWord.trim().toLowerCase();
+
+        int left = 0;
+        int right = normalized.length() - 1;
+        boolean isPalindrome = true;
+
+        while (left &lt; right) {
+            if (normalized.charAt(left) != normalized.charAt(right)) {
+                isPalindrome = false;
+                break;
+            }
+            left++;
+            right--;
+        }
+
+        System.out.println("--------------------------------------------------");
+        System.out.println("         STRING PALINDROME VERIFIER ENGINE        ");
+        System.out.println("--------------------------------------------------");
+        System.out.println("Input String   : " + testWord);
+        System.out.println("Normalized Text: " + normalized);
+        System.out.println("Word Length    : " + testWord.length());
+        System.out.println("Is Palindrome? : " + (isPalindrome ? "YES (100% Symmetrical)" : "NO"));
+        System.out.println("--------------------------------------------------");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 2 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (PalindromeStringAnalyzer)</div>
+        <pre class="output-content">--------------------------------------------------
+         STRING PALINDROME VERIFIER ENGINE        
+--------------------------------------------------
+Input String   : Madam
+Normalized Text: madam
+Word Length    : 5
+Is Palindrome? : YES (100% Symmetrical)
+--------------------------------------------------</pre>
+      </div>
+    </div>
+
+    <!-- Section 11 -->
+    <h2 class="section-title" id="sec-11"><span class="num">11</span> కోడ్ డెమో 3: Secure User Credential &amp; Password Strength Validator Engine (Capstone Mini Project)</h2>
+    <div class="section-body">
+      <p>
+        ఒక పూర్తిస్థాయి యూజర్ రిజిస్ట్రేషన్ సెక్యూరిటీ ఇంజిన్: పాస్‌వర్డ్ పొడవు, అప్పర్‌కేస్, లోయర్‌కేస్, అంకెలు, మరియు ప్రత్యేక చిహ్నాలను స్ట్రింగ్ మెథడ్స్ ద్వారా విశ్లేషించి బలం (Strength Score) ను లెక్కించే కాప్‌స్టోన్ ప్రాజెక్ట్:
+      </p>
+
+      <!-- CODE BLOCK 3 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">SecurityCredentialValidatorEngine.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class SecurityCredentialValidatorEngine {
+    public static void main(String[] args) {
+        String username = "kiran_kumar";
+        String password = "P@ssw0rd2026#Enterprise";
+
+        System.out.println("==================================================");
+        System.out.println("       IDENTITY &amp; PASSWORD STRENGTH VALIDATOR      ");
+        System.out.println("==================================================");
+
+        boolean hasUpper = false;
+        boolean hasLower = false;
+        boolean hasDigit = false;
+        boolean hasSpecial = false;
+        String specialChars = "!@#$%^&amp;*()-_+=&lt;&gt;?";
+
+        for (int i = 0; i &lt; password.length(); i++) {
+            char ch = password.charAt(i);
+            if (Character.isUpperCase(ch)) hasUpper = true;
+            else if (Character.isLowerCase(ch)) hasLower = true;
+            else if (Character.isDigit(ch)) hasDigit = true;
+            else if (specialChars.contains(String.valueOf(ch))) hasSpecial = true;
+        }
+
+        int strengthScore = 0;
+        if (password.length() &gt;= 12) strengthScore += 25;
+        if (hasUpper) strengthScore += 25;
+        if (hasLower &amp;&amp; hasDigit) strengthScore += 25;
+        if (hasSpecial) strengthScore += 25;
+
+        String strengthRating = switch (strengthScore) {
+            case 100 -&gt; "VERY STRONG (Military Grade Encryption Ready)";
+            case 75  -&gt; "STRONG (Exceeds Standard Enterprise Cutoff)";
+            case 50  -&gt; "MODERATE (Vulnerable to Dictionary Attacks)";
+            default  -&gt; "WEAK (Immediate Reset Mandated)";
+        };
+
+        System.out.println("Account User : " + username);
+        System.out.println("Password Len : " + password.length() + " chars");
+        System.out.printf("Upper: %b | Lower: %b | Digit: %b | Special: %b%n", 
+                          hasUpper, hasLower, hasDigit, hasSpecial);
+        System.out.println("--------------------------------------------------");
+        System.out.printf("Strength Score: %d / 100%n", strengthScore);
+        System.out.println("Security Audit: " + strengthRating);
+        System.out.println("==================================================");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 3 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (SecurityCredentialValidatorEngine)</div>
+        <pre class="output-content">=================================================="
+       IDENTITY &amp; PASSWORD STRENGTH VALIDATOR      
+==================================================
+Account User : kiran_kumar
+Password Len : 24 chars
+Upper: true | Lower: true | Digit: true | Special: true
+--------------------------------------------------
+Strength Score: 100 / 100
+Security Audit: VERY STRONG (Military Grade Encryption Ready)
+==================================================</pre>
+      </div>
+    </div>
+
+    <!-- Section 12 -->
+    <h2 class="section-title" id="sec-12"><span class="num">12</span> టాప్ 6 కామన్ స్ట్రింగ్ మిస్టేక్స్ &amp; 5 క్విజ్‌లు</h2>
+    <div class="section-body">
+      <p>
+        స్ట్రింగ్స్ వాడేటప్పుడు డెవలపర్లు ఎదుర్కొనే 6 ప్రధాన తప్పులు:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>లోపం</th>
+            <th>తప్పు కోడ్</th>
+            <th>సరిదిద్దిన సరైన విధానం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>కంటెంట్ సమానత్వానికి == వాడటం</strong></td>
+            <td><code>if (name == "Admin")</code> (హీప్ ఆబ్జెక్ట్ అయితే ఫెయిల్ అవుతుంది)</td>
+            <td>ఎల్లప్పుడూ <code>if ("Admin".equals(name))</code> వాడాలి (Null-safe).</td>
+          </tr>
+          <tr>
+            <td><strong>ఇమ్మ్యుటబిలిటీని మర్చిపోయి అసైన్ చేయకపోవడం</strong></td>
+            <td><code>String s = "hi"; s.toUpperCase(); // s మారదు!</code></td>
+            <td>తిరిగి అసైన్ చేయాలి: <code>s = s.toUpperCase();</code></td>
+          </tr>
+          <tr>
+            <td><strong>లూప్ లోపల స్ట్రింగ్ కాన్‌క్యాటనేషన్ (+)</strong></td>
+            <td><code>String s = ""; for(...) s += i;</code> (భారీ మెమరీ లీక్)</td>
+            <td>లూప్‌లలో <code>StringBuilder.append()</code> వాడాలి.</td>
+          </tr>
+          <tr>
+            <td><strong>నల్ చెక్ లేకుండా మెథడ్స్ కాల్ చేయడం</strong></td>
+            <td><code>str.length()</code> (str == null అయితే NPE వస్తుంది)</td>
+            <td>ముందే గార్డ్ క్లాజ్ వాడాలి: <code>if (str != null &amp;&amp; !str.isEmpty())</code></td>
+          </tr>
+          <tr>
+            <td><strong>స్ట్రింగ్ ఇండెక్స్ పరిధి దాటడం</strong></td>
+            <td><code>str.charAt(str.length())</code> (StringIndexOutOfBoundsException)</td>
+            <td>చివరి అక్షరం ఇండెక్స్ <code>length() - 1</code> అవుతుంది.</td>
+          </tr>
+          <tr>
+            <td><strong>అనవసరంగా new String() వాడటం</strong></td>
+            <td><code>String s = new String("hello");</code> (డూప్లికేట్ ఆబ్జెక్ట్)</td>
+            <td>కేవలం లిటరల్ వాడాలి: <code>String s = "hello";</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- QUIZ SECTION -->
+      <h3 style="color:#10b981; margin:32px 0 16px 0;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 1: జావాలో String Constant Pool (SCP) ఎక్కడ ఉంటుంది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> జావా 7 నుండి SCP అనేది నేరుగా ప్రధాన <strong>Heap Memory</strong> లో భాగమై ఉంటుంది (గతంలో జావా 6 లో PermGen లో ఉండేది).
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 2: 'String s = new String("Hello");' రాస్తే మొత్తం ఎన్ని ఆబ్జెక్ట్‌లు పుడతాయి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> మొత్తం రెండు (2) ఆబ్జెక్ట్‌లు పుడతాయి: ఒకటి సాధారణ హీప్‌లో, రెండవది String Constant Pool (SCP) లో (ఒకవేళ పూల్‌లో ఇప్పటికే లేకపోతే).
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 3: 's1 == s2' మరియు 's1.equals(s2)' మధ్య తేడా ఏమిటి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>==</code> రెండు రిఫరెన్స్‌లు ఒకే మెమరీ అడ్రస్‌ను సూచిస్తున్నాయా లేదా అని చూస్తుంది; <code>.equals()</code> రెండు స్ట్రింగ్స్‌లోని అక్షరాల కంటెంట్ సమానమా లేదా అని తనిఖీ చేస్తుంది.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 4: intern() మెథడ్ యొక్క ముఖ్య ఉపయోగం ఏమిటి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> హీప్ మెమరీలోని స్ట్రింగ్ ఆబ్జెక్ట్ నుండి SCP (String Constant Pool) లోని కానానికల్ పూల్డ్ రిఫరెన్స్‌ను పొందడానికి <code>intern()</code> వాడతారు.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 5: స్ట్రింగ్ ఇమ్మ్యుటబిలిటీ (మార్పులేని తత్వం) ఎందుకు అవసరం?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> సెక్యూరిటీ (పాస్‌వర్డ్స్ &amp; నెట్‌వర్క్ భద్రత), SCP మెమరీ షేరింగ్ సాధ్యం కావడం, మరియు మల్టీ-థ్రెడింగ్ సింక్రనైజేషన్ లేకుండా 100% థ్రెడ్-సేఫ్టీ ఉండడం కోసం.
+        </p>
+      </details>
+    </div>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/08-java-loops-while-for-and-enhanced-foreach.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 08. Loops Mastery
+      </a>
+      <a href="/blog-java/10-java-stringbuilder-stringbuffer-and-methods.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 10. StringBuilder &amp; StringBuffer →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>

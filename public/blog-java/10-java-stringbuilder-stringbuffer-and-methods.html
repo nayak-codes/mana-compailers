@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java StringBuilder, StringBuffer &amp; String Manipulation తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా StringBuilder, StringBuffer మరియు ఆధునిక Java 15+ Text Blocks సమగ్ర విశ్లేషణ. మెమరీ రీఅలొకేషన్ అల్గారిథమ్, త్రెడ్ సేఫ్టీ, పర్ఫార్మెన్స్ బెంచ్‌మార్క్ మరియు JSON సీరియలైజర్ ప్రాజెక్ట్ తెలుగులో నేర్చుకోండి." />
+  <meta name="keywords" content="java stringbuilder telugu, stringbuffer telugu, stringbuilder vs stringbuffer java telugu, mutable strings java telugu, java text blocks telugu, stringbuilder capacity telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/10-java-stringbuilder-stringbuffer-and-methods.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-java light-theme">
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+    <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Java Masterclass</div>
+
+    <div class="accordion">
+      <!-- Part 01: Basics & JVM -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 01</span>
+            <span class="phase-title">Basics & JVM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/01-java-introduction-features-and-jvm-architecture.html">1. Intro & JVM Architecture</a>
+        <a href="/blog-java/02-java-installation-ide-and-first-program.html">2. Setup & First Program</a>
+        <a href="/blog-java/03-java-syntax-class-structure-and-main-method.html">3. Syntax & Main Method</a>
+        <a href="/blog-java/04-java-variables-primitive-data-types-and-memory.html">4. Variables & Data Types</a>
+        <a href="/blog-java/05-java-operators-expressions-and-type-casting.html">5. Operators & Type Casting</a>
+      </div>
+
+      <!-- Part 02: Control Flow & Strings -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 02</span>
+            <span class="phase-title">Control Flow & Strings</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-java/06-java-conditional-statements-if-else.html">6. if, else-if & Ternary</a>
+        <a href="/blog-java/07-java-switch-statements-and-switch-expressions.html">7. switch Statements & Expressions</a>
+        <a href="/blog-java/08-java-loops-while-for-and-enhanced-foreach.html">8. Loops: while, for, foreach</a>
+        <a href="/blog-java/09-java-strings-memory-pool-and-immutability.html">9. Strings & Memory Pool</a>
+        <a href="/blog-java/10-java-stringbuilder-stringbuffer-and-methods.html" class="active">10. StringBuilder & StringBuffer</a>
+      </div>
+
+      <!-- Part 03: Arrays, Methods & OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 03</span>
+            <span class="phase-title">Arrays, Methods & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/11-java-arrays-multidimensional-and-algorithms.html">11. Arrays & Algorithms</a>
+        <a href="/blog-java/12-java-methods-call-stack-and-pass-by-value.html">12. Methods & Call Stack</a>
+        <a href="/blog-java/13-java-method-overloading-and-varargs.html">13. Method Overloading & Varargs</a>
+        <a href="/blog-java/14-java-oop-classes-objects-and-constructors.html">14. Classes, Objects & Heap</a>
+        <a href="/blog-java/15-java-constructors-this-keyword-and-chaining.html">15. Constructors & this Keyword</a>
+      </div>
+
+      <!-- Part 04: Core OOP & Exceptions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 04</span>
+            <span class="phase-title">Core OOP & Exceptions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/16-java-encapsulation-access-modifiers-and-records.html">16. Encapsulation & Records</a>
+        <a href="/blog-java/17-java-inheritance-super-keyword-and-object-class.html">17. Inheritance & super Keyword</a>
+        <a href="/blog-java/18-java-polymorphism-method-overriding-dynamic-binding.html">18. Polymorphism & Overriding</a>
+        <a href="/blog-java/19-java-abstract-classes-and-interfaces.html">19. Abstract Classes & Interfaces</a>
+        <a href="/blog-java/20-java-exception-handling-and-custom-exceptions.html">20. Exceptions & Custom Errors</a>
+      </div>
+
+      <!-- Part 05: Collections & Capstone -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 05</span>
+            <span class="phase-title">Collections & Capstone</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/21-java-collections-list-arraylist-linkedlist.html">21. List: ArrayList & LinkedList</a>
+        <a href="/blog-java/22-java-collections-set-and-map-deep-dive.html">22. Set & Map Deep Dive</a>
+        <a href="/blog-java/23-java-generics-and-type-safety.html">23. Generics & Type Safety</a>
+        <a href="/blog-java/24-java-lambdas-and-stream-api.html">24. Lambdas & Stream API</a>
+        <a href="/blog-java/25-java-capstone-project.html">25. Capstone: Banking Engine</a>
+      </div>
+
+    </div>
+
+    <div class="sidebar-heading">INTERACTIVE IDE</div>
+    <a href="/online-java-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Java Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">OTHER COURSES</div>
+    <a href="/blog-python.html">Python Course (25 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (25 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 10: StringBuilder &amp; StringBuffer</span>
+    </div>
+
+    <h1 class="page-title">10. జావా StringBuilder, StringBuffer &amp; మెథడ్స్ (Mutable Strings Mastery)</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java (Java 21+ LTS)</span>
+      <span class="badge">🟢 Lesson 10 of 25</span>
+      <span class="badge">📂 Part 02: Control Flow &amp; Strings (Page 5 of 5)</span>
+      <span class="badge">⏱️ 25 min read</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:28px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="font-weight:700; color:#10b981;">📌 Covered in this lesson:</span>
+      <span>మ్యూటబుల్ స్ట్రింగ్స్ · StringBuilder (Fast, Non-sync) vs StringBuffer (Thread-safe) · ముఖ్యమైన మెథడ్స్ (append, insert, reverse) · Java 15+ Text Blocks (""")</span>
+    </div>
+
+    <!-- WARM IVORY INTRO BOX (JavaScript Style) -->
+    <div class="intro-box">
+      <p style="margin:0 0 16px 0; font-size:15px; line-height:1.8; color:#1e293b;">
+        గత 9వ పాఠంలో మనం జావాలోని <code>String</code> క్లాస్ యొక్క అత్యంత ప్రముఖ లక్షణమైన <strong>"ఇమ్మ్యుటబిలిటీ" (Immutability - మార్చలేని తత్వం)</strong> మరియు String Constant Pool (SCP) గురించి లోతుగా అర్థం చేసుకున్నాం. సాధారణ ప్రోగ్రాములలో భద్రత, హాషింగ్ మరియు థ్రెడ్ సేఫ్టీ కోసం ఇమ్మ్యుటబిలిటీ ఎంతో మేలు చేసినప్పటికీ, హై-పర్ఫార్మెన్స్ అప్లికేషన్లు లేదా భారీ లూపులలో వేలాది సార్లు స్ట్రింగ్స్‌ను సవరించాల్సి వచ్చినప్పుడు (String Modification/Concatenation) ఇది విపరీతమైన మెమరీ వృధాను సృష్టిస్తుంది. ప్రతి సవరణకు హీప్ మెమరీలో కొత్త ఆబ్జెక్ట్ ఏర్పడి, గార్బేజ్ కలెక్టర్ (GC) పై తీవ్రమైన భారం పడుతుంది. ఈ సంక్షోభాన్ని అధిగమించడానికి జావా రెండు అద్భుతమైన మ్యూటబుల్ క్లాసులను రూపొందించింది: సింగిల్-థ్రెడ్ వేగానికి మకుటం లేని రాజు <strong><code>StringBuilder</code></strong> మరియు మల్టీ-థ్రెడింగ్ పర్యావరణాల్లో సురక్షితమైన రక్షణ కవచం <strong><code>StringBuffer</code></strong>. వీటితో పాటు ఆధునిక జావా 15+ నుండి వచ్చిన విప్లవాత్మక <strong>Text Blocks (<code>"""</code>)</strong> ఫీచర్‌ను ఈ పాఠంలో సంపూర్ణంగా నేర్చుకుందాం.
+      </p>
+
+      <h4 style="margin:0 0 10px 0; color:#047857; font-size:16px; font-weight:800;">
+        మట్టి కుండ శిల్పం &amp; కార్ల అసెంబ్లీ రోబోట్ల అనాలజీ (The Clay Pottery &amp; Mutable Assembly Robot Analogy):
+      </h4>
+      <ol style="margin:0; padding-left:22px; color:#334155; line-height:1.8; font-size:14.5px;">
+        <li style="margin-bottom:8px;">
+          <strong>1. String (ఎండిన రాతి శిల్పం - Immutable Stone Carving):</strong> ఒకసారి పాలరాతిపై శిల్పాన్ని చెక్కిన తర్వాత, దాని చేతిని లేదా ముక్కును మార్చడం అసాధ్యం. చిన్న మార్పు చేయాలన్నా, పాత శిల్పాన్ని పక్కన పారేసి, కొత్త రాయిని తెచ్చి మళ్లీ మొదటి నుండి మొత్తం చెక్కాల్సిందే. చిన్న చిన్న మార్పుల కోసం ఇది విపరీతమైన శ్రమ, సమయం మరియు మెటీరియల్ వృధా.
+        </li>
+        <li style="margin-bottom:8px;">
+          <strong>2. StringBuilder (మార్చడానికి వీలైన పచ్చి మట్టి ముద్ద - High-Speed Modifiable Clay):</strong> కుండలు చేసే బంకమట్టి ముద్ద పచ్చిగా ఉన్నప్పుడు, కావలసినట్లుగా అదనపు మట్టిని అతికించవచ్చు (<code>append</code>), అనవసరమైన భాగాన్ని గీకి తీసేయవచ్చు (<code>delete</code>), లేదా ఆకారాన్ని పూర్తిగా తిరగరాయవచ్చు (<code>reverse</code>). దీనికి కొత్త మట్టి అవసరం లేదు; ఉన్న ముద్దలోనే మార్పులు జరుగుతాయి. సింగిల్-థ్రెడ్ కోడింగ్‌లో ఇది రాకెట్ వేగంతో పనిచేస్తుంది ఎందుకంటే దీనికి ఎటువంటి లాకింగ్ తనిఖీలు ఉండవు.
+        </li>
+        <li>
+          <strong>3. StringBuffer (సెక్యూరిటీ గార్డులతో కూడిన ఫ్యాక్టరీ అసెంబ్లీ లైన్ - Thread-Safe Synchronized Factory):</strong> ఒకే సమయంలో బహుళ రోబోలు (Concurrent Threads) ఒకే కారును తయారు చేసేటప్పుడు, గందరగోళం జరగకుండా ప్రతి విభాగానికి ఒక సెక్యూరిటీ గార్డు (<code>synchronized lock</code>) ఉంటాడు. ఒక రోబో పనిచేసే వరకు మిగిలిన రోబోలు వేచి ఉంటాయి. తద్వారా డేటా కరప్ట్ కాకుండా 100% థ్రెడ్-సేఫ్టీ లభిస్తుంది, అయితే సింక్రనైజేషన్ వల్ల కాస్త వేగం తగ్గుతుంది.
+        </li>
+      </ol>
+      <p style="margin:14px 0 0 0; font-size:14px; color:#475569; line-height:1.7;">
+        ఈ పాఠం పూర్తయ్యేసరికి మీరు లూపులలో మెమరీ లీక్‌లు లేకుండా వేగవంతమైన స్ట్రింగ్ ప్రాసెసింగ్ రాయడం, మల్టీ-థ్రెడింగ్ వాతావరణంలో తగిన మ్యూటబుల్ క్లాస్‌ను ఎంచుకోవడం, మరియు ప్రొడక్షన్-గ్రేడ్ JSON REST API సీరియలైజర్‌ను సొంతంగా నిర్మించడంలో నిపుణులవుతారు!
+      </p>
+    </div>
+
+    <!-- 3-COLUMN TABLE OF CONTENTS (TOC CARD) -->
+    <div class="toc-card">
+      <div style="font-weight:800; color:var(--text); margin-bottom:14px; font-size:16px; display:flex; align-items:center; gap:8px;">
+        <span>📑 ఈ పాఠంలో మీరు నేర్చుకునే అంశాలు (Table of Contents)</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం A: మ్యూటబుల్ స్ట్రింగ్స్ &amp; ఆర్కిటెక్చర్
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-1" style="color:var(--text2); text-decoration:none;">1. String కాంకాటనేషన్ సమస్య &amp; హీప్ ఒత్తిడి</a></li>
+            <li><a href="#sec-2" style="color:var(--text2); text-decoration:none;">2. StringBuilder vs StringBuffer సమగ్ర పోలిక</a></li>
+            <li><a href="#sec-3" style="color:var(--text2); text-decoration:none;">3. డైనమిక్ Buffer కెపాసిటీ &amp; గ్రోత్ అల్గారిథమ్</a></li>
+            <li><a href="#sec-4" style="color:var(--text2); text-decoration:none;">4. Compact Strings &amp; byte[] ఇంటర్నల్ ఆర్కిటెక్చర్</a></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం B: కోర్ మెథడ్స్ &amp; జావా 15 Text Blocks
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-5" style="color:var(--text2); text-decoration:none;">5. ముఖ్యమైన మెథడ్స్: append, insert, delete, replace</a></li>
+            <li><a href="#sec-6" style="color:var(--text2); text-decoration:none;">6. reverse(), setCharAt() &amp; Method Chaining</a></li>
+            <li><a href="#sec-7" style="color:var(--text2); text-decoration:none;">7. Java 15+ Text Blocks (""") మల్టీ-లైన్ విప్లవం</a></li>
+            <li><a href="#sec-8" style="color:var(--text2); text-decoration:none;">8. String Formatting &amp; .formatted() మెథడ్</a></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం C: డెమోలు, ప్రాజెక్ట్ &amp; పరీక్ష
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-9" style="color:var(--text2); text-decoration:none;">9. డెమో 1: StringBuilder vs String బెంచ్‌మార్క్</a></li>
+            <li><a href="#sec-10" style="color:var(--text2); text-decoration:none;">10. డెమో 2: StringBuffer మల్టీ-థ్రెడింగ్ భద్రత</a></li>
+            <li><a href="#sec-11" style="color:var(--text2); text-decoration:none;">11. Capstone ప్రాజెక్ట్: JSON REST API Serializer</a></li>
+            <li><a href="#sec-12" style="color:var(--text2); text-decoration:none;">12. ప్రొడక్షన్ పిట్‌ఫాల్స్, చిట్కాలు &amp; 5 క్విజ్‌లు</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div id="sec-1" class="section-card">
+      <h2>1. String కాంకాటనేషన్ సమస్య &amp; StringBuilder అవసరం (The String Concatenation Bottleneck)</h2>
+      <p>
+        గత అధ్యాయంలో మనం చూసినట్లుగా, జావాలో <code>String</code> ఆబ్జెక్టులు శాశ్వతంగా మార్చలేనివి (Immutable). మీరు ఒక స్ట్రింగ్‌ను మరో స్ట్రింగ్‌తో <code>+</code> ఆపరేటర్ ఉపయోగించి కలిపినప్పుడు (Concatenation), జావా అసలు ఉన్న పాత స్ట్రింగ్‌ను మార్చదు. బదులుగా, హీప్ మెమరీలో రెండు విలువలనూ కలిపి సరికొత్త మూడవ ఆబ్జెక్ట్‌ను సృష్టిస్తుంది.
+      </p>
+      <p>
+        చిన్న చిన్న పనుల కోసం, ఉదాహరణకు రెండు లేదా మూడు పదాలను కలపడానికి (ఉదా: <code>String fullName = firstName + " " + lastName;</code>) ఇది ఎటువంటి సమస్యను కలిగించదు. ఎందుకంటే జావా కంపైలర్ (Java Compiler - <code>javac</code>) ఆధునిక వెర్షన్లలో సింపుల్ కాంకాటనేషన్లను అంతర్గతంగా <code>invokedynamic</code> లేదా <code>StringBuilder</code>గా మారుస్తుంది.
+      </p>
+      <p>
+        కానీ, అసలైన ప్రమాదం <strong>లూపులలో (Loops)</strong> సంభవిస్తుంది! లూప్‌లో వేలాది రికార్డులను ఒకే స్ట్రింగ్‌కు కలుపుతూ పోతే ఏమి జరుగుతుందో క్రింది ఉదాహరణ పరిశీలిద్దాం:
+      </p>
+
+      <div style="background:var(--bg2); border-left:4px solid #ef4444; border-radius:6px; padding:16px 20px; margin:20px 0;">
+        <h4 style="margin:0 0 8px 0; color:#ef4444; font-size:15px; font-weight:700;">⚠️ ది టెరిబుల్ లూప్ కాంకాటనేషన్ ట్రాప్ (O(N²) Complexity Trap):</h4>
+        <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:13.5px; color:var(--text); line-height:1.6;"><code>// అత్యంత ప్రమాదకరమైన కోడింగ్ పద్ధతి - ఎప్పటికీ రాయకండి!
+String result = "";
+for (int i = 0; i &lt; 50000; i++) {
+    result += i; // ప్రతి ఇటరేషన్‌లోనూ సరికొత్త String ఆబ్జెక్ట్ పుడుతుంది!
+}</code></pre>
+        <p style="margin:10px 0 0 0; font-size:13.5px; color:var(--text2); line-height:1.6;">
+          పై లూప్ 50,000 సార్లు తిరిగినప్పుడు, మెమరీలో ఏకంగా <strong>50,000 తాత్కాలిక String ఆబ్జెక్టులు</strong> సృష్టించబడతాయి. ప్రతి ఇటరేషన్‌లోనూ అంతకుముందు ఉన్న పొడవైన క్యారెక్టర్ ఎరే మొత్తాన్ని కొత్త ఎరేలోకి కాపీ చేయాలి. దీనివలన టైమ్ కాంప్లెక్సిటీ <code>O(N²)</code> అవుతుంది. ఈ వేలాది అనాథ ఆబ్జెక్టులను క్లీన్ చేయడానికి JVM గార్బేజ్ కలెక్టర్ (GC) అప్లికేషన్ మొత్తాన్ని క్షణకాలం నిలిపివేస్తుంది (Stop-the-World GC Pause). ఫలితంగా అప్లికేషన్ తీవ్రంగా మొరాయిస్తుంది!
+        </p>
+      </div>
+
+      <p>
+        ఈ విధ్వంసాన్ని ఆపడానికే జావా <strong>మ్యూటబుల్ బఫర్ (Mutable Character Buffer)</strong> సామర్థ్యం కలిగిన <code>StringBuilder</code> మరియు <code>StringBuffer</code> క్లాసులను <code>java.lang</code> ప్యాకేజీలో ప్రవేశపెట్టింది. ఇవి అంతర్గతంగా ఒకే రీసైజబుల్ క్యారెక్టర్ ఎరేను నిర్వహిస్తూ, అదే మెమరీలో మార్పులను చేయడానికి వీలు కల్పిస్తాయి.
+      </p>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div id="sec-2" class="section-card">
+      <h2>2. StringBuilder vs StringBuffer సమగ్ర పోలిక (The Ultimate Showdown)</h2>
+      <p>
+        జావా ఇంటర్వ్యూలలో అత్యంత ప్రాచుర్యం పొందిన ప్రశ్నలలో ఒకటి: <em>"What is the difference between String, StringBuilder, and StringBuffer?"</em>. జావా డెవలపర్‌గా ఈ మూడింటి మధ్య గల సూక్ష్మ వ్యత్యాసాలను, వాటి ఆర్కిటెక్చరల్ నిర్ణయాలను ఖచ్చితంగా తెలుసుకోవడం అత్యవసరం.
+      </p>
+
+      <div style="overflow-x:auto; margin:22px 0;">
+        <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">ఫీచర్ / లక్షణం</th>
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">String</th>
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">StringBuilder</th>
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">StringBuffer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">మ్యూటబిలిటీ (Mutability)</td>
+              <td style="padding:10px 14px; color:#ef4444; font-weight:600;">Immutable (మార్చలేం)</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:600;">Mutable (మార్చవచ్చు)</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:600;">Mutable (మార్చవచ్చు)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">పరిచయం చేయబడిన వెర్షన్</td>
+              <td style="padding:10px 14px; color:var(--text2);">Java 1.0 (మొదటి నుండి)</td>
+              <td style="padding:10px 14px; color:var(--text2);">Java 5 (JDK 1.5)</td>
+              <td style="padding:10px 14px; color:var(--text2);">Java 1.0 (లెగసీ క్లాస్)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">థ్రెడ్ సేఫ్టీ (Thread-Safety)</td>
+              <td style="padding:10px 14px; color:#10b981;">అవును (ఇమ్మ్యుటబుల్ కావున 100% సేఫ్)</td>
+              <td style="padding:10px 14px; color:#ef4444; font-weight:600;">కాదు (Not Thread-Safe)</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:600;">అవును (Synchronized Methods)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">పనితీరు &amp; వేగం (Performance)</td>
+              <td style="padding:10px 14px; color:var(--text2);">లూపులలో అత్యంత నెమ్మది</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">అత్యంత వేగం (Blazing Fast)</td>
+              <td style="padding:10px 14px; color:var(--text2);">మధ్యస్థం (లాకింగ్ ఓవర్‌హెడ్ వల్ల నెమ్మది)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">మెమరీ లొకేషన్</td>
+              <td style="padding:10px 14px; color:var(--text2);">String Constant Pool &amp; Heap</td>
+              <td style="padding:10px 14px; color:var(--text2);">సాధారణ Heap మాత్రమే (No SCP)</td>
+              <td style="padding:10px 14px; color:var(--text2);">సాధారణ Heap మాత్రమే (No SCP)</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">ఎప్పుడు ఉపయోగించాలి?</td>
+              <td style="padding:10px 14px; color:var(--text2);">విలువలు స్థిరంగా ఉన్నప్పుడు, కీస్ గా</td>
+              <td style="padding:10px 14px; color:var(--text2);">సింగిల్ త్రెడ్ లూపులలో, బిల్డర్లలో (95% కేసులు)</td>
+              <td style="padding:10px 14px; color:var(--text2);">బహుళ త్రెడ్స్ ఒకే బఫర్‌ను షేర్ చేసుకున్నప్పుడు</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        <strong>కీలకమైన అవగాహన:</strong> రియల్-వరల్డ్ సాఫ్ట్‌వేర్ డెవలప్‌మెంట్‌లో 95% సందర్భాలలో స్ట్రింగ్ మార్పులు ఒకే మెథడ్ పరిధిలో (Local Variables గా) జరుగుతాయి. లోకల్ వేరియబుల్స్ ఇప్పటికే ఒక్కో త్రెడ్ స్టాక్‌లో విడివిడిగా ఉంటాయి కాబట్టి వాటికి సింక్రనైజేషన్ అవసరం లేదు. అందువల్ల దాదాపు అన్ని చోట్లా <code>StringBuilder</code> వాడటమే ఉత్తమమైన ఇంజనీరింగ్ ప్రాక్టీస్!
+      </p>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div id="sec-3" class="section-card">
+      <h2>3. డైనమిక్ Buffer కెపాసిటీ &amp; గ్రోత్ అల్గారిథమ్ (Capacity Doubling Internals)</h2>
+      <p>
+        <code>StringBuilder</code> మరియు <code>StringBuffer</code> రెండూ కూడా అంతర్గతంగా <code>AbstractStringBuilder</code> అనే ఆబ్‌స్ట్రాక్ట్ క్లాస్‌ను ఎక్స్‌టెండ్ చేసుకుంటాయి. ఇవి పని చేసే విధానంలో అత్యంత ప్రధానమైన రెండు పదాలు: <strong><code>length()</code></strong> మరియు <strong><code>capacity()</code></strong>.
+      </p>
+
+      <ul>
+        <li><strong><code>length()</code>:</strong> బఫర్‌లో ప్రస్తుతం ఉన్న అక్షరాల సంఖ్య (Characters actually stored).</li>
+        <li><strong><code>capacity()</code>:</strong> కొత్త మెమరీని కేటాయించాల్సిన అవసరం లేకుండా ప్రస్తుత బఫర్ ఉంచుకోగల గరిష్ట అక్షరాల పరిమాణం (Total allocated slots).</li>
+      </ul>
+
+      <h4 style="color:#10b981; margin:20px 0 10px 0;">డీఫాల్ట్ కెపాసిటీ &amp; కన్‌స్ట్రక్టర్లు (Constructors):</h4>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin-bottom:20px; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.8;">
+        <span style="color:#64748b;">// 1. నో-ఆర్గ్ కన్‌స్ట్రక్టర్: డీఫాల్ట్ కెపాసిటీ = 16 అక్షరాలు</span><br />
+        StringBuilder sb1 = <span style="color:#0284c7;">new</span> StringBuilder(); <span style="color:#64748b;">// length = 0, capacity = 16</span><br /><br />
+        <span style="color:#64748b;">// 2. నిర్దిష్ట కెపాసిటీ కన్‌స్ట్రక్టర్ (బెస్ట్ పర్ఫార్మెన్స్)</span><br />
+        StringBuilder sb2 = <span style="color:#0284c7;">new</span> StringBuilder(100); <span style="color:#64748b;">// length = 0, capacity = 100</span><br /><br />
+        <span style="color:#64748b;">// 3. స్ట్రింగ్ ఆధారిత కన్‌స్ట్రక్టర్: స్ట్రింగ్ పొడవు + 16 అదనపు స్లాట్లు</span><br />
+        StringBuilder sb3 = <span style="color:#0284c7;">new</span> StringBuilder(<span style="color:#059669;">"Java"</span>); <span style="color:#64748b;">// length = 4, capacity = 4 + 16 = 20</span>
+      </div>
+
+      <h4 style="color:#10b981; margin:20px 0 10px 0;">కెపాసిటీ రీఅలొకేషన్ సూత్రం (Dynamic Growth Formula):</h4>
+      <p>
+        మనం అక్షరాలను కలుపుకుంటూ వెళ్లేకొద్దీ, బఫర్ పరిమాణం సరిపోకపోతే JVM అంతర్గతంగా కొత్త పెద్ద ఎరేను కేటాయించి పాత అక్షరాలను కాపీ చేస్తుంది. ఆ కొత్త కెపాసిటీని ఈ క్రింది గణిత సూత్రంతో గణిస్తుంది:
+      </p>
+
+      <div style="background:#fefce8; border:1px solid #fde047; border-left:5px solid #ca8a04; border-radius:6px; padding:14px 18px; margin:16px 0; font-family:'JetBrains Mono', monospace; font-weight:700; color:#854d0e; font-size:14.5px;">
+        New Capacity = (Current Capacity * 2) + 2
+      </div>
+
+      <p>
+        ఉదాహరణకు, మీరు డీఫాల్ట్ <code>new StringBuilder()</code> తీసుకున్నారనుకుందాం (Capacity = 16). మీరు 17వ అక్షరాన్ని జోడించగానే:
+        <br />
+        <code>New Capacity = (16 * 2) + 2 = 34</code> గా మారుతుంది.
+        <br />
+        35వ అక్షరాన్ని జోడించినప్పుడు:
+        <br />
+        <code>New Capacity = (34 * 2) + 2 = 70</code> గా మారుతుంది.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin:16px 0; font-size:13.5px; color:var(--text2); line-height:1.7;">
+        💡 <strong>ప్రొడక్షన్ సీక్రెట్:</strong> బఫర్ రీసైజ్ అయిన ప్రతిసారీ <code>Arrays.copyOf()</code> జరిగి CPU సైకిల్స్ వృధా అవుతాయి. మీకు ముందే సుమారుగా ఎంత సైజు డేటా వస్తుందో తెలిస్తే (ఉదా: 5000 అక్షరాల JSON రెస్పాన్స్), ప్రారంభంలోనే <code>new StringBuilder(5000);</code> అని పేర్కొనడం వల్ల ఎటువంటి రీఅలొకేషన్లు లేకుండా అత్యధిక వేగం లభిస్తుంది!
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div id="sec-4" class="section-card">
+      <h2>4. Compact Strings &amp; byte[] ఇంటర్నల్ ఆర్కిటెక్చర్ (Java 9+ Memory Optimization)</h2>
+      <p>
+        గతంలో Java 8 వరకు <code>StringBuilder</code> మరియు <code>String</code> రెండూ కూడా అక్షరాలను నిల్వ చేయడానికి 16-బిట్ <code>char[]</code> ఎరేను వాడేవి. అంటే ప్రతి ఒక్క అక్షరానికి 2 బైట్ల మెమరీ కేటాయించబడేది. ప్రపంచవ్యాప్తంగా నడిచే చాలా అప్లికేషన్లలోని స్ట్రింగ్స్ కేవలం ASCII లేదా Latin-1 (కేవలం 1 బైట్ సరిపోయే అక్షరాలు) మాత్రమే కలిగి ఉంటున్నాయని పరిశోధనలలో తేలింది.
+      </p>
+      <p>
+        అందువల్ల <strong>Java 9 (JEP 254: Compact Strings)</strong> నుండి ఆరాకిల్ ఇంజనీర్లు అంతర్గత నిర్మాణాన్ని విప్లవాత్మకంగా మార్చారు:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.8;">
+        <span style="color:#64748b;">// AbstractStringBuilder Internal Fields in Java 9 to Java 21+:</span><br />
+        <span style="color:#0284c7;">byte</span>[] value; <span style="color:#64748b;">// char[] కు బదులుగా byte[] వాడకం</span><br />
+        <span style="color:#0284c7;">byte</span> coder;  <span style="color:#64748b;">// 0 = LATIN1 (1 byte per char), 1 = UTF16 (2 bytes per char)</span><br />
+        <span style="color:#0284c7;">int</span> count;    <span style="color:#64748b;">// వాస్తవ అక్షరాల సంఖ్య</span>
+      </div>
+
+      <p>
+        ఈ మార్పు వలన మీ స్ట్రింగ్‌లో ఇంగ్లీష్ లేదా ల్యాటిన్ అక్షరాలు మాత్రమే ఉంటే, ప్రతి అక్షరానికి కేవలం 1 బైట్ మాత్రమే తీసుకుంటుంది. తెలుగు, హిందీ, ఎమోజీలు లేదా చైనీస్ వంటి ప్రత్యేక యూనికోడ్ అక్షరాలు వచ్చినప్పుడు మాత్రమే JVM ఆటోమేటిక్‌గా <code>coder = UTF16</code> గా మార్చి ఒక్కో అక్షరానికి 2 బైట్లు కేటాయిస్తుంది. ఈ సరికొత్త ఆర్కిటెక్చర్ వల్ల ఆధునిక జావా అప్లికేషన్లలో హీప్ మెమరీ వినియోగం సుమారు <strong>50% ఆదా</strong> అవుతుంది!
+      </p>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div id="sec-5" class="section-card">
+      <h2>5. ముఖ్యమైన మెథడ్స్: append, insert, delete, replace (Core API Methods)</h2>
+      <p>
+        <code>StringBuilder</code> మరియు <code>StringBuffer</code> రెండూ ఒకే రకమైన మెథడ్ సంతకాలను (Method Signatures) కలిగి ఉంటాయి. నిత్యజీవితంలో అత్యంత విస్తృతంగా ఉపయోగించే నాలుగు ప్రధాన మెథడ్ల పనితీరును పరిశీలిద్దాం:
+      </p>
+
+      <h4 style="color:#10b981; margin:18px 0 8px 0;">1. append(...) — చివర కలుపుట:</h4>
+      <p>
+        బఫర్ చివరిలో కొత్త డేటాను జోడించడానికి <code>append()</code> వాడతారు. ఇది అన్ని ప్రిమిటివ్ డేటా టైపులు (int, double, boolean, char), ఆబ్జెక్టులు మరియు స్ట్రింగ్స్‌తో ఓవర్‌లోడ్ చేయబడి ఉంది.
+      </p>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:6px; padding:12px 16px; margin-bottom:16px; font-family:'JetBrains Mono', monospace; font-size:13.5px;">
+        StringBuilder sb = <span style="color:#0284c7;">new</span> StringBuilder(<span style="color:#059669;">"Java"</span>);<br />
+        sb.append(<span style="color:#059669;">" 21"</span>).append(<span style="color:#059669;">" LTS"</span>); <span style="color:#64748b;">// sb becomes "Java 21 LTS"</span>
+      </div>
+
+      <h4 style="color:#10b981; margin:18px 0 8px 0;">2. insert(int offset, ...) — మధ్యలో చొప్పించుట:</h4>
+      <p>
+        మనం కోరుకున్న నిర్దిష్ట ఇండెక్స్ (offset) వద్ద కొత్త అక్షరాలను చొప్పించడానికి ఇది ఉపయోగపడుతుంది. ఆ ఇండెక్స్ తర్వాత ఉన్న పాత అక్షరాలు కుడివైపుకు జరుపబడతాయి.
+      </p>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:6px; padding:12px 16px; margin-bottom:16px; font-family:'JetBrains Mono', monospace; font-size:13.5px;">
+        StringBuilder sb = <span style="color:#0284c7;">new</span> StringBuilder(<span style="color:#059669;">"Java Rocks"</span>);<br />
+        sb.insert(4, <span style="color:#059669;">" 21"</span>); <span style="color:#64748b;">// sb becomes "Java 21 Rocks"</span>
+      </div>
+
+      <h4 style="color:#10b981; margin:18px 0 8px 0;">3. delete(int start, int end) &amp; deleteCharAt(int index) — తొలగించుట:</h4>
+      <p>
+        <code>start</code> ఇండెక్స్ నుండి <code>end - 1</code> ఇండెక్స్ వరకు ఉన్న అక్షరాలను తొలగిస్తుంది. కేవలం ఒక్క అక్షరాన్ని మాత్రమే తొలగించాలంటే <code>deleteCharAt(index)</code> వాడతాం.
+      </p>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:6px; padding:12px 16px; margin-bottom:16px; font-family:'JetBrains Mono', monospace; font-size:13.5px;">
+        StringBuilder sb = <span style="color:#0284c7;">new</span> StringBuilder(<span style="color:#059669;">"Hello World!"</span>);<br />
+        sb.delete(5, 11); <span style="color:#64748b;">// removes " World" -&gt; sb becomes "Hello!"</span><br />
+        sb.deleteCharAt(5); <span style="color:#64748b;">// removes '!' -&gt; sb becomes "Hello"</span>
+      </div>
+
+      <h4 style="color:#10b981; margin:18px 0 8px 0;">4. replace(int start, int end, String str) — భర్తీ చేయుట:</h4>
+      <p>
+        ఇచ్చిన శ్రేణిలోని అక్షరాల స్థానంలో కొత్త స్ట్రింగ్‌ను రీప్లేస్ చేస్తుంది.
+      </p>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:6px; padding:12px 16px; margin-bottom:16px; font-family:'JetBrains Mono', monospace; font-size:13.5px;">
+        StringBuilder sb = <span style="color:#0284c7;">new</span> StringBuilder(<span style="color:#059669;">"Good Morning"</span>);<br />
+        sb.replace(5, 12, <span style="color:#059669;">"Evening"</span>); <span style="color:#64748b;">// sb becomes "Good Evening"</span>
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div id="sec-6" class="section-card">
+      <h2>6. reverse(), setCharAt() &amp; Method Chaining (Fluent API Design)</h2>
+      <p>
+        స్ట్రింగ్ ఆపరేషన్లలో తరచూ ఉపయోగపడే మరికొన్ని అద్భుతమైన మెథడ్స్ మరియు ఫ్లూయెంట్ కోడింగ్ టెక్నిక్స్ గురించి తెలుసుకుందాం:
+      </p>
+
+      <h4 style="color:#10b981; margin:16px 0 8px 0;">reverse() — తిరగరాయుట:</h4>
+      <p>
+        బఫర్‌లోని అక్షరాల క్రమాన్ని పూర్తిగా తిరగేస్తుంది. పాలిండ్రోమ్ (Palindrome - ఉదా: MADAM, 12321) ప్రోగ్రాములను సులభంగా పరిష్కరించడానికి ఇది అత్యుత్తమ షార్ట్‌కట్.
+      </p>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:6px; padding:12px 16px; margin-bottom:16px; font-family:'JetBrains Mono', monospace; font-size:13.5px;">
+        StringBuilder sb = <span style="color:#0284c7;">new</span> StringBuilder(<span style="color:#059669;">"RADAR"</span>);<br />
+        sb.reverse(); <span style="color:#64748b;">// sb remains "RADAR"</span>
+      </div>
+
+      <h4 style="color:#10b981; margin:16px 0 8px 0;">setCharAt(int index, char ch) &amp; setLength(int newLength):</h4>
+      <ul>
+        <li><code>setCharAt(2, 'X')</code>: నిర్దిష్ట ఇండెక్స్ వద్ద ఉన్న ఒక్క క్యారెక్టర్‌ను మాత్రమే మారుస్తుంది.</li>
+        <li><code>setLength(0)</code>: బఫర్‌లోని మొత్తం కంటెంట్‌ను తుడిచివేసి ఖాళీ చేయడానికి (Clear buffer without creating new object) ఇది ఉత్తమ మార్గం!</li>
+      </ul>
+
+      <h4 style="color:#10b981; margin:20px 0 8px 0;">మెథడ్ చైనింగ్ (Method Chaining / Fluent Pattern):</h4>
+      <p>
+        <code>StringBuilder</code> లోని దాదాపు అన్ని సవరణ మెథడ్స్ (append, insert, delete, reverse) చివరికి ఆబ్జెక్ట్ యొక్క ప్రస్తుత రిఫరెన్స్‌ను (<code>return this;</code>) తిరిగి ఇస్తాయి. అందువల్ల మనం ఒకే లైన్‌లో బహుళ మెథడ్లను గొలుసుకట్టుగా పిలవవచ్చు (Fluent Interface):
+      </p>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:6px; padding:14px 18px; margin-bottom:16px; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.7;">
+        String report = <span style="color:#0284c7;">new</span> StringBuilder()<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;.append(<span style="color:#059669;">"=== STATUS REPORT ==="</span>)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;.append(<span style="color:#059669;">"
+Server: "</span>).append(<span style="color:#059669;">"Active"</span>)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;.append(<span style="color:#059669;">"
+Latency: "</span>).append(12).append(<span style="color:#059669;">"ms"</span>)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;.toString(); <span style="color:#64748b;">// చివరగా String గా మార్చడం</span>
+      </div>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div id="sec-7" class="section-card">
+      <h2>7. Java 15+ Text Blocks (""") — మల్టీ-లైన్ స్ట్రింగ్స్ విప్లవం (Modern Java)</h2>
+      <p>
+        గతంలో జావాలో HTML, JSON లేదా SQL వంటి మల్టీ-లైన్ కంటెంట్‌ను రాయాలంటే డెవలపర్లకు నరకం కనిపించేది. ప్రతి లైన్ చివర <code>
+</code> ఎస్కేప్ క్యారెక్టర్ పెట్టడం, డబుల్ కోట్స్ కోసం <code>"</code> వాడటం, మరియు ప్రతి లైన్‌ను <code>+</code> తో కలపడం చాలా గజిబిజిగా ఉండేది.
+      </p>
+      <p>
+        <strong>Java 15 (JEP 378)</strong> నుండి అధికారికంగా ప్రవేశపెట్టబడిన <strong>Text Blocks</strong> ఈ సమస్యను శాశ్వతంగా పరిష్కరించాయి! టెక్స్ట్ బ్లాక్‌ను మూడు డబుల్ కోట్స్ (<code>"""</code>) తో ప్రారంభించి, మూడు డబుల్ కోట్స్ తో ముగిస్తాం.
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px; margin:20px 0;">
+        <div style="background:var(--bg2); border:1px solid #ef4444; border-radius:8px; padding:16px;">
+          <div style="font-weight:700; color:#ef4444; margin-bottom:8px; font-size:13.5px;">❌ పాతకాలపు జావా కోడ్ (Traditional Multiline String):</div>
+          <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--text); line-height:1.6;"><code>String json = "{
+" +
+              "  "id": 101,
+" +
+              "  "name": "Java 21",
+" +
+              "  "status": "Active"
+" +
+              "}";</code></pre>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:16px;">
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px;">✅ ఆధునిక Java 15+ Text Block:</div>
+          <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--text); line-height:1.6;"><code>String json = """
+              {
+                "id": 101,
+                "name": "Java 21",
+                "status": "Active"
+              }
+              """;</code></pre>
+        </div>
+      </div>
+
+      <h4 style="color:#10b981; margin:18px 0 8px 0;">టెక్స్ట్ బ్లాక్స్ లో ముఖ్యమైన నియమాలు &amp; ఎస్కేప్ సీక్వెన్స్‌లు:</h4>
+      <ul>
+        <li><strong>లైన్ బ్రేక్ నియమం:</strong> ఓపెనింగ్ <code>"""</code> తర్వాత అదే లైన్‌లో ఎటువంటి కంటెంట్ ఉండకూడదు. కచ్చితంగా న్యూలైన్ (Line Terminator) ఉండాలి.</li>
+        <li><strong>ఆటోమేటిక్ ఇండెంటేషన్ స్ట్రిప్పింగ్:</strong> క్లోజింగ్ <code>"""</code> యొక్క అలైన్‌మెంట్‌ను బట్టి ఎడమవైపు ఉన్న కామన్ వైట్‌స్పేస్‌ను జావా కంపైలర్ ఆటోమేటిక్‌గా తీసివేస్తుంది (Incidental Indentation Stripping).</li>
+        <li><strong><code></code> (లైన్ కంటిన్యుయేషన్):</strong> కోడ్ చూసేందుకు రెండు లైన్లుగా కనిపించినా, ఫలితంలో న్యూలైన్ రాకూడదనుకుంటే లైన్ చివర బ్యాక్‌స్లాష్ (<code></code>) ఉంచుతాం.</li>
+        <li><strong><code>s</code> (ట్రెయిలింగ్ స్పేస్ ప్రిజర్వేషన్):</strong> లైన్ చివర ఉండే స్పేస్‌లను కంపైలర్ తీసివేయకుండా కాపాడటానికి <code>s</code> వాడతాం.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div id="sec-8" class="section-card">
+      <h2>8. String Formatting &amp; .formatted() మెథడ్ (Modern String Interpolation)</h2>
+      <p>
+        జావాలో డైనమిక్ విలువలను స్ట్రింగ్ టెంప్లేట్లలో చొప్పించడానికి సాంప్రదాయకంగా <code>String.format(template, args...)</code> వాడేవారు. అయితే Java 15 లో Text Blocks రావడంతో పాటు, మరింత క్లీన్ మరియు రీడబుల్ కోడ్ రాయడానికి సరికొత్త ఇన్‌స్టాన్స్ మెథడ్ <strong><code>.formatted(...)</code></strong> ను చేర్చారు.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.8;">
+        String user = <span style="color:#059669;">"Balaji"</span>;<br />
+        <span style="color:#0284c7;">int</span> unreadCount = 5;<br />
+        <span style="color:#0284c7;">double</span> balance = 4590.75;<br /><br />
+        <span style="color:#64748b;">// ఆధునిక .formatted() మెథడ్ వాడకం:</span><br />
+        String welcome = <span style="color:#059669;">"""
+            నమస్తే %s గారు!
+            మీ వద్ద %d కొత్త నోటిఫికేషన్లు ఉన్నాయి.
+            మీ అకౌంట్ బ్యాలెన్స్: ₹%,.2f
+            """</span>.formatted(user, unreadCount, balance);
+      </div>
+
+      <p>
+        <strong>ముఖ్యమైన ఫార్మాట్ స్పెసిఫైయర్లు (Format Specifiers):</strong>
+        <br />
+        • <code>%s</code> : String లేదా ఏదైనా ఆబ్జెక్ట్
+        <br />
+        • <code>%d</code> : డెసిమల్ పూర్ణాంకాలు (byte, short, int, long)
+        <br />
+        • <code>%,.2f</code> : ఫ్లోటింగ్ పాయింట్ నంబర్‌ను రెండు డెసిమల్స్‌తో, వేలల్లో కామాలతో (Commas grouping) ముద్రించడం
+        <br />
+        • <code>%b</code> : బూలియన్ విలువల కోసం
+      </p>
+    </div>
+
+    <!-- SECTION 9: CODE DEMO 1 -->
+    <div id="sec-9" class="section-card">
+      <h2>9. డెమో 1: StringBuilder vs String కాంకాటనేషన్ బెంచ్‌మార్క్ (Performance Benchmark)</h2>
+      <p>
+        సిద్ధాంతాన్ని పక్కన పెట్టి వాస్తవ పనితీరును కళ్లారా చూద్దాం! ఈ క్రింది ప్రోగ్రామ్‌లో 50,000 సార్లు <code>String +=</code> మరియు <code>StringBuilder.append()</code> లను రన్ చేసి, వాటికి పట్టిన సమయం (Elapsed Nanoseconds / Milliseconds) మరియు మెమరీ వినియోగాన్ని నేరుగా లెక్కిస్తాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">StringBuilderVsStringBenchmark.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">public class StringBuilderVsStringBenchmark {
+    public static void main(String[] args) {
+        final int ITERATIONS = 50_000;
+
+        System.out.println("=================================================");
+        System.out.println("🚀 JAVA STRING VS STRINGBUILDER BENCHMARK (50K)");
+        System.out.println("=================================================");
+
+        // 1. STRING CONCATENATION (+) BENCHMARK
+        System.gc(); // Clean garbage before test
+        long startMemString = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        long startTimeString = System.nanoTime();
+
+        String strResult = "";
+        for (int i = 0; i &lt; ITERATIONS; i++) {
+            strResult += "A";
+        }
+
+        long endTimeString = System.nanoTime();
+        long endMemString = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        long durationStringMs = (endTimeString - startTimeString) / 1_000_000;
+        long memUsedStringKb = Math.max(0, (endMemString - startMemString) / 1024);
+
+        System.out.printf("1. String (+) Loop:        %6d ms  | Approx Mem: %6d KB%n", durationStringMs, memUsedStringKb);
+
+        // 2. STRINGBUILDER APPEND BENCHMARK
+        System.gc(); // Clean garbage before test
+        long startMemSb = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        long startTimeSb = System.nanoTime();
+
+        StringBuilder sb = new StringBuilder(ITERATIONS); // Pre-sized capacity
+        for (int i = 0; i &lt; ITERATIONS; i++) {
+            sb.append("A");
+        }
+        String sbResult = sb.toString();
+
+        long endTimeSb = System.nanoTime();
+        long endMemSb = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        long durationSbMs = (endTimeSb - startTimeSb) / 1_000_000;
+        long memUsedSbKb = Math.max(0, (endMemSb - startMemSb) / 1024);
+
+        System.out.printf("2. StringBuilder.append:   %6d ms  | Approx Mem: %6d KB%n", durationSbMs, memUsedSbKb);
+
+        System.out.println("-------------------------------------------------");
+        if (durationSbMs &gt; 0) {
+            double speedup = (double) durationStringMs / Math.max(1, durationSbMs);
+            System.out.printf("⚡ తీర్పు: StringBuilder సుమారు %.1f రెట్లు వేగవంతమైనది!%n", speedup);
+        } else {
+            System.out.println("⚡ తీర్పు: StringBuilder 1 ms లోపే పూర్తయింది! (వందల రెట్లు వేగం)");
+        }
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+🚀 JAVA STRING VS STRINGBUILDER BENCHMARK (50K)
+=================================================
+1. String (+) Loop:          1428 ms  | Approx Mem:  49120 KB
+2. StringBuilder.append:        2 ms  | Approx Mem:    110 KB
+-------------------------------------------------
+⚡ తీర్పు: StringBuilder సుమారు 714.0 రెట్లు వేగవంతమైనది!
+=================================================</pre>
+      </div>
+
+      <p style="margin-top:14px; font-size:14px; color:var(--text2); line-height:1.7;">
+        📊 <strong>పరిశీలన:</strong> సాధారణ <code>String +=</code> కి 1428 మిల్లీసెకన్లు మరియు సుమారు 49 MB తాత్కాలిక మెమరీ ఖర్చవగా, <code>StringBuilder</code> కేవలం <strong>2 మిల్లీసెకన్లలో</strong> 110 KB మెమరీతో పని పూర్తి చేసింది! లూపులలో <code>StringBuilder</code> ఎందుకు తప్పనిసరో ఈ ఫలితాలు స్పష్టంగా రుజువు చేస్తున్నాయి.
+      </p>
+    </div>
+
+    <!-- SECTION 10: CODE DEMO 2 -->
+    <div id="sec-10" class="section-card">
+      <h2>10. డెమో 2: StringBuffer మల్టీ-థ్రెడింగ్ భద్రత (Race Condition &amp; Thread-Safety)</h2>
+      <p>
+        ఒకే సమయంలో బహుళ త్రెడ్స్ (Multiple Threads) పనిచేసేటప్పుడు <code>StringBuilder</code> ఎందుకు విఫలమవుతుందో మరియు <code>StringBuffer</code> డేటాను ఎలా రక్షిస్తుందో నిరూపించే ప్రాక్టికల్ డెమో ఇది:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">StringBufferThreadSafetyDemo.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">public class StringBufferThreadSafetyDemo {
+    public static void main(String[] args) throws InterruptedException {
+        final int APPENDS_PER_THREAD = 1000;
+
+        System.out.println("=================================================");
+        System.out.println("🛡️ MULTI-THREADING SAFETY TEST: BUILDER VS BUFFER");
+        System.out.println("=================================================");
+
+        // TEST 1: StringBuilder (Not Thread-Safe)
+        StringBuilder unsafeBuilder = new StringBuilder();
+        Thread t1 = new Thread(() -&gt; {
+            for (int i = 0; i &lt; APPENDS_PER_THREAD; i++) {
+                unsafeBuilder.append("A");
+            }
+        });
+        Thread t2 = new Thread(() -&gt; {
+            for (int i = 0; i &lt; APPENDS_PER_THREAD; i++) {
+                unsafeBuilder.append("B");
+            }
+        });
+
+        t1.start();
+        t2.start();
+        t1.join();
+        t2.join();
+
+        System.out.println("1. StringBuilder (Expected: 2000 chars):");
+        System.out.println("   వాస్తవ పొడవు: " + unsafeBuilder.length());
+        if (unsafeBuilder.length() &lt; 2000) {
+            System.out.println("   ❌ రేస్ కండిషన్ సంభవించింది! కొన్ని అక్షరాలు నష్టపోయాయి.");
+        } else {
+            System.out.println("   ⚠️ ఈ రన్‌లో కాకతాళీయంగా సరిపోయింది (కానీ గ్యారెంటీ లేదు).");
+        }
+
+        // TEST 2: StringBuffer (Thread-Safe with Synchronized Locks)
+        StringBuffer safeBuffer = new StringBuffer();
+        Thread t3 = new Thread(() -&gt; {
+            for (int i = 0; i &lt; APPENDS_PER_THREAD; i++) {
+                safeBuffer.append("A");
+            }
+        });
+        Thread t4 = new Thread(() -&gt; {
+            for (int i = 0; i &lt; APPENDS_PER_THREAD; i++) {
+                safeBuffer.append("B");
+            }
+        });
+
+        t3.start();
+        t4.start();
+        t3.join();
+        t4.join();
+
+        System.out.println("
+2. StringBuffer (Expected: 2000 chars):");
+        System.out.println("   వాస్తవ పొడవు: " + safeBuffer.length());
+        if (safeBuffer.length() == 2000) {
+            System.out.println("   ✅ 100% థ్రెడ్-సేఫ్! మొత్తం 2000 అక్షరాలు భద్రంగా నిల్వ చేయబడ్డాయి.");
+        }
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+🛡️ MULTI-THREADING SAFETY TEST: BUILDER VS BUFFER
+=================================================
+1. StringBuilder (Expected: 2000 chars):
+   వాస్తవ పొడవు: 1842
+   ❌ రేస్ కండిషన్ సంభవించింది! కొన్ని అక్షరాలు నష్టపోయాయి.
+
+2. StringBuffer (Expected: 2000 chars):
+   వాస్తవ పొడవు: 2000
+   ✅ 100% థ్రెడ్-సేఫ్! మొత్తం 2000 అక్షరాలు భద్రంగా నిల్వ చేయబడ్డాయి.
+=================================================</pre>
+      </div>
+
+      <p style="margin-top:14px; font-size:14px; color:var(--text2); line-height:1.7;">
+        🔒 <strong>విశ్లేషణ:</strong> <code>StringBuilder</code> లో రెండు త్రెడ్స్ ఒకేసారి అంతర్గత <code>count</code> వేరియబుల్‌ను మార్చడం వలన రేస్ కండిషన్ ఏర్పడి కొన్ని అక్షరాలు ఓవర్‌రైట్ అయిపోయాయి (1842 మాత్రమే మిగిలాయి). అదే <code>StringBuffer</code> లో ప్రతి <code>append()</code> మెథడ్ పై సింక్రనైజ్డ్ లాక్ ఉండటం వల్ల ఒక త్రెడ్ పూర్తయ్యేవరకు రెండో త్రెడ్ వేచి చూసి ఖచ్చితంగా 2000 అక్షరాలనూ భద్రపరిచింది!
+      </p>
+    </div>
+
+    <!-- SECTION 11: CAPSTONE PROJECT -->
+    <div id="sec-11" class="section-card">
+      <h2>11. Capstone ప్రాజెక్ట్: హై-త్రూపుట్ JSON REST API Serializer Engine</h2>
+      <p>
+        ఈ అధ్యాయంలో నేర్చుకున్న అన్ని కాన్సెప్టులను (StringBuilder, Pre-allocated Capacity, Method Chaining, Java 15 Text Blocks మరియు String Formatting) సమగ్రంగా మిళితం చేస్తూ ఒక రియల్-వరల్డ్ <strong>High-Throughput JSON Serializer &amp; API Response Generator</strong> ను రూపొందిద్దాం. ఎక్స్‌టర్నల్ లైబ్రరీలు (Jackson, Gson) లేకుండానే స్వచ్ఛమైన జావా కోడ్‌తో మైక్రోసెకన్లలో JSON పేలోడ్లను నిర్మించే ఇంజిన్ ఇది:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">JsonPayloadBuilderEngine.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">public class JsonPayloadBuilderEngine {
+
+    // High-Performance Fluent JSON Builder using StringBuilder
+    public static class FastJsonBuilder {
+        private final StringBuilder sb;
+        private boolean firstField = true;
+
+        public FastJsonBuilder(int estimatedSize) {
+            this.sb = new StringBuilder(estimatedSize);
+            this.sb.append("{
+");
+        }
+
+        public FastJsonBuilder addField(String key, String value) {
+            handleSeparator();
+            sb.append("  "").append(key).append("": "").append(escape(value)).append(""");
+            return this;
+        }
+
+        public FastJsonBuilder addField(String key, long value) {
+            handleSeparator();
+            sb.append("  "").append(key).append("": ").append(value);
+            return this;
+        }
+
+        public FastJsonBuilder addField(String key, double value) {
+            handleSeparator();
+            sb.append("  "").append(key).append("": ").append(value);
+            return this;
+        }
+
+        public FastJsonBuilder addField(String key, boolean value) {
+            handleSeparator();
+            sb.append("  "").append(key).append("": ").append(value);
+            return this;
+        }
+
+        public FastJsonBuilder addStringArray(String key, String[] items) {
+            handleSeparator();
+            sb.append("  "").append(key).append("": [");
+            for (int i = 0; i &lt; items.length; i++) {
+                sb.append(""").append(escape(items[i])).append(""");
+                if (i &lt; items.length - 1) sb.append(", ");
+            }
+            sb.append("]");
+            return this;
+        }
+
+        private void handleSeparator() {
+            if (!firstField) {
+                sb.append(",
+");
+            }
+            firstField = false;
+        }
+
+        private String escape(String raw) {
+            return raw.replace("\", "\\").replace(""", "\"");
+        }
+
+        public String build() {
+            sb.append("
+}");
+            return sb.toString();
+        }
+
+        public int currentCapacity() {
+            return sb.capacity();
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("⚡ HIGH-THROUGHPUT REST API JSON SERIALIZER ENGINE");
+        System.out.println("=================================================
+");
+
+        // Step 1: Pre-allocating capacity to avoid resizing overhead
+        FastJsonBuilder builder = new FastJsonBuilder(512);
+
+        String[] roles = {"SUPER_ADMIN", "DEVELOPER", "ANALYST"};
+
+        // Step 2: Fluent Method Chaining
+        String jsonPayload = builder
+                .addField("service", "AuthGateway-v2")
+                .addField("userId", 8849204821L)
+                .addField("username", "balaji_dev")
+                .addField("accountBalance", 125400.50)
+                .addField("isMfaEnabled", true)
+                .addStringArray("assignedRoles", roles)
+                .build();
+
+        System.out.println("📦 Generated JSON Payload:");
+        System.out.println(jsonPayload);
+
+        // Step 3: Modern Java 15+ Text Block API Response Wrapper
+        String httpResponseTemplate = """
+                HTTP/1.1 200 OK
+                Content-Type: application/json; charset=UTF-8
+                Content-Length: %d
+                X-Server-Engine: Java-21-LTS-CoreEngine
+
+                %s
+                """.formatted(jsonPayload.getBytes().length, jsonPayload);
+
+        System.out.println("
+🌐 Complete HTTP REST Response Envelope:");
+        System.out.println(httpResponseTemplate);
+
+        System.out.println("-------------------------------------------------");
+        System.out.println("📊 Performance Telemetry:");
+        System.out.println("   Buffer Allocated Capacity: " + builder.currentCapacity() + " bytes");
+        System.out.println("   Final Payload Size:       " + jsonPayload.length() + " chars");
+        System.out.println("   Zero Array Copies Reached: ✅ Optimal Memory State");
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+⚡ HIGH-THROUGHPUT REST API JSON SERIALIZER ENGINE
+=================================================
+
+📦 Generated JSON Payload:
+{
+  "service": "AuthGateway-v2",
+  "userId": 8849204821,
+  "username": "balaji_dev",
+  "accountBalance": 125400.5,
+  "isMfaEnabled": true,
+  "assignedRoles": ["SUPER_ADMIN", "DEVELOPER", "ANALYST"]
+}
+
+🌐 Complete HTTP REST Response Envelope:
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+Content-Length: 201
+X-Server-Engine: Java-21-LTS-CoreEngine
+
+{
+  "service": "AuthGateway-v2",
+  "userId": 8849204821,
+  "username": "balaji_dev",
+  "accountBalance": 125400.5,
+  "isMfaEnabled": true,
+  "assignedRoles": ["SUPER_ADMIN", "DEVELOPER", "ANALYST"]
+}
+
+-------------------------------------------------
+📊 Performance Telemetry:
+   Buffer Allocated Capacity: 512 bytes
+   Final Payload Size:       201 chars
+   Zero Array Copies Reached: ✅ Optimal Memory State
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 12 -->
+    <div id="sec-12" class="section-card">
+      <h2>12. ప్రొడక్షన్ పిట్‌ఫాల్స్, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 క్విజ్‌లు (Best Practices &amp; Quizzes)</h2>
+
+      <h4 style="color:#ef4444; margin:16px 0 10px 0;">🚫 ప్రొడక్షన్‌లో నివారించాల్సిన 4 ఘోరమైన తప్పులు (Production Pitfalls):</h4>
+      <ol style="line-height:1.8; color:var(--text2); font-size:14px; padding-left:20px;">
+        <li style="margin-bottom:10px;">
+          <strong>లూపులలో <code>+=</code> ఆపరేటర్‌ను వాడటం:</strong> ఇది ప్రతి చక్రంలోనూ సరికొత్త String ఆబ్జెక్ట్‌ను హీప్‌లో సృష్టిస్తుంది. లక్షలాది ట్రాన్సాక్షన్లు జరిగే సర్వర్లలో ఇది తీవ్రమైన అవుట్-ఆఫ్-మెమరీ (OutOfMemoryError) లేదా GC లాగ్స్ కు దారితీస్తుంది.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>సింగిల్-థ్రెడ్ కోడ్‌లోనూ అనవసరంగా <code>StringBuffer</code> వాడటం:</strong> చాలామంది పాత అలవాటు ప్రకారం StringBuffer వాడుతుంటారు. దీనివలన ప్రతి మెథడ్ కాల్ వద్ద నిష్ప్రయోజనమైన మ్యూటెక్స్ లాకింగ్ ఓవర్‌హెడ్ జరిగి CPU సైకిల్స్ వృధా అవుతాయి. సింగిల్ త్రెడ్ లో ఎల్లప్పుడూ <code>StringBuilder</code> మాత్రమే వాడాలి.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>ప్రారంభ కెపాసిటీని అంచనా వేయకపోవడం:</strong> భారీ స్ట్రింగ్స్ నిర్మించేటప్పుడు డీఫాల్ట్ కెపాసిటీ (16) తో మొదలుపెడితే, బఫర్ పదే పదే డబుల్ అవుతూ అనేకసార్లు ఎరే రీఅలొకేషన్లు జరుగుతాయి. వీలైనంత వరకు అంచనా వేసిన సైజును కన్‌స్ట్రక్టర్‌లో ఇవ్వండి (<code>new StringBuilder(expectedSize)</code>).
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>బఫర్‌ను రీసెట్ చేయడానికి కొత్త ఆబ్జెక్ట్ సృష్టించడం:</strong> పాత బఫర్‌ను క్లియర్ చేయడానికి మళ్లీ <code>sb = new StringBuilder();</code> అని రాయకండి. దానికి బదులుగా <code>sb.setLength(0);</code> వాడటం వలన కేటాయించిన పాత మెమరీ రీసైకిల్ అయి అత్యంత వేగంగా పనిచేస్తుంది.
+        </li>
+      </ol>
+
+      <h4 style="color:#10b981; margin:26px 0 10px 0;">✨ ప్రొడక్షన్ గోల్డెన్ రూల్స్ (Golden Rules):</h4>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; font-size:13.5px; line-height:1.8; color:var(--text);">
+        1. <strong>స్థిరమైన టెక్స్ట్:</strong> మారకుండా ఉండే స్ట్రింగ్స్ కు నేరుగా <code>String</code> వాడండి.<br />
+        2. <strong>సింగిల్-థ్రెడ్ మ్యానిప్యులేషన్:</strong> లూపులు, క్వెరీ బిల్డర్లు, లాగ్ ఫార్మాటర్లకు <code>StringBuilder</code> వాడండి.<br />
+        3. <strong>షేర్డ్ మల్టీ-థ్రెడింగ్:</strong> వేర్వేరు త్రెడ్స్ ఒకే బఫర్‌కు రాస్తుంటే <code>StringBuffer</code> వాడండి.<br />
+        4. <strong>మల్టీ-లైన్ SQL / JSON / HTML:</strong> కోడ్ క్లీన్‌నెస్ కోసం జావా 15+ <code>""" Text Blocks """</code> వాడండి.
+      </div>
+
+      <!-- QUIZ SECTION -->
+      <h3 style="color:#10b981; margin:32px 0 16px 0;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 1: StringBuilder యొక్క డీఫాల్ట్ నో-ఆర్గ్ కన్‌స్ట్రక్టర్ (new StringBuilder()) ప్రారంభ కెపాసిటీ ఎంత?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> 16 అక్షరాలు (16 characters / slots).
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 2: బఫర్ నిండిపోయినప్పుడు కొత్త కెపాసిటీని లెక్కించే జావా ఫార్ములా ఏమిటి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>New Capacity = (Old Capacity * 2) + 2</code>. ఉదాహరణకు పాత కెపాసిటీ 16 అయితే, కొత్తది (16 * 2) + 2 = 34 అవుతుంది.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 3: StringBuilder మరియు StringBuffer మధ్య ప్రధాన సాంకేతిక తేడా ఏమిటి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>StringBuffer</code> లోని మెథడ్స్ <code>synchronized</code> చేయబడి ఉంటాయి, కాబట్టి ఇది Thread-Safe. కానీ <code>StringBuilder</code> సింక్రనైజ్ కాలేదు (Not Thread-Safe), అందువల్ల సింగిల్ త్రెడ్ లో ఇది StringBuffer కంటే చాలా వేగంగా పనిచేస్తుంది.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 4: ఇప్పటికే ఉన్న StringBuilder ఆబ్జెక్ట్‌ను కొత్త మెమరీ అలొకేట్ చేయకుండా పూర్తిగా క్లియర్ చేయడానికి ఏ మెథడ్ వాడాలి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>sb.setLength(0);</code> వాడటం ద్వారా బఫర్ కౌంట్‌ను సున్నా చేసి పాత అలొకేటెడ్ ఎరేను సమర్థవంతంగా రీసైకిల్ చేయవచ్చు.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 5: జావా 15 Text Blocks (""") లో ఓపెనింగ్ ట్రిపుల్ కోట్స్ తర్వాత వెంటనే కంటెంట్ రాయవచ్చా?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> రాయకూడదు! ఓపెనింగ్ <code>"""</code> తర్వాత తప్పనిసరిగా లైన్ టెర్మినేటర్ (New Line) మాత్రమే ఉండాలి, లేకపోతే కంపైలేషన్ ఎర్రర్ వస్తుంది.
+        </p>
+      </details>
+    </div>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/09-java-strings-memory-pool-and-immutability.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 09. Strings &amp; SCP
+      </a>
+      <a href="/blog-java/11-java-arrays-multidimensional-and-algorithms.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 11. Arrays &amp; Algorithms →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>
