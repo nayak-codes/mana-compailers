@@ -1,0 +1,751 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildJavaSidebar } = require('./java_curriculum_data.js');
+
+const currentLesson = LESSONS.find(l => l.num === 15);
+
+const chapter15Content = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Constructors, 'this' Keyword &amp; Constructor Chaining తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా కన్‌స్ట్రక్టర్లు (Constructors), 'this' కీవర్డ్, Variable Shadowing పరిష్కారం, మరియు Constructor Chaining using this() సమగ్ర విశ్లేషణ. క్లౌడ్ డేటాబేస్ పూల్ ప్రాజెక్ట్ తెలుగులో నేర్చుకోండి." />
+  <meta name="keywords" content="java constructors telugu, this keyword java telugu, constructor chaining telugu, variable shadowing telugu, default vs parameterized constructor telugu, copy constructor java telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/15-java-constructors-this-keyword-and-chaining.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-java light-theme">
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+  ${buildJavaSidebar(15)}
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 15: Constructors &amp; this Keyword</span>
+    </div>
+
+    <h1 class="page-title">15. జావా కన్‌స్ట్రక్టర్లు, 'this' కీవర్డ్ &amp; Constructor Chaining (Constructors Mastery)</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java (Java 21+ LTS)</span>
+      <span class="badge">🟢 Lesson 15 of 25</span>
+      <span class="badge">📂 Part 03: Arrays, Methods &amp; OOP (Page 5 of 5)</span>
+      <span class="badge">⏱️ 26 min read</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:28px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="font-weight:700; color:#10b981;">📌 Covered in this lesson:</span>
+      <span>${currentLesson.subtopics}</span>
+    </div>
+
+    <!-- WARM IVORY INTRO BOX (JavaScript Style) -->
+    <div class="intro-box">
+      <p style="margin:0 0 16px 0; font-size:15px; line-height:1.8; color:#1e293b;">
+        సాఫ్ట్‌వేర్ అభివృద్ధిలో ఒక ఆబ్జెక్ట్ హీప్ మెమరీలో సృష్టించబడిన మరుక్షణమే, అది సరైన మరియు చెల్లుబాటు అయ్యే ప్రారంభ స్థితిలో (Valid Consistent State) ఉండటాన్ని నిర్ధారించడానికి జావా అందించిన అత్యంత శక్తివంతమైన మెకానిజం <strong>కన్‌స్ట్రక్టర్ (Constructor)</strong>. కన్‌స్ట్రక్టర్ అనేది క్లాస్ పేరుతోనే సమానమైన పేరు కలిగి ఉండి, ఎటువంటి రిటర్న్ టైప్ లేని ఒక ప్రత్యేకమైన కోడ్ బ్లాక్. ఒకవేళ మనం క్లాస్‌లో ఏ కన్‌స్ట్రక్టర్ రాయకపోతే జావా కంపైలర్ ఉచితంగా డీఫాల్ట్ కన్‌స్ట్రక్టర్‌ను ఎలా అందిస్తుంది? మనం స్వయంగా ఒక్క పారామీటరైజ్డ్ కన్‌స్ట్రక్టర్ రాసిన వెంటనే ఆ డీఫాల్ట్ కన్‌స్ట్రక్టర్ ఎందుకు అదృశ్యమవుతుంది? పారామీటర్ పేరు మరియు ఇన్‌స్టాన్స్ వేరియబుల్ పేరు ఒకటే అయినప్పుడు వచ్చే <strong>వేరియబుల్ షాడోయింగ్ (Variable Shadowing)</strong> సమస్యను <code>this</code> కీవర్డ్ ఎలా పరిష్కరిస్తుంది? మరియు ఒక కన్‌స్ట్రక్టర్ నుండి మరొక కన్‌స్ట్రక్టర్‌ను <code>this(...)</code> ద్వారా పిలిచే <strong>కన్‌స్ట్రక్టర్ చైనింగ్ (Constructor Chaining)</strong> యొక్క కఠినమైన నియమాలు ఏమిటి? అనే సమగ్రమైన కోర్ అంశాలను ఈ పాఠంలో ప్రాక్టికల్ విశ్లేషణలతో నేర్చుకుందాం.
+      </p>
+
+      <h4 style="margin:0 0 10px 0; color:#047857; font-size:16px; font-weight:800;">
+        హాస్పిటల్ బర్త్ సర్టిఫికేట్ &amp; పాస్‌పోర్ట్ వెరిఫికేషన్ అనాలజీ (The Hospital Birth Certificate &amp; Passport Verification Analogy):
+      </h4>
+      <ol style="margin:0; padding-left:22px; color:#334155; line-height:1.8; font-size:14.5px;">
+        <li style="margin-bottom:8px;">
+          <strong>1. Constructor (ఆసుపత్రిలో శిశువు జనన ధ్రువీకరణ పత్రం - Birth Certificate):</strong> ఆసుపత్రిలో ఒక బిడ్డ జన్మించిన వెంటనే (Object Allocation in Heap), వైద్యులు ఆ బిడ్డ పుట్టిన సమయం, బరువు, తల్లిదండ్రుల పేర్లతో అధికారిక బర్త్ సర్టిఫికేట్ నమోదు చేసి గుర్తింపునిస్తారు. ఆ పత్రం లేకుండా బిడ్డకు సమాజంలో గుర్తింపు ఉండదు. జావాలో కన్‌స్ట్రక్టర్ కూడా ఆబ్జెక్ట్ పుట్టిన వెంటనే దాని ఫీల్డ్స్‌కు సరైన ప్రారంభ విలువలను కేటాయించి ఆబ్జెక్ట్‌ను సంసిద్ధం చేస్తుంది.
+        </li>
+        <li style="margin-bottom:8px;">
+          <strong>2. 'this' Keyword (సెల్ఫీ కెమెరా లేదా అద్దంలో తన ముఖం - Selfie Mirror Pointer):</strong> ఒక గదిలో పదిమంది వ్యక్తులు ఉన్నప్పుడు, 'నేను', 'నాది' అని తనను తాను ప్రత్యేకంగా గుర్తించడానికి అద్దం ఎలా ఉపయోగపడుతుందో, ఒక ఆబ్జెక్ట్ తన సొంత ఇన్‌స్టాన్స్ వేరియబుల్స్‌ను లేదా మెథడ్లను ఇతరుల నుండి వేరుచేసి సూచించుకోవడానికి ఉపయోగించే సెల్ఫ్-రిఫరెన్స్ పాయింటరే <code>this</code>.
+        </li>
+        <li>
+          <strong>3. Constructor Chaining (పాస్‌పోర్ట్ ఆఫీస్ స్టెప్పులు - Step-by-Step Passport Counters):</strong> పాస్‌పోర్ట్ కార్యాలయానికి వెళ్లినప్పుడు సాధారణ ఫారమ్ పట్టుకొచ్చిన వ్యక్తిని నేరుగా ఫైనల్ ఆఫీసర్ వద్దకు పంపరు. ముందుగా బేసిక్ కౌంటర్ <code>this()</code> వద్ద ఆధార్ తనిఖీ చేసి, అక్కడి నుండి ఫోటో కౌంటర్‌కు, చివరగా వెరిఫికేషన్ కౌంటర్‌కు చైన్ చేస్తారు. ప్రతి కౌంటర్ తన మునుపటి తనిఖీలను మొదటి నుండి చేయకుండా ఒకే మాస్టర్ కౌంటర్‌కు బదిలీ చేస్తుంది. కోడ్ పునరావృతం కాకుండా ఉండటానికి <code>this()</code> ఉపయోగపడుతుంది!
+        </li>
+      </ol>
+      <p style="margin:14px 0 0 0; font-size:14px; color:#475569; line-height:1.7;">
+        ఈ పాఠం పూర్తయ్యేసరికి మీరు Part 03 (Arrays, Methods &amp; OOP) ను సంపూర్ణంగా ముగించి, క్లౌడ్ డేటాబేస్ కనెక్షన్ పూల్ మేనేజర్ ప్రాజెక్ట్‌ను సొంతంగా నిర్మించగల పరిపూర్ణ స్థాయికి చేరుకుంటారు!
+      </p>
+    </div>
+
+    <!-- 3-COLUMN TABLE OF CONTENTS (TOC CARD) -->
+    <div class="toc-card">
+      <div style="font-weight:800; color:var(--text); margin-bottom:14px; font-size:16px; display:flex; align-items:center; gap:8px;">
+        <span>📑 ఈ పాఠంలో మీరు నేర్చుకునే అంశాలు (Table of Contents)</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం A: కన్‌స్ట్రక్టర్ మూలాలు &amp; రకాలు
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-1" style="color:var(--text2); text-decoration:none;">1. కన్‌స్ట్రక్టర్ అంటే ఏమిటి? మెథడ్స్ తో 3 తేడాలు</a></li>
+            <li><a href="#sec-2" style="color:var(--text2); text-decoration:none;">2. డీఫాల్ట్ vs నో-ఆర్గ్ vs పారామీటరైజ్డ్</a></li>
+            <li><a href="#sec-3" style="color:var(--text2); text-decoration:none;">3. కంపైలర్ డీఫాల్ట్ కన్‌స్ట్రక్టర్ అదృశ్యమయ్యే రూల్</a></li>
+            <li><a href="#sec-4" style="color:var(--text2); text-decoration:none;">4. Constructor Overloading ఆర్కిటెక్చర్</a></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం B: 'this' కీవర్డ్ &amp; Chaining
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-5" style="color:var(--text2); text-decoration:none;">5. వేరియబుల్ షాడోయింగ్ &amp; this కీవర్డ్ రక్షణ</a></li>
+            <li><a href="#sec-6" style="color:var(--text2); text-decoration:none;">6. 'this' యొక్క 4 ప్రధాన వాస్తవ ఉపయోగాలు</a></li>
+            <li><a href="#sec-7" style="color:var(--text2); text-decoration:none;">7. Constructor Chaining: this() ఇన్వోకేషన్</a></li>
+            <li><a href="#sec-8" style="color:var(--text2); text-decoration:none;">8. First Statement Rule &amp; సర్క్యులర్ నిషేధం</a></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం C: డెమోలు, ప్రాజెక్ట్ &amp; పరీక్ష
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-9" style="color:var(--text2); text-decoration:none;">9. డెమో 1: Shadowing ఫిక్స్ &amp; Constructor Overloading</a></li>
+            <li><a href="#sec-10" style="color:var(--text2); text-decoration:none;">10. డెమో 2: Constructor Chaining using this()</a></li>
+            <li><a href="#sec-11" style="color:var(--text2); text-decoration:none;">11. Capstone ప్రాజెక్ట్: క్లౌడ్ DB పూల్ మేనేజర్</a></li>
+            <li><a href="#sec-12" style="color:var(--text2); text-decoration:none;">12. ప్రొడక్షన్ పిట్‌ఫాల్స్, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 క్విజ్‌లు</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div id="sec-1" class="section-card">
+      <h2>1. కన్‌స్ట్రక్టర్ అంటే ఏమిటి? మెథడ్స్ తో 3 ప్రధాన తేడాలు (Constructor Fundamentals)</h2>
+      <p>
+        జావాలో ఒక ఆబ్జెక్ట్‌ను <code>new</code> కీవర్డ్ ఉపయోగించి సృష్టించినప్పుడు, ఆ ఆబ్జెక్ట్ యొక్క ఇన్‌స్టాన్స్ వేరియబుల్స్‌ను ప్రారంభించడానికి (Initialize) ఎగ్జిక్యూట్ అయ్యే ప్రత్యేకమైన కోడ్ బ్లాక్‌ను <strong>కన్‌స్ట్రక్టర్</strong> అంటారు.
+      </p>
+
+      <h4 style="color:#10b981; margin:16px 0 8px 0;">కన్‌స్ట్రక్టర్ vs సాధారణ మెథడ్ — 3 ప్రధాన తేడాలు:</h4>
+      <ul>
+        <li>
+          <strong>1. పేరు నియమం:</strong> కన్‌స్ట్రక్టర్ పేరు తప్పనిసరిగా అది ఉన్న <strong>క్లాస్ పేరుతో ఖచ్చితంగా సరిపోలాలి (Same name as Class)</strong>. సాధారణ మెథడ్లకు ఏ పేరైనా పెట్టుకోవచ్చు.
+        </li>
+        <li>
+          <strong>2. రిటర్న్ టైప్ నిషేధం:</strong> కన్‌స్ట్రక్టర్‌కు <strong>ఎటువంటి రిటర్న్ టైప్ ఉండకూడదు — చివరకు <code>void</code> కూడా ఉండకూడదు!</strong> ఒకవేళ మీరు పొరపాటున <code>void Student()</code> అని రాస్తే, జావా కంపైలర్ దాన్ని కన్‌స్ట్రక్టర్‌గా కాకుండా ఒక సాధారణ మెథడ్‌గా పరిగణిస్తుంది!
+        </li>
+        <li>
+          <strong>3. కాల్ అయ్యే సమయం:</strong> <code>new</code> కీవర్డ్ రాసినప్పుడు JVM ఆటోమేటిక్‌గా కన్‌స్ట్రక్టర్‌ను ఒక్కసారే పిలుస్తుంది. సాధారణ మెథడ్ల మాదిరిగా మనం పదే పదే డాట్ ఆపరేటర్‌తో (<code>obj.Student()</code>) పిలవలేము.
+        </li>
+      </ul>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div id="sec-2" class="section-card">
+      <h2>2. డీఫాల్ట్ vs నో-ఆర్గ్ vs పారామీటరైజ్డ్ కన్‌స్ట్రక్టర్లు (The 3 Constructor Types)</h2>
+      <p>
+        జావాలో కన్‌స్ట్రక్టర్లు 3 ప్రధాన రకాలుగా ఉంటాయి:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:18px 22px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.9;">
+        <span style="color:#64748b;">// 1. డీఫాల్ట్ కన్‌స్ట్రక్టర్ (Default Constructor):</span><br />
+        <span style="color:#64748b;">// డెవలపర్ ఏ కన్‌స్ట్రక్టర్ రాయనప్పుడు కంపైలర్ ఆటోమేటిక్‌గా జతచేసే నో-ఆర్గ్ కన్‌స్ట్రక్టర్.</span><br /><br />
+        <span style="color:#64748b;">// 2. యూజర్-డిఫైన్డ్ నో-ఆర్గ్ కన్‌స్ట్రక్టర్ (No-Argument Constructor):</span><br />
+        <span style="color:#0284c7;">public class</span> User {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;String role;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">public</span> User() {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">this</span>.role = <span style="color:#059669;">"GUEST"</span>; <span style="color:#64748b;">// డీఫాల్ట్ స్టేట్ సెటప్</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+        }<br /><br />
+        <span style="color:#64748b;">// 3. పారామీటరైజ్డ్ కన్‌స్ట్రక్టర్ (Parameterized Constructor):</span><br />
+        <span style="color:#0284c7;">public</span> User(String role) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">this</span>.role = role;<br />
+        }
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div id="sec-3" class="section-card">
+      <h2>3. కంపైలర్ డీఫాల్ట్ కన్‌స్ట్రక్టర్ అదృశ్యమయ్యే నియమం (The Vanishing Constructor Rule)</h2>
+      <p>
+        జావాలో బిగినర్లందరూ ఎదుర్కొనే అత్యంత సాధారణ కంపైలేషన్ ఎర్రర్ ఇది:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid #ef4444; border-radius:8px; padding:16px; margin:16px 0;">
+        <div style="font-weight:700; color:#ef4444; margin-bottom:8px; font-size:14px;">❌ ది మిస్సింగ్ కన్‌స్ట్రక్టర్ ట్రాప్ (Compilation Error Trap):</div>
+        <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--text); line-height:1.6;"><code>public class Product {
+    String name;
+    public Product(String name) { // పారామీటరైజ్డ్ కన్‌స్ట్రక్టర్ రాశాం
+        this.name = name;
+    }
+}
+
+// వేరే క్లాస్‌లో:
+Product p = new Product(); // ❌ COMPILE ERROR: constructor Product() is undefined!</code></pre>
+        <p style="margin:10px 0 0 0; font-size:13px; color:var(--text2); line-height:1.6;">
+          <strong>కారణం:</strong> క్లాస్‌లో మీరు ఒక్క కన్‌స్ట్రక్టర్ కూడా రాయకపోతేనే జావా కంపైలర్ ఉచితంగా డీఫాల్ట్ నో-ఆర్గ్ కన్‌స్ట్రక్టర్‌ను ఇస్తుంది. కానీ మీరు స్వయంగా కనీసం ఒక్క పారామీటరైజ్డ్ కన్‌స్ట్రక్టర్ రాసినా, కంపైలర్ తన ఉచిత సేవను నిలిపివేస్తుంది! అందువల్ల మీకు నో-ఆర్గ్ కన్‌స్ట్రక్టర్ కూడా కావాలంటే, దాన్ని మీరే స్పష్టంగా కోడ్‌లో రాసుకోవాలి.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div id="sec-4" class="section-card">
+      <h2>4. Constructor Overloading ఆర్కిటెక్చర్ (Multiple Ways to Initialize)</h2>
+      <p>
+        ఒకే క్లాస్‌లో విభిన్న సంఖ్య లేదా విభిన్న రకాల పారామీటర్లతో బహుళ కన్‌స్ట్రక్టర్లను నిర్వచించడాన్ని <strong>Constructor Overloading</strong> అంటారు. వినియోగదారులకు ఆబ్జెక్ట్‌ను వివిధ పరిస్థితులలో సృష్టించే వెసులుబాటు కల్పించడానికి ఇది అత్యంత ప్రయోజనకరంగా ఉంటుంది.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:16px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.8;">
+        <span style="color:#0284c7;">public class</span> ServerConfig {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;String host;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">int</span> port;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">int</span> timeoutMs;<br /><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">public</span> ServerConfig() { ... }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// లోకల్‌హోస్ట్ డీఫాల్ట్స్</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">public</span> ServerConfig(String host, <span style="color:#0284c7;">int</span> port) { ... }&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// కస్టమ్ హోస్ట్ &amp; పోర్ట్</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">public</span> ServerConfig(String host, <span style="color:#0284c7;">int</span> port, <span style="color:#0284c7;">int</span> timeoutMs) { ... }<br />
+        }
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div id="sec-5" class="section-card">
+      <h2>5. వేరియబుల్ షాడోయింగ్ &amp; this కీవర్డ్ రక్షణ (The Shadowing Problem)</h2>
+      <p>
+        ఒక కన్‌స్ట్రక్టర్ లేదా మెథడ్‌లోని పారామీటర్ పేరు మరియు క్లాస్‌లోని ఇన్‌స్టాన్స్ వేరియబుల్ పేరు రెండూ ఒకేలా ఉన్నప్పుడు, లోకల్ పారామీటర్ ఇన్‌స్టాన్స్ వేరియబుల్‌ను కప్పివేస్తుంది (Shadows it). దీనినే <strong>Variable Shadowing</strong> అంటారు.
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px; margin:18px 0;">
+        <div style="background:var(--bg2); border:1px solid #ef4444; border-radius:8px; padding:16px;">
+          <div style="font-weight:700; color:#ef4444; margin-bottom:8px; font-size:13.5px;">❌ షాడోయింగ్ బగ్ (Data Lost):</div>
+          <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--text); line-height:1.6;"><code>class Employee {
+    String name;
+    Employee(String name) {
+        name = name; // ❌ లోకల్ వేరియబుల్ తనకే తాను అసైన్ అయింది!
+    }
+}
+// ఇన్‌స్టాన్స్ ఫీల్డ్ 'name' ఇప్పటికీ null గానే ఉంటుంది!</code></pre>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:16px;">
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px;">✅ 'this' తో సరైన పరిష్కారం:</div>
+          <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--text); line-height:1.6;"><code>class Employee {
+    String name;
+    Employee(String name) {
+        this.name = name; // ✅ this.name ప్రస్తుత ఆబ్జెక్ట్ ఫీల్డ్‌ను సూచిస్తుంది!
+    }
+}
+// ఇన్‌స్టాన్స్ ఫీల్డ్‌లో డేటా విజయవంతంగా స్టోర్ అవుతుంది!</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div id="sec-6" class="section-card">
+      <h2>6. 'this' యొక్క 4 ప్రధాన వాస్తవ ఉపయోగాలు (The 4 Faces of this)</h2>
+      <p>
+        జావాలో <code>this</code> కీవర్డ్ అనేది ప్రస్తుత ఆబ్జెక్ట్‌ను పాయింట్ చేసే ఇంప్లిసిట్ రిఫరెన్స్ వేరియబుల్. ఇది ప్రధానంగా 4 ప్రయోజనాలకు ఉపయోగపడుతుంది:
+      </p>
+
+      <ul>
+        <li><strong>1. ఇన్‌స్టాన్స్ వేరియబుల్స్ రిఫరెన్స్:</strong> షాడోయింగ్ సమస్యను పరిష్కరించడానికి (<code>this.id = id;</code>).</li>
+        <li><strong>2. ప్రస్తుత క్లాస్ మెథడ్స్ ఇన్వోకేషన్:</strong> ప్రస్తుత క్లాస్ లోని మరొక మెథడ్‌ను స్పష్టంగా సూచించడానికి (<code>this.validate();</code>).</li>
+        <li><strong>3. కన్‌స్ట్రక్టర్ చైనింగ్:</strong> అదే క్లాస్‌లోని మరొక ఓవర్‌లోడెడ్ కన్‌స్ట్రక్టర్‌ను కాల్ చేయడానికి (<code>this(...)</code>).</li>
+        <li><strong>4. మెథడ్ ఆర్గ్యుమెంట్‌గా తనను తాను పంపడం లేదా రిటర్న్ చేయడం:</strong> Fluent Builder ప్యాటర్న్‌లో <code>return this;</code> ద్వారా మెథడ్ చైనింగ్‌ను సులభతరం చేయడం.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div id="sec-7" class="section-card">
+      <h2>7. Constructor Chaining: this() ఇన్వోకేషన్ సూత్రాలు (DRY Principle)</h2>
+      <p>
+        ఓవర్‌లోడెడ్ కన్‌స్ట్రక్టర్లలో ఒకే రకమైన ఇనిషియలైజేషన్ కోడ్‌ను పదే పదే రాయడం వల్ల కోడ్ డూప్లికేషన్ పెరుగుతుంది. ఒక కన్‌స్ట్రక్టర్ నుండి అదే క్లాస్‌లోని మరొక కన్‌స్ట్రక్టర్‌ను పిలిచి పనిని అప్పగించడాన్ని <strong>Constructor Chaining using <code>this()</code></strong> అంటారు.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:18px 22px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.8;">
+        <span style="color:#0284c7;">public class</span> DatabaseConnection {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;String url;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">int</span> poolSize;<br /><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// 1. నో-ఆర్గ్ కన్‌స్ట్రక్టర్: డీఫాల్ట్ విలువలతో మెయిన్ కన్‌స్ట్రక్టర్‌ను పిలుస్తుంది</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">public</span> DatabaseConnection() {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">this</span>(<span style="color:#059669;">"jdbc:postgresql://localhost:5432/main_db"</span>, 10); <span style="color:#64748b;">// Calls 2-arg constructor</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// 2. మాస్టర్ పారామీటరైజ్డ్ కన్‌స్ట్రక్టర్ (ఇక్కడే వాస్తవ లాజిక్ ఉంటుంది)</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">public</span> DatabaseConnection(String url, <span style="color:#0284c7;">int</span> poolSize) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">this</span>.url = url;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">this</span>.poolSize = poolSize;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+        }
+      </div>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div id="sec-8" class="section-card">
+      <h2>8. First Statement Rule &amp; రికర్సివ్ చైనింగ్ నిషేధం (Compiler Mandates)</h2>
+      <p>
+        <code>this()</code> కన్‌స్ట్రక్టర్ చైనింగ్ వాడేటప్పుడు జావా విధించిన రెండు అత్యంత కఠినమైన నియమాలు:
+      </p>
+
+      <div style="background:#fefce8; border:1px solid #fde047; border-left:5px solid #ca8a04; border-radius:6px; padding:16px 20px; margin:16px 0; font-size:13.5px; color:#854d0e; line-height:1.8;">
+        <strong>1. ఫస్ట్ స్టేట్‌మెంట్ రూల్ (The First Statement Mandate):</strong><br />
+        కన్‌స్ట్రక్టర్ బాడీలో <code>this(...)</code> కాల్ తప్పనిసరిగా <strong>మొట్టమొదటి లైన్‌గా మాత్రమే ఉండాలి!</strong> అంతకుముందు ప్రింట్ స్టేట్‌మెంట్లు లేదా వేరియబుల్ డిక్లరేషన్లు రాయకూడదు.<br /><br />
+        <strong>2. రికర్సివ్ చైనింగ్ నిషేధం (No Circular Chaining):</strong><br />
+        కన్‌స్ట్రక్టర్ A కన్‌స్ట్రక్టర్ B ని పిలిచి, మళ్లీ B కన్‌స్ట్రక్టర్ A ని పిలవడం (Circular / Recursive Constructor Invocation) పూర్తిగా నిషేధం! అలా రాస్తే కంపైలర్ తక్షణమే <code>recursive constructor invocation</code> ఎర్రర్ ఇస్తుంది.
+      </div>
+    </div>
+
+    <!-- SECTION 9: CODE DEMO 1 -->
+    <div id="sec-9" class="section-card">
+      <h2>9. డెమో 1: Shadowing ఫిక్స్ &amp; కన్‌స్ట్రక్టర్ ఓవర్‌లోడింగ్ (Shadowing Demonstration)</h2>
+      <p>
+        వేరియబుల్ షాడోయింగ్ సమస్యను కళ్లారా చూసి, <code>this</code> కీవర్డ్ ద్వారా దాన్ని ఎలా సరిదిద్దాలో, మరియు బహుళ ఓవర్‌లోడెడ్ కన్‌స్ట్రక్టర్లు ఎలా స్పందిస్తాయో పరిశీలిద్దాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">ConstructorOverloadingAndShadowingDemo.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">public class ConstructorOverloadingAndShadowingDemo {
+
+    public static class DeviceProfile {
+        String deviceId;
+        String osType;
+        int batteryPercent;
+
+        // Broken constructor: Demonstrating Shadowing Bug
+        public static DeviceProfile createWithShadowingBug(String deviceId, String osType) {
+            DeviceProfile d = new DeviceProfile();
+            // Variable shadowing occurs here: parameter reassigns to itself
+            deviceId = deviceId;
+            osType = osType;
+            return d;
+        }
+
+        // Default no-arg constructor
+        public DeviceProfile() {
+            this.deviceId = "DEV-DEFAULT-001";
+            this.osType = "Android-14";
+            this.batteryPercent = 100;
+        }
+
+        // Overloaded constructor with 2 arguments (Correctly using this)
+        public DeviceProfile(String deviceId, String osType) {
+            this.deviceId = deviceId;
+            this.osType = osType;
+            this.batteryPercent = 100; // default battery
+        }
+
+        // Overloaded constructor with all 3 arguments
+        public DeviceProfile(String deviceId, String osType, int batteryPercent) {
+            this.deviceId = deviceId;
+            this.osType = osType;
+            this.batteryPercent = Math.min(100, Math.max(0, batteryPercent));
+        }
+
+        public void printProfile(String label) {
+            System.out.printf("📱 [%-20s] ID: %-14s | OS: %-10s | Battery: %3d%%%n",
+                    label, deviceId, osType, batteryPercent);
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("🔧 CONSTRUCTOR OVERLOADING &amp; SHADOWING DEMO");
+        System.out.println("=================================================\n");
+
+        // 1. Using No-Arg Constructor
+        DeviceProfile defaultDev = new DeviceProfile();
+        defaultDev.printProfile("No-Arg Constructor");
+
+        // 2. Using 2-Arg Constructor
+        DeviceProfile customDev = new DeviceProfile("PIXEL-9-PRO", "Android-15");
+        customDev.printProfile("2-Arg Constructor");
+
+        // 3. Using 3-Arg Constructor
+        DeviceProfile tabletDev = new DeviceProfile("IPAD-AIR-M2", "iPadOS-18", 78);
+        tabletDev.printProfile("3-Arg Constructor");
+
+        System.out.println("\n=================================================");
+        System.out.println("✅ All overloaded constructors executed with valid states!");
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+🔧 CONSTRUCTOR OVERLOADING &amp; SHADOWING DEMO
+=================================================
+
+📱 [No-Arg Constructor  ] ID: DEV-DEFAULT-001 | OS: Android-14 | Battery: 100%
+📱 [2-Arg Constructor   ] ID: PIXEL-9-PRO    | OS: Android-15 | Battery: 100%
+📱 [3-Arg Constructor   ] ID: IPAD-AIR-M2    | OS: iPadOS-18  | Battery:  78%
+
+=================================================
+✅ All overloaded constructors executed with valid states!
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 10: CODE DEMO 2 -->
+    <div id="sec-10" class="section-card">
+      <h2>10. డెమో 2: Constructor Chaining using this() (Execution Flow Inspection)</h2>
+      <p>
+        ఒక కన్‌స్ట్రక్టర్ నుండి మరొక కన్‌స్ట్రక్టర్‌కు ఎగ్జిక్యూషన్ కంట్రోల్ ఎలా గొలుసుకట్టుగా బదిలీ అవుతుందో స్టెప్-బై-స్టెప్ లాగ్‌లతో చూపే డెమో:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">ConstructorChainingExecutionFlowDemo.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">public class ConstructorChainingExecutionFlowDemo {
+
+    public static class MicroserviceInstance {
+        String serviceName;
+        String environment;
+        int maxReplicas;
+        boolean enableTracing;
+
+        // Constructor 1: No-arg (Calls Constructor 2)
+        public MicroserviceInstance() {
+            this("AuthService"); // Chaining to 1-arg
+            System.out.println("  1️⃣ [Exiting Constructor 1: No-arg]");
+        }
+
+        // Constructor 2: 1-arg (Calls Constructor 3)
+        public MicroserviceInstance(String name) {
+            this(name, "DEVELOPMENT"); // Chaining to 2-arg
+            System.out.println("  2️⃣ [Exiting Constructor 2: 1-arg ('" + name + "')]");
+        }
+
+        // Constructor 3: 2-args (Calls Master Constructor 4)
+        public MicroserviceInstance(String name, String env) {
+            this(name, env, 3, false); // Chaining to Master 4-arg
+            System.out.println("  3️⃣ [Exiting Constructor 3: 2-args ('" + name + "', '" + env + "')]");
+        }
+
+        // Master Constructor 4: Performs actual assignment
+        public MicroserviceInstance(String name, String env, int replicas, boolean tracing) {
+            System.out.println("  4️⃣ [Executing Master Constructor 4 (Core Initialization)]");
+            this.serviceName = name;
+            this.environment = env;
+            this.maxReplicas = replicas;
+            this.enableTracing = tracing;
+        }
+
+        public void printTelemetry() {
+            System.out.printf("🚀 Service: %-14s | Env: %-12s | Replicas: %d | Tracing: %b%n",
+                    serviceName, environment, maxReplicas, enableTracing);
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("🔗 CONSTRUCTOR CHAINING EXECUTION FLOW TRACER");
+        System.out.println("=================================================\n");
+
+        System.out.println("Initiating: new MicroserviceInstance():");
+        MicroserviceInstance svc = new MicroserviceInstance();
+
+        System.out.println("\nFinal Initialized State:");
+        svc.printTelemetry();
+
+        System.out.println("\n=================================================");
+        System.out.println("✅ Master Constructor executed first, then callers in reverse!");
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+🔗 CONSTRUCTOR CHAINING EXECUTION FLOW TRACER
+=================================================
+
+Initiating: new MicroserviceInstance():
+  4️⃣ [Executing Master Constructor 4 (Core Initialization)]
+  3️⃣ [Exiting Constructor 3: 2-args ('AuthService', 'DEVELOPMENT')]
+  2️⃣ [Exiting Constructor 2: 1-arg ('AuthService')]
+  1️⃣ [Exiting Constructor 1: No-arg]
+
+Final Initialized State:
+🚀 Service: AuthService    | Env: DEVELOPMENT  | Replicas: 3 | Tracing: false
+
+=================================================
+✅ Master Constructor executed first, then callers in reverse!
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 11: CAPSTONE PROJECT -->
+    <div id="sec-11" class="section-card">
+      <h2>11. Capstone ప్రాజెక్ట్: ఎంటర్‌ప్రైజ్ క్లౌడ్ డేటాబేస్ పూల్ కాన్ఫిగరేషన్ ఇంజిన్</h2>
+      <p>
+        ఈ అధ్యాయంలో మరియు Part 03 మొత్తం లో నేర్చుకున్న అన్ని కాన్సెప్టులను (కన్‌స్ట్రక్టర్లు, ఓవర్‌లోడింగ్, <code>this()</code> చైనింగ్, వాలిడేషన్, మరియు కాపీ కన్‌స్ట్రక్టర్) ఉపయోగిస్తూ ఒక ప్రొడక్షన్-గ్రేడ్ <strong>Cloud Database Connection Pool Manager &amp; Auditor Engine</strong> ను నిర్మిద్దాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">CloudDatabasePoolManagerEngine.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">public class CloudDatabasePoolManagerEngine {
+
+    public static class ConnectionPoolConfig {
+        // Core Configuration Properties
+        private final String poolName;
+        private final String jdbcUrl;
+        private final int minConnections;
+        private final int maxConnections;
+        private final int connectionTimeoutMs;
+        private final boolean isSslRequired;
+
+        // Constructor 1: Quick Dev Profile (Chains to Constructor 2)
+        public ConnectionPoolConfig() {
+            this("DevLocalPool", "jdbc:postgresql://localhost:5432/app_db");
+        }
+
+        // Constructor 2: Standard Profile (Chains to Master Constructor 3)
+        public ConnectionPoolConfig(String poolName, String jdbcUrl) {
+            this(poolName, jdbcUrl, 5, 20, 30000, true);
+        }
+
+        // Constructor 3: Master Fully-Parameterized Constructor with Strict Validation
+        public ConnectionPoolConfig(String poolName, String jdbcUrl,
+                                    int minConn, int maxConn, int timeoutMs, boolean ssl) {
+            if (minConn &lt; 0 || maxConn &lt; minConn) {
+                throw new IllegalArgumentException("Invalid pool boundaries: min must be &gt;= 0 and max &gt;= min");
+            }
+            this.poolName = poolName;
+            this.jdbcUrl = jdbcUrl;
+            this.minConnections = minConn;
+            this.maxConnections = maxConn;
+            this.connectionTimeoutMs = timeoutMs;
+            this.isSslRequired = ssl;
+        }
+
+        // Constructor 4: Copy Constructor (Defensive Snapshot)
+        public ConnectionPoolConfig(ConnectionPoolConfig source) {
+            this(source.poolName + "_ReplicaSnapshot",
+                 source.jdbcUrl,
+                 source.minConnections,
+                 source.maxConnections,
+                 source.connectionTimeoutMs,
+                 source.isSslRequired);
+        }
+
+        public void printAuditReport() {
+            System.out.println("-------------------------------------------------");
+            System.out.println("🛡️ CLOUD DATABASE POOL TELEMETRY SPECIFICATION");
+            System.out.printf("Pool Name:       %s%n", poolName);
+            System.out.printf("JDBC URL:        %s%n", jdbcUrl);
+            System.out.printf("Connection Band: Min: %d | Max: %d (Scale Factor: %.1fx)%n",
+                    minConnections, maxConnections, (double) maxConnections / Math.max(1, minConnections));
+            System.out.printf("Timeout Window:  %d ms | SSL Encrypted: %b%n", connectionTimeoutMs, isSslRequired);
+            System.out.println("-------------------------------------------------");
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("☁️ ENTERPRISE CLOUD DATABASE POOL CONFIG MANAGER");
+        System.out.println("=================================================\n");
+
+        // Profile 1: Using No-arg Chained Constructor
+        ConnectionPoolConfig devConfig = new ConnectionPoolConfig();
+        devConfig.printAuditReport();
+
+        // Profile 2: Using Production Master Constructor
+        ConnectionPoolConfig prodConfig = new ConnectionPoolConfig(
+            "AwsAuroraPrimaryPool",
+            "jdbc:postgresql://aurora-cluster.us-east-1.rds.amazonaws.com:5432/finance_prod",
+            20, 100, 10000, true
+        );
+        prodConfig.printAuditReport();
+
+        // Profile 3: Using Copy Constructor for Failover Replica
+        ConnectionPoolConfig replicaConfig = new ConnectionPoolConfig(prodConfig);
+        replicaConfig.printAuditReport();
+
+        System.out.println("=================================================");
+        System.out.println("🎉 PART 03 (ARRAYS, METHODS &amp; OOP) COMPLETED 100%!");
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+☁️ ENTERPRISE CLOUD DATABASE POOL CONFIG MANAGER
+=================================================
+
+-------------------------------------------------
+🛡️ CLOUD DATABASE POOL TELEMETRY SPECIFICATION
+Pool Name:       DevLocalPool
+JDBC URL:        jdbc:postgresql://localhost:5432/app_db
+Connection Band: Min: 5 | Max: 20 (Scale Factor: 4.0x)
+Timeout Window:  30000 ms | SSL Encrypted: true
+-------------------------------------------------
+-------------------------------------------------
+🛡️ CLOUD DATABASE POOL TELEMETRY SPECIFICATION
+Pool Name:       AwsAuroraPrimaryPool
+JDBC URL:        jdbc:postgresql://aurora-cluster.us-east-1.rds.amazonaws.com:5432/finance_prod
+Connection Band: Min: 20 | Max: 100 (Scale Factor: 5.0x)
+Timeout Window:  10000 ms | SSL Encrypted: true
+-------------------------------------------------
+-------------------------------------------------
+🛡️ CLOUD DATABASE POOL TELEMETRY SPECIFICATION
+Pool Name:       AwsAuroraPrimaryPool_ReplicaSnapshot
+JDBC URL:        jdbc:postgresql://aurora-cluster.us-east-1.rds.amazonaws.com:5432/finance_prod
+Connection Band: Min: 20 | Max: 100 (Scale Factor: 5.0x)
+Timeout Window:  10000 ms | SSL Encrypted: true
+-------------------------------------------------
+=================================================
+🎉 PART 03 (ARRAYS, METHODS &amp; OOP) COMPLETED 100%!
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 12 -->
+    <div id="sec-12" class="section-card">
+      <h2>12. ప్రొడక్షన్ పిట్‌ఫాల్స్, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 క్విజ్‌లు (Best Practices &amp; Quizzes)</h2>
+
+      <h4 style="color:#ef4444; margin:16px 0 10px 0;">🚫 ప్రొడక్షన్‌లో నివారించాల్సిన 4 ఘోరమైన తప్పులు (Production Pitfalls):</h4>
+      <ol style="line-height:1.8; color:var(--text2); font-size:14px; padding-left:20px;">
+        <li style="margin-bottom:10px;">
+          <strong>కన్‌స్ట్రక్టర్‌కు రిటర్న్ టైప్ రాయడం:</strong> <code>public void Student()</code> అని రాస్తే అది కన్‌స్ట్రక్టర్ అవ్వదు, కేవలం సాధారణ మెథడ్ అవుతుంది. <code>new Student()</code> రన్ చేసినప్పుడు డీఫాల్ట్ కన్‌స్ట్రక్టర్ రన్ అయి మీ కోడ్ అసలు ఎగ్జిక్యూట్ కాదు.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>కన్‌స్ట్రక్టర్ లోపల ఓవర్‌రైడబుల్ మెథడ్లను పిలవడం (Subclass Trap):</strong> కన్‌స్ట్రక్టర్ లోపల నుండి సబ్‌క్లాస్ ఓవర్‌రైడ్ చేయగల పబ్లిక్ మెథడ్లను పిలిస్తే, చైల్డ్ క్లాస్ ఆబ్జెక్ట్ పూర్తిగా ఇనిషియలైజ్ కాకముందే ఆ మెథడ్ రన్ అయి <code>NullPointerException</code> వస్తుంది.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong><code>this()</code> ను రెండవ లైన్‌లో రాయడం:</strong> <code>this()</code> తప్పనిసరిగా కన్‌స్ట్రక్టర్ లోని మొట్టమొదటి లైన్‌గా మాత్రమే ఉండాలి.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>కన్‌స్ట్రక్టర్‌లో భారీ ప్రాసెసింగ్ (DB Calls, Network Requests) చేయడం:</strong> కన్‌స్ట్రక్టర్ కేవలం వేరియబుల్స్‌ను ఇనిషియలైజ్ చేయడానికి మాత్రమే ఉండాలి. అందులో నెట్‌వర్క్ లేదా డిస్క్ ఐ/వో చేస్తే ఆబ్జెక్ట్ క్రియేషన్ బ్లాక్ అయిపోతుంది.
+        </li>
+      </ol>
+
+      <h4 style="color:#10b981; margin:26px 0 10px 0;">✨ ప్రొడక్షన్ గోల్డెన్ రూల్స్ (Golden Rules):</h4>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; font-size:13.5px; line-height:1.8; color:var(--text);">
+        1. <strong>డ్రై కోడ్ (DRY):</strong> అన్ని చిన్న కన్‌స్ట్రక్టర్లను <code>this(...)</code> ద్వారా ఒకే ప్రధాన మాస్టర్ కన్‌స్ట్రక్టర్‌కు చైన్ చేయండి.<br />
+        2. <strong>డిఫెన్సివ్ కాపీలు:</strong> మ్యూటబుల్ ఆబ్జెక్టులను (Date, Arrays) కన్‌స్ట్రక్టర్‌లో స్వీకరించేటప్పుడు వాటి క్లోన్ లేదా కాపీలను స్టోర్ చేసుకోండి.<br />
+        3. <strong>ఇన్‌పుట్ వాలిడేషన్:</strong> తప్పుడు డేటాతో ఆబ్జెక్ట్ ఏర్పడకుండా ఉండేందుకు కన్‌స్ట్రక్టర్ ప్రారంభంలోనే వేలిడేట్ చేసి తగిన ఎక్సెప్షన్ విసరండి.<br />
+        4. <strong>బిల్డర్ ప్యాటర్న్:</strong> 5 లేదా అంతకంటే ఎక్కువ కాన్ఫిగరేషన్ ఫీల్డ్స్ ఉన్నప్పుడు టెలిస్కోపింగ్ కన్‌స్ట్రక్టర్ల కంటే Builder Pattern ను వాడండి.
+      </div>
+
+      <!-- QUIZ SECTION -->
+      <h3 style="color:#10b981; margin:32px 0 16px 0;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 1: కన్‌స్ట్రక్టర్‌కు రిటర్న్ టైప్ ఉంటుందా?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> ఉండదు! కన్‌స్ట్రక్టర్‌కు ఎటువంటి రిటర్న్ టైప్ ఉండదు (చివరకు <code>void</code> కూడా ఉండకూడదు).
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 2: డెవలపర్ స్వయంగా పారామీటరైజ్డ్ కన్‌స్ట్రక్టర్ రాసినప్పుడు డీఫాల్ట్ కన్‌స్ట్రక్టర్ పరిస్థితి ఏమిటి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> కంపైలర్ ఆటోమేటిక్ డీఫాల్ట్ కన్‌స్ట్రక్టర్‌ను అందించడం ఆపివేస్తుంది. నో-ఆర్గ్ కన్‌స్ట్రక్టర్ కావాలంటే డెవలపరే స్వయంగా రాయాలి.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 3: 'this' కీవర్డ్ ప్రధాన ప్రయోజనం ఏమిటి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> ఇది ప్రస్తుత ఆబ్జెక్ట్ యొక్క ఇన్‌స్టాన్స్ వేరియబుల్స్ మరియు మెథడ్లను సూచించే ఇంప్లిసిట్ రిఫరెన్స్ వేరియబుల్. వేరియబుల్ షాడోయింగ్ సమస్యను పరిష్కరిస్తుంది.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 4: Constructor Chaining లో 'this()' కాల్ ఎక్కడ ఉండాలి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> తప్పనిసరిగా కన్‌స్ట్రక్టర్ లోపలి <strong>మొట్టమొదటి స్టేట్‌మెంట్ (First Statement)</strong> గా మాత్రమే ఉండాలి.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 5: సర్క్యులర్ లేదా రికర్సివ్ కన్‌స్ట్రక్టర్ చైనింగ్ (A calls B, B calls A) జావాలో సాధ్యమా?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> సాధ్యం కాదు! జావా కంపైలర్ దీన్ని గుర్తించి తక్షణమే కంపైలేషన్ ఎర్రర్ (Recursive constructor invocation) ఇస్తుంది.
+        </p>
+      </details>
+    </div>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/14-java-oop-classes-objects-and-constructors.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 14. Classes, Objects &amp; Heap
+      </a>
+      <a href="/blog-java/16-java-encapsulation-access-modifiers-and-records.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 16. Encapsulation &amp; Records →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>`;
+
+const outPath = path.join(__dirname, '..', 'public', 'blog-java', '15-java-constructors-this-keyword-and-chaining.html');
+fs.writeFileSync(outPath, chapter15Content, 'utf8');
+
+console.log('✅ Successfully generated Java Chapter 15 in exact JavaScript HTML style!');
+console.log('Target file:', outPath);
+console.log('Target file size:', chapter15Content.length, 'characters');

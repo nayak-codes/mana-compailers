@@ -1,0 +1,769 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildJavaSidebar } = require('./java_curriculum_data.js');
+
+const currentLesson = LESSONS.find(l => l.num === 11);
+
+const chapter11Content = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Arrays Mastery — 1D, 2D, Jagged Arrays &amp; Algorithms తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా ఎరేలు (Arrays): 1D, 2D మ్యాట్రిక్స్, Jagged Arrays మరియు java.util.Arrays యుటిలిటీల సమగ్ర విశ్లేషణ. మెమరీ లేఅవుట్, బైనరీ సెర్చ్, సార్టింగ్ మరియు IoT టెలిమెట్రీ ప్రాజెక్ట్ తెలుగులో నేర్చుకోండి." />
+  <meta name="keywords" content="java arrays telugu, 2d arrays java telugu, jagged arrays java telugu, arrayindexoutofboundsexception telugu, java util arrays sort telugu, binary search java telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/11-java-arrays-multidimensional-and-algorithms.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-java light-theme">
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+  ${buildJavaSidebar(11)}
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 11: Arrays &amp; Algorithms</span>
+    </div>
+
+    <h1 class="page-title">11. జావా ఎరేలు — 1D, 2D, Jagged Arrays &amp; అల్గారిథమ్స్ (Arrays Mastery)</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java (Java 21+ LTS)</span>
+      <span class="badge">🟢 Lesson 11 of 25</span>
+      <span class="badge">📂 Part 03: Arrays, Methods &amp; OOP (Page 1 of 5)</span>
+      <span class="badge">⏱️ 26 min read</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:28px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="font-weight:700; color:#10b981;">📌 Covered in this lesson:</span>
+      <span>${currentLesson.subtopics}</span>
+    </div>
+
+    <!-- WARM IVORY INTRO BOX (JavaScript Style) -->
+    <div class="intro-box">
+      <p style="margin:0 0 16px 0; font-size:15px; line-height:1.8; color:#1e293b;">
+        సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌లో వేలాది లేదా లక్షలాది డేటా పాయింట్లను నిల్వ చేయడానికి విడివిడిగా వేరియబుల్స్ రాయడం అసాధ్యమైన పని. ఒకే డేటా టైపుకు చెందిన సజాతీయ అంశాలను (Homogeneous Data Elements) వరుస క్రమంలో, నిరంతరాయ మెమరీ బ్లాక్‌లలో (Contiguous Memory Allocation) భద్రపరచడానికి జావా అందించిన అత్యంత ప్రాథమిక మరియు శక్తివంతమైన డేటా స్ట్రక్చర్ <strong>ఎరే (Array)</strong>. C లేదా C++ లలో మాదిరిగా జావాలో ఎరే అనేది కేవలం ఒక పాయింటర్ చిరునామా మాత్రమే కాదు; ఇక్కడ ఎరే స్వయంగా <strong>హీప్ మెమరీలో సృష్టించబడే ఒక సంపూర్ణ ఫస్ట్-క్లాస్ ఆబ్జెక్ట్ (First-Class Object)</strong>! దీని పరిమాణం ఒకసారి నిర్ణయించిన తర్వాత మార్చలేం (Fixed Size). ఎరేల మెమరీ లేఅవుట్, 0-బేస్డ్ ఇండెక్సింగ్, మల్టీ-డైమెన్షనల్ మ్యాట్రిక్స్ గ్రిడ్లు, జావా ప్రత్యేకత అయిన Jagged Arrays మరియు ఆధునిక <code>java.util.Arrays</code> యుటిలిటీల సమగ్ర విశ్లేషణను ఈ పాఠంలో నేర్చుకుందాం.
+      </p>
+
+      <h4 style="margin:0 0 10px 0; color:#047857; font-size:16px; font-weight:800;">
+        సినిమా థియేటర్ సీట్ల వరుస &amp; హోటల్ రూమ్‌ల అనాలజీ (The Cinema Theater &amp; Hotel Room Floor Analogy):
+      </h4>
+      <ol style="margin:0; padding-left:22px; color:#334155; line-height:1.8; font-size:14.5px;">
+        <li style="margin-bottom:8px;">
+          <strong>1. 1D Array (సినిమా థియేటర్ లోని ఒక సీట్ల వరుస - Single Row of Fixed Seats):</strong> థియేటర్‌లో 'Row A' లో 10 సీట్లుంటే, అవి A[0] నుండి A[9] వరకు ఒకదాని పక్కన ఒకటి స్థిరంగా బిగించబడి ఉంటాయి. షో మొదలైన తర్వాత మధ్యలో కొత్త సీటును చొప్పించలేం లేదా ఉన్న సీట్లను తొలగించలేం. మీ టికెట్ నంబర్ (ఇండెక్స్) తెలిస్తే చాలు, ఎవరినీ అడగకుండా నేరుగా ఒక్క క్షణంలో మీ సీటులో కూర్చోవచ్చు (O(1) Direct Memory Access). ఒకవేళ మీరు A[10] సీటు కోసం వెళ్తే, థియేటర్ సెక్యూరిటీ గార్డు వెంటనే మిమ్మల్ని ఆపేస్తాడు (ArrayIndexOutOfBoundsException)!
+        </li>
+        <li style="margin-bottom:8px;">
+          <strong>2. 2D Array (థియేటర్ మొత్తం లేదా చెస్ బోర్డ్ - Uniform Grid of Rows &amp; Columns):</strong> ప్రతి వరుసలో సమాన సంఖ్యలో సీట్లు లేదా గడులు ఉండే దీర్ఘచతురస్రాకార గ్రిడ్. వరుస నంబర్ (Row Index) మరియు సీట్ నంబర్ (Column Index) తెలిస్తే చాలు, ప్రతి స్థానాన్ని (ఉదా: <code>seats[row][col]</code>) అత్యంత సులభంగా యాక్సెస్ చేయవచ్చు.
+        </li>
+        <li>
+          <strong>3. Jagged Array (హోటల్ లోని ఒక్కో అంతస్తులో వేర్వేరు గదుల సంఖ్య - Irregular Floor Hotel):</strong> ఒక విలాసవంతమైన హోటల్‌లో గ్రౌండ్ ఫ్లోర్‌లో 2 ప్రెసిడెన్షియల్ సూట్స్, ఫస్ట్ ఫ్లోర్‌లో 5 డీలక్స్ రూమ్స్, సెకండ్ ఫ్లోర్‌లో 10 ఎకానమీ రూమ్స్ ఉంటాయి. జావాలో 2D ఎరే అనేది 'ఎరేల యొక్క ఎరే' (Array of Arrays) కాబట్టి, ప్రతి వరుసకు వేర్వేరు పొడవుల ఎరేలను కేటాయించే అద్భుతమైన స్వేచ్ఛ ఉంటుంది. దీనినే 'జాగ్డ్ ఎరే' అంటారు.
+        </li>
+      </ol>
+      <p style="margin:14px 0 0 0; font-size:14px; color:#475569; line-height:1.7;">
+        ఈ పాఠం పూర్తయ్యేసరికి మీరు ఎరేల మెమరీ లేఅవుట్‌ను సంపూర్ణంగా అర్థం చేసుకోవడం, బగ్-ఫ్రీ లూప్ ఇటరేషన్లు రాయడం, మల్టీ-డైమెన్షనల్ మ్యాట్రిక్స్ ఆపరేషన్లు చేయడం, మరియు IoT సెన్సార్ల టెలిమెట్రీ డేటాను ఎరేల ద్వారా ప్రాసెస్ చేసే ప్రొడక్షన్ ఇంజిన్‌ను నిర్మించడంలో పరిపూర్ణ నైపుణ్యాన్ని సాధిస్తారు!
+      </p>
+    </div>
+
+    <!-- 3-COLUMN TABLE OF CONTENTS (TOC CARD) -->
+    <div class="toc-card">
+      <div style="font-weight:800; color:var(--text); margin-bottom:14px; font-size:16px; display:flex; align-items:center; gap:8px;">
+        <span>📑 ఈ పాఠంలో మీరు నేర్చుకునే అంశాలు (Table of Contents)</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం A: 1D ఎరేలు &amp; మెమరీ ఇంటర్నల్స్
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-1" style="color:var(--text2); text-decoration:none;">1. ఎరే ఆవిర్భావం, డిక్లరేషన్ &amp; హీప్ ఆర్కిటెక్చర్</a></li>
+            <li><a href="#sec-2" style="color:var(--text2); text-decoration:none;">2. Contiguous Memory &amp; O(1) రాండమ్ యాక్సెస్</a></li>
+            <li><a href="#sec-3" style="color:var(--text2); text-decoration:none;">3. ArrayIndexOutOfBoundsException &amp; భద్రత</a></li>
+            <li><a href="#sec-4" style="color:var(--text2); text-decoration:none;">4. Enhanced for-each లూప్ vs క్లాసిక్ ఫర్ లూప్</a></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం B: 2D మ్యాట్రిక్స్ &amp; Jagged ఎరేలు
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-5" style="color:var(--text2); text-decoration:none;">5. 2D ఎరేలు &amp; మ్యాట్రిక్స్ రో-మేజర్ మోడల్</a></li>
+            <li><a href="#sec-6" style="color:var(--text2); text-decoration:none;">6. Jagged Arrays (ఎరేల యొక్క ఎరే) ఆర్కిటెక్చర్</a></li>
+            <li><a href="#sec-7" style="color:var(--text2); text-decoration:none;">7. java.util.Arrays (sort, binarySearch, copyOf)</a></li>
+            <li><a href="#sec-8" style="color:var(--text2); text-decoration:none;">8. Arrays.deepToString(), equals() &amp; deepEquals()</a></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం C: డెమోలు, ప్రాజెక్ట్ &amp; పరీక్ష
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-9" style="color:var(--text2); text-decoration:none;">9. డెమో 1: 1D ఎరే సెర్చ్, సార్ట్ &amp; రివర్సల్</a></li>
+            <li><a href="#sec-10" style="color:var(--text2); text-decoration:none;">10. డెమో 2: 2D Matrix ట్రాన్స్‌పోజ్ &amp; Jagged ఎరే</a></li>
+            <li><a href="#sec-11" style="color:var(--text2); text-decoration:none;">11. Capstone ప్రాజెక్ట్: IoT టెలిమెట్రీ ఎరే ఇంజిన్</a></li>
+            <li><a href="#sec-12" style="color:var(--text2); text-decoration:none;">12. ప్రొడక్షన్ పిట్‌ఫాల్స్, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 క్విజ్‌లు</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div id="sec-1" class="section-card">
+      <h2>1. ఎరే ఆవిర్భావం, డిక్లరేషన్ &amp; హీప్ ఆర్కిటెక్చర్ (Array Declaration &amp; Heap Internals)</h2>
+      <p>
+        జావాలో ఎరే అనేది ఒకే డేటా రకానికి చెందిన బహుళ అంశాలను ఒక నిర్దిష్ట స్థిర పరిమాణంలో (Fixed Size) నిల్వ చేసే డేటా స్ట్రక్చర్. ఎరేను డిక్లేర్ చేయడం మరియు మెమరీ కేటాయించడం మూడు దశల్లో జరుగుతుంది:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:18px 22px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.9;">
+        <span style="color:#64748b;">// దశ 1: డిక్లరేషన్ (Declaration) - కేవలం రిఫరెన్స్ వేరియబుల్ స్టాక్‌లో ఏర్పడుతుంది</span><br />
+        <span style="color:#0284c7;">int</span>[] numbers; <span style="color:#64748b;">// సిఫార్సు చేయబడిన స్టైల్ (type[] name)</span><br /><br />
+        <span style="color:#64748b;">// దశ 2: ఇన్‌స్టాన్షియేషన్ (Instantiation) - హీప్ మెమరీలో వాస్తవ ఆబ్జెక్ట్ పుడుతుంది</span><br />
+        numbers = <span style="color:#0284c7;">new int</span>[5]; <span style="color:#64748b;">// 5 పూర్ణాంకాల కోసం హీప్‌లో స్థలం కేటాయింపు</span><br /><br />
+        <span style="color:#64748b;">// దశ 3: ఇనిషియలైజేషన్ (Initialization) - విలువలను నమోదు చేయడం</span><br />
+        numbers[0] = 10; numbers[1] = 20; numbers[2] = 30; numbers[3] = 40; numbers[4] = 50;<br /><br />
+        <span style="color:#64748b;">// లేదా షార్ట్‌కట్ (Array Literal Syntax):</span><br />
+        <span style="color:#0284c7;">int</span>[] primes = {2, 3, 5, 7, 11};
+      </div>
+
+      <h4 style="color:#10b981; margin:20px 0 10px 0;">హీప్ మెమరీలో ఎరే ఎలా ఉంటుంది? (JVM Memory Representation):</h4>
+      <p>
+        స్టాక్ మెమరీలో కేవలం 4 బైట్ల (లేదా 64-బిట్ JVM లో 8 బైట్ల) <strong>రిఫరెన్స్ వేరియబుల్</strong> మాత్రమే నిల్వ ఉంటుంది. వాస్తవ ఎరే ఆబ్జెక్ట్ ఎల్లప్పుడూ <strong>హీప్ మెమరీ (Heap Memory)</strong> లోనే కేటాయించబడుతుంది.
+      </p>
+      <p>
+        ప్రతి జావా ఎరే ఆబ్జెక్ట్ రెండు భాగాలను కలిగి ఉంటుంది:
+      </p>
+      <ul>
+        <li><strong>ఆబ్జెక్ట్ హెడర్ (Mark Word + Klass Word):</strong> ఎరే యొక్క రకం (ఉదా: <code>[I</code> అంటే int array) మరియు దాని లాకింగ్/హాష్‌కోడ్ సమాచారం.</li>
+        <li><strong><code>length</code> ఫీల్డ్:</strong> ఎరే యొక్క పొడవును సూచించే రీడ్-ఓన్లీ పబ్లిక్ ఫైనల్ ఫీల్డ్ (ఉదా: <code>numbers.length</code>). గమనించండి: స్ట్రింగ్స్ లో <code>.length()</code> మెథడ్ కాగా, ఎరేలలో <code>.length</code> అనేది ఒక వేరియబుల్/ఫీల్డ్!</li>
+        <li><strong>డీఫాల్ట్ విలువలు:</strong> మీరు <code>new int[5]</code> అన్న వెంటనే, ఆ ఎరే అంశాలన్నీ ఆటోమేటిక్‌గా వాటి డీఫాల్ట్ విలువలతో నింపబడతాయి (<code>int/byte/short/long</code> లకు <code>0</code>, <code>double/float</code> లకు <code>0.0</code>, <code>boolean</code> కు <code>false</code>, మరియు ఆబ్జెక్ట్ ఎరేలకు <code>null</code>). గార్బేజ్ విలువలు జావాలో ఉండవు!</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div id="sec-2" class="section-card">
+      <h2>2. Contiguous Memory &amp; O(1) రాండమ్ యాక్సెస్ (Why Array Lookup is Blazing Fast)</h2>
+      <p>
+        కంప్యూటర్ సైన్స్‌లో ఎరేలు ఎందుకు అంత వేగవంతమైనవి? సమాధానం: <strong>నిరంతరాయ మెమరీ కేటాయింపు (Contiguous Memory Layout)</strong> మరియు <strong>ప్రత్యక్ష ఇండెక్స్ గణితం</strong>.
+      </p>
+
+      <div style="background:#fefce8; border:1px solid #fde047; border-left:5px solid #ca8a04; border-radius:6px; padding:16px 20px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:14px; color:#854d0e; line-height:1.7;">
+        Memory Address(arr[i]) = Base_Address + (i * Element_Size_In_Bytes)
+      </div>
+
+      <p>
+        ఉదాహరణకు, <code>int[] arr = new int[5];</code> యొక్క ప్రారంభ చిరునామా (Base Address) రామ్‌లో <code>1000</code> అనుకుందాం. ఒక <code>int</code> 4 బైట్లు తీసుకుంటుంది.
+        <br />
+        • <code>arr[0]</code> చిరునామా: <code>1000 + (0 * 4) = 1000</code>
+        <br />
+        • <code>arr[1]</code> చిరునామా: <code>1000 + (1 * 4) = 1004</code>
+        <br />
+        • <code>arr[4]</code> చిరునామా: <code>1000 + (4 * 4) = 1016</code>
+      </p>
+      <p>
+        CPU కేవలం ఒకే ఒక్క గుణకారం మరియు కూడికతో ఏ ఇండెక్స్ యొక్క మెమరీ చిరునామానైనా క్షణంలో లెక్కించగలదు! ఎరే పరిమాణం 5 అయినా లేదా 5 కోట్లయినా, ఏ అంశాన్ని పొందడానికైనా పట్టే సమయం ఒక్కటే — దీనినే టైమ్ కాంప్లెక్సిటీలో <strong><code>O(1) Constant Time Random Access</code></strong> అంటారు.
+      </p>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div id="sec-3" class="section-card">
+      <h2>3. ArrayIndexOutOfBoundsException &amp; బౌండరీ భద్రత (Zero-Index Trap)</h2>
+      <p>
+        C లేదా C++ భాషలలో ఎరే బౌండరీలను దాటి వెళితే, ప్రోగ్రామ్ మెమరీని క్రాష్ చేయడం లేదా సెక్యూరిటీ బగ్స్ (Buffer Overflow Exploits) రావడం జరుగుతుంది. కానీ జావా ఒక దృఢమైన టైప్-సేఫ్ మరియు మెమరీ-సేఫ్ భాష.
+      </p>
+      <p>
+        జావా రన్‌టైమ్ ఎన్విరాన్‌మెంట్ (JRE) మీరు ఎరేలోని అంశాన్ని యాక్సెస్ చేసే ప్రతిసారీ అంతర్గతంగా ఈ క్రింది తనిఖీని అమలు చేస్తుంది:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:6px; padding:14px 18px; margin:16px 0; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.7; color:var(--text);">
+        if (index &lt; 0 || index &gt;= arr.length) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;throw new ArrayIndexOutOfBoundsException(index);<br />
+        }
+      </div>
+
+      <p>
+        ఒక ఎరే పొడవు <code>N</code> అయితే, చెల్లుబాటు అయ్యే ఇండెక్స్‌లు కేవలం <strong><code>0</code> నుండి <code>N - 1</code></strong> వరకు మాత్రమే ఉంటాయి.
+      </p>
+      <ul>
+        <li><code>int[] scores = new int[5];</code> లో <code>scores[5] = 99;</code> అని రాస్తే వెంటనే రన్‌టైమ్‌లో <code>ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5</code> వస్తుంది.</li>
+        <li>రుణాత్మక ఇండెక్స్ (ఉదా: <code>scores[-1]</code>) కూడా జావాలో అనుమతించబడదు.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div id="sec-4" class="section-card">
+      <h2>4. Enhanced for-each లూప్ vs క్లాసిక్ ఫర్ లూప్ (Array Traversal)</h2>
+      <p>
+        ఎరేలోని అంశాలను చదవడానికి జావాలో రెండు ప్రధాన మార్గాలు ఉన్నాయి. ప్రతి దానికీ దాని స్వంత ప్రయోజనాలు ఉన్నాయి:
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px; margin:18px 0;">
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <div style="font-weight:700; color:#0284c7; margin-bottom:8px; font-size:13.5px;">1. క్లాసిక్ ఫర్ లూప్ (Index-Aware Loop):</div>
+          <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--text); line-height:1.6;"><code>int[] nums = {10, 20, 30};
+for (int i = 0; i &lt; nums.length; i++) {
+    System.out.println("Index " + i + ": " + nums[i]);
+    // ఎరే విలువలను సవరించవచ్చు (nums[i] *= 2)
+}</code></pre>
+          <p style="margin:8px 0 0 0; font-size:12.5px; color:var(--text2);">
+            <strong>ఎప్పుడు వాడాలి?</strong> మీకు ఇండెక్స్ అవసరమైనప్పుడు, వెనుక నుండి రివర్స్‌లో తిరగడానికి, లేదా ఎరేలోని విలువలను మార్చడానికి.
+          </p>
+        </div>
+
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px;">2. Enhanced for-each లూప్ (Read-Only Clean Loop):</div>
+          <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--text); line-height:1.6;"><code>int[] nums = {10, 20, 30};
+for (int val : nums) {
+    System.out.println("Value: " + val);
+    // బౌండరీ తప్పులు (Index OOB) వచ్చే అవకాశమే లేదు!
+}</code></pre>
+          <p style="margin:8px 0 0 0; font-size:12.5px; color:var(--text2);">
+            <strong>ఎప్పుడు వాడాలి?</strong> ఎరేలోని అన్ని అంశాలనూ కేవలం చదవడానికి (Read-Only) మాత్రమే అవసరమైనప్పుడు. ఇది అత్యంత క్లీన్ మరియు సురక్షితమైనది.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div id="sec-5" class="section-card">
+      <h2>5. 2D ఎరేలు &amp; మ్యాట్రిక్స్ రో-మేజర్ మోడల్ (Two-Dimensional Arrays)</h2>
+      <p>
+        గణితంలోని మ్యాట్రిక్స్‌లు (Matrices), గేమ్ డెవలప్‌మెంట్‌లోని గ్రిడ్లు (Chess, Tic-Tac-Toe), మరియు డేటాబేస్ పట్టికలను రిప్రజెంట్ చేయడానికి 2D ఎరేలను ఉపయోగిస్తాం.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.8;">
+        <span style="color:#64748b;">// 3 వరుసలు (Rows), 4 నిలువు వరుసలు (Columns) కలిగిన 2D ఎరే</span><br />
+        <span style="color:#0284c7;">int</span>[][] matrix = <span style="color:#0284c7;">new int</span>[3][4];<br /><br />
+        <span style="color:#64748b;">// ఎరే లిటరల్ డిక్లరేషన్:</span><br />
+        <span style="color:#0284c7;">int</span>[][] grid = {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;{1, 2, 3},<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;{4, 5, 6},<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;{7, 8, 9}<br />
+        };
+      </div>
+
+      <p>
+        <strong>అంతర్గత వాస్తవం:</strong> జావాలో నిజమైన 2D ఎరే మెమరీ బ్లాక్ ఉండదు! బదులుగా, <code>matrix</code> అనేది 3 ఎలిమెంట్స్ ఉన్న ఒక 1D రిఫరెన్స్ ఎరేను పాయింట్ చేస్తుంది. ఆ మూడు ఎలిమెంట్స్ లోని ప్రతి ఒక్కటీ హీప్‌లో వేర్వేరుగా ఉన్న 4 ఎలిమెంట్స్ 1D ఎరేలను పాయింట్ చేస్తాయి. దీనినే <strong>"Array of Arrays"</strong> అంటారు!
+      </p>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div id="sec-6" class="section-card">
+      <h2>6. Jagged Arrays (ఎరేల యొక్క ఎరే) ఆర్కిటెక్చర్ (Irregular Arrays)</h2>
+      <p>
+        జావాలో మల్టీ-డైమెన్షనల్ ఎరేలు 'ఎరేల యొక్క ఎరే' కావడం వల్ల కలిగే అతిపెద్ద వరం: <strong>Jagged Arrays (అసమాన పొడవు గల ఎరేలు)</strong>. ప్రతి వరుసలో ఒకే సంఖ్యలో కాలమ్స్ ఉండాల్సిన అవసరం లేదు.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.8;">
+        <span style="color:#64748b;">// కాలమ్ సైజ్ ఇవ్వకుండా కేవలం రో సైజ్ మాత్రమే ఇవ్వడం:</span><br />
+        <span style="color:#0284c7;">int</span>[][] jagged = <span style="color:#0284c7;">new int</span>[3][];<br /><br />
+        jagged[0] = <span style="color:#0284c7;">new int</span>[2]; <span style="color:#64748b;">// రో 0 లో 2 ఎలిమెంట్స్</span><br />
+        jagged[1] = <span style="color:#0284c7;">new int</span>[4]; <span style="color:#64748b;">// రో 1 లో 4 ఎలిమెంట్స్</span><br />
+        jagged[2] = <span style="color:#0284c7;">new int</span>[1]; <span style="color:#64748b;">// రో 2 లో కేవలం 1 ఎలిమెంట్</span>
+      </div>
+
+      <p>
+        <strong>రియల్ వరల్డ్ ఉపయోగాలు:</strong> కంపెనీలోని వివిధ విభాగాలలో ఉండే ఉద్యోగుల సంఖ్య (Sales లో 10 మంది, IT లో 50 మంది, HR లో 4 గురు), లేదా నెలలోని రోజులలో ఉన్న సేల్స్ డేటా వంటి విభిన్న పరిమాణాల సమాచారాన్ని నిల్వ చేయడానికి ఖాళీ మెమరీ వృధా కాకుండా Jagged Arrays అద్భుతంగా పనిచేస్తాయి.
+      </p>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div id="sec-7" class="section-card">
+      <h2>7. java.util.Arrays సూపర్ యుటిలిటీస్: sort, binarySearch, copyOf (Core Helpers)</h2>
+      <p>
+        ఎరేలతో పనిచేసేటప్పుడు మనం ప్రతి చిన్న పనికీ సొంతంగా లూపులు రాయాల్సిన పనిలేదు. <code>java.util.Arrays</code> క్లాస్ డెవలపర్లకు అవసరమైన అత్యంత ఆప్టిమైజ్ చేయబడిన స్టాటిక్ మెథడ్లను అందిస్తుంది:
+      </p>
+
+      <ul>
+        <li>
+          <strong><code>Arrays.sort(arr)</code>:</strong> ప్రిమిటివ్ ఎరేల కోసం డ్యూయల్-పీవోట్ క్విక్‌సార్ట్ (Dual-Pivot Quicksort - <code>O(N log N)</code>) మరియు ఆబ్జెక్ట్ ఎరేల కోసం టిమ్‌సార్ట్ (TimSort) అల్గారిథమ్‌లను ఉపయోగించి ఎరేను ఆరోహణ క్రమంలో క్రమబద్ధీకరిస్తుంది.
+        </li>
+        <li>
+          <strong><code>Arrays.binarySearch(arr, key)</code>:</strong> క్రమబద్ధీకరించబడిన (Sorted) ఎరేలో ఒక అంశాన్ని <code>O(log N)</code> వేగంతో కనుగొంటుంది. గమనిక: బైనరీ సెర్చ్ వాడేముందు ఎరే కచ్చితంగా సార్ట్ అయి ఉండాలి! లేకపోతే ఫలితం అనూహ్యంగా వస్తుంది.
+        </li>
+        <li>
+          <strong><code>Arrays.copyOf(arr, newLength)</code>:</strong> పాత ఎరేలోని అంశాలను కాపీ చేస్తూ కొత్త పరిమాణంతో కూడిన సరికొత్త ఎరేను సృష్టిస్తుంది. ఎరేలను డైనమిక్‌గా రీసైజ్ చేయడానికి ఇది సులభమైన మార్గం.
+        </li>
+        <li>
+          <strong><code>Arrays.fill(arr, val)</code>:</strong> ఎరేలోని ప్రతి స్లాట్‌ను ఒక నిర్దిష్ట విలువతో (ఉదా: అన్నిటినీ <code>-1</code> లేదా <code>0</code> తో) నింపడానికి వాడతాం.
+        </li>
+      </ul>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div id="sec-8" class="section-card">
+      <h2>8. Arrays.toString(), deepToString(), equals() &amp; deepEquals() (Printing &amp; Equality)</h2>
+      <p>
+        జావాలో బిగినర్లు చేసే అతిపెద్ద తప్పు: ఎరేను నేరుగా <code>System.out.println(arr);</code> అని ప్రింట్ చేయడం! అలా ప్రింట్ చేస్తే ఎరేలోని విలువలు రావు; బదులుగా <code>[I@15db9742</code> వంటి టైప్ కోడ్ మరియు హాష్‌కోడ్ వస్తాయి.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.8;">
+        <span style="color:#0284c7;">int</span>[] a = {1, 2, 3};<br />
+        <span style="color:#0284c7;">int</span>[][] b = {{1, 2}, {3, 4}};<br /><br />
+        <span style="color:#64748b;">// 1D ఎరేను అందంగా ప్రింట్ చేయడానికి:</span><br />
+        System.out.println(Arrays.toString(a)); <span style="color:#64748b;">// Output: [1, 2, 3]</span><br /><br />
+        <span style="color:#64748b;">// 2D లేదా మల్టీ-డైమెన్షనల్ ఎరేలను ప్రింట్ చేయడానికి:</span><br />
+        System.out.println(Arrays.deepToString(b)); <span style="color:#64748b;">// Output: [[1, 2], [3, 4]]</span>
+      </div>
+
+      <p>
+        <strong>సమానత్వ తనిఖీ (Equality Testing):</strong>
+        <br />
+        • <code>a1.equals(a2)</code> లేదా <code>==</code> వాడితే కేవలం మెమరీ రిఫరెన్స్ మాత్రమే సరిచూడబడుతుంది.
+        <br />
+        • <code>Arrays.equals(a1, a2)</code>: 1D ఎరేలలోని అంశాలు సమానంగా ఉన్నాయో లేదో చూస్తుంది.
+        <br />
+        • <code>Arrays.deepEquals(b1, b2)</code>: నెస్టెడ్ 2D/3D ఎరేలలోని అంతర్గత అంశాలన్నింటినీ లోతుగా పరిశీలించి సమానత్వాన్ని నిర్ధారిస్తుంది.
+      </p>
+    </div>
+
+    <!-- SECTION 9: CODE DEMO 1 -->
+    <div id="sec-9" class="section-card">
+      <h2>9. డెమో 1: 1D ఎరే సెర్చ్, సార్ట్ &amp; ఇన్-ప్లేస్ రివర్సల్ (Array Algorithms Benchmark)</h2>
+      <p>
+        1D ఎరేలతో అత్యంత కీలకమైన ప్రాథమిక అల్గారిథమ్స్: కనీస/గరిష్ట (Min/Max) విలువల గణన, లీనియర్ సెర్చ్ vs ఆప్టిమైజ్డ్ బైనరీ సెర్చ్, మరియు అదనపు మెమరీ తీసుకోకుండా ఎరేను ఇన్-ప్లేస్ (Two-Pointer In-Place Reverse) రివర్స్ చేయడం ఎలాగో క్రింది డెమోలో పరిశీలిద్దాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">ArrayOperationsAndSearchBenchmark.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">import java.util.Arrays;
+
+public class ArrayOperationsAndSearchBenchmark {
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("⚡ JAVA 1D ARRAY CORE OPERATIONS &amp; ALGORITHMS");
+        System.out.println("=================================================\n");
+
+        int[] scores = {88, 45, 92, 67, 34, 99, 78, 56, 83};
+        System.out.println("1. అసలు ఎరే (Original Array): " + Arrays.toString(scores));
+
+        // 1. Min &amp; Max Calculation
+        int min = scores[0];
+        int max = scores[0];
+        long sum = 0;
+
+        for (int score : scores) {
+            if (score &lt; min) min = score;
+            if (score &gt; max) max = score;
+            sum += score;
+        }
+        double avg = (double) sum / scores.length;
+
+        System.out.printf("   కనీస విలువ (Min): %d | గరిష్ట విలువ (Max): %d | సగటు (Avg): %.2f%n%n", min, max, avg);
+
+        // 2. In-Place Array Reversal (Two Pointers Technique - O(1) Aux Memory)
+        int left = 0;
+        int right = scores.length - 1;
+        while (left &lt; right) {
+            int temp = scores[left];
+            scores[left] = scores[right];
+            scores[right] = temp;
+            left++;
+            right--;
+        }
+        System.out.println("2. ఇన్-ప్లేస్ రివర్స్ చేసిన ఎరే: " + Arrays.toString(scores));
+
+        // 3. Sorting with Dual-Pivot Quicksort
+        Arrays.sort(scores);
+        System.out.println("3. సార్టింగ్ తర్వాత ఎరే:         " + Arrays.toString(scores));
+
+        // 4. Binary Search vs Linear Search
+        int searchTarget = 92;
+        int foundIndex = Arrays.binarySearch(scores, searchTarget);
+        System.out.printf("4. Binary Search for target %d: ఇండెక్స్ %d వద్ద లభించింది!%n", searchTarget, foundIndex);
+
+        int missingTarget = 70;
+        int missingIndex = Arrays.binarySearch(scores, missingTarget);
+        System.out.printf("   Missing target %d result:     %d (Insertion point: %d)%n",
+                missingTarget, missingIndex, -(missingIndex + 1));
+
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+⚡ JAVA 1D ARRAY CORE OPERATIONS &amp; ALGORITHMS
+=================================================
+
+1. అసలు ఎరే (Original Array): [88, 45, 92, 67, 34, 99, 78, 56, 83]
+   కనీస విలువ (Min): 34 | గరిష్ట విలువ (Max): 99 | సగటు (Avg): 71.33
+
+2. ఇన్-ప్లేస్ రివర్స్ చేసిన ఎరే: [83, 56, 78, 99, 34, 67, 92, 45, 88]
+3. సార్టింగ్ తర్వాత ఎరే:         [34, 45, 56, 67, 78, 83, 88, 92, 99]
+4. Binary Search for target 92: ఇండెక్స్ 7 వద్ద లభించింది!
+   Missing target 70 result:     -5 (Insertion point: 4)
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 10: CODE DEMO 2 -->
+    <div id="sec-10" class="section-card">
+      <h2>10. డెమో 2: 2D Matrix ట్రాన్స్‌పోజ్ &amp; Jagged ఎరే (Matrix &amp; Jagged Demo)</h2>
+      <p>
+        మ్యాట్రిక్స్ ట్రాన్స్‌పోజ్ (Rows ను Columns గా మార్చడం) మరియు సంస్థలోని ఉద్యోగుల శాఖల వారీ ప్రాజెక్టులను నిర్వహించే డైనమిక్ Jagged Array పనితీరును క్రింది ప్రాక్టికల్ ప్రోగ్రామ్ ద్వారా పరిశీలిద్దాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">MatrixAndJaggedArrayEngine.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">import java.util.Arrays;
+
+public class MatrixAndJaggedArrayEngine {
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("📊 2D MATRIX TRANSPOSE &amp; JAGGED ARRAYS DEMO");
+        System.out.println("=================================================\n");
+
+        // PART 1: 2D MATRIX TRANSPOSE (3x2 Matrix to 2x3 Matrix)
+        int[][] originalMatrix = {
+            {10, 20},
+            {30, 40},
+            {50, 60}
+        };
+
+        int rows = originalMatrix.length;
+        int cols = originalMatrix[0].length;
+        int[][] transpose = new int[cols][rows];
+
+        for (int r = 0; r &lt; rows; r++) {
+            for (int c = 0; c &lt; cols; c++) {
+                transpose[c][r] = originalMatrix[r][c];
+            }
+        }
+
+        System.out.println("1. Original 3x2 Matrix:  " + Arrays.deepToString(originalMatrix));
+        System.out.println("   Transposed 2x3 Matrix: " + Arrays.deepToString(transpose));
+
+        // PART 2: DYNAMIC JAGGED ARRAY (Corporate Departments Projects)
+        String[] deptNames = {"Core Platform", "Mobile App", "AI Research"};
+        String[][] departmentProjects = new String[3][];
+
+        departmentProjects[0] = new String[]{"Auth-v2", "DB-Migration"};
+        departmentProjects[1] = new String[]{"Android-Compose", "iOS-SwiftUI", "Flutter-Sync"};
+        departmentProjects[2] = new String[]{"LLM-FineTuning"};
+
+        System.out.println("\n2. Dynamic Department Jagged Projects:");
+        for (int i = 0; i &lt; departmentProjects.length; i++) {
+            System.out.printf("   🏢 Dept: %-14s | Count: %d | Projects: %s%n",
+                    deptNames[i],
+                    departmentProjects[i].length,
+                    Arrays.toString(departmentProjects[i]));
+        }
+
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+📊 2D MATRIX TRANSPOSE &amp; JAGGED ARRAYS DEMO
+=================================================
+
+1. Original 3x2 Matrix:  [[10, 20], [30, 40], [50, 60]]
+   Transposed 2x3 Matrix: [[10, 30, 50], [20, 40, 60]]
+
+2. Dynamic Department Jagged Projects:
+   🏢 Dept: Core Platform  | Count: 2 | Projects: [Auth-v2, DB-Migration]
+   🏢 Dept: Mobile App     | Count: 3 | Projects: [Android-Compose, iOS-SwiftUI, Flutter-Sync]
+   🏢 Dept: AI Research    | Count: 1 | Projects: [LLM-FineTuning]
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 11: CAPSTONE PROJECT -->
+    <div id="sec-11" class="section-card">
+      <h2>11. Capstone ప్రాజెక్ట్: IoT సెన్సార్ టెలిమెట్రీ ఎరే అనలిటిక్స్ ఇంజిన్</h2>
+      <p>
+        ఈ అధ్యాయంలో నేర్చుకున్న అన్ని కాన్సెప్టులను (1D ఎరేలు, 2D మ్యాట్రిక్స్, Jagged Arrays, Arrays.sort, Arrays.copyOf మరియు బౌండరీ సేఫ్టీ) సమగ్రంగా మిళితం చేస్తూ ఒక రియల్-వరల్డ్ <strong>IoT Sensor Grid Telemetry Analytics Engine</strong> ను నిర్మిద్దాం. క్లౌడ్ డేటా సెంటర్‌లోని వివిధ సర్వర్ ర్యాక్‌లలోని ఉష్ణోగ్రత రీడింగ్‌లను విశ్లేషించి, హీట్‌మ్యాప్‌లు మరియు హాట్‌స్పాట్ హెచ్చరికలను జారీ చేసే ప్రొడక్షన్-గ్రేడ్ ఇంజిన్ ఇది:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">SensorTelemetryMatrixEngine.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">import java.util.Arrays;
+
+public class SensorTelemetryMatrixEngine {
+
+    // Analyzes a thermal grid rack of IoT temperature sensors
+    public static class RackTelemetryProcessor {
+        private final double[][] thermalGrid; // 2D Grid: [RackRows][SensorNodes]
+        private final double alertThreshold;
+
+        public RackTelemetryProcessor(double[][] grid, double threshold) {
+            this.thermalGrid = grid;
+            this.alertThreshold = threshold;
+        }
+
+        public void printThermalReport() {
+            System.out.println("🌡️ DATA CENTER RACK THERMAL TELEMETRY REPORT:");
+            System.out.println("-------------------------------------------------");
+
+            double highestOverall = -1.0;
+            int hotRow = -1, hotCol = -1;
+            double totalSum = 0;
+            int totalSensors = 0;
+
+            for (int r = 0; r &lt; thermalGrid.length; r++) {
+                double rowSum = 0;
+                double rowMax = thermalGrid[r][0];
+
+                for (int c = 0; c &lt; thermalGrid[r].length; c++) {
+                    double temp = thermalGrid[r][c];
+                    rowSum += temp;
+                    totalSum += temp;
+                    totalSensors++;
+
+                    if (temp &gt; rowMax) rowMax = temp;
+                    if (temp &gt; highestOverall) {
+                        highestOverall = temp;
+                        hotRow = r;
+                        hotCol = c;
+                    }
+                }
+
+                double rowAvg = rowSum / thermalGrid[r].length;
+                System.out.printf("   Rack-Zone [%d]: Avg: %5.1f°C | Peak: %5.1f°C | Grid: %s%n",
+                        r, rowAvg, rowMax, Arrays.toString(thermalGrid[r]));
+            }
+
+            double facilityAvg = totalSum / totalSensors;
+            System.out.println("-------------------------------------------------");
+            System.out.printf("🌐 Facility Overview: Sensors: %d | Avg Temp: %.2f°C%n", totalSensors, facilityAvg);
+            System.out.printf("🚨 Critical Hotspot:  Zone [%d][%d] at %.1f°C%n", hotRow, hotCol, highestOverall);
+
+            if (highestOverall &gt;= alertThreshold) {
+                System.out.println("⚠️ STATUS: HAZARD DETECTED! Emergency HVAC Cooling Activated.");
+            } else {
+                System.out.println("✅ STATUS: OPTIMAL! All rack temperatures within safety zone.");
+            }
+        }
+
+        public double[] getSortedFlatTemperatures() {
+            // Flatten 2D Grid into 1D Array for percentile calculation
+            int total = 0;
+            for (double[] row : thermalGrid) total += row.length;
+
+            double[] flat = new double[total];
+            int idx = 0;
+            for (double[] row : thermalGrid) {
+                for (double val : row) {
+                    flat[idx++] = val;
+                }
+            }
+            Arrays.sort(flat);
+            return flat;
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("📡 IOT SENSOR GRID TELEMETRY ANALYTICS ENGINE");
+        System.out.println("=================================================\n");
+
+        // Simulating a 3-Rack server zone (Jagged grid: different sensor counts per rack)
+        double[][] serverZoneGrid = {
+            {34.5, 36.2, 38.0, 35.8},         // Rack 0: 4 sensors
+            {41.2, 43.8, 48.5, 42.1, 40.0},   // Rack 1: 5 sensors (High load rack)
+            {32.0, 33.4, 31.8}                // Rack 2: 3 sensors (Storage rack)
+        };
+
+        RackTelemetryProcessor processor = new RackTelemetryProcessor(serverZoneGrid, 45.0);
+        processor.printThermalReport();
+
+        // Percentile analysis using 1D sorted array
+        double[] sortedTemps = processor.getSortedFlatTemperatures();
+        System.out.println("\n📈 Temperature Distribution (Sorted 1D):");
+        System.out.println("   " + Arrays.toString(sortedTemps));
+
+        double medianTemp = sortedTemps[sortedTemps.length / 2];
+        System.out.printf("   Median Temperature: %.1f°C%n", medianTemp);
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+📡 IOT SENSOR GRID TELEMETRY ANALYTICS ENGINE
+=================================================
+
+🌡️ DATA CENTER RACK THERMAL TELEMETRY REPORT:
+-------------------------------------------------
+   Rack-Zone [0]: Avg:  36.1°C | Peak:  38.0°C | Grid: [34.5, 36.2, 38.0, 35.8]
+   Rack-Zone [1]: Avg:  43.1°C | Peak:  48.5°C | Grid: [41.2, 43.8, 48.5, 42.1, 40.0]
+   Rack-Zone [2]: Avg:  32.4°C | Peak:  33.4°C | Grid: [32.0, 33.4, 31.8]
+-------------------------------------------------
+🌐 Facility Overview: Sensors: 12 | Avg Temp: 38.11°C
+🚨 Critical Hotspot:  Zone [1][2] at 48.5°C
+⚠️ STATUS: HAZARD DETECTED! Emergency HVAC Cooling Activated.
+
+📈 Temperature Distribution (Sorted 1D):
+   [31.8, 32.0, 33.4, 34.5, 35.8, 36.2, 40.0, 41.2, 42.1, 43.8, 48.5]
+   Median Temperature: 36.2°C
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 12 -->
+    <div id="sec-12" class="section-card">
+      <h2>12. ప్రొడక్షన్ పిట్‌ఫాల్స్, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 క్విజ్‌లు (Best Practices &amp; Quizzes)</h2>
+
+      <h4 style="color:#ef4444; margin:16px 0 10px 0;">🚫 ప్రొడక్షన్‌లో నివారించాల్సిన 4 ఘోరమైన తప్పులు (Production Pitfalls):</h4>
+      <ol style="line-height:1.8; color:var(--text2); font-size:14px; padding-left:20px;">
+        <li style="margin-bottom:10px;">
+          <strong>సార్ట్ చేయకుండా <code>Arrays.binarySearch()</code> ను పిలవడం:</strong> బైనరీ సెర్చ్ పనిచేయడానికి ఎరే తప్పనిసరిగా ఆరోహణ క్రమంలో సార్ట్ అయి ఉండాలి. సార్ట్ చేయని ఎరేపై దీన్ని పిలిస్తే తప్పుడు ఇండెక్స్ లేదా రుణాత్మక సంఖ్యలు వచ్చి తీవ్రమైన లాజిక్ బగ్స్ ఏర్పడతాయి.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>ఎరేలను పోల్చడానికి <code>==</code> లేదా <code>.equals()</code> వాడటం:</strong> ఎరేలపై <code>==</code> లేదా సాధారణ <code>.equals()</code> పిలిస్తే కేవలం వాటి మెమరీ రిఫరెన్స్ మాత్రమే పోల్చబడుతుంది. ఎలిమెంట్స్ సమానత్వాన్ని చూడటానికి ఎల్లప్పుడూ <code>Arrays.equals(a, b)</code> లేదా 2D కోసం <code>Arrays.deepEquals(a, b)</code> వాడాలి.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>ఎరేలను నేరుగా ప్రింట్ చేయడం:</strong> <code>System.out.println(myArray);</code> అని రాస్తే <code>[I@hashcode</code> ముద్రించబడుతుంది. రీడబుల్ అవుట్‌పుట్ కోసం తప్పనిసరిగా <code>Arrays.toString(myArray)</code> లేదా <code>Arrays.deepToString(my2DArray)</code> వాడాలి.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>ఆఫ్‌-బై-వన్ బౌండరీ తప్పులు (Off-by-One Loop Error):</strong> లూప్‌లలో <code>i &lt;= arr.length</code> అని రాయడం వల్ల చివరి ఇటరేషన్‌లో <code>ArrayIndexOutOfBoundsException</code> వస్తుంది. ఎల్లప్పుడూ <code>i &lt; arr.length</code> అని మాత్రమే రాయాలి.
+        </li>
+      </ol>
+
+      <h4 style="color:#10b981; margin:26px 0 10px 0;">✨ ప్రొడక్షన్ గోల్డెన్ రూల్స్ (Golden Rules):</h4>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; font-size:13.5px; line-height:1.8; color:var(--text);">
+        1. <strong>రీడ్-ఓన్లీ ఆపరేషన్లకు:</strong> బగ్స్ రాని Enhanced <code>for (int x : arr)</code> లూప్ మాత్రమే వాడండి.<br />
+        2. <strong>స్థిర పరిమాణం తెలిసినప్పుడు:</strong> మెమరీ ఓవర్‌హెడ్ లేకుండా అత్యధిక పనితీరు కోసం ప్రిమిటివ్ ఎరేలనే (int[], double[]) ఎంచుకోండి.<br />
+        3. <strong>ఎరే రీసైజింగ్ కు:</strong> మాన్యువల్ లూపులు రాయకుండా <code>Arrays.copyOf()</code> లేదా <code>System.arraycopy()</code> వాడండి.<br />
+        4. <strong>డైనమిక్ కలెక్షన్లకు:</strong> పరిమాణం ముందుగా తెలియకపోతే Part 05 లో నేర్చుకోబోయే <code>ArrayList</code> ను ఉపయోగించండి.
+      </div>
+
+      <!-- QUIZ SECTION -->
+      <h3 style="color:#10b981; margin:32px 0 16px 0;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 1: జావాలో ఎరే ఆబ్జెక్టులు మెమరీలో ఎక్కడ నిల్వ చేయబడతాయి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> ఎరేలు జావాలో ఫస్ట్-క్లాస్ ఆబ్జెక్టులు కాబట్టి అవి ఎల్లప్పుడూ <strong>హీప్ మెమరీ (Heap Memory)</strong> లోనే నిల్వ చేయబడతాయి. కేవలం వాటి రిఫరెన్స్ వేరియబుల్ మాత్రమే స్టాక్‌లో ఉంటుంది.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 2: 'new int[10]' తో ఎరేను సృష్టించినప్పుడు అందులోని ఎలిమెంట్స్ యొక్క ప్రారంభ డీఫాల్ట్ విలువ ఎంత?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>0</code> (సున్నా). జావాలో ప్రిమిటివ్ న్యూమరిక్ ఎరేలు ఆటోమేటిక్‌గా సున్నాలతో నింపబడతాయి.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 3: ఎరేలో ఏ ఇండెక్స్ ను యాక్సెస్ చేయడానికైనా టైమ్ కాంప్లెక్సిటీ ఎంత?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>O(1)</code> (కాన్‌స్టాంట్ టైమ్). నిరంతరాయ మెమరీ కేటాయింపు మరియు ప్రత్యక్ష బేస్ అడ్రస్ గణితం వల్ల రాండమ్ యాక్సెస్ క్షణంలో జరుగుతుంది.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 4: Jagged Array అంటే ఏమిటి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> వేర్వేరు వరుసలలో వేర్వేరు సంఖ్యలో కాలమ్స్ (అసమాన పొడవులు) కలిగిన మల్టీ-డైమెన్షనల్ ఎరేను Jagged Array అంటారు.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 5: 2D ఎరేలోని అన్ని అంశాలను రీడబుల్ స్ట్రింగ్ ఫార్మాట్‌లో ప్రింట్ చేయడానికి ఏ మెథడ్ వాడాలి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>Arrays.deepToString(matrix)</code> వాడాలి (సాధారణ Arrays.toString వాడితే అంతర్గత హాష్‌కోడ్‌లు మాత్రమే వస్తాయి).
+        </p>
+      </details>
+    </div>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/10-java-stringbuilder-stringbuffer-and-methods.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 10. StringBuilder &amp; StringBuffer
+      </a>
+      <a href="/blog-java/12-java-methods-call-stack-and-pass-by-value.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 12. Methods &amp; Call Stack →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>`;
+
+const outPath = path.join(__dirname, '..', 'public', 'blog-java', '11-java-arrays-multidimensional-and-algorithms.html');
+fs.writeFileSync(outPath, chapter11Content, 'utf8');
+
+console.log('✅ Successfully generated Java Chapter 11 in exact JavaScript HTML style!');
+console.log('Target file:', outPath);
+console.log('Target file size:', chapter11Content.length, 'characters');

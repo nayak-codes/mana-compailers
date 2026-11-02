@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Method Overloading &amp; Varargs (Compile-time Polymorphism) తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా మెథడ్ ఓవర్‌లోడింగ్, Compile-time Polymorphism, Widening vs Autoboxing vs Varargs రిసొల్యూషన్ ప్రయారిటీ, మరియు క్లౌడ్ నోటిఫికేషన్ డిస్పాచర్ ప్రాజెక్ట్ తెలుగులో నేర్చుకోండి." />
+  <meta name="keywords" content="java method overloading telugu, varargs java telugu, compile time polymorphism telugu, method overloading rules java telugu, widening autoboxing varargs priority telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/13-java-method-overloading-and-varargs.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-java light-theme">
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+    <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Java Masterclass</div>
+
+    <div class="accordion">
+      <!-- Part 01: Basics & JVM -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 01</span>
+            <span class="phase-title">Basics & JVM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/01-java-introduction-features-and-jvm-architecture.html">1. Intro & JVM Architecture</a>
+        <a href="/blog-java/02-java-installation-ide-and-first-program.html">2. Setup & First Program</a>
+        <a href="/blog-java/03-java-syntax-class-structure-and-main-method.html">3. Syntax & Main Method</a>
+        <a href="/blog-java/04-java-variables-primitive-data-types-and-memory.html">4. Variables & Data Types</a>
+        <a href="/blog-java/05-java-operators-expressions-and-type-casting.html">5. Operators & Type Casting</a>
+      </div>
+
+      <!-- Part 02: Control Flow & Strings -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 02</span>
+            <span class="phase-title">Control Flow & Strings</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/06-java-conditional-statements-if-else.html">6. if, else-if & Ternary</a>
+        <a href="/blog-java/07-java-switch-statements-and-switch-expressions.html">7. switch Statements & Expressions</a>
+        <a href="/blog-java/08-java-loops-while-for-and-enhanced-foreach.html">8. Loops: while, for, foreach</a>
+        <a href="/blog-java/09-java-strings-memory-pool-and-immutability.html">9. Strings & Memory Pool</a>
+        <a href="/blog-java/10-java-stringbuilder-stringbuffer-and-methods.html">10. StringBuilder & StringBuffer</a>
+      </div>
+
+      <!-- Part 03: Arrays, Methods & OOP -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 03</span>
+            <span class="phase-title">Arrays, Methods & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-java/11-java-arrays-multidimensional-and-algorithms.html">11. Arrays & Algorithms</a>
+        <a href="/blog-java/12-java-methods-call-stack-and-pass-by-value.html">12. Methods & Call Stack</a>
+        <a href="/blog-java/13-java-method-overloading-and-varargs.html" class="active">13. Method Overloading & Varargs</a>
+        <a href="/blog-java/14-java-oop-classes-objects-and-constructors.html">14. Classes, Objects & Heap</a>
+        <a href="/blog-java/15-java-constructors-this-keyword-and-chaining.html">15. Constructors & this Keyword</a>
+      </div>
+
+      <!-- Part 04: Core OOP & Exceptions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 04</span>
+            <span class="phase-title">Core OOP & Exceptions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/16-java-encapsulation-access-modifiers-and-records.html">16. Encapsulation & Records</a>
+        <a href="/blog-java/17-java-inheritance-super-keyword-and-object-class.html">17. Inheritance & super Keyword</a>
+        <a href="/blog-java/18-java-polymorphism-method-overriding-dynamic-binding.html">18. Polymorphism & Overriding</a>
+        <a href="/blog-java/19-java-abstract-classes-and-interfaces.html">19. Abstract Classes & Interfaces</a>
+        <a href="/blog-java/20-java-exception-handling-and-custom-exceptions.html">20. Exceptions & Custom Errors</a>
+      </div>
+
+      <!-- Part 05: Collections & Capstone -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 05</span>
+            <span class="phase-title">Collections & Capstone</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/21-java-collections-list-arraylist-linkedlist.html">21. List: ArrayList & LinkedList</a>
+        <a href="/blog-java/22-java-collections-set-and-map-deep-dive.html">22. Set & Map Deep Dive</a>
+        <a href="/blog-java/23-java-generics-and-type-safety.html">23. Generics & Type Safety</a>
+        <a href="/blog-java/24-java-lambdas-and-stream-api.html">24. Lambdas & Stream API</a>
+        <a href="/blog-java/25-java-capstone-project.html">25. Capstone: Banking Engine</a>
+      </div>
+
+    </div>
+
+    <div class="sidebar-heading">INTERACTIVE IDE</div>
+    <a href="/online-java-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Java Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">OTHER COURSES</div>
+    <a href="/blog-python.html">Python Course (25 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (25 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 13: Method Overloading &amp; Varargs</span>
+    </div>
+
+    <h1 class="page-title">13. జావా మెథడ్ ఓవర్‌లోడింగ్ &amp; Varargs (Compile-time Polymorphism)</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java (Java 21+ LTS)</span>
+      <span class="badge">🟢 Lesson 13 of 25</span>
+      <span class="badge">📂 Part 03: Arrays, Methods &amp; OOP (Page 3 of 5)</span>
+      <span class="badge">⏱️ 25 min read</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:28px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="font-weight:700; color:#10b981;">📌 Covered in this lesson:</span>
+      <span>Compile-time Polymorphism · నంబర్, టైప్ మరియు ఆర్డర్ ఆఫ్ పారామీటర్లతో ఓవర్‌లోడింగ్ · Variable-length Arguments (Type... args) వాడకం & రూల్స్</span>
+    </div>
+
+    <!-- WARM IVORY INTRO BOX (JavaScript Style) -->
+    <div class="intro-box">
+      <p style="margin:0 0 16px 0; font-size:15px; line-height:1.8; color:#1e293b;">
+        సాఫ్ట్‌వేర్ అభివృద్ధిలో ఒకే రకమైన ఆపరేషన్‌ను విభిన్న డేటా రకాలు లేదా వివిధ సంఖ్యల ఇన్‌పుట్లతో చేయాల్సి వచ్చినప్పుడు, ప్రతి ఒక్క కేస్ కోసం <code>calculateInt()</code>, <code>calculateDouble()</code>, <code>calculateThreeNumbers()</code> అని వందల కొద్దీ విభిన్న పేర్లు పెట్టుకుంటూ పోవడం క్లీన్ కోడ్ సూత్రాలకు విరుద్ధం. జావాలో ఒకే పేరుతో, కానీ వేర్వేరు పారామీటర్ల అమరికతో బహుళ మెథడ్లను సృష్టించే శక్తివంతమైన సదుపాయమే <strong>మెథడ్ ఓవర్‌లోడింగ్ (Method Overloading)</strong>. దీనినే ఆబ్జెక్ట్-ఓరియెంటెడ్ ప్రోగ్రామింగ్ ప్రపంచంలో <strong>కంపైల్-టైమ్ పాలిమార్ఫిజం (Compile-time Polymorphism / Static Binding)</strong> అంటారు. వీటితో పాటు ఏకకాలంలో సున్నా నుండి ఎన్ని ఆర్గ్యుమెంట్లనైనా నేరుగా స్వీకరించే వెసులుబాటు కల్పించే <strong>Varargs (Variable Arguments - <code>...</code>)</strong> యొక్క మెమరీ ఇంటర్నల్స్, కంపైలర్ రిసొల్యూషన్ ప్రాధాన్యతలు (Widening vs Autoboxing vs Varargs), మరియు ఆంబిగ్యుటీ ట్రాప్స్ గురించి ఈ పాఠంలో సమగ్రంగా నేర్చుకుందాం.
+      </p>
+
+      <h4 style="margin:0 0 10px 0; color:#047857; font-size:16px; font-weight:800;">
+        మల్టీ-పోర్ట్ యూనివర్సల్ ఛార్జర్ &amp; బఫే ప్లేట్ల అనాలజీ (The Multi-Port Universal Charger &amp; Buffet Plate Analogy):
+      </h4>
+      <ol style="margin:0; padding-left:22px; color:#334155; line-height:1.8; font-size:14.5px;">
+        <li style="margin-bottom:8px;">
+          <strong>1. Method Overloading (మల్టీ-పోర్ట్ యూనివర్సల్ ఛార్జర్ - Multi-Port Fast Charger):</strong> ఇంట్లో ఉన్న ఒక అధునాతన ఫాస్ట్ ఛార్జర్‌కు ఒకే సమయంలో USB-C, మైక్రో USB, మరియు ల్యాప్‌టాప్ పవర్ కేబుల్స్ పెట్టేందుకు 3 వేర్వేరు సాకెట్లు ఉన్నాయి. ఛార్జర్ పేరు ఒక్కటే — కానీ మీరు ఏ కేబుల్ పెడితే ఆ పరికరానికి తగిన వోల్టేజ్‌తో అది విద్యుత్తును అందిస్తుంది. అదేవిధంగా జావాలో మెథడ్ పేరు ఒక్కటే అయినప్పటికీ, మీరు పాస్ చేసే ఆర్గ్యుమెంట్ల రకం మరియు సంఖ్య ఆధారంగా జావా కంపైలర్ సరైన మెథడ్‌ను ముందుగానే బైండ్ చేస్తుంది.
+        </li>
+        <li style="margin-bottom:8px;">
+          <strong>2. Overloading Ambiguity (ఒకే పరిమాణం ఉన్న రెండు పోర్టుల గందరగోళం - Ambiguous Slot):</strong> ఒకే రకమైన రెండు వైర్లు వచ్చి ఏ పోర్టులోకి వెళ్లాలో స్పష్టత లేనప్పుడు ఛార్జర్ షార్ట్ సర్క్యూట్ అయినట్లుగా, జావాలో కూడా ఒక మెథడ్ కాల్ రెండు ఓవర్‌లోడెడ్ మెథడ్లకు సమానంగా సరిపోలితే కంపైలర్ కంగారుపడి <code>reference to method is ambiguous</code> అని ఎర్రర్ ఇస్తుంది.
+        </li>
+        <li>
+          <strong>3. Varargs (అన్‌లిమిటెడ్ బఫే లంచ్ ప్లేట్ - Variable Arguments Buffet Plate):</strong> ఒక విందు భోజనంలో బఫే ప్లేట్ పట్టుకుని వెళ్లినప్పుడు, మీ ప్లేట్‌లో మీరు 1 గులాబ్ జామ్ వేసుకోవచ్చు, 5 రకాల కూరలు వేసుకోవచ్చు, లేదా ఏమీ వేసుకోకుండా ఖాళీ ప్లేట్‌తో నిలబడవచ్చు (0 to N items). జావాలో <code>Type... args</code> అనేది ఆ బఫే ప్లేట్ లాంటిది. తెరవెనుక JVM స్వయంగా ఒక తాత్కాలిక ఎరేను (Heap Array) సృష్టించి ఎన్ని విలువలనైనా స్వీకరిస్తుంది.
+        </li>
+      </ol>
+      <p style="margin:14px 0 0 0; font-size:14px; color:#475569; line-height:1.7;">
+        ఈ పాఠం పూర్తయ్యేసరికి మీరు ఓవర్‌లోడింగ్ లోని సూక్ష్మమైన టైప్ ప్రమోషన్ నియమాలను, Varargs ఇంటర్నల్స్ మరియు ఎంటర్‌ప్రైజ్ క్లౌడ్ నోటిఫికేషన్ మల్టీ-ఛానల్ ఇంజిన్‌ను నిర్మించడంలో నిష్ణాతులవుతారు!
+      </p>
+    </div>
+
+    <!-- 3-COLUMN TABLE OF CONTENTS (TOC CARD) -->
+    <div class="toc-card">
+      <div style="font-weight:800; color:var(--text); margin-bottom:14px; font-size:16px; display:flex; align-items:center; gap:8px;">
+        <span>📑 ఈ పాఠంలో మీరు నేర్చుకునే అంశాలు (Table of Contents)</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం A: ఓవర్‌లోడింగ్ సూత్రాలు &amp; రూల్స్
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-1" style="color:var(--text2); text-decoration:none;">1. ఓవర్‌లోడింగ్ ఆవశ్యకత &amp; కంపైల్-టైమ్ బైండింగ్</a></li>
+            <li><a href="#sec-2" style="color:var(--text2); text-decoration:none;">2. ఓవర్‌లోడింగ్ 3 గోల్డెన్ నియమాలు</a></li>
+            <li><a href="#sec-3" style="color:var(--text2); text-decoration:none;">3. రిటర్న్ టైప్ &amp; యాక్సెస్ మోడిఫైయర్ల పాత్ర</a></li>
+            <li><a href="#sec-4" style="color:var(--text2); text-decoration:none;">4. టైప్ ప్రమోషన్ &amp; ఆటోమేటిక్ వైడనింగ్ రూల్స్</a></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం B: Varargs &amp; రిసొల్యూషన్ ప్రయారిటీ
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-5" style="color:var(--text2); text-decoration:none;">5. Varargs (Type... args) &amp; హీప్ ఎరే నిర్మాణం</a></li>
+            <li><a href="#sec-6" style="color:var(--text2); text-decoration:none;">6. Varargs నియమాలు: లాస్ట్ పారామీటర్ రూల్</a></li>
+            <li><a href="#sec-7" style="color:var(--text2); text-decoration:none;">7. Widening vs Autoboxing vs Varargs ప్రాధాన్యత</a></li>
+            <li><a href="#sec-8" style="color:var(--text2); text-decoration:none;">8. Ambiguity ట్రాప్స్ &amp; కంపైలర్ ఎర్రర్స్</a></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం C: డెమోలు, ప్రాజెక్ట్ &amp; పరీక్ష
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-9" style="color:var(--text2); text-decoration:none;">9. డెమో 1: రిసొల్యూషన్ ప్రయారిటీ టెస్ట్</a></li>
+            <li><a href="#sec-10" style="color:var(--text2); text-decoration:none;">10. డెమో 2: ఫ్లెక్సిబుల్ Varargs మ్యాథ్ కాలిక్యులేటర్</a></li>
+            <li><a href="#sec-11" style="color:var(--text2); text-decoration:none;">11. Capstone ప్రాజెక్ట్: క్లౌడ్ అలర్ట్ డిస్పాచర్</a></li>
+            <li><a href="#sec-12" style="color:var(--text2); text-decoration:none;">12. ప్రొడక్షన్ పిట్‌ఫాల్స్, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 క్విజ్‌లు</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div id="sec-1" class="section-card">
+      <h2>1. ఓవర్‌లోడింగ్ ఆవశ్యకత &amp; కంపైల్-టైమ్ బైండింగ్ (Why Overloading Matters)</h2>
+      <p>
+        జావాలో మెథడ్ ఓవర్‌లోడింగ్ అనేది కోడ్ రీడబిలిటీని పదింతలు పెంచే అత్యద్భుతమైన ఫీచర్. ఉదాహరణకు జావా ప్రామాణిక లైబ్రరీలోని <code>System.out.println()</code> మెథడ్‌ను చూడండి. మీరు <code>println(10)</code> అన్నా, <code>println("Hello")</code> అన్నా, లేదా <code>println(true)</code> అన్నా అది సజావుగా ముద్రిస్తుంది. జావా డెవలపర్ ప్రతి డేటా రకానికి వేర్వేరు మెథడ్ పేర్లను గుర్తుపెట్టుకోవాల్సిన అవసరం లేకుండా <code>PrintStream</code> క్లాస్‌లో సుమారు 10 వేర్వేరు ఓవర్‌లోడెడ్ <code>println()</code> మెథడ్లను అందించడమే దీనికి కారణం.
+      </p>
+      <p>
+        <strong>కంపైల్-టైమ్ పాలిమార్ఫిజం (Static Binding):</strong> మీరు ప్రోగ్రామ్‌ను కంపైల్ (<code>javac</code>) చేస్తున్నప్పుడే, జావా కంపైలర్ మీరు పంపిన ఆర్గ్యుమెంట్ల డేటా టైప్‌లను పరిశీలించి, బైట్‌కోడ్‌లో ఏ నిర్దిష్ట మెథడ్‌ను ఇన్వోక్ చేయాలో ఖరారు చేస్తుంది. రన్‌టైమ్‌లో ఎటువంటి శోధన లేదా డైనమిక్ డిస్పాచ్ జరగదు కాబట్టి దీనివల్ల అప్లికేషన్ పనితీరులో ఎటువంటి నష్టం (Zero Runtime Overhead) ఉండదు.
+      </p>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div id="sec-2" class="section-card">
+      <h2>2. ఓవర్‌లోడింగ్ 3 గోల్డెన్ నియమాలు (The 3 Golden Rules of Overloading)</h2>
+      <p>
+        ఒకే క్లాస్‌లో రెండు లేదా అంతకంటే ఎక్కువ మెథడ్లకు ఒకే పేరు ఉండాలంటే, వాటి పారామీటర్ల జాబితా (Parameter List) తప్పనిసరిగా క్రింది 3 మార్గాలలో కనీసం ఒకదానిలో భిన్నంగా ఉండాలి:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:18px 22px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.9;">
+        <span style="color:#64748b;">// నియమం 1: పారామీటర్ల సంఖ్యలో తేడా (Difference in Number of Parameters)</span><br />
+        <span style="color:#0284c7;">int</span> add(<span style="color:#0284c7;">int</span> a, <span style="color:#0284c7;">int</span> b) { <span style="color:#0284c7;">return</span> a + b; }<br />
+        <span style="color:#0284c7;">int</span> add(<span style="color:#0284c7;">int</span> a, <span style="color:#0284c7;">int</span> b, <span style="color:#0284c7;">int</span> c) { <span style="color:#0284c7;">return</span> a + b + c; }<br /><br />
+        <span style="color:#64748b;">// నియమం 2: పారామీటర్ల డేటా టైప్స్‌లో తేడా (Difference in Data Types)</span><br />
+        <span style="color:#0284c7;">double</span> add(<span style="color:#0284c7;">double</span> a, <span style="color:#0284c7;">double</span> b) { <span style="color:#0284c7;">return</span> a + b; }<br /><br />
+        <span style="color:#64748b;">// నియమం 3: పారామీటర్ల వరుస క్రమంలో తేడా (Difference in Order of Types)</span><br />
+        <span style="color:#0284c7;">void</span> printInfo(String name, <span style="color:#0284c7;">int</span> age) { ... }<br />
+        <span style="color:#0284c7;">void</span> printInfo(<span style="color:#0284c7;">int</span> age, String name) { ... }
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div id="sec-3" class="section-card">
+      <h2>3. రిటర్న్ టైప్ &amp; యాక్సెస్ మోడిఫైయర్ల పాత్ర (The Return Type Fallacy)</h2>
+      <p>
+        జావా బిగినర్లు అత్యంత ఎక్కువగా బోల్తా పడే ప్రమాదకరమైన అంశం ఇది:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid #ef4444; border-radius:8px; padding:16px; margin:16px 0;">
+        <div style="font-weight:700; color:#ef4444; margin-bottom:8px; font-size:14px;">❌ ఈ కోడ్ కంపైల్ కాదు (Compilation Error):</div>
+        <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--text); line-height:1.6;"><code>public class Calculator {
+    public int multiply(int a, int b) { return a * b; }
+    public double multiply(int a, int b) { return (double)(a * b); } // ❌ COMPILE ERROR!
+}</code></pre>
+        <p style="margin:10px 0 0 0; font-size:13px; color:var(--text2); line-height:1.6;">
+          <strong>ఎందుకు ఎర్రర్ వస్తుంది?</strong> మీరు మెథడ్‌ను కాల్ చేసేటప్పుడు కేవలం <code>calc.multiply(10, 20);</code> అని మాత్రమే రాస్తారు (రిటర్న్ వచ్చిన విలువను ఏ వేరియబుల్‌లోనూ స్టోర్ చేసుకోకపోవచ్చు). అప్పుడు కంపైలర్‌కు ఏ మెథడ్‌ను రన్ చేయాలో అర్థం కాదు. కాబట్టి <strong>కేవలం రిటర్న్ టైప్ లేదా యాక్సెస్ మోడిఫైయర్లను మార్చడం ద్వారా మెథడ్ ఓవర్‌లోడింగ్ సాధ్యం కాదు!</strong>
+        </p>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div id="sec-4" class="section-card">
+      <h2>4. టైప్ ప్రమోషన్ &amp; ఆటోమేటిక్ వైడనింగ్ రూల్స్ (Type Promotion in Overloading)</h2>
+      <p>
+        మీరు పంపించిన ఆర్గ్యుమెంట్ టైప్‌కు సరిగ్గా సరిపోయే (Exact Match) మెథడ్ లేనప్పుడు, జావా కంపైలర్ ఆటోమేటిక్‌గా చిన్న డేటా రకాలను పెద్ద డేటా రకాలుగా మారుస్తుంది (Automatic Type Promotion / Widening):
+      </p>
+
+      <div style="background:#fefce8; border:1px solid #fde047; border-left:5px solid #ca8a04; border-radius:6px; padding:14px 18px; margin:16px 0; font-family:'JetBrains Mono', monospace; font-size:13.5px; color:#854d0e; line-height:1.7;">
+        byte ➔ short ➔ int ➔ long ➔ float ➔ double<br />
+        char ➔ int ➔ long ➔ float ➔ double
+      </div>
+
+      <p>
+        ఉదాహరణకు, మీరు <code>int</code> ఆర్గ్యుమెంట్‌ను పాస్ చేశారు, కానీ క్లాస్‌లో <code>foo(int)</code> లేదు. అయితే <code>foo(long)</code> ఉంటే, JVM ఆటోమేటిక్‌గా మీ <code>int</code> ను <code>long</code> గా ప్రమోట్ చేసి <code>foo(long)</code> ను విజయవంతంగా రన్ చేస్తుంది.
+      </p>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div id="sec-5" class="section-card">
+      <h2>5. Varargs (Type... args) &amp; హీప్ ఎరే నిర్మాణం (Variable Arguments Internals)</h2>
+      <p>
+        Java 5 కి ముందు, ఒక మెథడ్‌కు అనిశ్చిత సంఖ్యలో (Arbitrary Number) ఆర్గ్యుమెంట్లను పంపించాలంటే డెవలపర్ తప్పనిసరిగా మాన్యువల్‌గా ఒక ఎరేను సృష్టించి పంపించాల్సి వచ్చేది (ఉదా: <code>printItems(new String[]{"A", "B"})</code>).
+      </p>
+      <p>
+        దీనికి పరిష్కారంగా <strong>Varargs (Variable Arguments)</strong> ఫీచర్ ప్రవేశపెట్టబడింది. డేటా టైప్ తర్వాత మూడు చుక్కలు (<code>Type... varName</code>) ఉంచడం ద్వారా దీన్ని వాడతాం.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.8;">
+        <span style="color:#0284c7;">public static void</span> logMessages(String... messages) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// కంపైలర్ దృష్టిలో messages అనేది సాధారణ String[] ఎరే మాత్రమే!</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">for</span> (String msg : messages) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(msg);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+        }
+      </div>
+
+      <p>
+        <strong>అంతర్గత మెకానిజం:</strong> మీరు <code>logMessages("Err1", "Err2", "Err3");</code> అని కాల్ చేసినప్పుడు, జావా కంపైలర్ అంతర్గతంగా <code>logMessages(new String[]{"Err1", "Err2", "Err3"});</code> గా మారుస్తుంది. మీరు సున్నా ఆర్గ్యుమెంట్లు పంపితే (<code>logMessages()</code>), ఖాళీ ఎరే <code>new String[0]</code> హీప్‌లో ఏర్పడుతుంది!
+      </p>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div id="sec-6" class="section-card">
+      <h2>6. Varargs నియమాలు: లాస్ట్ పారామీటర్ రూల్ (The Strict Syntactic Rules)</h2>
+      <p>
+        Varargs తో పనిచేసేటప్పుడు జావా కంపైలర్ విధించిన రెండు కఠినమైన నియమాలను గుర్తుంచుకోవాలి:
+      </p>
+
+      <ul>
+        <li>
+          <strong>నియమం 1 (Last Parameter Rule):</strong> మెథడ్ పారామీటర్ల జాబితాలో Varargs ఎల్లప్పుడూ <strong>చివరి పారామీటర్‌గా మాత్రమే</strong> ఉండాలి! (ఉదా: <code>void test(int x, String... names)</code> చెల్లుబాటు అవుతుంది; కానీ <code>void test(String... names, int x)</code> కంపైలేషన్ ఎర్రర్).
+        </li>
+        <li>
+          <strong>నియమం 2 (Single Varargs Rule):</strong> ఒక మెథడ్‌లో కేవలం <strong>ఒకే ఒక్క Varargs పారామీటర్</strong> మాత్రమే ఉండాలి. ఒకే మెథడ్‌లో <code>void test(int... a, String... b)</code> రాయడం చట్టవిరుద్ధం.
+        </li>
+      </ul>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div id="sec-7" class="section-card">
+      <h2>7. Widening vs Autoboxing vs Varargs ప్రాధాన్యత (Compiler Resolution Priority)</h2>
+      <p>
+        ఒక మెథడ్ కాల్‌ను పరిష్కరించేటప్పుడు జావా కంపైలర్ అత్యంత ఖచ్చితమైన ప్రాధాన్యతా క్రమాన్ని (Resolution Hierarchy) అనుసరిస్తుంది:
+      </p>
+
+      <div style="background:#fefce8; border:1px solid #fde047; border-left:5px solid #ca8a04; border-radius:6px; padding:16px 20px; margin:16px 0; font-size:13.5px; color:#854d0e; line-height:1.8;">
+        <strong>కంపైలర్ రిసొల్యూషన్ 4 దశలు (Priority Order):</strong><br />
+        1. <strong>దశ 1 (Exact Match):</strong> సరిగ్గా సరిపోయే టైప్ (ఉదా: <code>int ➔ int</code>)<br />
+        2. <strong>దశ 2 (Widening / Primitive Promotion):</strong> చిన్న ప్రిమిటివ్ పెద్ద ప్రిమిటివ్‌గా మారడం (ఉదా: <code>int ➔ long ➔ double</code>)<br />
+        3. <strong>దశ 3 (Autoboxing / Unboxing):</strong> ప్రిమిటివ్ ర్యాపర్ ఆబ్జెక్ట్‌గా మారడం (ఉదా: <code>int ➔ Integer</code>)<br />
+        4. <strong>దశ 4 (Varargs):</strong> వేరియబుల్ ఆర్గ్యుమెంట్లు (ఉదా: <code>int...</code>) — ఇది ఎల్లప్పుడూ చివరి ప్రాధాన్యత!
+      </div>
+
+      <p>
+        <strong>ముఖ్యమైన గమనిక:</strong> జావా కంపైలర్ బ్యాక్‌వర్డ్ అనుకూలత (Backward Compatibility) కోసం రూపొందించబడింది. Widening అనేది Java 1.0 నాటిది, Autoboxing మరియు Varargs అనేవి Java 5 లో వచ్చాయి. అందువల్ల పాతకాలపు Widening ఎల్లప్పుడూ Autoboxing మరియు Varargs కంటే ముందు గెలుస్తుంది!
+      </p>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div id="sec-8" class="section-card">
+      <h2>8. Ambiguity ట్రాప్స్ &amp; కంపైలర్ ఎర్రర్స్ (The Ambiguous Method Pitfall)</h2>
+      <p>
+        ఓవర్‌లోడింగ్ మరియు Varargs ను కలిపి వాడేటప్పుడు అత్యంత జాగ్రత్తగా ఉండాలి. క్రింది కోడ్ చూడండి:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.8;">
+        <span style="color:#0284c7;">public static void</span> show(<span style="color:#0284c7;">int</span>... a) { System.out.println(<span style="color:#059669;">"int varargs"</span>); }<br />
+        <span style="color:#0284c7;">public static void</span> show(String... s) { System.out.println(<span style="color:#059669;">"String varargs"</span>); }<br /><br />
+        <span style="color:#64748b;">// ఇప్పుడు మీరు ఖాళీగా కాల్ చేస్తే:</span><br />
+        show(); <span style="color:#ef4444; font-weight:700;">// ❌ Compile Error: reference to show is ambiguous!</span>
+      </div>
+
+      <p>
+        ఖాళీ ఆర్గ్యుమెంట్‌తో పిలిచినప్పుడు, అది <code>int[]</code> కావాలో లేదా <code>String[]</code> కావాలో కంపైలర్ తేల్చుకోలేక క్రాష్ అవుతుంది. ఇటువంటి ఆంబిగ్యుటీలను నివారించడానికి Varargs మెథడ్లను విచక్షణారహితంగా ఓవర్‌లోడ్ చేయకూడదు.
+      </p>
+    </div>
+
+    <!-- SECTION 9: CODE DEMO 1 -->
+    <div id="sec-9" class="section-card">
+      <h2>9. డెమో 1: Widening vs Autoboxing vs Varargs ప్రయారిటీ (Priority Showdown)</h2>
+      <p>
+        జావా కంపైలర్ యొక్క రిసొల్యూషన్ క్రమాన్ని కళ్లారా ధృవీకరించే ప్రాక్టికల్ డెమో ఇది:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">OverloadingResolutionPriorityDemo.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">public class OverloadingResolutionPriorityDemo {
+
+    // Overloaded candidate methods
+    public static void process(long val) {
+        System.out.println("  -> [Winner: Widening] matched process(long): " + val);
+    }
+
+    public static void process(Integer val) {
+        System.out.println("  -> [Winner: Autoboxing] matched process(Integer): " + val);
+    }
+
+    public static void process(int... vals) {
+        System.out.println("  -> [Winner: Varargs] matched process(int...): count = " + vals.length);
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("⚖️ COMPILER OVERLOADING RESOLUTION PRIORITY TEST");
+        System.out.println("=================================================
+");
+
+        int testValue = 42;
+
+        System.out.println("Calling process(int 42) with long, Integer, and int... available:");
+        process(testValue);
+
+        System.out.println("
+తీర్పు:");
+        System.out.println("1. Widening (long) beats Autoboxing (Integer) &amp; Varargs (int...)!");
+        System.out.println("2. Varargs ఎల్లప్పుడూ ఆఖరి ఎంపికగా మాత్రమే పరిగణించబడుతుంది.");
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+⚖️ COMPILER OVERLOADING RESOLUTION PRIORITY TEST
+=================================================
+
+Calling process(int 42) with long, Integer, and int... available:
+  -> [Winner: Widening] matched process(long): 42
+
+తీర్పు:
+1. Widening (long) beats Autoboxing (Integer) &amp; Varargs (int...)!
+2. Varargs ఎల్లప్పుడూ ఆఖరి ఎంపికగా మాత్రమే పరిగణించబడుతుంది.
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 10: CODE DEMO 2 -->
+    <div id="sec-10" class="section-card">
+      <h2>10. డెమో 2: ఫ్లెక్సిబుల్ Varargs మ్యాథ్ కాలిక్యులేటర్ (Flexible Math Calculator)</h2>
+      <p>
+        ఒకటి లేదా అంతకంటే ఎక్కువ పారామీటర్లను తప్పనిసరి చేస్తూ, మిగిలిన ఎన్ని సంఖ్యలనైనా స్వీకరించే ఫ్లెక్సిబుల్ మ్యాథ్ కాలిక్యులేటర్‌ను ఎలా డిజైన్ చేయాలో పరిశీలిద్దాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">FlexibleVarargsCalculator.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">public class FlexibleVarargsCalculator {
+
+    // Overloaded sum methods
+    public static int sum(int a, int b) {
+        return a + b;
+    }
+
+    public static int sum(int a, int b, int c) {
+        return a + b + c;
+    }
+
+    // Varargs sum for any quantity (4 or more, or dynamic collections)
+    public static int sum(int... numbers) {
+        int total = 0;
+        for (int num : numbers) {
+            total += num;
+        }
+        return total;
+    }
+
+    // Best Practice: At least one parameter is strictly mandatory
+    public static double average(double first, double... rest) {
+        double total = first;
+        for (double val : rest) {
+            total += val;
+        }
+        return total / (rest.length + 1);
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("🧮 FLEXIBLE OVERLOADED &amp; VARARGS CALCULATOR");
+        System.out.println("=================================================
+");
+
+        System.out.println("1. Two parameters:   sum(10, 20)             = " + sum(10, 20));
+        System.out.println("2. Three parameters: sum(10, 20, 30)         = " + sum(10, 20, 30));
+        System.out.println("3. Varargs (5 nums): sum(5, 10, 15, 20, 25)  = " + sum(5, 10, 15, 20, 25));
+        System.out.println("4. Varargs (0 nums): sum()                   = " + sum());
+
+        System.out.println("
+5. Mandatory First Arg Average:");
+        System.out.printf("   average(100.0)                     = %.2f%n", average(100.0));
+        System.out.printf("   average(80.0, 90.0, 95.0, 85.0)     = %.2f%n", average(80.0, 90.0, 95.0, 85.0));
+
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+🧮 FLEXIBLE OVERLOADED &amp; VARARGS CALCULATOR
+=================================================
+
+1. Two parameters:   sum(10, 20)             = 30
+2. Three parameters: sum(10, 20, 30)         = 60
+3. Varargs (5 nums): sum(5, 10, 15, 20, 25)  = 75
+4. Varargs (0 nums): sum()                   = 0
+
+5. Mandatory First Arg Average:
+   average(100.0)                     = 100.00
+   average(80.0, 90.0, 95.0, 85.0)     = 87.50
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 11: CAPSTONE PROJECT -->
+    <div id="sec-11" class="section-card">
+      <h2>11. Capstone ప్రాజెక్ట్: మల్టీ-ఛానల్ క్లౌడ్ అలర్ట్ డిస్పాచర్ ఇంజిన్</h2>
+      <p>
+        ఈ అధ్యాయంలో నేర్చుకున్న అన్ని కాన్సెప్టులను (మెథడ్ ఓవర్‌లోడింగ్, Varargs, కంపైల్-టైమ్ సేఫ్టీ, స్ట్రింగ్ ఫార్మాటింగ్) సమగ్రంగా మేళవిస్తూ ఒక ఎంటర్‌ప్రైజ్ స్థాయి <strong>Multi-Channel Cloud Alert &amp; Incident Dispatcher</strong> ను నిర్మిద్దాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">CloudNotificationDispatcherEngine.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">public class CloudNotificationDispatcherEngine {
+
+    public enum Priority { LOW, MEDIUM, HIGH, CRITICAL }
+
+    // Overloaded Dispatch Methods
+
+    // 1. Single SMS Alert
+    public static void sendAlert(String phoneNumber, String message) {
+        System.out.printf("📱 [SMS DISPATCH] To: %s | Message: %s%n", phoneNumber, message);
+    }
+
+    // 2. Email with Subject and Priority
+    public static void sendAlert(String email, String subject, Priority priority, String message) {
+        System.out.printf("📧 [EMAIL DISPATCH] To: %-18s | Priority: %-8s | Subj: %-15s | Body: %s%n",
+                email, priority, subject, message);
+    }
+
+    // 3. Multi-Channel Broadcast via Varargs
+    public static void sendAlert(Priority priority, String message, String... targetChannels) {
+        System.out.printf("%n📢 [BROADCAST ALERT - %s] Message: '%s'%n", priority, message);
+        System.out.println("   Active Target Nodes (" + targetChannels.length + "):");
+        for (String channel : targetChannels) {
+            System.out.println("    └─► Dispatched to channel: " + channel);
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("🚨 ENTERPRISE CLOUD MULTI-CHANNEL DISPATCHER");
+        System.out.println("=================================================
+");
+
+        // Use case 1: Quick SMS
+        sendAlert("+91-9848012345", "OTP for login: 928410. Valid for 5 mins.");
+
+        // Use case 2: Rich Email
+        sendAlert("balaji@company.com", "DB High Memory", Priority.HIGH, "PostgreSQL RAM exceeded 88% threshold.");
+
+        // Use case 3: Varargs Incident Broadcast to multiple internal channels
+        sendAlert(
+            Priority.CRITICAL,
+            "Service Outage: PaymentGateway-v2 returned 503 Service Unavailable",
+            "#slack-incident-war-room",
+            "pagerduty:on-call-dev",
+            "webhook:https://status.company.com/api/v1/update",
+            "email:executives@company.com"
+        );
+
+        System.out.println("
+=================================================");
+        System.out.println("✅ All notification streams dispatched successfully!");
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+🚨 ENTERPRISE CLOUD MULTI-CHANNEL DISPATCHER
+=================================================
+
+📱 [SMS DISPATCH] To: +91-9848012345 | Message: OTP for login: 928410. Valid for 5 mins.
+📧 [EMAIL DISPATCH] To: balaji@company.com  | Priority: HIGH     | Subj: DB High Memory  | Body: PostgreSQL RAM exceeded 88% threshold.
+
+📢 [BROADCAST ALERT - CRITICAL] Message: 'Service Outage: PaymentGateway-v2 returned 503 Service Unavailable'
+   Active Target Nodes (4):
+    └─► Dispatched to channel: #slack-incident-war-room
+    └─► Dispatched to channel: pagerduty:on-call-dev
+    └─► Dispatched to channel: webhook:https://status.company.com/api/v1/update
+    └─► Dispatched to channel: email:executives@company.com
+
+=================================================
+✅ All notification streams dispatched successfully!
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 12 -->
+    <div id="sec-12" class="section-card">
+      <h2>12. ప్రొడక్షన్ పిట్‌ఫాల్స్, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 క్విజ్‌లు (Best Practices &amp; Quizzes)</h2>
+
+      <h4 style="color:#ef4444; margin:16px 0 10px 0;">🚫 ప్రొడక్షన్‌లో నివారించాల్సిన 4 ఘోరమైన తప్పులు (Production Pitfalls):</h4>
+      <ol style="line-height:1.8; color:var(--text2); font-size:14px; padding-left:20px;">
+        <li style="margin-bottom:10px;">
+          <strong>కేవలం రిటర్న్ టైప్ మార్చి ఓవర్‌లోడ్ చేయాలని ప్రయత్నించడం:</strong> ఇది కంపైలేషన్ ఎర్రర్‌కు దారితీస్తుంది.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>ప్రాచీనమైన Widening మరియు Autoboxing ను ఒకేసారి ఆశించడం:</strong> జావా <code>int</code> ను ఒకే స్టెప్‌లో <code>Long</code> (Widening + Autoboxing) గా మార్చదు! <code>int ➔ long</code> సాధ్యమే, లేదా <code>int ➔ Integer</code> సాధ్యమే, కానీ <code>int ➔ Long</code> కంపైలేషన్ ఎర్రర్ అవుతుంది.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>Varargs మెథడ్లను విపరీతంగా ఓవర్‌లోడ్ చేయడం:</strong> ఇది కాలర్ల వద్ద అంతుచిక్కని <code>ambiguous method call</code> ఎర్రర్‌లను తెచ్చిపెడుతుంది.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>లూపులలో ప్రతిసారీ Varargs ను పిలవడం:</strong> లూప్‌లో వేలాది సార్లు Varargs పిలిస్తే ప్రతిసారీ కొత్త తాత్కాలిక ఎరే హీప్‌లో ఏర్పడి GC పై భారం పడుతుంది. భారీ లూపులకు స్పష్టమైన ఎరే లేదా కలెక్షన్లను ముందే కేటాయించండి.
+        </li>
+      </ol>
+
+      <h4 style="color:#10b981; margin:26px 0 10px 0;">✨ ప్రొడక్షన్ గోల్డెన్ రూల్స్ (Golden Rules):</h4>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; font-size:13.5px; line-height:1.8; color:var(--text);">
+        1. <strong>పనితీరు కోసం:</strong> తరచూ వాడే 1 లేదా 2 ఆర్గ్యుమెంట్ల కోసం స్పష్టమైన ఓవర్‌లోడెడ్ మెథడ్స్ రాసి, అదనపు ఆర్గ్యుమెంట్ల కోసమే Varargs వాడండి.<br />
+        2. <strong>కనీస ఇన్‌పుట్ గ్యారెంటీ:</strong> Varargs మెథడ్‌కు కనీసం ఒక ఆర్గ్యుమెంట్ తప్పనిసరి చేయాలనుకుంటే <code>foo(Type first, Type... rest)</code> పద్ధతిని అనుసరించండి.<br />
+        3. <strong>కంపైలర్ భద్రత:</strong> జెనరిక్ Varargs తో పనిచేసేటప్పుడు Heap Pollution హెచ్చరికలను నివారించడానికి <code>@SafeVarargs</code> అనోటేషన్ వాడండి.
+      </div>
+
+      <!-- QUIZ SECTION -->
+      <h3 style="color:#10b981; margin:32px 0 16px 0;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 1: మెథడ్ ఓవర్‌లోడింగ్‌ను 'కంపైల్-టైమ్ పాలిమార్ఫిజం' అని ఎందుకు అంటారు?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> కంపైలేషన్ సమయంలోనే పారామీటర్ల రకాలు మరియు సంఖ్య ఆధారంగా ఏ నిర్దిష్ట మెథడ్‌ను పిలవాలో జావా కంపైలర్ ఖరారు చేస్తుంది (Static Binding) కాబట్టి.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 2: కేవలం రిటర్న్ టైప్ మాత్రమే వేరుగా ఉన్న రెండు మెథడ్లను ఒకే క్లాస్‌లో ఓవర్‌లోడ్ చేయవచ్చా?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> చేయలేము! పారామీటర్ల సంఖ్య, రకం లేదా క్రమంలో ఎటువంటి మార్పు లేకుండా కేవలం రిటర్న్ టైప్ మారిస్తే కంపైలేషన్ ఎర్రర్ వస్తుంది.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 3: Widening, Autoboxing మరియు Varargs లలో దేనికి అత్యధిక ప్రాధాన్యత ఉంటుంది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <strong>Widening (ప్రిమిటివ్ ప్రమోషన్)</strong> కి మొదటి ప్రాధాన్యత, ఆ తర్వాత Autoboxing, మరియు చివరిగా Varargs కి ప్రాధాన్యత లభిస్తుంది.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 4: ఒక మెథడ్ పారామీటర్ల లిస్ట్‌లో Varargs ఎక్కడ ఉండాలి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> తప్పనిసరిగా <strong>చివరి పారామీటర్‌గా (Last Parameter)</strong> మాత్రమే ఉండాలి మరియు ఒక మెథడ్‌కు ఒక Varargs మాత్రమే అనుమతించబడుతుంది.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 5: 'void log(String... msgs)' మెథడ్‌కు ఎటువంటి ఆర్గ్యుమెంట్లు పంపకుండా 'log()' అని పిలిస్తే ఏమవుతుంది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> ప్రోగ్రామ్ విజయవంతంగా రన్ అవుతుంది! JVM అంతర్గతంగా పొడవు 0 ఉన్న ఖాళీ ఎరేను (<code>new String[0]</code>) సృష్టించి పంపుతుంది.
+        </p>
+      </details>
+    </div>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/12-java-methods-call-stack-and-pass-by-value.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 12. Methods &amp; Call Stack
+      </a>
+      <a href="/blog-java/14-java-oop-classes-objects-and-constructors.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 14. Classes, Objects &amp; Heap →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>
