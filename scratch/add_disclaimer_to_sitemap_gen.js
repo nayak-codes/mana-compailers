@@ -14,3 +14,4 @@ if (!content.includes("'disclaimer.html'")) {
 } else {
   console.log("disclaimer.html already in scratch/generate_comprehensive_sitemap.js");
 }
+

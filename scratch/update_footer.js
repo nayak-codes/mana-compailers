@@ -24,3 +24,4 @@ if (s.includes("'<a href=\"/disclaimer.html\">Disclaimer</a>'")) {
 
 fs.writeFileSync(footerPath, s, 'utf8');
 console.log("Footer updated successfully!");
+
