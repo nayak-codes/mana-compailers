@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>లూప్ కంట్రోల్ — break, continue, pass & else — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Python 3 లూప్ కంట్రోల్ స్టేట్‌మెంట్స్ సమగ్ర తెలుగు గైడ్: break, continue, pass మరియు పైథాన్ ప్రత్యేకమైన for-else & while-else లూప్స్. నెస్టెడ్ లూప్ బ్రేక్స్, ఎర్లీ ఎగ్జిట్ ప్యాటర్న్స్, మరియు Cyber Security Intrusion Detection System ప్రాజెక్ట్." />
+  <meta name="keywords" content="python break continue pass telugu, python for else telugu, python loop control telugu, break nested loops python, learn python in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/08-python-loop-control-break-continue-else.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-python/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "లూప్ కంట్రోల్ — break, continue, pass & else (Complete Guide to Python Loop Control, break, continue, pass and for-else in Telugu)",
+    "description": "Python 3 లూప్ కంట్రోల్ పూర్తి గైడ్: break, continue, pass, for-else & while-else లూప్స్, multi-level nested break, మరియు Cyber Security Intrusion Detection System.",
+    "articleSection": "Phase 02: కంట్రోల్ ఫ్లో, లూప్స్ & స్ట్రింగ్స్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-01-22",
+    "dateModified": "2026-11-02"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Compiler Integration -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___PY_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|f?"[^"\\]*(?:\\.[^"\\]*)*"|f?'[^'\\]*(?:\\.[^'\\]*)*'|r"[^"\\]*(?:\\.[^"\\]*)*"|r'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'import','from','as','def','return','class','if','elif','else','while','for','in',
+        'break','continue','pass','try','except','finally','with','lambda','global','nonlocal',
+        'and','or','not','is','yield','async','await','raise','assert','True','False','None'
+      ];
+      const kwRegex = new RegExp('\\b(' + kwList.join('|') + ')\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'print','len','range','type','isinstance','id','input','int','float','str','list',
+        'dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted',
+        'abs','open','help','dir','filter','bool'
+      ];
+      const fnRegex = new RegExp('\\b(' + fnList.join('|') + ')\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('num', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split('___PY_TOK_' + idx + '___').join(tok);
+      });
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code.language-python').forEach(block => {
+        block.innerHTML = highlightPythonCode(block.innerText);
+      });
+    });
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      const code = pre.innerText;
+      try {
+        localStorage.setItem('code_python', code);
+        localStorage.setItem('code_python3', code);
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+      window.open('/online-python-compiler.html', '_blank');
+    }
+  </script>
+</head>
+
+<body class="lang-python light-theme">
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Python 3 Master Course (తెలుగు)</div>
+    <a href="/blog-python.html" class="sidebar-home-link">🐍 Python Course HOME (ఇండెక్స్)</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">పైథాన్ ఫండమెంటల్స్ & బేసిక్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/01-python-introduction-features-and-setup.html">1. పైథాన్ పరిచయం, ఫీచర్లు & ఎన్విరాన్‌మెంట్ సెటప్</a>
+        <a href="/blog-python/02-python-syntax-indentation-and-comments.html">2. సింటాక్స్, ఇండెంటేషన్ & కామెంట్స్</a>
+        <a href="/blog-python/03-python-variables-data-types-and-naming.html">3. వేరియబుల్స్, డేటా టైప్స్ & టైప్ కాస్టింగ్</a>
+        <a href="/blog-python/04-python-input-output-formatting.html">4. ఇన్‌పుట్ & అవుట్‌పుట్ ఫార్మాటింగ్ (print, input & f-strings)</a>
+        <a href="/blog-python/05-python-operators-and-expressions.html">5. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్</a>
+      </div>
+
+      <!-- Phase 02 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో, లూప్స్ & స్ట్రింగ్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-python/06-python-conditional-statements-branching.html">6. డెసిషన్ మేకింగ్ (if, elif, else & match-case)</a>
+        <a href="/blog-python/07-python-loops-while-and-for.html">7. లూప్స్ — while & for లూప్స్</a>
+        <a href="/blog-python/08-python-loop-control-break-continue-else.html" class="active">8. లూప్ కంట్రోల్ — break, continue, pass & else</a>
+        <a href="/blog-python/09-python-strings-deep-dive-slicing.html">9. స్ట్రింగ్స్ డీప్ డైవ్ & స్లైసింగ్ (String Mastery)</a>
+        <a href="/blog-python/10-python-regular-expressions-regex.html">10. రెగ్యులర్ ఎక్స్‌ప్రెషన్స్ (Regex & Pattern Matching)</a>
+      </div>
+
+      <!-- Phase 03 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">డేటా స్ట్రక్చర్స్ & కలెక్షన్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/11-python-lists-and-comprehensions.html">11. లిస్ట్స్ (Lists) & లిస్ట్ కాంప్రహెన్షన్స్</a>
+        <a href="/blog-python/12-python-tuples-and-immutability.html">12. టుపుల్స్ (Tuples) & ఇమ్మ్యుటబిలిటీ</a>
+        <a href="/blog-python/13-python-dictionaries-deep-dive.html">13. డిక్షనరీలు (Dictionaries) & డిక్ట్ కాంప్రహెన్షన్స్</a>
+        <a href="/blog-python/14-python-sets-and-operations.html">14. సెట్స్ (Sets) & సెట్ మ్యాథమెటికల్ ఆపరేషన్స్</a>
+        <a href="/blog-python/15-python-collections-advanced-structures.html">15. కలెక్షన్స్ మాడ్యూల్ & అడ్వాన్స్‌డ్ డేటా స్ట్రక్చర్స్</a>
+      </div>
+
+      <!-- Phase 04 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">ఫంక్షన్స్, మాడ్యూల్స్ & ఫైల్ I/O</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/16-python-functions-fundamentals.html">16. ఫంక్షన్స్ ఫండమెంటల్స్ & ఆర్గ్యుమెంట్స్</a>
+        <a href="/blog-python/17-python-args-kwargs-variable-scope.html">17. వేరియబుల్ ఆర్గ్యుమెంట్స్ & స్కోప్ (*args, **kwargs & LEGB)</a>
+        <a href="/blog-python/18-python-lambda-recursion-functional.html">18. ల్యాంబ్డా, రికర్షన్ & ఫంక్షనల్ ప్రోగ్రామింగ్</a>
+        <a href="/blog-python/19-python-modules-packages-and-pip.html">19. మాడ్యూల్స్, ప్యాకేజీలు & వర్చువల్ ఎన్విరాన్‌మెంట్స్</a>
+        <a href="/blog-python/20-python-file-handling-and-json.html">20. ఫైల్ హ్యాండ్లింగ్, CSV & JSON ప్రాసెసింగ్</a>
+      </div>
+
+      <!-- Phase 05 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">OOP, ఎక్సెప్షన్స్ & ప్రాజెక్ట్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/21-python-exception-handling.html">21. ఎక్సెప్షన్ హ్యాండ్లింగ్ & కస్టమ్ ఎర్రర్స్</a>
+        <a href="/blog-python/22-python-oop-classes-and-objects.html">22. OOP బేసిక్స్ — క్లాసెస్, ఆబ్జెక్ట్స్ & __init__</a>
+        <a href="/blog-python/23-python-oop-inheritance-polymorphism.html">23. OOP పిల్లర్స్ — ఇన్హెరిటెన్స్, ఎన్‌క్యాప్సులేషన్ & పాలిమార్ఫిజమ్</a>
+        <a href="/blog-python/24-python-decorators-generators-dunder.html">24. అడ్వాన్స్‌డ్ పైథాన్ — డెకరేటర్లు, జెనరేటర్లు & డండర్ మెథడ్స్</a>
+        <a href="/blog-python/25-python-capstone-project.html">25. గ్రాండ్ ఫినాలే: రియల్-వరల్డ్ పైథాన్ క్యాప్‌స్టోన్ ప్రాజెక్ట్</a>
+      </div>
+
+    </div>
+
+    <div style="margin-top:24px; padding:16px; background:var(--bg2); border:1px solid var(--border); border-radius:10px; font-size:12px; text-align:center;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:4px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+      <a href="/online-python-compiler.html" style="color:var(--text); text-decoration:none; font-weight:600; display:inline-block; margin-top:6px; background:rgba(16,185,129,0.12); padding:6px 12px; border-radius:6px; border:1px solid rgba(16,185,129,0.3);">
+        ▶ Try Online Python Compiler
+      </a>
+      <a href="/blog.html" style="color:var(--text2); text-decoration:none; display:block; margin-top:8px;">
+        📁 All Tutorials Index
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="content">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a>
+      <span class="sep">›</span>
+      <a href="/blog-python.html">Python Masterclass</a>
+      <span class="sep">›</span>
+      <span>Chapter 8: లూప్ కంట్రోల్ — break, continue, pass & else</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">లూప్ కంట్రోల్ — break, continue, pass & else</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge badge-tech">🐍 Modern Python (Python 3.12+)</span>
+      <span class="badge badge-chapter">🎯 Chapter 8 of 25</span>
+      <span class="badge badge-phase">⚙️ Phase 02: కంట్రోల్ ఫ్లో, లూప్స్ &amp; స్ట్రింగ్స్</span>
+      <span class="badge badge-edition">📅 2026 Edition</span>
+    </div>
+
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin-bottom:24px; font-size:13px; line-height:1.7;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span style="color:var(--text2); margin-left:6px;">
+        లూప్ ఫ్లో ఇంటరప్షన్ · break స్టేట్‌మెంట్ &amp; ఎర్లీ ఎగ్జిట్ · continue &amp; డేటా ఫిల్టరింగ్ · pass ప్లేస్‌హోల్డర్ vs Ellipsis (...) · పైథాన్ ప్రత్యేకమైన for-else &amp; while-else లూప్స్ · మల్టీ-లెవల్ నెస్టెడ్ లూప్ బ్రేక్స్ · Cyber Security Log Intrusion Engine ప్రాజెక్ట్!
+      </span>
+    </div>
+
+    <!-- INTRO BOX (Warm Soft Ivory HTML5 Style) -->
+    <div class="intro-box">
+      లూప్స్ అనేవి మొదలైన తర్వాత సాధారణంగా తమ పరిధిలోని అన్ని అంశాలు పూర్తయ్యే వరకు లేదా ఇచ్చిన షరతు ఫాల్స్ అయ్యే వరకు నిరంతరాయంగా తిరుగుతాయి.
+      కానీ వాస్తవ ప్రపంచ సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌లో కొన్ని అనుకోని పరిస్థితులు ఎదురవుతాయి: ఉదాహరణకు మనం వెతుకుతున్న డేటా రికార్డు లూప్ ప్రారంభంలోనే దొరికినప్పుడు ఇంకా మిగిలిన 10 లక్షల రౌండ్లు తిరగడం సమయాన్ని వృధా చేయడమే అవుతుంది! లేదా ఒక చెల్లని కలుషితమైన రికార్డు వచ్చినప్పుడు దాన్ని దాటవేసి తర్వాతి రౌండ్‌కు వెళ్లాల్సి ఉంటుంది.
+      అలాంటి సందర్భాలలో లూప్ యొక్క సహజ ప్రవాహాన్ని నియంత్రించడానికి పైథాన్ <strong><code>break</code></strong>, <strong><code>continue</code></strong>, <strong><code>pass</code></strong> మరియు ప్రపంచంలో చాలా కొద్ది భాషల్లో మాత్రమే ఉండే అరుదైన <strong><code>for-else / while-else</code></strong> నిర్మాణాలను అందిస్తుంది.
+      ఈ ఎనిమిదవ అధ్యాయంలో — జంప్ స్టేట్‌మెంట్ల ఆర్కిటెక్చర్, నెస్టెడ్ లూప్ ఎస్కేప్ టెక్నిక్స్, మరియు సర్వర్ యాక్సెస్ లాగ్స్‌ను విశ్లేషించి సైబర్ దాడులను గుర్తించే పూర్తి స్థాయి <strong>Automated Cyber Security Log Analyzer &amp; Intrusion Detection System</strong> ప్రాజెక్ట్ ద్వారా లూప్ కంట్రోల్‌లో పరిపూర్ణ నైపుణ్యాన్ని సాధిద్దాం!
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 class="section-title"><span class="num">1</span> లూప్ కంట్రోల్ స్టేట్‌మెంట్స్ పరిచయం (Loop Flow Interruption)</h2>
+    <p>
+      పైథాన్‌లో లూప్ నడుస్తున్నప్పుడు దాని సాధారణ ప్రవర్తనను మార్చడానికి 4 ప్రధాన కంట్రోల్ స్టేట్‌మెంట్స్ ఉన్నాయి:
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>స్టేట్‌మెంట్</th>
+            <th>కీలక చర్య (Action)</th>
+            <th>లూప్ పరిస్థితి</th>
+            <th>సాధారణ ఉపయోగం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><code>break</code></strong></td>
+            <td>లూప్‌ను అక్కడికక్కడే <strong>శాశ్వతంగా నిలిపివేస్తుంది</strong>.</td>
+            <td>లూప్ వెంటనే ముగుస్తుంది; కంట్రోల్ లూప్ వెలుపలికి వెళ్తుంది.</td>
+            <td>సెర్చ్ ఆపరేషన్లలో ఐటెమ్ దొరికినప్పుడు, ఎర్రర్ వచ్చినప్పుడు.</td>
+          </tr>
+          <tr>
+            <td><strong><code>continue</code></strong></td>
+            <td>ప్రస్తుత రౌండ్‌ను మధ్యలోనే ఆపి, <strong>తర్వాతి రౌండ్‌కు వెళ్తుంది</strong>.</td>
+            <td>లూప్ ఆగదు; తర్వాతి ఐటెమ్‌ను ప్రాసెస్ చేయడం ప్రారంభిస్తుంది.</td>
+            <td>చెల్లని డేటాను, నెగటివ్ విలువలను దాటవేయడానికి (Data Filtering).</td>
+          </tr>
+          <tr>
+            <td><strong><code>pass</code></strong></td>
+            <td>ఏ పనీ చేయదు (No-operation / Null statement).</td>
+            <td>లూప్ ప్రవాహంపై ఎటువంటి ప్రభావం ఉండదు.</td>
+            <td>సింటాక్స్ ఎర్రర్ రాకుండా భవిష్యత్తు కోడ్ కోసం ప్లేస్‌హోల్డర్.</td>
+          </tr>
+          <tr>
+            <td><strong><code>else</code></strong></td>
+            <td>లూప్ ఎటువంటి <code>break</code> లేకుండా పూర్తయినప్పుడు రన్ అవుతుంది.</td>
+            <td>సహజసిద్ధంగా ముగిసినప్పుడు మాత్రమే ఎగ్జిక్యూట్ అవుతుంది.</td>
+            <td>ఫ్లాగ్ వేరియబుల్స్ లేకుండా ఐటెమ్ దొరకలేదని నిర్ధారించడానికి.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 2 -->
+    <h2 class="section-title"><span class="num">2</span> <code>break</code> స్టేట్‌మెంట్ — లూప్‌ను తక్షణమే నిలిపివేయడం (Immediate Loop Exit)</h2>
+    <p>
+      <code>break</code> స్టేట్‌మెంట్ కనిపించిన క్షణంలోనే, లూప్ యొక్క కండిషన్ ఇంకా True గా ఉన్నప్పటికీ లేదా లిస్ట్‌లో ఇంకా ఎన్నో అంశాలు మిగిలి ఉన్నప్పటికీ — పైథాన్ ఆ లూప్‌ను తక్షణమే ముగించి బయటకు వచ్చేస్తుంది.
+    </p>
+
+    <!-- ARCHITECTURE DIAGRAM -->
+    <div style="background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:20px; margin:20px 0; color:#e2e8f0; font-family:'JetBrains Mono', monospace; font-size:13px; overflow-x:auto;">
+<span style="color:#38bdf8; font-weight:700;">[break స్టేట్‌మెంట్ ఎగ్జిక్యూషన్ ఫ్లో]</span>
+
+      for item in collection:
+             │
+             ▼
+      ┌──────────────┐
+      │  స్టేట్‌మెంట్ 1 │
+      └──────┬───────┘
+             │
+             ▼
+     ╱───────────────╲       (ఒకవేళ True అయితే)
+    ╱   break condition?╲───────────────────────┐
+    ╲                 ╱                         │
+     ╲───────────────╱                          ▼
+             │ (False)                     ┌─────────┐
+             ▼                             │  break  │
+      ┌──────────────┐                     └────┬────┘
+      │  స్టేట్‌మెంట్ 2 │                          │
+      └──────┬───────┘                          │
+             │                                  │
+             └───────────┐                      │
+                         ▼                      ▼
+                 [ తర్వాతి రౌండ్ ]     [ లూప్ పూర్తిగా సమాప్తం! ]
+    </div>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:8px;">💡 break మరియు నెస్టెడ్ లూప్స్ (Innermost Only):</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        ఒక లూప్ లోపల మరొక లూప్ (Nested Loop) ఉన్నప్పుడు, లోపలి లూప్‌లో రాసిన <code>break</code> కేవలం ఆ లోపలి లూప్‌ను మాత్రమే ఆపుతుంది!
+        బయటి లూప్ ఎప్పటిలాగే తన తర్వాతి రౌండ్‌ను కొనసాగిస్తుంది.
+      </p>
+    </div>
+
+    <!-- SECTION 3 -->
+    <h2 class="section-title"><span class="num">3</span> కోడ్ డెమో 1: <code>break</code> ఆధారిత బ్యాంక్ ATM పిన్ వెరిఫికేషన్</h2>
+    <p>
+      యూజర్‌కు కేవలం 3 అవకాశాలు మాత్రమే ఇచ్చి, సరైన పిన్ కొట్టినప్పుడు వెంటనే లూప్ బ్రేక్ అయ్యే లాజిక్‌ను పరిశీలించండి:
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">01_break_atm_security_pin.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># ATM సెక్యూరిటీ పిన్ వెరిఫికేషన్ (గరిష్టంగా 3 ప్రయత్నాలు)
+
+CORRECT_PIN = "5432"
+MAX_ATTEMPTS = 3
+attempt = 1
+
+# సిమ్యులేటెడ్ యూజర్ ఎంట్రీలు (టెస్టింగ్ కోసం)
+user_inputs = ["1111", "5432", "9999"]
+
+print("=" * 55)
+print("     🏧 మన బ్యాంక్ ATM — పిన్ వెరిఫికేషన్ సిస్టమ్")
+print("=" * 55)
+
+for entered_pin in user_inputs:
+    print(f"ప్రయత్నం {attempt} of {MAX_ATTEMPTS}: పిన్ '{entered_pin}' నమోదు చేయబడింది...")
+
+    if entered_pin == CORRECT_PIN:
+        print("✅ పిన్ ధృవీకరించబడింది! లాగిన్ విజయవంతమైంది.")
+        print("➡️ ప్రధాన బ్యాంకింగ్ మెనూకి మళ్లించబడుతోంది...")
+        break  # పిన్ సరైనది కాబట్టి లూప్‌ను వెంటనే ఆపివేస్తున్నాము!
+
+    print(f"❌ తప్పుడు పిన్! మిగిలిన ప్రయత్నాలు: {MAX_ATTEMPTS - attempt}")
+    attempt += 1
+
+    if attempt > MAX_ATTEMPTS:
+        print("🛑 హెచ్చరిక: 3 సార్లు తప్పుడు పిన్! మీ డెబిట్ కార్డ్ 24 గంటలు బ్లాక్ చేయబడింది.")
+        break
+
+print("=" * 55)
+</code></pre>
+    </div>
+
+    <!-- SECTION 4 -->
+    <h2 class="section-title"><span class="num">4</span> <code>continue</code> స్టేట్‌మెంట్ — ప్రస్తుత రౌండ్‌ను దాటవేయడం (Skipping)</h2>
+    <p>
+      <code>continue</code> స్టేట్‌మెంట్ కనిపించినప్పుడు, ఆ రౌండ్‌లో దాని కింద ఉన్న కోడ్ లైన్లను దాటవేసి, లూప్ యొక్క తర్వాతి రౌండ్‌కు (Next Iteration) వెంటనే వెళ్లిపోతుంది.
+      ఇది డేటా ప్రాసెసింగ్ పైప్‌లైన్‌లలో చెల్లని అంశాలను ఫిల్టర్ చేయడానికి ఎక్కువగా ఉపయోగపడుతుంది.
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>లక్షణం</th>
+            <th><code>break</code></th>
+            <th><code>continue</code></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>లూప్ పరిస్థితి</strong></td>
+            <td>మొత్తం లూప్ శాశ్వతంగా ముగుస్తుంది.</td>
+            <td>కేవలం ప్రస్తుత రౌండ్ మాత్రమే రద్దవుతుంది; లూప్ కొనసాగుతుంది.</td>
+          </tr>
+          <tr>
+            <td><strong>మిగిలిన ఐటెమ్స్</strong></td>
+            <td>మిగిలిన ఏ ఐటెమ్‌ను కూడా ముట్టుకోదు.</td>
+            <td>మిగిలిన అన్ని ఐటెమ్స్‌ను వరుసగా ప్రాసెస్ చేస్తుంది.</td>
+          </tr>
+          <tr>
+            <td><strong>వాడే సందర్భం</strong></td>
+            <td>సెర్చ్ పూర్తయినప్పుడు, ఎమర్జెన్సీ షట్‌డౌన్.</td>
+            <td>స్పేస్‌లు, ఖాళీ రికార్డులు, బ్యాడ్ డేటాను ఇగ్నోర్ చేయడానికి.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 5 -->
+    <h2 class="section-title"><span class="num">5</span> కోడ్ డెమో 2: <code>continue</code> ఆధారిత డేటా శానిటైజేషన్</h2>
+    <p>
+      ఒక ఈ-కామర్స్ ఆర్డర్ల లిస్ట్‌లో నెగటివ్ విలువలు లేదా చెల్లని రికార్డులు ఉన్నప్పుడు వాటిని <code>continue</code> ద్వారా దాటవేసి సరైన ఆర్డర్ల మొత్తాన్ని మాత్రమే లెక్కించే కోడ్ చూడండి:
+    </p>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">02_continue_data_sanitization.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># చెల్లని రికార్డులను దాటవేసే continue డెమో
+
+raw_transactions = [
+    {"txn_id": "T101", "amount": 1499.00, "status": "COMPLETED"},
+    {"txn_id": "T102", "amount": -50.00,  "status": "CORRUPT"},   # బ్యాడ్ డేటా
+    {"txn_id": "T103", "amount": 2899.50, "status": "COMPLETED"},
+    {"txn_id": "T104", "amount": 0.00,    "status": "FAILED"},    # ఫెయిల్ అయిన లావాదేవీ
+    {"txn_id": "T105", "amount": 750.00,  "status": "COMPLETED"}
+]
+
+valid_total = 0.0
+processed_count = 0
+
+print("=" * 60)
+print(f"{'లావాదేవీ ID':<15} {'స్థితి':<15} {'మొత్తం (₹)':>15}")
+print("=" * 60)
+
+for txn in raw_transactions:
+    # 1. చెల్లని లావాదేవీలను continue ద్వారా దాటవేస్తున్నాము
+    if txn["status"] != "COMPLETED" or txn["amount"] <= 0:
+        print(f"⚠️ స్కిప్ చేయబడింది: [{txn['txn_id']}] స్థితి: {txn['status']}")
+        continue
+
+    # కేవలం సరైన లావాదేవీలకే ఈ కోడ్ రన్ అవుతుంది
+    valid_total += txn["amount"]
+    processed_count += 1
+    print(f"✅ ప్రాసెస్ అయ్యింది: {txn['txn_id']:<10} {txn['status']:<15} {txn['amount']:>15,.2f}")
+
+print("-" * 60)
+print(f"విజయవంతమైన లావాదేవీలు : {processed_count} of {len(raw_transactions)}")
+print(f"మొత్తం సేకరించిన మొత్తం : ₹ {valid_total:,.2f}")
+print("=" * 60)
+</code></pre>
+    </div>
+
+    <!-- SECTION 6 -->
+    <h2 class="section-title"><span class="num">6</span> <code>pass</code> స్టేట్‌మెంట్ — ది నో-ఆప్ ప్లేస్‌హోల్డర్ (The No-Op Null Statement)</h2>
+    <p>
+      పైథాన్‌లో ఇతర భాషల్లో లాగా ఖాళీ కర్లీ బ్రేసెస్ <code>{}</code> లేదా సెమికోలన్ <code>;</code> పెట్టి బ్లాక్‌ను ఖాళీగా వదిలేయలేము.
+      ఒక <code>if</code> లేదా <code>for</code> కింద ఏమీ రాయకపోతే పైథాన్ <strong><code>IndentationError: expected an indented block</code></strong> ఎర్రర్‌ను విసురుతుంది!
+    </p>
+    <p>
+      అందుకే సింటాక్స్ నియమాలను సంతృప్తి పరుస్తూ, ప్రస్తుతానికి ఏ పనీ చేయకుండా ఉండేందుకు <strong><code>pass</code></strong> అనే శూన్య స్టేట్‌మెంట్‌ను (No-Op) ఉపయోగిస్తాము:
+    </p>
+
+    <div style="background:#0f172a; padding:14px 20px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.7;">
+      # ఫ్యూచర్ ఫీచర్ కోసం ప్లేస్‌హోల్డర్:<br/>
+      def process_ai_neural_network():<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;pass # రాబోయే వెర్షన్‌లో కోడ్ రాయబోతున్నాము<br/><br/>
+      # ఎక్సెప్షన్ వచ్చినప్పుడు సైలెంట్‌గా ఇగ్నోర్ చేయడానికి:<br/>
+      try:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;risky_operation()<br/>
+      except Exception:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;pass<br/><br/>
+      # పైథాన్ 3 లో Ellipsis (...) ను కూడా pass లాగా వాడవచ్చు:<br/>
+      def future_func():<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;...
+    </div>
+
+    <!-- SECTION 7 -->
+    <h2 class="section-title"><span class="num">7</span> పైథాన్ స్పెషల్ ఫీచర్: <code>for-else</code> &amp; <code>while-else</code> లూప్స్!</h2>
+    <p>
+      చాలామంది డెవలపర్లు పైథాన్‌కు కొత్తగా వచ్చినప్పుడు ఆశ్చర్యపోయే అత్యంత అద్భుతమైన ఫీచర్: <strong>లూప్‌లకు కూడా <code>else</code> బ్లాక్ ఉండటం!</strong>
+    </p>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:8px;">🌟 ది గోల్డెన్ రూల్ of Loop-Else:</div>
+      <p style="font-size:14px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        <strong>లూప్ తన సహజ ముగింపుకు చేరుకున్నప్పుడు (ఎటువంటి <code>break</code> ట్రిగ్గర్ అవ్వకుండా పూర్తయినప్పుడు) మాత్రమే <code>else</code> బ్లాక్ రన్ అవుతుంది!</strong>
+        ఒకవేళ లూప్ మధ్యలో ఎక్కడైనా <code>break</code> ద్వారా ఆగిపోతే, <code>else</code> బ్లాక్ అస్సలు రన్ అవ్వదు!
+      </p>
+    </div>
+
+    <p>
+      సాధారణంగా ఏదైనా ఐటెమ్ దొరికిందో లేదో చూడటానికి ఇతర భాషల్లో <code>found = False</code> అని ఫ్లాగ్ వేరియబుల్ వాడాల్సి వస్తుంది.
+      కానీ పైథాన్‌లో ఎటువంటి ఫ్లాగ్ వేరియబుల్స్ అవసరం లేకుండా <code>for-else</code> తో నేరుగా రాయవచ్చు!
+    </p>
+
+    <!-- SECTION 8 -->
+    <h2 class="section-title"><span class="num">8</span> కోడ్ డెమో 3: <code>for-else</code> ద్వారా ప్రైమ్ నంబర్ డిటెక్టర్</h2>
+    <p>
+      ఫ్లాగ్ వేరియబుల్స్ లేకుండా <code>for-else</code> ఎంత సొగసైన కోడ్‌ను అందిస్తుందో ఈ క్రింది ప్రధాన సంఖ్యల (Prime Numbers) డిటెక్టర్‌లో చూడండి:
+    </p>
+
+    <!-- CODE BLOCK 3 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">03_for_else_prime_detector.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># for-else ద్వారా ప్రైమ్ నంబర్ చెకర్
+
+def check_prime(number: int):
+    """
+    ఒక సంఖ్య ప్రధాన సంఖ్య (Prime) అవునో కాదో ఫ్లాగ్స్ లేకుండా తేలుస్తుంది.
+    """
+    if number <= 1:
+        print(f"సంఖ్య {number} ప్రధాన సంఖ్య కాదు.")
+        return
+
+    # 2 నుండి వర్గమూలం (sqrt) వరకు భాగిస్తున్నాము
+    for divisor in range(2, int(number ** 0.5) + 1):
+        if number % divisor == 0:
+            print(f"❌ {number} ప్రధాన సంఖ్య కాదు (ఇది {divisor} చే నిశ్శేషంగా భాగించబడింది).")
+            break # శేషం 0 కాగానే లూప్ ఆగిపోతుంది! else రన్ అవ్వదు!
+    else:
+        # లూప్ మొత్తం తిరిగి ఏ ఒక్క break రన్ కానప్పుడు మాత్రమే else రన్ అవుతుంది!
+        print(f"🌟 {number} ఒక సంపూర్ణ ప్రధాన సంఖ్య (Prime Number)!")
+
+print("=== PRIME NUMBER CHECKER DEMO ===")
+check_prime(29)
+check_prime(35)
+check_prime(97)
+</code></pre>
+    </div>
+
+    <!-- SECTION 9 -->
+    <h2 class="section-title"><span class="num">9</span> నెస్టెడ్ లూప్స్ నుండి బయటపడటం (Multi-Level Nested Break)</h2>
+    <p>
+      పైథాన్‌లో C++ లేదా Java లలో లాగా లేబుల్డ్ బ్రేక్ (<code>break outer;</code>) సింటాక్స్ లేదు.
+      మరి 2-3 స్థాయిల నెస్టెడ్ లూప్‌ల నుండి ఒకేసారి బయటపడాలంటే ప్రొడక్షన్‌లో పాటించే 3 వ్యూహాలు:
+    </p>
+
+    <ul>
+      <li><strong>1. ఫంక్షన్‌లో పెట్టి <code>return</code> చేయడం (అత్యంత పైథానిక్ &amp; క్లీన్ సొల్యూషన్):</strong>
+        మొత్తం నెస్టెడ్ లూప్‌ను ఒక ఫంక్షన్‌లో ఉంచి, ఫలితం దొరకగానే <code>return</code> చేస్తే అన్ని స్థాయిల లూప్‌ల నుండి తక్షణమే బయటకు వచ్చేస్తుంది.
+      </li>
+      <li><strong>2. ఫ్లాగ్ వేరియబుల్స్ ఉపయోగించడం:</strong>
+        <code>found = True</code> చేసి బయటి లూప్‌లో కూడా <code>if found: break</code> రాయడం.
+      </li>
+      <li><strong>3. కస్టమ్ ఎక్సెప్షన్ రైజ్ చేయడం:</strong>
+        చాలా లోతైన లూప్‌లలో <code>raise ItemFoundException()</code> ద్వారా డైరెక్ట్‌గా జంప్ చేయడం.
+      </li>
+    </ul>
+
+    <!-- SECTION 10 -->
+    <h2 class="section-title"><span class="num">10</span> కోడ్ డెమో 4: 2D మ్యాట్రిక్స్‌లో ఎలిమెంట్ సెర్చ్ &amp; క్లీన్ రిటర్న్</h2>
+    <p>
+      2D గ్రిడ్‌లో ఒక నిర్దిష్ట కోఆర్డినేట్‌ను కనుగొని నెస్టెడ్ లూప్‌ల నుండి తక్షణమే బయటపడే విధానాన్ని క్రింది స్క్రిప్ట్‌లో చూడండి:
+    </p>
+
+    <!-- CODE BLOCK 4 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">04_nested_search_return_pattern.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># 2D మ్యాట్రిక్స్ లో సెర్చ్ & ఫంక్షన్ రిటర్న్ బ్రేక్ ప్యాటర్న్
+
+warehouse_grid = [
+    ["ఖాళీ", "ఖాళీ", "టెలివిజన్", "ఖాళీ"],
+    ["ఖాళీ", "ల్యాప్‌టాప్", "ఖాళీ", "ఖాళీ"],
+    ["స్మార్ట్‌వాచ్", "ఖాళీ", "ఖాళీ", "ఐఫోన్"]
+]
+
+def locate_product_in_warehouse(grid, target_item):
+    """
+    2D గ్రిడ్‌లో వస్తువును వెతికి దాని అడ్డు, నిలువు వరుసలను రిటర్న్ చేస్తుంది.
+    """
+    for row_idx, row in enumerate(grid):
+        for col_idx, item in enumerate(row):
+            if item == target_item:
+                # return రాయడం వల్ల రెండు లూప్‌లు వెంటనే ముగుస్తాయి!
+                return f"✅ '{target_item}' గిడ్డంగిలో వరుస {row_idx + 1}, అర {col_idx + 1} లో దొరికింది."
+    return f"❌ '{target_item}' స్టాక్‌లో లభించలేదు."
+
+print(locate_product_in_warehouse(warehouse_grid, "ల్యాప్‌టాప్"))
+print(locate_product_in_warehouse(warehouse_grid, "డ్రోన్ కెమెరా"))
+</code></pre>
+    </div>
+
+    <!-- SECTION 11 -->
+    <h2 class="section-title"><span class="num">11</span> లూప్ కంట్రోల్ పెర్ఫార్మెన్స్ &amp; ఎర్లీ ఎగ్జిట్ (Early Exit Pattern)</h2>
+    <p>
+      లూప్‌లలో <code>break</code> మరియు <code>continue</code> లను సరిగ్గా వాడటం వల్ల సాఫ్ట్‌వేర్ వేగం అసాధారణంగా పెరుగుతుంది.
+      ఉదాహరణకు $1,000,000$ రికార్డులు ఉన్న డేటాబేస్‌లో ఒక ఐటెమ్ కోసం వెతుకుతున్నప్పుడు, అది 50వ స్థానంలోనే దొరికినప్పుడు <code>break</code> రాస్తే మిగిలిన $999,950$ అనవసరమైన ఆపరేషన్లు ఆగిపోతాయి!
+      దీనినే <strong>ఎర్లీ ఎగ్జిట్ ప్యాటర్న్ (Early Exit Pattern)</strong> అంటారు.
+    </p>
+
+    <!-- SECTION 12 -->
+    <h2 class="section-title"><span class="num">12</span> కామన్ బిగినర్స్ మిస్టేక్స్ &amp; ప్రొడక్షన్ బెస్ట్ ప్రాక్టీసెస్</h2>
+    <ul>
+      <li><strong>Mistake 1: <code>while</code> లూప్‌లో <code>continue</code> కి ముందు ఇంక్రిమెంట్ మర్చిపోవడం:</strong> <code>while i &lt; 10: if i == 5: continue; i += 1</code> అని రాస్తే <code>i = 5</code> వద్ద అనంతమైన లూప్‌లో చిక్కుకుపోతుంది! <code>continue</code> పిలవడానికి ముందే వేరియబుల్‌ను అప్‌డేట్ చేయాలి.</li>
+      <li><strong>Mistake 2: <code>for-else</code> ను <code>if-else</code> అనుకోవడం:</strong> <code>for-else</code> లో <code>else</code> ప్రతి లూప్ రౌండ్‌లోనూ రన్ అవ్వదు; లూప్ మొత్తం <code>break</code> లేకుండా పూర్తయినప్పుడు మాత్రమే చివరగా ఒక్కసారి రన్ అవుతుంది.</li>
+      <li><strong>Mistake 3: నెస్టెడ్ లూప్‌లో <code>break</code> ప్రవర్తనను తప్పుగా అర్థం చేసుకోవడం:</strong> <code>break</code> కేవలం తనను చుట్టుముట్టిన ఒకే ఒక్క లూప్‌ను మాత్రమే ఆపుతుంది.</li>
+    </ul>
+
+    <!-- SECTION 13 -->
+    <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాజెక్ట్: "Automated Cyber Security Log Analyzer &amp; Intrusion Detection System"</h2>
+    <p>
+      ఈ ఎనిమిదవ అధ్యాయంలో నేర్చుకున్న అన్ని అంశాలను (break, continue, pass, for-else, nested search, early exit) కలగలిపి — వెబ్ సర్వర్‌కు వచ్చే వేలాది నెట్‌వర్క్ రిక్వెస్ట్‌లను స్కాన్ చేసి హ్యాకర్ల దాడులను (DDoS, SQL Injection, Brute Force) తక్షణమే గుర్తించి బ్లాక్ చేసే <strong>Automated Cyber Security Intrusion Detection System</strong> ప్రాజెక్ట్‌ను నిర్మిద్దాం!
+    </p>
+
+    <!-- CODE BLOCK 5: CAPSTONE MINI PROJECT -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">05_cyber_security_log_intrusion_detector.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 08 మినీ ప్రాజెక్ట్: Cyber Security Intrusion Detection System
+# కాన్సెప్ట్స్: break, continue, pass, for-else, Threat Detection,
+#             Log Sanitization, IP Blocking & Security Audit Reports
+# =====================================================================
+
+MALICIOUS_SIGNATURES = ["' OR '1'='1", "<script>", "../etc/passwd", "UNION SELECT"]
+BLOCKED_IPS = set()
+
+def scan_server_access_logs(access_logs: list):
+    """
+    సర్వర్ యాక్సెస్ లాగ్స్‌ను స్కాన్ చేసి దాడులను గుర్తించి భద్రతా నివేదికను ఇస్తుంది.
+    """
+    print("\n" + "=" * 76)
+    print(f"{'🛡️ MANA APEX CLOUD — CYBER SECURITY INTRUSION SHIELD 2026':^76}")
+    print("=" * 76)
+    print(f"{'IP చిరునామా':<16} {'రెక్వెస్ట్ మెథడ్':<10} {'HTTP కోడ్':<12} {'భద్రతా విశ్లేషణ ఫలితం':<32}")
+    print("-" * 76)
+
+    clean_requests_count = 0
+    threats_detected = 0
+
+    for log in access_logs:
+        ip = log["ip"]
+        endpoint = log["url"]
+        payload = log["payload"]
+        status = log["status"]
+
+        # 1. continue: అంతర్గత సర్వర్ హెల్త్ చెక్స్ (Health check logs) ను దాటవేయడం
+        if endpoint == "/health" or endpoint == "/favicon.ico":
+            continue
+
+        # 2. pass: ఇన్ఫర్మేషనల్ లాగ్స్ కోసం సైలెంట్ ప్లేస్‌హోల్డర్
+        if status == 100:
+            pass # భవిష్యత్తు సాకెట్ హ్యాండ్‌షేక్ కోసం రిజర్వ్
+
+        # 3. for-else: పేలోడ్‌లో మాలీషియస్ సిగ్నేచర్స్ కోసం లోతైన తనిఖీ
+        for signature in MALICIOUS_SIGNATURES:
+            if signature.lower() in payload.lower():
+                threats_detected += 1
+                BLOCKED_IPS.add(ip)
+                print(f"{ip:<16} {log['method']:<10} {status:<12} 🚨 ముప్పు: [{signature}] - IP బ్లాక్ చేయబడింది!")
+                break # దాడి ఖరారైంది కాబట్టి మిగిలిన సిగ్నేచర్ల తనిఖీ నిలిపివేస్తున్నాము
+        else:
+            # ఎటువంటి దాడి లేకపోతేనే ఈ else బ్లాక్ రన్ అవుతుంది!
+            clean_requests_count += 1
+            print(f"{ip:<16} {log['method']:<10} {status:<12} ✅ సాధారణ సురక్షిత రిక్వెస్ట్")
+
+    print("=" * 76)
+    print(f"మొత్తం పరిశీలించిన రిక్వెస్ట్‌లు : {len(access_logs)}")
+    print(f"సురక్షితమైన ట్రాఫిక్              : {clean_requests_count}")
+    print(f"గుర్తించిన సైబర్ ముప్పులు (Threats): {threats_detected}")
+    print(f"బ్లాక్‌లిస్ట్‌లో చేర్చిన IP లు   : {list(BLOCKED_IPS)}")
+    print("=" * 76)
+    print(f"{'✅ సెక్యూరిటీ ఆడిట్ విజయవంతంగా పూర్తయింది! సర్వర్ సురక్షితంగా ఉంది.':^76}")
+    print("=" * 76 + "\n")
+
+# సిమ్యులేటెడ్ రియల్-వరల్డ్ సర్వర్ ట్రాఫిక్ లాగ్స్
+server_logs = [
+    {"ip": "192.168.1.10", "method": "GET",  "url": "/health",    "payload": "",               "status": 200},
+    {"ip": "45.33.32.156", "method": "GET",  "url": "/home",      "payload": "user=guest",     "status": 200},
+    {"ip": "185.220.101.5", "method": "POST", "url": "/login",     "payload": "admin' OR '1'='1", "status": 200}, # SQL Injection Attack
+    {"ip": "104.244.42.1", "method": "GET",  "url": "/products",  "payload": "category=books", "status": 200},
+    {"ip": "198.51.100.42", "method": "POST", "url": "/feedback",  "payload": "<script>alert('hack')</script>", "status": 200}, # XSS Attack
+    {"ip": "192.168.1.10", "method": "GET",  "url": "/favicon.ico", "payload": "",             "status": 200}
+]
+
+scan_server_access_logs(server_logs)
+</code></pre>
+    </div>
+
+    <!-- 5 COLLAPSIBLE QUIZZES -->
+    <h2 class="section-title"><span class="num">★</span> ఈ అధ్యాయంపై ప్రాక్టీస్ క్విజ్ (Knowledge Check)</h2>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">1. break కి మరియు continue కి మధ్య ప్రాథమిక వ్యత్యాసం ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>break</code> అనేది మొత్తం లూప్‌ను తక్షణమే మరియు శాశ్వతంగా ముగించి బయటకు వచ్చేస్తుంది. కానీ <code>continue</code> కేవలం ఆ ఒక్క ప్రస్తుత రౌండ్‌ను మాత్రమే ఆపివేసి, లూప్ యొక్క తర్వాతి రౌండ్‌ను యధావిధిగా కొనసాగిస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">2. పైథాన్‌లో pass స్టేట్‌మెంట్ ఎందుకు అవసరం?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> పైథాన్‌లో ఇండెంటేషన్ తప్పనిసరి. ఒక ఫంక్షన్, క్లాస్, లూప్ లేదా if బ్లాక్‌లో ఏ కోడూ రాయకుండా వదిలేస్తే <code>IndentationError</code> వస్తుంది. ఆ సింటాక్స్ ఎర్రర్ రాకుండా నిరోధించడానికి <code>pass</code> ను ఒక తాత్కాలిక ప్లేస్‌హోల్డర్‌గా (No-op) ఉపయోగిస్తాము.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">3. for-else లూప్‌లో else బ్లాక్ ఎప్పుడు ఎగ్జిక్యూట్ అవుతుంది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> లూప్ ఎటువంటి <code>break</code> స్టేట్‌మెంట్ ట్రిగ్గర్ అవ్వకుండా తనలోని అన్ని అంశాలను సహజసిద్ధంగా పూర్తి చేసుకున్నప్పుడు మాత్రమే <code>else</code> బ్లాక్ రన్ అవుతుంది. లూప్ మధ్యలో ఎక్కడైనా <code>break</code> జరిగితే <code>else</code> రన్ అవ్వదు.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">4. నెస్టెడ్ లూప్‌లో break రాస్తే అన్ని లూప్‌లూ ఆగిపోతాయా?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> లేదు! <code>break</code> కేవలం తనను చుట్టుముట్టిన లోపలి లూప్‌ను (Innermost Loop) మాత్రమే నిలిపివేస్తుంది. బయటి లూప్ తన తర్వాతి రౌండ్‌ను యధావిధిగా కొనసాగిస్తుంది. అన్ని లూప్‌ల నుండి బయటపడాలంటే ఫంక్షన్ నుండి <code>return</code> చేయడం అత్యుత్తమ మార్గం.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">5. while లూప్‌లో continue వాడేటప్పుడు వచ్చే అత్యంత ప్రమాదకరమైన బగ్ ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>continue</code> కి ముందే లూప్ వేరియబుల్‌ను ఇంక్రిమెంట్ (<code>i += 1</code>) చేయకపోవడం! అలా చేయకపోతే వేరియబుల్ విలువ ఎప్పటికీ మారక, మళ్లీ మళ్లీ అదే కండిషన్‌ను తాకుతూ ఇన్ఫినైట్ లూప్ (Infinite Loop) లోకి వెళ్లి ప్రోగ్రామ్ ఫ్రీజ్ అయిపోతుంది.
+      </div>
+    </details>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-python/07-python-loops-while-and-for.html" style="text-decoration:none; color:var(--text); font-weight:600; display:inline-flex; align-items:center; gap:8px; background:var(--bg2); padding:10px 18px; border-radius:8px; border:1px solid var(--border);">
+        ← మునుపటి అధ్యాయం: 7. లూప్స్ (while &amp; for)
+      </a>
+      <a href="/blog-python/09-python-strings-deep-dive-slicing.html" style="text-decoration:none; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; background:#10b981; padding:10px 22px; border-radius:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        తర్వాతి అధ్యాయం: 9. స్ట్రింగ్స్ డీప్ డైవ్ &amp; స్లైసింగ్ →
+      </a>
+    </div>
+
+    <!-- INTERACTIVE COMPILER CTA CARD -->
+    <div style="margin-top:40px; background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(56,189,248,0.1) 100%); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:24px; text-align:center;">
+      <h3 style="margin-top:0; color:var(--text); font-size:20px;">ఈ Cyber Security Intrusion Detector ను లైవ్‌గా మన కంపైలర్‌లో రన్ చేయండి!</h3>
+      <p style="color:var(--text2); max-width:650px; margin:8px auto 20px; font-size:14px; line-height:1.6;">
+        ఎటువంటి లోకల్ సెటప్ లేకుండా, బ్రౌజర్‌లోనే Modern Python 3 కంపైలర్‌లో ఈ కోడ్‌ను ఎగ్జిక్యూట్ చేసి అవుట్‌పుట్ చూడండి.
+      </p>
+      <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; padding:12px 28px; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Launch Python Interactive Compiler
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER / NAV SCRIPTS -->
+<script src="/site-nav.js"></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = `# =====================================================================
+# చాప్టర్ 08 మినీ ప్రాజెక్ట్: Cyber Security Intrusion Detector
+# =====================================================================
+
+MALICIOUS_SIGNATURES = ["' OR '1'='1", "<script>", "../etc/passwd"]
+BLOCKED_IPS = set()
+
+server_logs = [
+    {"ip": "192.168.1.10", "method": "GET",  "url": "/health",    "payload": "",               "status": 200},
+    {"ip": "45.33.32.156", "method": "GET",  "url": "/home",      "payload": "user=guest",     "status": 200},
+    {"ip": "185.220.101.5", "method": "POST", "url": "/login",     "payload": "admin' OR '1'='1", "status": 200},
+    {"ip": "104.244.42.1", "method": "GET",  "url": "/products",  "payload": "category=books", "status": 200},
+    {"ip": "198.51.100.42", "method": "POST", "url": "/feedback",  "payload": "<script>alert('hack')</script>", "status": 200}
+]
+
+print("=" * 68)
+print(f"{'🛡️ CYBER SECURITY INTRUSION SHIELD (LIVE DEMO)':^68}")
+print("=" * 68)
+
+clean = 0
+threats = 0
+
+for log in server_logs:
+    if log["url"] == "/health":
+        continue  # హెల్త్ చెక్స్ స్కిప్
+
+    for sig in MALICIOUS_SIGNATURES:
+        if sig.lower() in log["payload"].lower():
+            threats += 1
+            BLOCKED_IPS.add(log["ip"])
+            print(f"🚨 ముప్పు గుర్తించబడింది: [{sig}] from {log['ip']}")
+            break
+    else:
+        clean += 1
+        print(f"✅ క్లీన్ రిక్వెస్ట్: {log['url']} from {log['ip']}")
+
+print("=" * 68)
+print(f"సురక్షిత రిక్వెస్ట్‌లు : {clean} | దాడులు : {threats}")
+print(f"బ్లాక్ చేయబడిన IP లు  : {list(BLOCKED_IPS)}")
+print("=" * 68)
+print("\n🎉 చాప్టర్ 08 ప్రాజెక్ట్ విజయవంతంగా రన్ అయ్యింది! 🚀")
+`;
+
+    try {
+      localStorage.setItem('code_python', projectCode);
+      localStorage.setItem('code_python3', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-python-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
