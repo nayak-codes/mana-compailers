@@ -7,3 +7,4 @@ console.log('Chars:', s.length);
 console.log('code-blocks:', cb);
 console.log('dark-boxes:', db);
 console.log('pre tags:', pre);
+

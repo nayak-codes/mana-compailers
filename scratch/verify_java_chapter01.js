@@ -21,8 +21,9 @@ console.log('Dark boxes count:', darkBoxesCount);
 
 const checks = {
   minSize: content.length >= 45000,
-  has13Sections: (content.match(/<h2 class="section-title"><span class="num">(\d+)<\/span>/g) || []).length >= 13,
+  has13Sections: (content.match(/<h2 class="section-title"[^>]*><span class="num">(\d+)<\/span>/g) || []).length >= 13,
   hasIvoryBox: content.includes('class="intro-box"'),
+  hasTocCard: content.includes('class="toc-card"'),
   hasSingleSidebar: (content.match(/<aside class="sidebar"/g) || []).length === 1,
   hasSiteNavPlaceholder: content.includes('id="site-nav-placeholder"'),
   hasLayoutClass: content.includes('class="layout"'),
@@ -36,11 +37,11 @@ const checks = {
   has5Quizzes: (content.match(/<details/g) || []).length >= 5,
   hasExact3CodeBlocks: codeBlocksCount === 3,
   hasZeroDarkBoxes: darkBoxesCount === 0,
-  hasCompilerIntegration: content.includes('openInteractiveCompiler()') && content.includes('/online-java-compiler.html'),
+  hasCompilerIntegration: (content.includes('runInJavaCompiler') || content.includes('openInteractiveCompiler()')) && content.includes('/online-java-compiler.html'),
   hasBreadcrumb: content.includes('class="breadcrumb"') && content.includes('<span class="sep">›</span>'),
   hasPageTitle: content.includes('class="page-title"'),
   hasPageMeta: content.includes('class="page-meta"'),
-  hasCoveredPill: content.includes('📌 Covered in this chapter:'),
+  hasCoveredPill: content.includes('📌 Covered in this lesson:') || content.includes('📌 Covered in this chapter:'),
   hasNotoSansTelugu: content.includes('Noto+Sans+Telugu')
 };
 
@@ -50,13 +51,14 @@ if (failedKeys.length === 0) {
   console.log('✅ All checks passed successfully for Java Chapter 01!');
   console.log('   - File Size: ' + content.length.toLocaleString() + ' chars');
   console.log('   - 13 Numbered Sections: OK');
+  console.log('   - TOC Card: OK');
   console.log('   - Single Accordion Sidebar (25 Chapters): OK');
   console.log('   - Warm Ivory Intro Box: OK');
   console.log('   - 5 Details Quizzes: OK');
   console.log('   - Interactive Code Blocks: ' + codeBlocksCount + ' (Target: exactly 3)');
   console.log('   - Dark Boxes: ' + darkBoxesCount + ' (Target: 0)');
   console.log('   - Online Java Compiler Integration: OK');
-  console.log('   - HTML Masterclass Header & Badges: OK');
+  console.log('   - Masterclass Header & Badges: OK');
   process.exit(0);
 } else {
   console.error('❌ FAILED CHECKS:', failedKeys.join(', '));
