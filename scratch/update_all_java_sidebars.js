@@ -41,3 +41,4 @@ if (errors.length > 0) {
   errors.forEach(e => console.error('  - ' + e));
   process.exit(1);
 }
+

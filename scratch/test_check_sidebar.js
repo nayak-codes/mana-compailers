@@ -13,3 +13,4 @@ LESSONS.forEach(l => {
 });
 
 console.log('All 25 chapters have <aside class="sidebar">: ', allHaveAside);
+
