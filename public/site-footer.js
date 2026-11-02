@@ -4,9 +4,9 @@
   var FOOTER_HTML =
     '<div class="footer-accent"></div>' +
     '<div class="footer-banner">' +
-      '<span class="banner-title">Proudly built by</span>' +
+      
       '<a href="https://balanju-solutions.vercel.app/" target="_blank" rel="noopener noreferrer" class="banner-badge">' +
-        '<span class="badge-icon">🔷</span>' +
+        '<img src="/balanju-logo.jpg" alt="Balanju Solutions" style="height: 20px; width: 20px; object-fit: contain; border-radius: 4px;" />' +
         '<span class="badge-text">Balanju Solutions</span>' +
         '<span class="badge-arrow">↗</span>' +
       '</a>' +
@@ -61,7 +61,7 @@
         '</div>' +
         '<div class="footer-col card-col">' +
           '<div class="balanju-card">' +
-            '<div class="card-header"><span>🔷</span><span class="card-title">Balanju Solutions</span></div>' +
+            '<div class="card-header"><img src="/balanju-logo.jpg" alt="Balanju Solutions" style="height: 22px; width: 22px; object-fit: contain; border-radius: 5px; margin-right: 6px;" /><span class="card-title">Balanju Solutions</span></div>' +
             '<p class="card-desc">Our Compiler is a flagship product of Balanju Solutions — building free developer tools and software for learners worldwide.</p>' +
             '<a href="https://balanju-solutions.vercel.app/" target="_blank" rel="noopener noreferrer" class="card-btn">Visit Company →</a>' +
           '</div>' +

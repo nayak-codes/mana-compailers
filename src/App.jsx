@@ -3025,7 +3025,7 @@ function HomePage({ selectLanguage, theme, setTheme, isMobile }) {
           padding: '14px 40px',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px'
         }}>
-          <span style={{ fontSize: '12px', color: '#cbd5e1', fontWeight: '600', letterSpacing: '1.5px', textTransform: 'uppercase' }}>Proudly built by</span>
+          
           <a href="https://balanju-solutions.vercel.app/" target="_blank" rel="noopener noreferrer"
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
@@ -3038,7 +3038,7 @@ function HomePage({ selectLanguage, theme, setTheme, isMobile }) {
             onMouseEnter={e => { e.currentTarget.style.background = 'rgba(108,61,232,0.4)'; e.currentTarget.style.borderColor = '#9f75ff'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(108,61,232,0.4)' }}
             onMouseLeave={e => { e.currentTarget.style.background = 'rgba(108,61,232,0.25)'; e.currentTarget.style.borderColor = 'rgba(108,61,232,0.5)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
           >
-            <span style={{ fontSize: '15px' }}>🔷</span>
+            <img src="/balanju-logo.jpg" alt="Balanju Solutions" style={{ height: '22px', width: '22px', objectFit: 'contain', borderRadius: '4px' }} />
             <span style={{ fontSize: '13px', fontWeight: '800', color: '#c4b5fd', letterSpacing: '0.2px' }}>Balanju Solutions</span>
             <span style={{ fontSize: '11px', color: 'rgba(196,181,253,0.9)', fontWeight: '700' }}>↗</span>
           </a>
@@ -3172,7 +3172,7 @@ function HomePage({ selectLanguage, theme, setTheme, isMobile }) {
               padding: '24px'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                <span style={{ fontSize: '18px' }}>🔷</span>
+                <img src="/balanju-logo.jpg" alt="Balanju Solutions" style={{ height: '26px', width: '26px', objectFit: 'contain', borderRadius: '6px' }} />
                 <span style={{ fontSize: '14px', fontWeight: '800', color: '#c4b5fd', letterSpacing: '-0.2px' }}>Balanju Solutions</span>
               </div>
               <p style={{ fontSize: '12.5px', color: '#e9d5ff', lineHeight: '1.75', margin: '0 0 18px' }}>
