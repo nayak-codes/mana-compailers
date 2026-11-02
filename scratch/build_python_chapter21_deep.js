@@ -1,0 +1,674 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildPythonSidebar } = require('./python_curriculum_data.js');
+
+const currentLesson = LESSONS[20]; // Chapter 21 (0-indexed 20)
+const sidebarHtml = buildPythonSidebar(21);
+
+const chapter21Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Python 3 ఎక్సెప్షన్ హ్యాండ్లింగ్ & కస్టమ్ ఎర్రర్స్ సమగ్ర తెలుగు గైడ్: try-except-else-finally ఆర్కిటెక్చర్, Standard Exception Hierarchy, raise & Exception Chaining (raise from), Custom Domain Exceptions, మరియు FinTech Payment Gateway ప్రాజెక్ట్." />
+  <meta name="keywords" content="python exception handling in telugu, python try except else finally telugu, python custom exceptions telugu, python raise error telugu, learn python in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-python/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Complete Guide to Python Exception Handling and Custom Errors in Telugu)",
+    "description": "Python 3 ఎక్సెప్షన్ హ్యాండ్లింగ్ పూర్తి గైడ్: try-except-else-finally, raise, Custom Exceptions, Exception Chaining, మరియు FinTech Payment Gateway Engine.",
+    "articleSection": "Phase 05: OOP, ఎక్సెప్షన్స్ & క్యాప్‌స్టోన్ ప్రాజెక్ట్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-01-26",
+    "dateModified": "2026-11-02"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Compiler Integration -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___PY_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/("""[\\s\\S]*?"""|'''[\\s\\S]*?'''|f?"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|f?'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'|r"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|r'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'import','from','as','def','return','class','if','elif','else','while','for','in',
+        'break','continue','pass','try','except','finally','with','lambda','global','nonlocal',
+        'and','or','not','is','yield','async','await','raise','assert','True','False','None'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'print','len','range','type','isinstance','id','input','int','float','str','list',
+        'dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted',
+        'abs','open','help','dir','filter','Exception','ValueError','TypeError','KeyError',
+        'ZeroDivisionError','FileNotFoundError','IndexError','RuntimeError'
+      ];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?)\\b/g, m => pushToken('num', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split('___PY_TOK_' + idx + '___').join(tok);
+      });
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code.language-python').forEach(block => {
+        block.innerHTML = highlightPythonCode(block.innerText);
+      });
+    });
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      const code = pre.innerText;
+      try {
+        localStorage.setItem('code_python', code);
+        localStorage.setItem('code_python3', code);
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+      window.open('/online-python-compiler.html', '_blank');
+    }
+  </script>
+</head>
+<body class="lang-python light-theme">
+
+<!-- Site Navigation Placeholder -->
+<div id="site-nav-placeholder"></div>
+
+<!-- Layout Container -->
+<div class="layout">
+
+  <!-- Single Sidebar Component -->
+  ${sidebarHtml}
+
+  <!-- Main Content Area -->
+  <main class="content">
+
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb" style="display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text2); margin-bottom:16px;">
+      <a href="/" style="color:var(--text2); text-decoration:none;">Home</a>
+      <span class="sep">›</span>
+      <a href="/tutorials" style="color:var(--text2); text-decoration:none;">Tutorials</a>
+      <span class="sep">›</span>
+      <a href="/blog-python/" style="color:var(--text2); text-decoration:none;">Python Masterclass</a>
+      <span class="sep">›</span>
+      <span style="color:var(--text); font-weight:600;">Chapter 21: ${currentLesson.title}</span>
+    </div>
+
+    <!-- MAIN PAGE TITLE -->
+    <h1 class="page-title" style="font-size:32px; font-weight:800; color:var(--text); margin-bottom:14px; line-height:1.25;">
+      ${currentLesson.title}
+    </h1>
+
+    <!-- 4 PAGE META BADGES -->
+    <div class="page-meta" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; font-size:12.5px;">
+      <span style="background:rgba(16,185,129,0.12); color:#10b981; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        🌐 Modern Python 3.12+
+      </span>
+      <span style="background:rgba(59,130,246,0.12); color:#3b82f6; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        📖 Chapter 21 of 25
+      </span>
+      <span style="background:rgba(245,158,11,0.12); color:#f59e0b; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        📁 Phase 05: OOP, ఎక్సెప్షన్స్ &amp; ప్రాజెక్ట్
+      </span>
+      <span style="background:rgba(139,92,246,0.12); color:#8b5cf6; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        🗓️ 2026 Edition
+      </span>
+    </div>
+
+    <!-- COVERED PILL -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin-bottom:24px; font-size:13.5px; color:var(--text2); line-height:1.6;">
+      <strong style="color:var(--text); font-weight:700;">📌 Covered in this chapter:</strong>
+      ${currentLesson.subtopics} · Syntax Errors vs Runtime Exceptions · try-except-else-finally Architecture · Exception Hierarchy · raise &amp; Exception Chaining (raise from) · Custom Domain Exception Classes · FinTech Payment Gateway Resilient Engine
+    </div>
+
+    <!-- WARM SOFT IVORY INTRO BOX -->
+    <div class="intro-box" style="background:#fffdf7; border:1px solid #fef3c7; border-left:4px solid #f59e0b; border-radius:10px; padding:20px 24px; margin-bottom:30px; font-size:15px; color:#451a03; line-height:1.75;">
+      మీరు ఒక ఆన్‌లైన్ పేమెంట్ యాప్ లేదా ఫ్లైట్ బుకింగ్ పోర్టల్‌ను వాడుతున్నప్పుడు, సర్వర్‌లో ఇంటర్నెట్ కనెక్షన్ పోయినా లేదా వినియోగదారుడు తప్పుడు పిన్ నంబర్ నమోదు చేసినా — యాప్ మొత్తం క్రాష్ అయిపోయి ఎర్రటి కోడ్ స్క్రీన్ కనిపిస్తే మీకు ఎంత చిరాకు వస్తుంది? ఒక బిగినర్ రాసే కోడ్‌కు మరియు ఒక ప్రొఫెషనల్ సాఫ్ట్‌వేర్ ఇంజనీర్ రాసే ప్రొడక్షన్ కోడ్‌కు మధ్య ఉన్న అతిపెద్ద వ్యత్యాసం — <strong>ఎర్రర్లను ఎదుర్కొనే తట్టుకునే శక్తి (Fault Tolerance &amp; Resilience)</strong>!
+      <br/><br/>
+      వాస్తవ ప్రపంచంలో ఊహించని సమస్యలు ఎప్పుడైనా రావచ్చు. సర్వర్ ఫైల్ డిలీట్ కావచ్చు, జీరోతో భాగహారం జరగవచ్చు, లేదా బ్యాంక్ సర్వర్ డౌన్ కావచ్చు. ఇటువంటి సంక్షోభ పరిస్థితులలో కూడా ప్రోగ్రామ్ కుప్పకూలిపోకుండా హుందాగా తట్టుకుని, యూజర్‌కు సరైన సమాచారం అందించి రక్షించే కవచమే <strong>ఎక్సెప్షన్ హ్యాండ్లింగ్ (Exception Handling)</strong>! ఈ అధ్యాయంలో మనం <code>try-except-else-finally</code> నిర్మాణం నుండి కస్టమ్ డొమైన్ ఎక్సెప్షన్ క్లాస్‌ల సృష్టి మరియు బ్యాంకింగ్ పేమెంట్ గేట్‌వే రిజిలియంట్ ఇంజిన్ వరకు సమగ్రంగా నేర్చుకుందాం!
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 class="section-title"><span class="num">1</span> ఎర్రర్ vs ఎక్సెప్షన్ అంటే ఏమిటి? &amp; Traceback అనాటమీ</h2>
+    <p>
+      పైథాన్‌లో ప్రోగ్రామ్ ఆగిపోవడానికి రెండు ప్రధాన కారణాలు ఉంటాయి:
+    </p>
+    <ul>
+      <li><strong>సింటాక్స్ ఎర్రర్స్ (Syntax Errors / Parsing Errors):</strong> పైథాన్ వ్యాకరణ నియమాలను ఉల్లంఘించినప్పుడు వస్తాయి (ఉదాహరణకు కాలన్ <code>:</code> మర్చిపోవడం లేదా బ్రాకెట్లు మూయకపోవడం). ఇవి కోడ్ రన్ అవ్వకముందే కంపైలర్ పట్టుకుంటుంది. వీటిని <code>try-except</code> ద్వారా ఆపలేము.</li>
+      <li><strong>రన్‌టైమ్ ఎక్సెప్షన్స్ (Runtime Exceptions):</strong> సింటాక్స్ అంతా సరిగ్గానే ఉన్నప్పటికీ, ప్రోగ్రామ్ రన్ అవుతున్న సమయంలో ఎదురయ్యే అనూహ్య సమస్యలు (ఉదాహరణకు <code>10 / 0</code> జీరో డివిజన్, ఫైల్ లేకపోవడం, లేదా రాంగ్ కీ వెతకడం). వీటిని మనం <strong>ఎక్సెప్షన్ హ్యాండ్లింగ్</strong> ద్వారా నియంత్రించి ప్రోగ్రామ్ క్రాష్ కాకుండా కాపాడవచ్చు!</li>
+    </ul>
+
+    <p><strong>పైథాన్ Traceback యొక్క అనాటమీ (ఎలా చదవాలి?):</strong></p>
+    <div style="background:#0f172a; border:1px solid #1e293b; border-radius:8px; padding:16px; margin:12px 0; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#f8fafc; line-height:1.6;">
+      Traceback (most recent call last):<br/>
+      &nbsp;&nbsp;File "checkout.py", line 42, in process_payment<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;discount = user_discounts[coupon_code]  # 👈 ఎర్రర్ జరిగిన నిర్దిష్ట లైన్<br/>
+      KeyError: 'DIWALI2026'  # 👈 [ఎక్సెప్షన్ రకం]: [ఎర్రర్ సందేశం]
+    </div>
+    <p>
+      ట్రేస్‌బ్యాక్‌ను ఎల్లప్పుడూ <strong>క్రింది నుండి పైకి (Bottom-Up)</strong> చదవాలి. చిట్టచివరి లైన్ ఏ రకమైన ఎర్రర్ వచ్చిందో స్పష్టంగా చెబుతుంది, దాని పై లైన్లు అది ఏ ఫంక్షన్ కాల్ ద్వారా అక్కడికి చేరుకుందో వివరిస్తాయి.
+
+    <!-- SECTION 2 -->
+    <h2 class="section-title"><span class="num">2</span> The <code>try-except</code> బ్లాక్ ఆర్కిటెక్చర్ &amp; Anti-Patterns</h2>
+    <p>
+      పైథాన్‌లో ఎక్సెప్షన్లను పట్టుకోవడానికి <strong><code>try</code></strong> మరియు <strong><code>except</code></strong> బ్లాక్‌లను ఉపయోగిస్తాము:
+    </p>
+    <div style="background:#0f172a; padding:12px 18px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:10px 0; line-height:1.6;">
+      try:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;# ప్రమాదం పొంచి ఉన్న కోడ్ (Risky Code)<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;number = int(input("ఒక సంఖ్యను నమోదు చేయండి: "))<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;result = 100 / number<br/>
+      except ValueError:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;print("దయచేసి సరైన పూర్ణాంక సంఖ్యను మాత్రమే ఇవ్వండి!")<br/>
+      except ZeroDivisionError:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;print("సున్నాతో భాగించడం అసాధ్యం!")
+    </div>
+
+    <div style="background:rgba(239,68,68,0.08); border-left:4px solid #ef4444; padding:14px 18px; border-radius:6px; margin:14px 0; font-size:13.5px; line-height:1.7;">
+      <strong style="color:#ef4444;">⚠️ The Bare Except Anti-Pattern:</strong><br/>
+      ఎట్టి పరిస్థితుల్లోనూ ఎటువంటి పేరు పేర్కొనకుండా కేవలం <code>except:</code> లేదా <code>except Exception: pass</code> అని గుడ్డిగా రాయకండి! ఇది యూజర్ ప్రోగ్రామ్‌ను ఆపడానికి నొక్కే <code>Ctrl+C</code> (KeyboardInterrupt) మరియు మెమరీ ఎర్రర్లను కూడా సైలెంట్‌గా మింగేస్తుంది, దీనివల్ల ప్రొడక్షన్‌లో బగ్‌లు ఎక్కడున్నాయో కనిపెట్టడం అసాధ్యం అవుతుంది.
+    </div>
+
+    <!-- SECTION 3 -->
+    <h2 class="section-title"><span class="num">3</span> బహుళ ఎక్సెప్షన్లను హ్యాండిల్ చేయడం (Multiple &amp; Grouped)</h2>
+    <p>
+      ఒకే <code>try</code> బ్లాక్‌కు వేర్వేరు సమస్యలకు వేర్వేరు <code>except</code> బ్లాక్‌లు రాయవచ్చు, లేదా ఒకే రకమైన చర్య కోసం బహుళ ఎక్సెప్షన్లను ఒక టుపుల్ రూపంలో గ్రూప్ చేయవచ్చు:
+    </p>
+    <div style="background:#0f172a; padding:10px 16px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:8px 0;">
+      except (ValueError, TypeError, KeyError) as err:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;print(f"ఇన్‌పుట్ ప్రాసెసింగ్ ఎర్రర్: {err}")
+    </div>
+
+    <!-- SECTION 4 -->
+    <h2 class="section-title"><span class="num">4</span> The <code>else</code> బ్లాక్ యొక్క ప్రాముఖ్యత (No Exceptions Flow)</h2>
+    <p>
+      <code>try</code> బ్లాక్‌లో <strong>ఎటువంటి ఎర్రర్ రాని సందర్భంలో మాత్రమే</strong> ఎగ్జిక్యూట్ అవ్వాల్సిన కోడ్‌ను <strong><code>else</code></strong> బ్లాక్‌లో రాస్తాము.
+    </p>
+    <p>
+      చాలా మంది డెవలపర్లు ఈ కోడ్‌ను కూడా <code>try</code> లోపలే రాస్తుంటారు. కానీ <code>try</code> లో కేవలం ప్రమాదకరమైన లైన్‌ను మాత్రమే ఉంచి, మిగిలిన పనిని <code>else</code> లో ఉంచడం పరిశ్రమ ప్రామాణిక క్లీన్ కోడ్ పద్ధతి!
+    </p>
+
+    <!-- SECTION 5 -->
+    <h2 class="section-title"><span class="num">5</span> The <code>finally</code> బ్లాక్ — గ్యారెంటీడ్ క్లీనప్ (Guaranteed Cleanup)</h2>
+    <p>
+      <code>try</code> బ్లాక్ సక్సెస్ అయినా, లేదా ఎర్రర్ వచ్చి <code>except</code> బ్లాక్ రన్ అయినా, లేదా చివరకు ప్రోగ్రామ్ క్రాష్ అయ్యే పరిస్థితి వచ్చినా సరే — <strong>తప్పనిసరిగా 100% ఎగ్జిక్యూట్ అయ్యే ఏకైక బ్లాక్ <code>finally</code>!</strong>
+    </p>
+    <ul>
+      <li><strong>రిసోర్స్ క్లీనప్:</strong> డేటాబేస్ కనెక్షన్లను క్లోజ్ చేయడానికి, నెట్‌వర్క్ సాకెట్లను విడుదల చేయడానికి, మరియు టెంపరరీ ఫైళ్లను డిలీట్ చేయడానికి <code>finally</code> సరైన ప్రదేశం.</li>
+    </ul>
+
+    <!-- SECTION 6 -->
+    <h2 class="section-title"><span class="num">6</span> ఎక్సెప్షన్లను విసరడం: <code>raise</code> కీవర్డ్</h2>
+    <p>
+      పైథాన్ మాత్రమే కాకుండా, మన వ్యాపార నిబంధనలు (Business Rules) ఉల్లంఘించబడినప్పుడు మన స్వంతంగా కూడా ఎక్సెప్షన్‌ను విసరవచ్చు. దీనికి <strong><code>raise</code></strong> కీవర్డ్‌ను ఉపయోగిస్తాము:
+    </p>
+    <div style="background:#0f172a; padding:10px 16px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:8px 0;">
+      if withdraw_amount &gt; account_balance:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;raise ValueError("ఖాతాలో సరిపడా నిల్వ లేదు!")
+    </div>
+
+    <!-- SECTION 7 -->
+    <h2 class="section-title"><span class="num">7</span> కోడ్ డెమో 1: లైవ్ బ్యాంకింగ్ ఫండ్ ట్రాన్స్‌ఫర్ with Full Suite</h2>
+    <p>
+      <code>try-except-else-finally</code> యొక్క పూర్తి సమగ్ర ప్రవర్తనను క్రింది కోడ్‌లో చూడండి:
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">01_banking_exception_suite.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 21 డెమో 1: try - except - else - finally ఆర్కిటెక్చర్
+# =====================================================================
+
+def transfer_funds(sender_bal: float, amount: float):
+    print(f"\\n--- లావాదేవీ ప్రారంభం: మొత్తం ₹{amount:,.2f} ---")
+    connection_open = True
+    print("🔌 బ్యాంకింగ్ సెక్యూర్ గేట్‌వే కనెక్ట్ చేయబడింది.")
+
+    try:
+        if amount <= 0:
+            raise ValueError("బదిలీ మొత్తం ₹0 కంటే ఎక్కువ ఉండాలి!")
+        if amount > sender_bal:
+            raise ArithmeticError("ఖాతాలో తగినంత నగదు నిల్వ లేదు!")
+
+        new_balance = sender_bal - amount
+
+    except ValueError as ve:
+        print(f"❌ ఇన్‌పుట్ లోపం: {ve}")
+    except ArithmeticError as ae:
+        print(f"❌ బ్యాంకింగ్ నిల్వ లోపం: {ae}")
+    else:
+        # ఎర్రర్ రాకపోతేనే ఎగ్జిక్యూట్ అవుతుంది!
+        print(f"✅ లావాదేవీ విజయవంతం! తాజా బ్యాలెన్స్: ₹{new_balance:,.2f}")
+    finally:
+        # ఎర్రర్ వచ్చినా రాకపోయినా ఖచ్చితంగా రన్ అవుతుంది!
+        connection_open = False
+        print("🔒 సెక్యూర్ గేట్‌వే కనెక్షన్ క్లోజ్ చేయబడింది (Cleaned up).")
+
+# టెస్ట్ 1: విజయవంతమైన బదిలీ
+transfer_funds(50000.0, 15000.0)
+
+# టెస్ట్ 2: తగినంత నిల్వ లేని సందర్భం
+transfer_funds(10000.0, 25000.0)
+</code></pre>
+    </div>
+
+    <!-- SECTION 8 -->
+    <h2 class="section-title"><span class="num">8</span> పైథాన్ స్టాండర్డ్ ఎక్సెప్షన్స్ హైరార్కీ (The Hierarchy)</h2>
+    <p>
+      పైథాన్‌లోని అన్ని ఎక్సెప్షన్లు ఆబ్జెక్ట్ ఓరియెంటెడ్ క్లాస్ రూపంలో ఉంటాయి. ఇవన్నీ ఒక నిర్దిష్టమైన వంశవృక్షాన్ని (Inheritance Hierarchy) కలిగి ఉంటాయి:
+    </p>
+
+    <div style="background:#0f172a; border:1px solid #1e293b; border-radius:8px; padding:18px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13px; color:#f8fafc; line-height:1.7;">
+      <div style="color:#10b981; font-weight:700; margin-bottom:8px;">[Python Exception Class Hierarchy]</div>
+      BaseException (అత్యున్నత మూల క్లాస్ - సాధారణంగా డైరెక్ట్‌గా క్యాచ్ చేయకూడదు)<br/>
+      &nbsp;&nbsp;├── SystemExit (sys.exit() ద్వారా వస్తుంది)<br/>
+      &nbsp;&nbsp;├── KeyboardInterrupt (Ctrl+C నొక్కినప్పుడు వస్తుంది)<br/>
+      &nbsp;&nbsp;└── Exception (అన్ని సాధారణ అప్లికేషన్ ఎర్రర్లకు మూల క్లాస్) 🌟<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── ArithmeticError ──▶ ZeroDivisionError, OverflowError<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── LookupError ─────▶ IndexError, KeyError<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── ValueError<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── TypeError<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── OSError ─────────▶ FileNotFoundError, PermissionError
+    </div>
+
+    <p><strong>అత్యంత తరచుగా ఎదురయ్యే కోర్ ఎక్సెప్షన్ల విశ్లేషణ:</strong></p>
+    <ul>
+      <li><strong><code>ZeroDivisionError</code>:</strong> ఏదైనా సంఖ్యను సున్నాతో భాగించడానికి ప్రయత్నించినప్పుడు వస్తుంది.</li>
+      <li><strong><code>IndexError</code>:</strong> లిస్ట్ లేదా టుపుల్ పరిధి దాటిన ఇండెక్స్‌ను (ఉదా: 3 ఎలిమెంట్లు ఉన్న లిస్ట్‌లో <code>lst[10]</code>) యాక్సెస్ చేయాలని చూస్తే వస్తుంది.</li>
+      <li><strong><code>KeyError</code>:</strong> డిక్షనరీలో ఉనికిలో లేని కీని బ్రాకెట్లతో (<code>d['missing']</code>) వెతికినప్పుడు వస్తుంది.</li>
+      <li><strong><code>TypeError</code>:</strong> అనుకూలం కాని డేటా రకాలపై ఆపరేషన్ చేసినప్పుడు (ఉదా: <code>"హలో" + 5</code>) వస్తుంది.</li>
+      <li><strong><code>ValueError</code>:</strong> సరైన డేటా రకమే అయినప్పటికీ విలువ చెల్లనప్పుడు (ఉదా: <code>int("abc")</code>) వస్తుంది.</li>
+      <li><strong><code>AttributeError</code>:</strong> ఒక ఆబ్జెక్ట్‌లో లేని మెథడ్ లేదా వేరియబుల్‌ను కాల్ చేయాలని చూసినప్పుడు వస్తుంది.</li>
+    </ul>
+
+    <!-- SECTION 9 -->
+    <h2 class="section-title"><span class="num">9</span> ఎక్సెప్షన్ చైనింగ్ (<code>raise ... from</code>)</h2>
+    <p>
+      పైథాన్ 3 లో ఒక ఎర్రర్‌ను హ్యాండిల్ చేస్తూ మరొక ఉన్నత స్థాయి ఎర్రర్‌ను విసిరినప్పుడు, అసలైన మూల కారణం (Root Cause) మరుగున పడకుండా కాపాడే అద్భుతమైన ఫీచరే <strong><code>raise ... from original_error</code></strong>!
+    </p>
+    <div style="background:#0f172a; padding:12px 18px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:10px 0; line-height:1.6;">
+      try:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;connect_to_database()<br/>
+      except ConnectionRefusedError as err:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;raise DatabaseOutageError("డేటాబేస్ సేవలు అందుబాటులో లేవు!") from err
+    </div>
+
+    <!-- SECTION 10 -->
+    <h2 class="section-title"><span class="num">10</span> కస్టమ్ డొమైన్ ఎక్సెప్షన్స్ సృష్టి &amp; HTTP స్టేటస్ కోడ్స్</h2>
+    <p>
+      ఎంటర్‌ప్రైజ్ మైక్రోసర్వీసెస్ మరియు RESTful APIలలో సాధారణ <code>ValueError</code> సరిపోదు. API రెస్పాన్స్‌లో సరైన HTTP స్టేటస్ కోడ్ (ఉదా: 400 Bad Request, 401 Unauthorized, 404 Not Found, 409 Conflict) మరియు ఎర్రర్ పేలోడ్ పంపడానికి ఒక చక్కని కస్టమ్ ఎక్సెప్షన్ హైరార్కీని నిర్మిస్తాము:
+    </p>
+    <div style="background:#0f172a; padding:12px 18px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:10px 0; line-height:1.6;">
+      class APIBaseException(Exception):<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;"""మైక్రోసర్వీస్ బేస్ ఎక్సెప్షన్ క్లాస్."""<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;status_code = 500<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;def __init__(self, message, error_code="INTERNAL_ERROR"):<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;super().__init__(message)<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.message = message<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.error_code = error_code<br/><br/>
+      class ResourceNotFoundError(APIBaseException):<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;status_code = 404<br/><br/>
+      class UnauthorizedAccessError(APIBaseException):<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;status_code = 401
+    </div>
+
+    <!-- SECTION 11 -->
+    <h2 class="section-title"><span class="num">11</span> కోడ్ డెమో 2: ఇ-కామర్స్ ఇన్వెంటరీ కార్ట్ with Custom Exceptions</h2>
+    <p>
+      కస్టమ్ ఎక్సెప్షన్లతో కూడిన స్టాక్ మరియు బ్యాలెన్స్ వాలిడేషన్ సిస్టమ్‌ను పరిశీలిద్దాం:
+    </p>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">02_custom_ecommerce_exceptions.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># కస్టమ్ ఎక్సెప్షన్ క్లాసెస్
+class OutOfStockError(Exception):
+    """ఉత్పత్తి నిల్వ లేనప్పుడు వచ్చే ఎర్రర్."""
+    pass
+
+class InsufficientBalanceError(Exception):
+    """యూజర్ వాలెట్‌లో తగినంత నగదు లేనప్పుడు వచ్చే ఎర్రర్."""
+    pass
+
+def checkout_order(item_name: str, requested_qty: int, available_stock: int, total_price: float, wallet_bal: float):
+    if requested_qty > available_stock:
+        raise OutOfStockError(f"క్షమించండి! '{item_name}' స్టాక్ కేవలం {available_stock} మాత్రమే ఉంది.")
+    if total_price > wallet_bal:
+        shortfall = total_price - wallet_bal
+        raise InsufficientBalanceError(f"వాలెట్‌లో ₹{shortfall:,.2f} తక్కువగా ఉంది!")
+
+    print(f"🎉 ఆర్డర్ కన్ఫర్మ్ అయింది! వస్తువు: {item_name} (పరిమాణం: {requested_qty})")
+
+# టెస్టింగ్
+try:
+    checkout_order("స్మార్ట్‌ఫోన్", requested_qty=3, available_stock=1, total_price=45000, wallet_bal=50000)
+except OutOfStockError as ose:
+    print(f"🚨 ఇన్వెంటరీ హెచ్చరిక: {ose}")
+except InsufficientBalanceError as ibe:
+    print(f"🚨 పేమెంట్ హెచ్చరిక: {ibe}")
+</code></pre>
+    </div>
+
+    <!-- SECTION 12 -->
+    <h2 class="section-title"><span class="num">12</span> కామన్ బిగినర్స్ మిస్టేక్స్ &amp; ప్రొడక్షన్ బెస్ట్ ప్రాక్టీసెస్: EAFP vs LBYL</h2>
+    <p>
+      పైథాన్‌లో ఎక్సెప్షన్ హ్యాండ్లింగ్ కేవలం ఎర్రర్లను నివారించడానికి మాత్రమే కాదు; ప్రోగ్రామింగ్ శైలిని (Design Philosophy) తీర్చిదిద్దే అత్యంత ప్రముఖమైన సిద్ధాంతం. ఇతర భాషల్లో (C, Java) సాధారణంగా <strong>LBYL (Look Before You Leap)</strong> శైలిని ఉపయోగిస్తారు, కానీ పైథాన్‌లో ఆధునిక నిపుణులు <strong>EAFP (Easier to Ask for Forgiveness than Permission)</strong> శైలికి ప్రాధాన్యత ఇస్తారు:
+    </p>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+      <h4 style="margin-top:0; color:#10b981;">EAFP vs LBYL తులనాత్మక పోలిక:</h4>
+      <ul>
+        <li><strong>LBYL (Look Before You Leap):</strong> ఏదైనా ఆపరేషన్ చేసే ముందు, అనేక <code>if</code> కండిషన్లను ఉంచి అది సాధ్యమేనా అని పరిశీలించడం. ఉదాహరణకు డిక్షనరీలో కీ ఉందా లేదా అని <code>if key in dict:</code> ద్వారా వెతకడం, లేదా ఫైల్ ఉందా అని <code>if os.path.exists(filepath):</code> అని చూడటం. దీని లోపం: మల్టీ-థ్రెడింగ్ లేదా డిస్ట్రిబ్యూటెడ్ ఎన్విరాన్‌మెంట్‌లో "Time-of-Check to Time-of-Use" (TOCTOU) రేస్ కండిషన్ రావడం వల్ల మీరు చెక్ చేసిన మరుక్షణమే మరొక ప్రాసెస్ ఆ ఫైల్‌ను తొలగించవచ్చు.</li>
+        <li><strong>EAFP (Easier to Ask for Forgiveness than Permission):</strong> ఆపరేషన్ విజయవంతం అవుతుందనే సానుకూల అంచనాతో నేరుగా ప్రయత్నించి (<code>try</code>), అరుదుగా పొరపాటు జరిగితే క్షమాపణ కోరుతూ ఎక్సెప్షన్‌ను క్యాచ్ చేయడం (<code>except KeyError</code>). ఇది వేగవంతమైనది మరియు అదనపు అనవసరపు లుకప్ ఖర్చులను నివారిస్తుంది.</li>
+      </ul>
+      <div style="background:#0f172a; border-radius:8px; padding:14px; font-family:Consolas, monospace; font-size:12.5px; color:#38bdf8; margin:10px 0; line-height:1.6;">
+        # 1. LBYL పద్ధతి (సాంప్రదాయ):<br/>
+        if "user_token" in session_cache:<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;token = session_cache["user_token"]<br/>
+        else:<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;token = None<br/><br/>
+        # 2. EAFP పైథానిక్ పద్ధతి (సిఫార్సు చేయబడినది):<br/>
+        try:<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;token = session_cache["user_token"]<br/>
+        except KeyError:<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;token = None
+      </div>
+    </div>
+
+    <ul>
+      <li><strong>The Silent Failure Pitfall:</strong> <code>except: pass</code> అని రాయడం వల్ల ఎర్రర్లు కప్పిపుచ్చబడి భవిష్యత్తులో డేటాబేస్ కరప్ట్ అయ్యే ప్రమాదం ఉంది. ఎర్రర్ వస్తే కనీసం లాగ్ (Log) చేయండి.</li>
+      <li><strong>తప్పుడు ఆర్డర్‌లో ఎక్సెప్షన్స్ క్యాచ్ చేయడం:</strong> పేరెంట్ క్లాస్‌ను (<code>Exception</code>) మొదట రాసి, దాని క్రింద చైల్డ్ క్లాస్‌ను (<code>ValueError</code>) రాస్తే — పేరెంట్ క్లాసే అన్నింటినీ ముందే క్యాచ్ చేసేస్తుంది! ఎల్లప్పుడూ స్పెసిఫిక్ ఎక్సెప్షన్లు పైభాగంలో, జెనరిక్ క్లాస్ చివరిలో ఉండాలి.</li>
+      <li><strong>finally బ్లాక్‌లో return రాయడం:</strong> <code>finally</code> లో <code>return</code> రాస్తే, <code>try</code> లేదా <code>except</code> లో వచ్చిన ఒరిజినల్ రిటర్న్ వాల్యూ లేదా ఎక్సెప్షన్ పూర్తిగా అణచివేయబడుతుంది!</li>
+      <li><strong>స్పెసిఫిక్ ఎక్సెప్షన్లు మాత్రమే క్యాచ్ చేయండి:</strong> సాధారణ <code>except Exception:</code> రాయడం కంటే <code>except (KeyError, ValueError) as err:</code> వంటి నిర్దిష్టమైన క్లాసులను క్యాచ్ చేయడం ద్వారా కోడ్ క్లీన్‌గా మరియు డీబగ్ చేయడానికి అనువుగా ఉంటుంది.</li>
+    </ul>
+
+    <!-- SECTION 13 -->
+    <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాజెక్ట్: "Enterprise FinTech Payment Gateway &amp; Resilient Engine"</h2>
+    <p>
+      ఈ ఇరవై ఒకటవ అధ్యాయంలో నేర్చుకున్న అన్ని ఎక్సెప్షన్ కాన్సెప్టులను (<code>try-except-else-finally</code>, కస్టమ్ డొమైన్ ఎక్సెప్షన్లు, ఎక్సెప్షన్ చైనింగ్, ఆటోమేటిక్ రీట్రై లాజిక్, సేఫ్ రోల్‌బ్యాక్) అనుసంధానిస్తూ — విఫలమైన లావాదేవీలను సురక్షితంగా రికవర్ చేసే పూర్తి స్థాయి <strong>FinTech Resilient Payment Gateway Engine</strong> ను నిర్మిద్దాం!
+    </p>
+
+    <!-- CODE BLOCK 3: CAPSTONE MINI PROJECT -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">03_fintech_payment_gateway_engine.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 21 మినీ ప్రాజెక్ట్: FinTech Resilient Payment Gateway Engine
+# కాన్సెప్ట్స్: try-except-else-finally, Custom Domain Exceptions,
+#             Retry Logic, Circuit Breaker Basics, Audit Logging
+# =====================================================================
+import time
+
+# 1. కస్టమ్ బ్యాంకింగ్ ఎక్సెప్షన్ క్లాసెస్
+class PaymentException(Exception):
+    """అన్ని పేమెంట్ వైఫల్యాలకు బేస్ క్లాస్."""
+    pass
+
+class CardExpiredError(PaymentException):
+    pass
+
+class InsufficientFundsError(PaymentException):
+    pass
+
+class NetworkGatewayTimeoutError(PaymentException):
+    pass
+
+class FinTechPaymentProcessor:
+    def __init__(self, merchant_id: str):
+        self.merchant_id = merchant_id
+        self.audit_log = []
+
+    def execute_charge(self, txn_id: str, card_token: str, amount: float, max_retries: int = 2) -> dict:
+        """నెట్‌వర్క్ సమస్యలు వస్తే ఆటో-రీట్రై చేస్తూ పేమెంట్‌ను పూర్తి చేస్తుంది."""
+        print("\\n" + "=" * 70)
+        print(f"💳 లావాదేవీ ప్రాసెసింగ్ [{txn_id}] — మొత్తం: ₹{amount:,.2f}")
+        print("=" * 70)
+
+        attempt = 0
+        while attempt <= max_retries:
+            attempt += 1
+            print(f"👉 ప్రయత్నం #{attempt}...")
+
+            try:
+                # వాలిడేషన్ రూల్స్ సిమ్యులేషన్
+                if amount <= 0:
+                    raise ValueError("చెల్లించాల్సిన మొత్తం సున్నా లేదా నెగటివ్ కాకూడదు!")
+                if card_token == "CARD-EXPIRED":
+                    raise CardExpiredError("కార్డు గడువు ముగిసింది. దయచేసి తాజా కార్డును వాడండి.")
+                if amount > 100000:
+                    raise InsufficientFundsError("ఖాతాలో రోజువారీ క్రెడిట్ లిమిట్ సరిపోదు.")
+
+                # మూడవ ప్రయత్నంలో నెట్‌వర్క్ సక్సెస్ అవుతుందని సిమ్యులేషన్
+                if card_token == "CARD-TIMEOUT" and attempt < 2:
+                    raise NetworkGatewayTimeoutError("బ్యాంక్ సర్వర్ నుండి స్పందన రాలేదు (504 Timeout)!")
+
+                # హ్యాపీ పాత్: పేమెంట్ సక్సెస్!
+                receipt = {
+                    "txn_id": txn_id,
+                    "status": "SUCCESS",
+                    "amount": amount,
+                    "attempts": attempt,
+                    "auth_code": "AUTH-998812"
+                }
+                return receipt
+
+            except NetworkGatewayTimeoutError as nte:
+                print(f"  ⚠️ నెట్‌వర్క్ అంతరాయం: {nte}")
+                if attempt <= max_retries:
+                    print("  ⏳ 1 సెకను వేచి చూసి తిరిగి ప్రయత్నిస్తున్నాం...")
+                    time.sleep(0.5)
+                else:
+                    raise PaymentException("నెట్‌వర్క్ అంతరాయం వల్ల గరిష్ట ప్రయత్నాలు విఫలమయ్యాయి!") from nte
+
+            except (CardExpiredError, InsufficientFundsError, ValueError) as client_err:
+                # క్లయింట్ వైపు తప్పులకు రీట్రై చేయకూడదు! తక్షణమే ఆపాలి.
+                print(f"  ❌ మార్చలేని లోపం: {client_err}")
+                raise client_err
+
+            finally:
+                print(f"  📝 లావాదేవీ ఆడిట్ లాగ్ నమోదు చేయబడింది (Attempt #{attempt}).")
+
+# లైవ్ టెస్టింగ్
+processor = FinTechPaymentProcessor(merchant_id="MERC-HYD-9901")
+
+# టెస్ట్ 1: నెట్‌వర్క్ రీట్రై ద్వారా సక్సెస్ అయ్యే లావాదేవీ
+try:
+    res1 = processor.execute_charge("TXN-1001", card_token="CARD-TIMEOUT", amount=3500.0)
+    print(f"\\n🎉 లావాదేవీ విజయవంతం! ఆథరైజేషన్ కోడ్: {res1['auth_code']}")
+except Exception as e:
+    print(f"\\n🚨 లావాదేవీ శాశ్వతంగా విఫలమైంది: {e}")
+
+# టెస్ట్ 2: కార్డు గడువు ముగిసిన కేసు (నో రీట్రై)
+try:
+    res2 = processor.execute_charge("TXN-1002", card_token="CARD-EXPIRED", amount=1200.0)
+except Exception as e:
+    print(f"\\n🚨 లావాదేవీ తిరస్కరించబడింది: {e}")
+</code></pre>
+    </div>
+
+    <!-- 5 COLLAPSIBLE QUIZZES -->
+    <h2 class="section-title"><span class="num">★</span> ఈ అధ్యాయంపై ప్రాక్టీస్ క్విజ్ (Knowledge Check)</h2>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">1. try బ్లాక్‌లో ఎర్రర్ రాకపోతే ఏ బ్లాక్ ఎగ్జిక్యూట్ అవుతుంది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>try</code> బ్లాక్‌లో ఎటువంటి ఎక్సెప్షన్ రానప్పుడు <strong><code>else</code></strong> బ్లాక్ ఎగ్జిక్యూట్ అవుతుంది. ఆ తర్వాత <code>finally</code> బ్లాక్ రన్ అవుతుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">2. except: pass అని రాయడం ఎందుకు తీవ్రమైన తప్పు (Anti-pattern)?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> ఇది ఏ రకమైన ఎర్రర్ వచ్చిందో చూడకుండా అన్నింటినీ మరుగున పరుస్తుంది (Silent Failure). సిస్టమ్ ఎర్రర్లను, యూజర్ నొక్కే <code>Ctrl+C</code> ఇంటరప్ట్‌లను కూడా ఆపేస్తుంది. దీనివల్ల బగ్‌లను కనుగొనడం అసాధ్యం అవుతుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">3. కస్టమ్ ఎక్సెప్షన్ క్లాస్‌ను ఎలా తయారు చేయాలి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> పైథాన్ అంతర్నిర్మిత <code>Exception</code> క్లాస్‌ను ఇన్‌హెరిట్ చేయడం ద్వారా: <code>class InvalidAgeError(Exception): pass</code>.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">4. raise ... from err సింటాక్స్ యొక్క ప్రయోజనం ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> దీనిని <strong>Exception Chaining</strong> అంటారు. ఒక కొత్త ఎర్రర్‌ను విసురుతున్నప్పుడు, అసలైన మూల కారణమైన పాత ఎర్రర్‌ను కోల్పోకుండా ట్రేస్‌బ్యాక్‌లో రెండింటినీ చూపిస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">5. finally బ్లాక్‌లో return స్టేట్‌మెంట్ రాయకూడదు ఎందుకు?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>finally</code> లో <code>return</code> రాస్తే, <code>try</code> లేదా <code>except</code> లో వచ్చిన ఒరిజినల్ రిటర్న్ వాల్యూ లేదా రేజ్ అయిన ఎక్సెప్షన్ పూర్తిగా అణచివేయబడి రద్దు అవుతుంది.
+      </div>
+    </details>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-python/20-python-file-handling-and-json.html" style="text-decoration:none; color:var(--text); font-weight:600; display:inline-flex; align-items:center; gap:8px; background:var(--bg2); padding:10px 18px; border-radius:8px; border:1px solid var(--border);">
+        ← మునుపటి అధ్యాయం: 20. ఫైల్ హ్యాండ్లింగ్ &amp; JSON
+      </a>
+      <a href="/blog-python/22-python-oop-classes-and-objects.html" style="text-decoration:none; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; background:#10b981; padding:10px 22px; border-radius:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        తర్వాతి అధ్యాయం: 22. OOP బేసిక్స్ (Classes &amp; Objects) →
+      </a>
+    </div>
+
+    <!-- INTERACTIVE COMPILER CTA CARD -->
+    <div style="margin-top:40px; background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(56,189,248,0.1) 100%); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:24px; text-align:center;">
+      <h3 style="margin-top:0; color:var(--text); font-size:20px;">ఈ FinTech Resilient Engine ని లైవ్‌గా మన కంపైలర్‌లో రన్ చేయండి!</h3>
+      <p style="color:var(--text2); max-width:650px; margin:8px auto 20px; font-size:14px; line-height:1.6;">
+        ఎటువంటి లోకల్ సెటప్ లేకుండా, బ్రౌజర్‌లోనే Modern Python 3 కంపైలర్‌లో ఈ కోడ్‌ను ఎగ్జిక్యూట్ చేసి అవుట్‌పుట్ తనిఖీ చేయండి.
+      </p>
+      <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; padding:12px 28px; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Launch Python Interactive Compiler
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER / NAV SCRIPTS -->
+<script src="/site-nav.js"></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`# =====================================================================
+# చాప్టర్ 21 మినీ ప్రాజెక్ట్: Exception Resilience (LIVE DEMO)
+# =====================================================================
+class BalanceLowError(Exception): pass
+
+def pay(balance, bill):
+    print("=" * 60)
+    try:
+        if bill > balance:
+            raise BalanceLowError(f"బ్యాలెన్స్ ₹{balance} కంటే బిల్లు ₹{bill} ఎక్కువ!")
+        rem = balance - bill
+    except BalanceLowError as ble:
+        print(f"❌ విఫలం: {ble}")
+    else:
+        print(f"✅ చెల్లింపు సక్సెస్! మిగిలిన బ్యాలెన్స్: ₹{rem}")
+    finally:
+        print("🔒 సెషన్ సురక్షితంగా ముగిసింది.")
+    print("=" * 60)
+
+pay(5000, 1200)
+pay(2000, 3500)
+print("\\n🎉 చాప్టర్ 21 ప్రాజెక్ట్ విజయవంతంగా రన్ అయ్యింది! 🚀")
+\`;
+
+    try {
+      localStorage.setItem('code_python', projectCode);
+      localStorage.setItem('code_python3', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-python-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-python', currentLesson.file);
+fs.writeFileSync(outputPath, chapter21Content, 'utf8');
+console.log('✅ Successfully generated deep high-value Python Chapter 21 in exact HTML style!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter21Content.length, 'characters');

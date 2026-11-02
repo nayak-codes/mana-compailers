@@ -75,3 +75,4 @@ if (allPassed) {
   console.error('❌ PHASE 04 AUDIT FAILED. Check errors above.');
   process.exit(1);
 }
+

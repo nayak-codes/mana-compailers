@@ -1,0 +1,611 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildPythonSidebar } = require('./python_curriculum_data.js');
+
+const currentLesson = LESSONS.find(l => l.num === 22);
+
+const chapter22Content = `<!DOCTYPE html>
+<html lang="te" class="lang-python light-theme">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>22. OOP బేసిక్స్: Classes, Objects, __init__ &amp; self | Modern Python 3 Masterclass</title>
+  <meta name="description" content="పైథాన్ ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP) బేసిక్స్: క్లాసెస్, ఆబ్జెక్ట్స్, __init__ కన్‌స్ట్రక్టర్, self మెకానిక్స్, ఇన్స్టాన్స్ వర్సెస్ క్లాస్ వేరియబుల్స్, @classmethod మరియు @staticmethod పూర్తి వివరణ.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Telugu:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/site-nav.css">
+  <link rel="stylesheet" href="/blog-style.css">
+  <link rel="stylesheet" href="/blog-python/style.css">
+</head>
+<body class="line-numbers">
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+  ${buildPythonSidebar(22)}
+
+  <main class="content">
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/index.html">హోమ్</a>
+      <span class="sep">›</span>
+      <a href="/blog-python/index.html">పైథాన్ ట్యుటోరియల్స్</a>
+      <span class="sep">›</span>
+      <span>చాప్టర్ 22: OOP బేసిక్స్ (Classes &amp; Objects)</span>
+    </div>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge badge-primary">Modern Python 3.12+</span>
+      <span class="badge badge-secondary">చాప్టర్ 22 / 25</span>
+      <span class="badge badge-outline">Phase 05: OOP &amp; Advanced</span>
+      <span class="badge badge-success">2026 Edition</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">22. ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP) బేసిక్స్ — Classes, Objects, __init__ &amp; self</h1>
+
+    <!-- COVERED PILL BAR -->
+    <div class="covered-bar" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; background:var(--bg2); padding:10px 16px; border-radius:8px; border:1px solid var(--border); margin:18px 0 24px; font-size:13.5px; color:var(--text2);">
+      <strong style="color:var(--text);">📌 Covered in this chapter:</strong>
+      <span>OOP Mental Model vs Procedural</span> •
+      <span>Class Blueprint &amp; Object Instantiation</span> •
+      <span>__init__ Constructor Lifecycle</span> •
+      <span>The Mystery of self</span> •
+      <span>Instance vs Class Attributes &amp; __dict__</span> •
+      <span>Instance, @classmethod, @staticmethod</span> •
+      <span>Autonomous Fleet Management Capstone</span>
+    </div>
+
+    <!-- INTRO BOX -->
+    <div class="intro-box">
+      సాఫ్ట్‌వేర్ అభివృద్ధిలో నిజ జీవిత సమస్యలను (Real-world Entities) కంప్యూటర్ ప్రోగ్రామ్‌గా మలచడానికి అత్యంత ప్రజాదరణ పొందిన పద్ధతి ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (Object-Oriented Programming - OOP). ఇప్పటివరకు మనం వేరియబుల్స్, లిస్టులు మరియు ఫంక్షన్ల ద్వారా కోడ్ రాశాము (ఇది Procedural Programming). అయితే పెద్ద స్థాయి అప్లికేషన్లు, గేమింగ్ ఇంజిన్లు, వెబ్ ఫ్రేమ్‌వర్కులు (Django, FastAPI), AI ఆర్కిటెక్చర్లు (PyTorch, TensorFlow) నిర్మించేటప్పుడు డేటాను (State) మరియు ఆ డేటాపై పనిచేసే ఫంక్షన్లను (Behavior) ఒకే గూటికి చేర్చడం అనివార్యం. ఈ అధ్యాయంలో క్లాస్ అంటే ఏమిటి, మెమరీలో ఆబ్జెక్ట్ ఎలా పుడుతుంది, <code>__init__</code> కన్‌స్ట్రక్టర్ అంతర్గత చక్రం ఏమిటి, పైథాన్‌లో <code>self</code> పారామీటర్ ఎందుకు తప్పనిసరిగా ఉండాలి, మరియు క్లాస్ మెథడ్స్, స్టాటిక్ మెథడ్స్ మధ్య సూక్ష్మ వ్యత్యాసాలను ప్రాక్టికల్ విజువల్స్‌తో లోతుగా శోధిద్దాం.
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 class="section-title"><span class="num">1</span> ప్రొసీజరల్ వర్సెస్ ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP Mental Model)</h2>
+    <p>
+      పైథాన్ ఒక మల్టీ-పారడైమ్ (Multi-paradigm) ప్రోగ్రామింగ్ లాంగ్వేజ్. మీరు ఫంక్షనల్ శైలిలో కోడ్ రాయవచ్చు, ప్రొసీజరల్ శైలిలో రాయవచ్చు, లేదా ఆబ్జెక్ట్ ఓరియెంటెడ్ పద్ధతిలో రూపొందించవచ్చు. ఈ రెండింటి మధ్య ప్రాథమిక తేడాను గ్రహించడం సాఫ్ట్‌వేర్ ఆర్కిటెక్ట్‌గా మారడానికి మొదటి మెట్టు:
+    </p>
+    <ul>
+      <li><strong>Procedural Programming (విధానాత్మక విధానం):</strong> ఇక్కడ ప్రాధాన్యత ఫంక్షన్ల పైన మరియు వరుస క్రమ చర్యల పైన ఉంటుంది. డేటా వేరుగా (గ్లోబల్ లేదా లోకల్ వేరియబుల్స్‌గా) ఉంటుంది, ఫంక్షన్లు వేరుగా ఉంటాయి. డేటా పెద్దదవుతున్న కొద్దీ ఏ ఫంక్షన్ ఏ వేరియబుల్‌ను మారుస్తోందో ట్రాక్ చేయడం అసాధ్యంగా మారి "స్పాఘెట్టి కోడ్" (Spaghetti Code) ఏర్పడుతుంది.</li>
+      <li><strong>Object-Oriented Programming (ఆబ్జెక్ట్ ఆధారిత విధానం):</strong> ఇక్కడ డేటా (Attributes/State) మరియు దానిపై చర్యలు జరిపే ఫంక్షన్లు (Methods/Behavior) ఒకే ఆబ్జెక్ట్ లోపల ఒకదానితో ఒకటి గట్టిగా బంధించబడతాయి (Encapsulated). నిజ జీవితంలో ఒక కారును చూస్తే — రంగు, స్పీడ్, ఇంధనం అనేవి దాని లక్షణాలు (State); డ్రైవ్ చేయడం, బ్రేక్ వేయడం, హారన్ కొట్టడం అనేవి దాని చర్యలు (Behavior). సరిగ్గా ఇదే సూత్రాన్ని కంప్యూటర్ కోడ్‌లో వర్తింపజేయడమే OOP!</li>
+    </ul>
+
+    <!-- SECTION 2 -->
+    <h2 class="section-title"><span class="num">2</span> క్లాస్ (Class) మరియు ఆబ్జెక్ట్ (Object) — Blueprint vs Building</h2>
+    <p>
+      బిగినర్స్ ఎక్కువగా గందరగోళానికి గురయ్యే అంశం: క్లాస్‌కు మరియు ఆబ్జెక్ట్‌కు మధ్య వ్యత్యాసం ఏమిటి?
+    </p>
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; margin:16px 0;">
+      <h3 style="margin-top:0; color:#10b981; font-size:16px;">ఆర్కిటెక్చర్ అనాలజీ (Real-world Visual):</h3>
+      <p style="margin-bottom:12px; font-size:14px; line-height:1.7;">
+        <strong>క్లాస్ (Class) అనేది కేవలం బ్లూప్రింట్ (డిజైన్ నమూనా):</strong> ఒక ఇంటిని నిర్మించడానికి ఇంజనీర్ కాగితంపై గీసిన ప్లాన్ క్లాస్ వంటిది. ఆ ప్లాన్ కాగితం మాత్రమే; మీరు ఆ ప్లాన్‌లో నివసించలేరు, అది భూమిపై ఎటువంటి స్థలాన్ని (RAM మెమరీని) ఆక్రమించదు. అందులో బెడ్‌రూమ్ ఎక్కడ ఉండాలి, కిచెన్ ఎక్కడ ఉండాలి అనే నియమాలు మాత్రమే ఉంటాయి.
+      </p>
+      <p style="margin-bottom:0; font-size:14px; line-height:1.7;">
+        <strong>ఆబ్జెక్ట్ (Object లేదా Instance) అనేది నిజమైన భవనం:</strong> ఆ బ్లూప్రింట్‌ను ఆధారంగా చేసుకుని కాంక్రీట్, ఇటుకలతో భూమిపై నిర్మించిన నిజమైన ఇల్లు ఆబ్జెక్ట్. ఒకే బ్లూప్రింట్ ఆధారంగా మీరు 10 విభిన్న రంగులు, విభిన్న ఫర్నిచర్ ఉన్న 10 ఇళ్లను నిర్మించవచ్చు. కంప్యూటర్‌లో ప్రతి ఇల్లు ర్యామ్ (RAM) లో ఒక ప్రత్యేక మెమరీ అడ్రస్‌ను కలిగి ఉంటుంది.
+      </p>
+    </div>
+
+    <!-- SECTION 3 -->
+    <h2 class="section-title"><span class="num">3</span> క్లాస్ డిక్లరేషన్ &amp; ఇన్స్టాన్షియేషన్ సింటాక్స్</h2>
+    <p>
+      పైథాన్‌లో క్లాస్‌ను డిక్లేర్ చేయడానికి <code>class</code> అనే రిజర్వ్‌డ్ కీవర్డ్‌ను ఉపయోగిస్తాము. PEP 8 కన్వెన్షన్ ప్రకారం క్లాస్ పేర్లను ఎల్లప్పుడూ <strong>PascalCase</strong> (ప్రతి పదం మొదటి అక్షరం క్యాపిటల్) లో రాయాలి (ఉదాహరణకు: <code>BankAccount</code>, <code>NetworkConnectionManager</code>):
+    </p>
+
+    <div style="background:#0f172a; border-radius:8px; padding:16px; font-family:Consolas, monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.6;">
+      # 1. సరళమైన ఎంప్టీ క్లాస్ డిక్లరేషన్<br/>
+      class Car:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;pass  # భవిష్యత్తులో కోడ్ రాయడానికి ప్లేస్‌హోల్డర్<br/><br/>
+      # 2. ఆబ్జెక్ట్‌ను సృష్టించడం (Instantiation)<br/>
+      car1 = Car()<br/>
+      car2 = Car()<br/><br/>
+      print(type(car1))      # &lt;class '__main__.Car'&gt;<br/>
+      print(hex(id(car1)))   # RAM లో ప్రత్యేక మెమరీ అడ్రస్: 0x7fa8901b<br/>
+      print(hex(id(car2)))   # మరొక ప్రత్యేక మెమరీ అడ్రస్: 0x7fa890a4<br/>
+      print(car1 is car2)    # False (రెండు పూర్తిగా విభిన్న ఆబ్జెక్టులు!)
+    </div>
+
+    <!-- SECTION 4 -->
+    <h2 class="section-title"><span class="num">4</span> <code>__init__</code> మెథడ్ డీప్ డైవ్ (Constructor Lifecycle &amp; <code>__new__</code>)</h2>
+    <p>
+      ఆబ్జెక్ట్ సృష్టించబడిన వెంటనే దానికి అవసరమైన ప్రారంభ విలువలను (Initial State) కేటాయించడానికి పైథాన్‌లో ప్రత్యేకమైన డండర్ (Double Underscore) మెథడ్ <code>__init__</code> ను వాడతాము. దీనిని సాంప్రదాయ ప్రోగ్రామింగ్‌లో <strong>Constructor</strong> అని పిలుస్తారు:
+    </p>
+    <ul>
+      <li><strong>ఆబ్జెక్ట్ సృష్టి ప్రయాణం (__new__ vs __init__):</strong> వాస్తవానికి పైథాన్ అంతర్గతంగా మొదట <code>__new__(cls, ...)</code> అనే స్టాటిక్ మెథడ్‌ను పిలుస్తుంది. ఇది రన్‌టైమ్‌లో ఆబ్జెక్ట్‌కు అవసరమైన అసలైన మెమరీ బ్లాక్‌ను RAM లో కేటాయించి కొత్త ఇన్స్టాన్స్‌ను సృష్టించి రిటర్న్ చేస్తుంది. ఆ తర్వాత వెంటనే పైథాన్ <code>__init__(self, ...)</code> ను పిలిచి ఆ మెమరీ బ్లాక్‌లోని అట్రిబ్యూట్లను యూజర్ అందించిన విలువల ఆధారంగా ఇనిషియలైజ్ చేస్తుంది. Singleton Design Pattern వంటి ఆధునిక ఆర్కిటెక్చర్లలో ఒకే ఒక్క ఆబ్జెక్ట్ ఉండాలని నియంత్రించడానికి నిపుణులు <code>__new__</code> ను ఓవర్‌రైడ్ చేస్తారు.</li>
+      <li><strong>రిటర్న్ నియమం:</strong> <code>__init__</code> మెథడ్ ఎప్పుడూ ఏ విలువనూ రిటర్న్ చేయకూడదు (అది అంతర్గతంగా కేవలం <code>None</code> ను మాత్రమే అనుమతిస్తుంది). మీరు పొరపాటున <code>return 100</code> అని రాస్తే పైథాన్ రన్‌టైమ్ <code>TypeError: __init__() should return None</code> ఎర్రర్‌ను విసురుతుంది!</li>
+    </ul>
+
+    <div style="background:#0f172a; border-radius:8px; padding:14px; font-family:Consolas, monospace; font-size:12.5px; color:#38bdf8; margin:12px 0; line-height:1.6;">
+      # ఆబ్జెక్ట్ లైఫ్‌సైకిల్ ఇంటర్నల్స్:<br/>
+      class LifecycleTracker:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;def __new__(cls, *args, **kwargs):<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("1. [__new__] మెమరీలో రా ఆబ్జెక్ట్ సృష్టించబడింది")<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance = super().__new__(cls)<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return instance<br/><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;def __init__(self, name):<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("2. [__init__] ఆబ్జెక్ట్ అట్రిబ్యూట్స్ ఇనిషియలైజ్ అవుతున్నాయి")<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.name = name
+    </div>
+
+    <!-- SECTION 5 -->
+    <h2 class="section-title"><span class="num">5</span> <code>self</code> పారామీటర్ అంతర్గత రహస్యం (Runtime Mechanics)</h2>
+    <p>
+      పైథాన్ క్లాసులలో ప్రతి ఇన్స్టాన్స్ మెథడ్ మొదటి ఆర్గ్యుమెంట్‌గా <code>self</code> ఎందుకు ఉండాలి? C++ లేదా Java లో <code>this</code> కీవర్డ్ కనిపించకుండా దాగి ఉంటుంది (Implicit), కానీ పైథాన్‌లో <strong>Explicit is better than implicit</strong> (ది జెన్ ఆఫ్ పైథాన్ సూత్రం) ప్రకారం <code>self</code> స్పష్టంగా మొదటి పారామీటర్‌గా ఉండాలి:
+    </p>
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+      <h4 style="margin-top:0; color:#10b981;">పైథాన్ ఇంటర్‌ప్రీటర్ తెరవెనుక ఏమి చేస్తుంది?</h4>
+      <p style="font-size:13.5px; line-height:1.7; margin-bottom:8px;">
+        మీరు కోడ్‌లో <code>car1.drive(60)</code> అని పిలిచినప్పుడు, పైథాన్ ఇంటర్‌ప్రీటర్ దానిని వెనువెంటనే ఈ క్రింది విధంగా రీరైట్ చేస్తుంది:
+      </p>
+      <div style="background:#0f172a; border-radius:6px; padding:10px 14px; font-family:Consolas, monospace; font-size:13px; color:#38bdf8;">
+        Car.drive(car1, 60)
+      </div>
+      <p style="font-size:13.5px; line-height:1.7; margin-top:8px; margin-bottom:0;">
+        అంటే క్లాస్ స్థాయి ఫంక్షన్‌కు మొదటి ఆర్గ్యుమెంట్‌గా మీరు పిలిచిన ఆబ్జెక్ట్ రెఫరెన్స్‌నే (<code>car1</code>) పాస్ చేస్తుంది! ఆ ఆబ్జెక్ట్ రిఫరెన్స్‌ను పట్టుకునే పారామీటరే <code>self</code>. సంప్రదాయం ప్రకారం దీనిని <code>self</code> అంటారు (మీరు కావాలంటే వేరే పేరు పెట్టవచ్చు కానీ పైథాన్ కమ్యూనిటీ నిబంధనల ప్రకారం ఎల్లప్పుడూ <code>self</code> అనే వాడాలి).
+      </p>
+    </div>
+
+    <!-- SECTION 6 -->
+    <h2 class="section-title"><span class="num">6</span> ఇన్స్టాన్స్ వేరియబుల్స్ vs క్లాస్ వేరియబుల్స్ &amp; <code>__dict__</code> నేమ్‌స్పేస్</h2>
+    <p>
+      పైథాన్‌లో వేరియబుల్స్ ఏ స్థాయిలో డిక్లేర్ చేయబడ్డాయో అనేదానిపై వాటి ప్రవర్తన ఆధారపడి ఉంటుంది:
+    </p>
+    <table style="width:100%; border-collapse:collapse; margin:16px 0; font-size:13.5px; text-align:left;">
+      <thead>
+        <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+          <th style="padding:10px 12px;">ఫీచర్</th>
+          <th style="padding:10px 12px; color:#10b981;">ఇన్స్టాన్స్ వేరియబుల్ (Instance Attribute)</th>
+          <th style="padding:10px 12px; color:#38bdf8;">క్లాస్ వేరియబుల్ (Class Attribute)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 12px; font-weight:600;">డిక్లరేషన్ లొకేషన్</td>
+          <td style="padding:10px 12px;"><code>__init__</code> లేదా మెథడ్స్ లోపల <code>self.name</code> తో</td>
+          <td style="padding:10px 12px;">క్లాస్ బాడీలో ఏ మెథడ్ బయటైనా నేరుగా</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 12px; font-weight:600;">మెమరీ షేరింగ్</td>
+          <td style="padding:10px 12px;">ప్రతి ఆబ్జెక్ట్‌కు స్వంత ప్రత్యేక మెమరీ కాపీ ఉంటుంది</td>
+          <td style="padding:10px 12px;">అన్ని ఆబ్జెక్టులు ఒకే ఒక కాపీని పంచుకుంటాయి (Shared)</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 12px; font-weight:600;">యాక్సెస్ పద్ధతి</td>
+          <td style="padding:10px 12px;"><code>object.attribute</code></td>
+          <td style="padding:10px 12px;"><code>ClassName.attribute</code> లేదా <code>object.attribute</code></td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:10px 12px; font-weight:600;">ఇంటర్నల్ స్టోరేజ్</td>
+          <td style="padding:10px 12px;">ఆబ్జెక్ట్ యొక్క <code>self.__dict__</code> లో నిల్వ ఉంటుంది</td>
+          <td style="padding:10px 12px;">క్లాస్ యొక్క <code>ClassName.__dict__</code> లో నిల్వ ఉంటుంది</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="background:var(--bg2); border-left:4px solid #10b981; padding:12px 16px; margin:14px 0; border-radius:0 8px 8px 0; font-size:13.5px; line-height:1.7;">
+      <strong>🚀 ప్రో టిప్ — మెమరీ ఆప్టిమైజేషన్ with <code>__slots__</code>:</strong> పైథాన్‌లో ప్రతి సాధారణ ఆబ్జెక్ట్ డైనమిక్ అట్రిబ్యూట్ల కోసం లోపల ఒక డిక్షనరీని (<code>__dict__</code>) నిర్వహిస్తుంది. దీనివల్ల వేల కొద్దీ ఆబ్జెక్టులు ఉన్నప్పుడు భారీగా RAM వృథా అవుతుంది. మీరు క్లాస్‌లో <code>__slots__ = ('name', 'salary')</code> అని డిఫైన్ చేస్తే, పైథాన్ <code>__dict__</code> ను తొలగించి స్థిరమైన C-స్ట్రక్చర్ శైలిలో మెమరీని కేటాయిస్తుంది. దీనివల్ల మెమరీ వినియోగం దాదాపు <strong>40% నుండి 50% వరకు తగ్గుతుంది!</strong>
+    </div>
+
+    <!-- SECTION 7 -->
+    <h2 class="section-title"><span class="num">7</span> ఇన్స్టాన్స్ మెథడ్స్ (Instance Methods)</h2>
+    <p>
+      క్లాస్‌లో డిఫాల్ట్‌గా రాసే మెథడ్స్ అన్నీ ఇన్స్టాన్స్ మెథడ్లే. వీటి మొదటి పారామీటర్ <code>self</code>. ఇవి ఆబ్జెక్ట్ యొక్క స్టేట్‌ను (Instance Attributes) చదవగలవు, సవరించగలవు, అలాగే ఇతర ఇన్స్టాన్స్ మెథడ్లను పిలవగలవు:
+    </p>
+    <div style="background:#0f172a; border-radius:8px; padding:16px; font-family:Consolas, monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.6;">
+      class BankAccount:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;def __init__(self, owner, balance=0.0):<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.owner = owner<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.balance = balance<br/><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;def deposit(self, amount):<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if amount &lt;= 0:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;raise ValueError("డిపాజిట్ మొత్తం పాజిటివ్‌గా ఉండాలి!")<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.balance += amount<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return self.balance
+    </div>
+
+    <!-- SECTION 8 -->
+    <h2 class="section-title"><span class="num">8</span> క్లాస్ మెథడ్స్ (<code>@classmethod</code> &amp; <code>cls</code> పారామీటర్)</h2>
+    <p>
+      కొన్ని సందర్భాలలో మనకు ప్రత్యేకంగా ఒక ఆబ్జెక్ట్ స్టేట్‌తో పని ఉండదు; బదులుగా మొత్తం క్లాస్ స్టేట్‌ను మార్చాల్సి ఉంటుంది లేదా <strong>Alternative Constructors</strong> (వివిధ ఫార్మాట్లలోని డేటా నుండి ఆబ్జెక్టులను సృష్టించే ఫ్యాక్టరీ మెథడ్స్) నిర్మించాల్సి ఉంటుంది. దీని కోసం <code>@classmethod</code> డెకరేటర్‌ను మరియు మొదటి పారామీటర్‌గా <code>cls</code> (క్లాస్ రెఫరెన్స్) ను ఉపయోగిస్తాము:
+    </p>
+    <div style="background:#0f172a; border-radius:8px; padding:16px; font-family:Consolas, monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.6;">
+      class Employee:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;base_raise_percentage = 0.05  # 5% క్లాస్ వేరియబుల్<br/><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;def __init__(self, name, salary):<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.name = name<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.salary = salary<br/><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;@classmethod<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;def from_csv_string(cls, data_str):<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"""స్ట్రింగ్ నుండి ఆబ్జెక్ట్‌ను సృష్టించే ఫ్యాక్టరీ మెథడ్."""<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name, salary_str = data_str.split(",")<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return cls(name.strip(), float(salary_str.strip()))<br/><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;@classmethod<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;def update_raise_rate(cls, new_rate):<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cls.base_raise_percentage = new_rate
+    </div>
+
+    <!-- SECTION 9 -->
+    <h2 class="section-title"><span class="num">9</span> స్టాటిక్ మెథడ్స్ (<code>@staticmethod</code>) &amp; త్రయం పోలిక</h2>
+    <p>
+      ఒక మెథడ్‌కు ఆబ్జెక్ట్ డేటాతో (<code>self</code>) పని లేదు, మరియు క్లాస్ వేరియబుల్స్‌తో (<code>cls</code>) కూడా పని లేదు; కానీ లాజికల్‌గా ఆ క్లాస్‌కు సంబంధించిన యుటిలిటీ లేదా వాలిడేషన్ ఫంక్షన్ అయితే, దానిని <code>@staticmethod</code> గా డిక్లేర్ చేస్తాము:
+    </p>
+    <ul>
+      <li><strong>Instance Method (<code>self</code>):</strong> నిర్దిష్ట ఆబ్జెక్ట్ స్టేట్‌ను చదువుతుంది/మారుస్తుంది. అత్యధికంగా వాడబడుతుంది.</li>
+      <li><strong>Class Method (<code>cls</code>):</strong> క్లాస్ స్టేట్‌ను మార్చగలదు, సబ్-క్లాసింగ్‌కు అనుకూలంగా ఉండే ఆల్టర్నేటివ్ కన్‌స్ట్రక్టర్లను సమకూరుస్తుంది.</li>
+      <li><strong>Static Method (స్వతంత్రమైనది):</strong> కేవలం సాధారణ ఫంక్షన్ లాంటిదే, కానీ ఆర్గనైజేషన్ కోసం క్లాస్ నేమ్‌స్పేస్ లోపల బంధించబడి ఉంటుంది (ఉదాహరణకు ఈమెయిల్ ఫార్మాట్ లేదా ఫోన్ నంబర్ వాలిడేషన్).</li>
+    </ul>
+
+    <!-- SECTION 10 -->
+    <h2 class="section-title"><span class="num">10</span> కోడ్ డెమో 1: బ్యాంకింగ్ అకౌంట్ మోడలింగ్ (Complete Implementation)</h2>
+    <p>
+      డిపాజిట్, విత్‌డ్రా, మరియు బ్యాలెన్స్ ఎంక్వైరీతో కూడిన పూర్తి బ్యాంకింగ్ అకౌంట్ క్లాస్‌ను లైవ్‌గా పరిశీలిద్దాం:
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">01_bank_account_oop.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># చాప్టర్ 22: బ్యాంకింగ్ అకౌంట్ OOP మోడల్
+class BankAccount:
+    bank_name = "State Bank of Telugu"
+    interest_rate = 0.04  # 4% వార్షిక వడ్డీ
+
+    def __init__(self, account_no: str, holder_name: str, opening_balance: float = 1000.0):
+        self.account_no = account_no
+        self.holder_name = holder_name
+        self.balance = opening_balance
+        self.transactions = []
+
+    def deposit(self, amount: float):
+        if amount &lt;= 0:
+            print("❌ డిపాజిట్ మొత్తం పాజిటివ్‌గా ఉండాలి!")
+            return False
+        self.balance += amount
+        self.transactions.append(f"+ ₹{amount:,.2f} జమ చేయబడింది")
+        print(f"✅ ₹{amount:,.2f} డిపాజిట్ విజయవంతం. ప్రస్తుత బ్యాలెన్స్: ₹{self.balance:,.2f}")
+        return True
+
+    def withdraw(self, amount: float):
+        if amount &gt; self.balance:
+            print(f"❌ విత్‌డ్రా విఫలం! ఖాతాలో తగినంత నగదు లేదు (బ్యాలెన్స్: ₹{self.balance:,.2f})")
+            return False
+        self.balance -= amount
+        self.transactions.append(f"- ₹{amount:,.2f} డ్రా చేయబడింది")
+        print(f"💸 ₹{amount:,.2f} విత్‌డ్రా సక్సెస్. మిగిలిన బ్యాలెన్స్: ₹{self.balance:,.2f}")
+        return True
+
+    def statement(self):
+        print(f"\n--- {BankAccount.bank_name} స్టేట్‌మెంట్: {self.holder_name} ({self.account_no}) ---")
+        for tx in self.transactions:
+            print("  *", tx)
+        print(f"నికర నిల్వ (Net Balance): ₹{self.balance:,.2f}\n")
+
+# ఆబ్జెక్టులను సృష్టించి పరీక్షిద్దాం
+acc1 = BankAccount("SB-10928", "రమేష్ వర్మ", 15000.0)
+acc1.deposit(5000.0)
+acc1.withdraw(3500.0)
+acc1.withdraw(25000.0)  # విఫలమవుతుంది
+acc1.statement()
+</code></pre>
+    </div>
+
+    <!-- SECTION 11 -->
+    <h2 class="section-title"><span class="num">11</span> కోడ్ డెమో 2: కార్పొరేట్ ఎంప్లాయ్ మేనేజర్ with @classmethod &amp; @staticmethod</h2>
+    <p>
+      క్లాస్ మెథడ్స్ మరియు స్టాటిక్ మెథడ్స్ రియల్-వరల్డ్ సాఫ్ట్‌వేర్‌లో డేటా పార్సింగ్ మరియు బిజినెస్ రూల్స్‌కు ఎలా ఉపయోగపడతాయో చూద్దాం:
+    </p>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">02_employee_factory_methods.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python">import re
+
+class Employee:
+    company_name = "Hyderabad Tech Innovators"
+    total_employees = 0
+
+    def __init__(self, emp_id: str, name: str, role: str, salary: float):
+        self.emp_id = emp_id
+        self.name = name
+        self.role = role
+        self.salary = salary
+        Employee.total_employees += 1
+
+    # ఇన్స్టాన్స్ మెథడ్
+    def apply_bonus(self, percentage: float):
+        bonus_amount = self.salary * (percentage / 100)
+        self.salary += bonus_amount
+        print(f"🎉 {self.name} కి {percentage}% బోనస్ (₹{bonus_amount:,.2f}) లభించింది. కొత్త శాలరీ: ₹{self.salary:,.2f}")
+
+    # క్లాస్ మెథడ్: ఆల్టర్నేటివ్ కన్‌స్ట్రక్టర్ (CSV డేటా నుండి ఆబ్జెక్ట్ సృష్టి)
+    @classmethod
+    def from_csv_line(cls, csv_line: str):
+        parts = [p.strip() for p in csv_line.split(",")]
+        emp_id, name, role, salary_str = parts
+        return cls(emp_id, name, role, float(salary_str))
+
+    # స్టాటిక్ మెథడ్: స్వతంత్ర ఈమెయిల్ వాలిడేటర్
+    @staticmethod
+    def is_valid_corp_email(email: str) -> bool:
+        pattern = r"^[a-zA-Z0-9_.+-]+@techinnovators\.com$"
+        return bool(re.match(pattern, email))
+
+# పరీక్షించడం
+emp1 = Employee("EMP01", "సరిత", "Senior Architect", 125000.0)
+emp2 = Employee.from_csv_line("EMP02, విక్రమ్ రాజ్, DevOps Lead, 110000.0")
+
+emp1.apply_bonus(10)
+print(f"మొత్తం ఉద్యోగుల సంఖ్య: {Employee.total_employees}")
+print("ఈమెయిల్ సరియైనదా?:", Employee.is_valid_corp_email("vikram@techinnovators.com"))
+print("వ్యక్తిగత జీమెయిల్ సరియైనదా?:", Employee.is_valid_corp_email("vikram@gmail.com"))
+</code></pre>
+    </div>
+
+    <!-- SECTION 12 -->
+    <h2 class="section-title"><span class="num">12</span> కామన్ బిగినర్స్ మిస్టేక్స్ &amp; ప్రొడక్షన్ బెస్ట్ ప్రాక్టీసెస్</h2>
+    <ul>
+      <li><strong>Mutable Class Attribute Trap:</strong> క్లాస్ స్థాయిలో లిస్ట్ లేదా డిక్షనరీ వంటి మ్యూటబుల్ వస్తువును డిక్లేర్ చేస్తే (ఉదా: <code>items = []</code>), ప్రతి ఆబ్జెక్ట్ అదే లిస్ట్‌ను షేర్ చేసుకుంటుంది! ఒక కస్టమర్ కార్ట్‌లోకి వస్తువును చేరిస్తే అందరి కార్టులలోకి అది కనిపిస్తుంది. ఎల్లప్పుడూ మ్యూటబుల్ డేటాను <code>__init__</code> లో <code>self.items = []</code> గానే డిక్లేర్ చేయాలి.</li>
+      <li><strong>self మర్చిపోవడం:</strong> మెథడ్ డిఫైన్ చేసేటప్పుడు మొదటి ఆర్గ్యుమెంట్‌గా <code>self</code> రాయడం మర్చిపోతే, కాల్ చేసినప్పుడు <code>TypeError: takes 0 positional arguments but 1 was given</code> ఎర్రర్ వస్తుంది.</li>
+      <li><strong>Instance Variable vs Class Variable Shadowing:</strong> క్లాస్ వేరియబుల్‌ను ఆబ్జెక్ట్ ద్వారా మోడిఫై చేయడానికి ప్రయత్నిస్తే (<code>self.company_name = "NewName"</code>), అది క్లాస్ వేరియబుల్‌ను మార్చదు; బదులుగా ఆ ఆబ్జెక్ట్‌కు మాత్రమే వర్తించే ఒక కొత్త ఇన్స్టాన్స్ వేరియబుల్‌ను సృష్టిస్తుంది (Shadowing). క్లాస్ వేరియబుల్‌ను మార్చాలంటే నేరుగా <code>ClassName.variable = value</code> అని రాయాలి.</li>
+      <li><strong>OOP ని అవసరం లేని చోట బలవంతంగా రుద్దకండి:</strong> కేవలం రెండు సాధారణ మ్యాథమెటికల్ కాలిక్యులేషన్ల కోసం భారీ క్లాసులను నిర్మించకూడదు. స్టేట్ (State) మరియు బిహేవియర్ (Behavior) కలగలసినప్పుడే OOP ఉపయోగించాలి.</li>
+    </ul>
+
+    <!-- SECTION 13 -->
+    <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాజెక్ట్: "Smart Autonomous Vehicle Fleet Management Engine"</h2>
+    <p>
+      ఈ అధ్యాయంలో నేర్చుకున్న క్లాసెస్, ఆబ్జెక్ట్స్, <code>__init__</code> కన్‌స్ట్రక్టర్, క్లాస్ అట్రిబ్యూట్స్, ఇన్స్టాన్స్ మెథడ్స్, <code>@classmethod</code> మరియు <code>@staticmethod</code> లన్నింటినీ రంగరించి — ఒక పూర్తి స్థాయి <strong>Smart Autonomous Vehicle Fleet Management System</strong> ను నిర్మిద్దాం! ఈ ఇంజిన్ వాహనాల బ్యాటరీ స్థితి, ప్రయాణ కిలోమీటర్లు, సర్వీసింగ్ అలర్టులు మరియు ఫ్లీట్ సారాంశ విశ్లేషణలను సమగ్రంగా నిర్వహిస్తుంది.
+    </p>
+
+    <!-- CODE BLOCK 3: CAPSTONE MINI PROJECT -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">03_autonomous_fleet_management_engine.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 22 ప్రాజెక్ట్: Smart Autonomous Vehicle Fleet Engine
+# ఫీచర్స్: Classes &amp; Objects, Class Attributes vs Instance Attributes,
+#          Alternative Factory Constructors (@classmethod), Utility Validators (@staticmethod)
+# =====================================================================
+import datetime
+
+class AutonomousVehicle:
+    fleet_name = "Cyberabad Smart EV Mobility"
+    fleet_registry = []
+    min_battery_threshold = 15.0  # 15% కన్నా తక్కువ ఉంటే రైడ్ ఆగిపోతుంది
+
+    def __init__(self, vehicle_id: str, model: str, battery_percentage: float = 100.0):
+        self.vehicle_id = vehicle_id
+        self.model = model
+        self.battery_percentage = max(0.0, min(100.0, battery_percentage))
+        self.odometer_km = 0.0
+        self.status = "IDLE"  # IDLE, IN_TRANSIT, CHARGING, MAINTENANCE
+        self.trip_log = []
+        
+        # ఫ్లీట్ రిజిస్ట్రీలో ఈ ఆబ్జెక్ట్‌ను నమోదు చేయడం
+        AutonomousVehicle.fleet_registry.append(self)
+
+    # 1. ఇన్స్టాన్స్ మెథడ్: ట్రిప్ రన్ చేయడం
+    def execute_trip(self, distance_km: float, destination: str):
+        battery_required = distance_km * 0.45  # ప్రతి 1 కిమీ కి 0.45% ఛార్జింగ్ అవసరం
+        
+        if self.status != "IDLE":
+            print(f"⚠️ [{self.vehicle_id}] రైడ్‌కు సిద్ధంగా లేదు! ప్రస్తుత స్థితి: {self.status}")
+            return False
+
+        if (self.battery_percentage - battery_required) &lt; AutonomousVehicle.min_battery_threshold:
+            print(f"❌ [{self.vehicle_id}] బ్యాటరీ సరిపోదు! అవసరమైనది: {battery_required:.1f}%, ఉన్నది: {self.battery_percentage:.1f}%")
+            self.status = "CHARGING"
+            return False
+
+        # ట్రిప్ ప్రారంభం
+        self.status = "IN_TRANSIT"
+        self.battery_percentage -= battery_required
+        self.odometer_km += distance_km
+        
+        trip_entry = {
+            "destination": destination,
+            "distance_km": distance_km,
+            "battery_used": battery_required,
+            "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
+        }
+        self.trip_log.append(trip_entry)
+        self.status = "IDLE"
+        
+        print(f"🚗 [{self.vehicle_id}] '{destination}' ట్రిప్ విజయవంతం! ప్రయాణ దూరం: {distance_km} KM. మిగిలిన బ్యాటరీ: {self.battery_percentage:.1f}%")
+        return True
+
+    # 2. ఇన్స్టాన్స్ మెథడ్: రీఛార్జ్ చేయడం
+    def recharge(self, target_percentage: float = 100.0):
+        print(f"⚡ [{self.vehicle_id}] ఛార్జింగ్ ప్రారంభమైంది... {self.battery_percentage:.1f}% నుండి {target_percentage:.1f}% కి")
+        self.battery_percentage = target_percentage
+        self.status = "IDLE"
+        print(f"🔋 [{self.vehicle_id}] ఛార్జింగ్ పూర్తయింది. రైడ్‌కు సిద్ధం!")
+
+    # 3. క్లాస్ మెథడ్: టెలిమెట్రీ JSON/డిక్షనరీ నుండి ఆబ్జెక్ట్ సృష్టించే ఫ్యాక్టరీ
+    @classmethod
+    def from_telemetry_dict(cls, data: dict):
+        v_id = data.get("vid", "UNKNOWN")
+        model = data.get("mod", "Standard EV")
+        bat = float(data.get("bat", 100.0))
+        return cls(v_id, model, bat)
+
+    # 4. క్లాస్ మెథడ్: మొత్తం ఫ్లీట్ సారాంశ నివేదిక (Fleet Analytics)
+    @classmethod
+    def print_fleet_summary(cls):
+        print("\n" + "=" * 65)
+        print(f"📊 {cls.fleet_name} — ఎగ్జిక్యూటివ్ ఫ్లీట్ రిపోర్ట్")
+        print("=" * 65)
+        print(f"మొత్తం యాక్టివ్ వాహనాలు: {len(cls.fleet_registry)}")
+        total_kms = sum(v.odometer_km for v in cls.fleet_registry)
+        avg_bat = sum(v.battery_percentage for v in cls.fleet_registry) / len(cls.fleet_registry) if cls.fleet_registry else 0.0
+        
+        print(f"మొత్తం ప్రయాణించిన దూరం: {total_kms:,.2f} KM")
+        print(f"సగటు బ్యాటరీ శాతం: {avg_bat:.1f}%")
+        print("-" * 65)
+        for v in cls.fleet_registry:
+            print(f"• ID: {v.vehicle_id:&lt;8} | మోడల్: {v.model:&lt;12} | బాటరీ: {v.battery_percentage:&gt;5.1f}% | ఓడోమీటర్: {v.odometer_km:&gt;6.1f} KM | స్టేటస్: {v.status}")
+        print("=" * 65 + "\n")
+
+    # 5. స్టాటిక్ మెథడ్: వెహికల్ ID ఫార్మాట్ వాలిడేషన్ (ఉదా: EV-HYD-101)
+    @staticmethod
+    def validate_id_format(vid: str) -> bool:
+        parts = vid.split("-")
+        return len(parts) == 3 and parts[0] == "EV" and parts[1].isalpha() and parts[2].isdigit()
+
+
+# =====================================================================
+# సిమ్యులేషన్ మరియు టెస్టింగ్ డ్రైవర్
+# =====================================================================
+print("🚦 స్మార్ట్ ఆటోనమస్ ఫ్లీట్ సిమ్యులేషన్ ప్రారంభమవుతోంది...")
+
+# ID వాలిడేషన్ పరిశీలన
+test_id = "EV-HYD-901"
+print(f"వెహికల్ ID '{test_id}' చెల్లుబాటు తనిఖీ: {AutonomousVehicle.validate_id_format(test_id)}")
+
+# వాహనాల ఇన్స్టాన్షియేషన్ (డైరెక్ట్ &amp; ఫ్యాక్టరీ మెథడ్)
+v1 = AutonomousVehicle("EV-HYD-101", "Tesla Cyber", battery_percentage=90.0)
+v2 = AutonomousVehicle("EV-HYD-102", "Tata Nexon EV", battery_percentage=30.0)
+v3 = AutonomousVehicle.from_telemetry_dict({"vid": "EV-BLR-505", "mod": "MG ZS EV", "bat": 95.0})
+
+# రైడ్ ఎగ్జిక్యూషన్లు
+v1.execute_trip(25.0, "హైటెక్ సిటీ నుండి రాజీవ్ గాంధీ ఎయిర్‌పోర్ట్")
+v2.execute_trip(45.0, "గచ్చిబౌలి నుండి రామంతాపూర్")  # బ్యాటరీ సరిపోక ఫెయిల్ అవుతుంది
+v2.recharge(100.0)                                    # రీఛార్జ్ చేశాక మళ్లీ ట్రై చేద్దాం
+v2.execute_trip(45.0, "గచ్చిబౌలి నుండి రామంతాపూర్")  # ఇప్పుడు సక్సెస్ అవుతుంది
+v3.execute_trip(12.0, "ఎలక్ట్రానిక్ సిటీ కారిడార్")
+
+# ఫ్లీట్ సారాంశ నివేదిక ముద్రణ
+AutonomousVehicle.print_fleet_summary()
+</code></pre>
+    </div>
+
+    <!-- 5 INTERACTIVE QUIZZES -->
+    <h2 class="section-title" style="margin-top:40px;"><span class="num">?</span> మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes)</h2>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+      <summary style="cursor:pointer; font-weight:600; color:#10b981; font-size:14.5px;">1. క్లాస్ (Class) మరియు ఆబ్జెక్ట్ (Object) మధ్య ప్రాథమిక వ్యత్యాసం ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> క్లాస్ అనేది కేవలం బ్లూప్రింట్ (డిజైన్ లేదా రూల్స్ సెట్) మాత్రమే; ఇది స్వయంగా మెమరీని ఆక్రమించదు. ఆబ్జెక్ట్ (Instance) అనేది ఆ బ్లూప్రింట్ ఆధారంగా ర్యామ్ (RAM) లో మెమరీ కేటాయించబడి సృష్టించబడిన నిజమైన ఎంటిటీ.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+      <summary style="cursor:pointer; font-weight:600; color:#10b981; font-size:14.5px;">2. __init__ మెథడ్ నుండి ఏదైనా వాల్యూను return చేయవచ్చా?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> చేయకూడదు! <code>__init__</code> మెథడ్ కేవలం <code>None</code> ను మాత్రమే అనుమతిస్తుంది. ఏదైనా ఇతర విలువను (ఉదా: <code>return 10</code>) రిటర్న్ చేయడానికి ప్రయత్నిస్తే పైథాన్ <code>TypeError</code> ను రైజ్ చేస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+      <summary style="cursor:pointer; font-weight:600; color:#10b981; font-size:14.5px;">3. ఇన్స్టాన్స్ మెథడ్స్‌లో self పారామీటర్ మొదటి స్థానంలో ఎందుకు ఉండాలి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> మీరు <code>obj.method()</code> అని పిలిచినప్పుడు పైథాన్ ఇంటర్‌ప్రీటర్ తెరవెనుక <code>Class.method(obj)</code> గా పిలుస్తుంది. ఆ పిలుపులో మొదటి ఆర్గ్యుమెంట్‌గా వచ్చే కరెంట్ ఆబ్జెక్ట్ రిఫరెన్స్‌ను అందుకోవడానికి <code>self</code> అవసరం.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+      <summary style="cursor:pointer; font-weight:600; color:#10b981; font-size:14.5px;">4. @classmethod మరియు @staticmethod మధ్య ముఖ్యమైన తేడా ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>@classmethod</code> మొదటి పారామీటర్‌గా క్లాస్ రిఫరెన్స్‌ను (<code>cls</code>) అందుకుంటుంది మరియు ఇది క్లాస్ వేరియబుల్స్‌ను మార్చగలదు లేదా ఆల్టర్నేటివ్ కన్‌స్ట్రక్టర్లను నిర్మించగలదు. కాగా <code>@staticmethod</code> కి <code>self</code> కానీ <code>cls</code> కానీ ఉండవు; ఇది కేవలం స్వతంత్ర యుటిలిటీ ఫంక్షన్ లాగా పనిచేస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:12px;">
+      <summary style="cursor:pointer; font-weight:600; color:#10b981; font-size:14.5px;">5. క్లాస్ స్థాయిలో mutable వేరియబుల్స్ (ఉదా: items = []) డిక్లేర్ చేయడం ఎందుకు ప్రమాదకరం?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> క్లాస్ వేరియబుల్స్ అన్ని ఇన్స్టాన్స్‌లచే పంచుకోబడతాయి (Shared memory). అందువల్ల ఒక ఆబ్జెక్ట్ ఆ లిస్ట్‌ను మార్చినప్పుడు, అన్ని ఇతర ఆబ్జెక్టులలోని లిస్ట్ కూడా మారిపోయి డేటా కాలుష్యం (Data Corruption) ఏర్పడుతుంది.
+      </div>
+    </details>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-python/21-python-exception-handling.html" style="text-decoration:none; color:var(--text); font-weight:600; display:inline-flex; align-items:center; gap:8px; background:var(--bg2); padding:10px 18px; border-radius:8px; border:1px solid var(--border);">
+        ← మునుపటి అధ్యాయం: 21. ఎక్సెప్షన్ హ్యాండ్లింగ్
+      </a>
+      <a href="/blog-python/23-python-oop-inheritance-polymorphism.html" style="text-decoration:none; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; background:#10b981; padding:10px 22px; border-radius:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        తర్వాతి అధ్యాయం: 23. OOP పిల్లర్స్ (Inheritance &amp; Polymorphism) →
+      </a>
+    </div>
+
+    <!-- INTERACTIVE COMPILER CTA CARD -->
+    <div style="margin-top:40px; background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(56,189,248,0.1) 100%); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:24px; text-align:center;">
+      <h3 style="margin-top:0; color:var(--text); font-size:20px;">ఈ Autonomous Fleet Management Engine ని లైవ్‌గా మన కంపైలర్‌లో రన్ చేయండి!</h3>
+      <p style="color:var(--text2); max-width:650px; margin:8px auto 20px; font-size:14px; line-height:1.6;">
+        ఎటువంటి లోకల్ సెటప్ లేకుండా, బ్రౌజర్‌లోనే Modern Python 3 కంపైలర్‌లో ఈ OOP కోడ్‌ను ఎగ్జిక్యూట్ చేసి అవుట్‌పుట్ తనిఖీ చేయండి.
+      </p>
+      <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; padding:12px 28px; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Launch Python Interactive Compiler
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER / NAV SCRIPTS -->
+<script src="/site-nav.js"></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`# =====================================================================
+# చాప్టర్ 22 మినీ ప్రాజెక్ట్: Autonomous Vehicle Fleet (LIVE DEMO)
+# =====================================================================
+class Vehicle:
+    fleet_count = 0
+
+    def __init__(self, vid, battery=100.0):
+        self.vid = vid
+        self.battery = battery
+        Vehicle.fleet_count += 1
+
+    def run_trip(self, distance):
+        needed = distance * 0.5
+        if self.battery >= needed:
+            self.battery -= needed
+            print(f"✅ [{self.vid}] {distance}km ట్రిప్ పూర్తి! మిగిలిన బ్యాటరీ: {self.battery:.1f}%")
+        else:
+            print(f"❌ [{self.vid}] బ్యాటరీ సరిపోదు ({self.battery:.1f}%)! రీఛార్జ్ అవసరం.")
+
+v1 = Vehicle("EV-01", 80.0)
+v2 = Vehicle("EV-02", 20.0)
+v1.run_trip(30)
+v2.run_trip(50)
+print(f"\\n🚗 మొత్తం ఫ్లీట్ వాహనాలు: {Vehicle.fleet_count}")
+print("🎉 చాప్టర్ 22 OOP కోడ్ విజయవంతంగా రన్ అయ్యింది! 🚀")
+\`;
+
+    try {
+      localStorage.setItem('code_python', projectCode);
+      localStorage.setItem('code_python3', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-python-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-python', currentLesson.file);
+fs.writeFileSync(outputPath, chapter22Content, 'utf8');
+console.log('✅ Successfully generated deep high-value Python Chapter 22 in exact HTML style!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter22Content.length, 'characters');
