@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>లూప్స్ — while & for లూప్స్ — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Python 3 లూప్స్ (while & for) సమగ్ర తెలుగు గైడ్: Iterables vs Iterators, while లూప్ & ఇన్ఫినైట్ లూప్స్ నివారణ, for లూప్, range(start, stop, step) ఇటరేషన్, నెస్టెడ్ లూప్స్, enumerate(), zip() మరియు Automated Enterprise Payroll Salary Processing Engine ప్రాజెక్ట్." />
+  <meta name="keywords" content="python loops in telugu, python while loop telugu, python for loop telugu, python range function telugu, enumerate and zip python telugu, learn python in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/07-python-loops-while-and-for.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-python/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "లూప్స్ — while & for లూప్స్ (Complete Guide to Python Loops, while and for in Telugu)",
+    "description": "Python 3 లూప్స్ పూర్తి గైడ్: while loop, for loop, range() function, nested loops, enumerate, zip, మరియు Automated Payroll Processing Engine.",
+    "articleSection": "Phase 02: కంట్రోల్ ఫ్లో, లూప్స్ & స్ట్రింగ్స్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-01-21",
+    "dateModified": "2026-11-02"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Compiler Integration -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___PY_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|f?"[^"\\]*(?:\\.[^"\\]*)*"|f?'[^'\\]*(?:\\.[^'\\]*)*'|r"[^"\\]*(?:\\.[^"\\]*)*"|r'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'import','from','as','def','return','class','if','elif','else','while','for','in',
+        'break','continue','pass','try','except','finally','with','lambda','global','nonlocal',
+        'and','or','not','is','yield','async','await','raise','assert','True','False','None'
+      ];
+      const kwRegex = new RegExp('\\b(' + kwList.join('|') + ')\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'print','len','range','type','isinstance','id','input','int','float','str','list',
+        'dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted',
+        'abs','open','help','dir','filter','bool','iter','next'
+      ];
+      const fnRegex = new RegExp('\\b(' + fnList.join('|') + ')\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('num', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split('___PY_TOK_' + idx + '___').join(tok);
+      });
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code.language-python').forEach(block => {
+        block.innerHTML = highlightPythonCode(block.innerText);
+      });
+    });
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      const code = pre.innerText;
+      try {
+        localStorage.setItem('code_python', code);
+        localStorage.setItem('code_python3', code);
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+      window.open('/online-python-compiler.html', '_blank');
+    }
+  </script>
+</head>
+
+<body class="lang-python light-theme">
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Python 3 Master Course (తెలుగు)</div>
+    <a href="/blog-python.html" class="sidebar-home-link">🐍 Python Course HOME (ఇండెక్స్)</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">పైథాన్ ఫండమెంటల్స్ & బేసిక్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/01-python-introduction-features-and-setup.html">1. పైథాన్ పరిచయం, ఫీచర్లు & ఎన్విరాన్‌మెంట్ సెటప్</a>
+        <a href="/blog-python/02-python-syntax-indentation-and-comments.html">2. సింటాక్స్, ఇండెంటేషన్ & కామెంట్స్</a>
+        <a href="/blog-python/03-python-variables-data-types-and-naming.html">3. వేరియబుల్స్, డేటా టైప్స్ & టైప్ కాస్టింగ్</a>
+        <a href="/blog-python/04-python-input-output-formatting.html">4. ఇన్‌పుట్ & అవుట్‌పుట్ ఫార్మాటింగ్ (print, input & f-strings)</a>
+        <a href="/blog-python/05-python-operators-and-expressions.html">5. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్</a>
+      </div>
+
+      <!-- Phase 02 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో, లూప్స్ & స్ట్రింగ్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-python/06-python-conditional-statements-branching.html">6. డెసిషన్ మేకింగ్ (if, elif, else & match-case)</a>
+        <a href="/blog-python/07-python-loops-while-and-for.html" class="active">7. లూప్స్ — while & for లూప్స్</a>
+        <a href="/blog-python/08-python-loop-control-break-continue-else.html">8. లూప్ కంట్రోల్ — break, continue, pass & else</a>
+        <a href="/blog-python/09-python-strings-deep-dive-slicing.html">9. స్ట్రింగ్స్ డీప్ డైవ్ & స్లైసింగ్ (String Mastery)</a>
+        <a href="/blog-python/10-python-regular-expressions-regex.html">10. రెగ్యులర్ ఎక్స్‌ప్రెషన్స్ (Regex & Pattern Matching)</a>
+      </div>
+
+      <!-- Phase 03 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">డేటా స్ట్రక్చర్స్ & కలెక్షన్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/11-python-lists-and-comprehensions.html">11. లిస్ట్స్ (Lists) & లిస్ట్ కాంప్రహెన్షన్స్</a>
+        <a href="/blog-python/12-python-tuples-and-immutability.html">12. టుపుల్స్ (Tuples) & ఇమ్మ్యుటబిలిటీ</a>
+        <a href="/blog-python/13-python-dictionaries-deep-dive.html">13. డిక్షనరీలు (Dictionaries) & డిక్ట్ కాంప్రహెన్షన్స్</a>
+        <a href="/blog-python/14-python-sets-and-operations.html">14. సెట్స్ (Sets) & సెట్ మ్యాథమెటికల్ ఆపరేషన్స్</a>
+        <a href="/blog-python/15-python-collections-advanced-structures.html">15. కలెక్షన్స్ మాడ్యూల్ & అడ్వాన్స్‌డ్ డేటా స్ట్రక్చర్స్</a>
+      </div>
+
+      <!-- Phase 04 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">ఫంక్షన్స్, మాడ్యూల్స్ & ఫైల్ I/O</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/16-python-functions-fundamentals.html">16. ఫంక్షన్స్ ఫండమెంటల్స్ & ఆర్గ్యుమెంట్స్</a>
+        <a href="/blog-python/17-python-args-kwargs-variable-scope.html">17. వేరియబుల్ ఆర్గ్యుమెంట్స్ & స్కోప్ (*args, **kwargs & LEGB)</a>
+        <a href="/blog-python/18-python-lambda-recursion-functional.html">18. ల్యాంబ్డా, రికర్షన్ & ఫంక్షనల్ ప్రోగ్రామింగ్</a>
+        <a href="/blog-python/19-python-modules-packages-and-pip.html">19. మాడ్యూల్స్, ప్యాకేజీలు & వర్చువల్ ఎన్విరాన్‌మెంట్స్</a>
+        <a href="/blog-python/20-python-file-handling-and-json.html">20. ఫైల్ హ్యాండ్లింగ్, CSV & JSON ప్రాసెసింగ్</a>
+      </div>
+
+      <!-- Phase 05 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">OOP, ఎక్సెప్షన్స్ & ప్రాజెక్ట్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/21-python-exception-handling.html">21. ఎక్సెప్షన్ హ్యాండ్లింగ్ & కస్టమ్ ఎర్రర్స్</a>
+        <a href="/blog-python/22-python-oop-classes-and-objects.html">22. OOP బేసిక్స్ — క్లాసెస్, ఆబ్జెక్ట్స్ & __init__</a>
+        <a href="/blog-python/23-python-oop-inheritance-polymorphism.html">23. OOP పిల్లర్స్ — ఇన్హెరిటెన్స్, ఎన్‌క్యాప్సులేషన్ & పాలిమార్ఫిజమ్</a>
+        <a href="/blog-python/24-python-decorators-generators-dunder.html">24. అడ్వాన్స్‌డ్ పైథాన్ — డెకరేటర్లు, జెనరేటర్లు & డండర్ మెథడ్స్</a>
+        <a href="/blog-python/25-python-capstone-project.html">25. గ్రాండ్ ఫినాలే: రియల్-వరల్డ్ పైథాన్ క్యాప్‌స్టోన్ ప్రాజెక్ట్</a>
+      </div>
+
+    </div>
+
+    <div style="margin-top:24px; padding:16px; background:var(--bg2); border:1px solid var(--border); border-radius:10px; font-size:12px; text-align:center;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:4px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+      <a href="/online-python-compiler.html" style="color:var(--text); text-decoration:none; font-weight:600; display:inline-block; margin-top:6px; background:rgba(16,185,129,0.12); padding:6px 12px; border-radius:6px; border:1px solid rgba(16,185,129,0.3);">
+        ▶ Try Online Python Compiler
+      </a>
+      <a href="/blog.html" style="color:var(--text2); text-decoration:none; display:block; margin-top:8px;">
+        📁 All Tutorials Index
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="content">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a>
+      <span class="sep">›</span>
+      <a href="/blog-python.html">Python Masterclass</a>
+      <span class="sep">›</span>
+      <span>Chapter 7: లూప్స్ — while & for లూప్స్</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">లూప్స్ — while & for లూప్స్</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge badge-tech">🐍 Modern Python (Python 3.12+)</span>
+      <span class="badge badge-chapter">🎯 Chapter 7 of 25</span>
+      <span class="badge badge-phase">⚙️ Phase 02: కంట్రోల్ ఫ్లో, లూప్స్ &amp; స్ట్రింగ్స్</span>
+      <span class="badge badge-edition">📅 2026 Edition</span>
+    </div>
+
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin-bottom:24px; font-size:13px; line-height:1.7;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span style="color:var(--text2); margin-left:6px;">
+        లూపింగ్ ఆర్కిటెక్చర్ · Iterables vs Iterators · while లూప్ &amp; ఇన్ఫినైట్ లూప్స్ నివారణ · for లూప్ మెకానిక్స్ (For-each Style) · range(start, stop, step) ఇటరేషన్ · 2D నెస్టెడ్ లూప్స్ · enumerate() &amp; zip() పైథానిక్ టూల్స్ · మోడిఫికేషన్ ట్రాప్స్ · Enterprise Payroll Engine ప్రాజెక్ట్!
+      </span>
+    </div>
+
+    <!-- INTRO BOX (Warm Soft Ivory HTML5 Style) -->
+    <div class="intro-box">
+      మానవులకు పదే పదే ఒకే పని చేయడం విసుగు కలిగిస్తుంది, కానీ కంప్యూటర్లకు అలసట అనేది ఉండదు. ఒకే పనిని ఒక మిలియన్ సార్లు చేయాలన్నా సెకన్లలో కచ్చితత్వంతో పూర్తి చేయగలగడమే కంప్యూటర్ల యొక్క అసలైన సూపర్-పవర్!
+      సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌లో ఒకే కోడ్‌ను మళ్లీ మళ్లీ రాయకుండా పునరావృతం చేయడానికి ఉపయోగించే నిర్మాణాన్నే <strong>లూప్స్ (Loops / Iteration)</strong> అంటారు.
+      పైథాన్‌లో లూప్స్ ఇతర సాంప్రదాయ భాషల కంటే ఎంతో విలక్షణమైనవి. C లేదా Java లాగా ఇండెక్స్ ట్రాకింగ్ వేరియబుల్స్ రాయాల్సిన అవసరం లేకుండా, <strong>for</strong> లూప్ నేరుగా డేటా సీక్వెన్సులపై (For-each శైలిలో) అత్యంత సహజంగా నడుస్తుంది.
+      ఈ ఏడవ అధ్యాయంలో — <code>while</code> లూప్ ఆర్కిటెక్చర్, <code>for</code> లూప్ అంతర్గత ప్రోటోకాల్, <code>range()</code> మెమరీ సామర్థ్యం, <code>enumerate()</code>, <code>zip()</code>, మరియు ఉద్యోగుల వేతనాలు, పన్నులు, భత్యాలను ఆటోమేటిక్‌గా లెక్కించే పూర్తి స్థాయి <strong>Automated Enterprise Payroll Salary Processing Engine</strong> ప్రాజెక్ట్ ద్వారా లూప్స్‌పై తిరుగులేని పట్టు సాధిద్దాం!
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 class="section-title"><span class="num">1</span> లూపింగ్ ఆర్కిటెక్చర్ అంటే ఏమిటి? (Iteration, Iterables &amp; Iterators)</h2>
+    <p>
+      సాఫ్ట్‌వేర్ అభివృద్ధిలో అత్యంత ముఖ్యమైన సూత్రం <strong>DRY (Don't Repeat Yourself)</strong>.
+      మీరు 10 మంది యూజర్ల పేర్లను ప్రింట్ చేయాలంటే 10 సార్లు <code>print()</code> రాయకూడదు; ఒకే ఒక లూప్ ద్వారా ఆ పనిని సాధించాలి.
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>కాన్సెప్ట్</th>
+            <th>వివరణ</th>
+            <th>పైథాన్ ఉదాహరణ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>పునరావృతం (Iteration)</strong></td>
+            <td>ఒక డేటా సమూహంలోని ప్రతి అంశాన్ని ఒక్కొక్కటిగా ప్రాసెస్ చేసే ప్రక్రియ.</td>
+            <td>ఒక లిస్ట్‌లోని అన్ని నంబర్లను కూడటం.</td>
+          </tr>
+          <tr>
+            <td><strong>ఇటరబుల్ (Iterable)</strong></td>
+            <td>తనలోని అంశాలను ఒక్కొక్కటిగా బయటకు ఇవ్వగల ఏ ఆబ్జెక్ట్ అయినా ఇటరబుల్ అవుతుంది. <code>__iter__()</code> మెథడ్ కలిగి ఉంటుంది.</td>
+            <td><code>list</code>, <code>tuple</code>, <code>str</code>, <code>dict</code>, <code>set</code>, <code>range</code></td>
+          </tr>
+          <tr>
+            <td><strong>ఇటరేటర్ (Iterator)</strong></td>
+            <td>ప్రస్తుతం ఏ స్థానంలో ఉన్నామో గుర్తుపెట్టుకుని, <code>next()</code> పిలిచినప్పుడు తర్వాతి అంశాన్ని ఇచ్చే పాయింటర్ ఆబ్జెక్ట్. <code>__next__()</code> మెథడ్ కలిగి ఉంటుంది.</td>
+            <td><code>iter(my_list)</code> ద్వారా లభిస్తుంది.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #38bdf8; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#38bdf8; margin-bottom:8px;">🔬 తెరవెనుక Python Iteration Protocol ఎలా పనిచేస్తుంది?</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:8px;">
+        మీరు <code>for x in [10, 20, 30]:</code> అని రాసినప్పుడు పైథాన్ అంతర్గతంగా చేసే పనులు:
+      </p>
+      <ol style="font-size:13px; color:var(--text2); line-height:1.8; margin-left:20px; margin-bottom:0;">
+        <li>ముందుగా <code>iterator = iter([10, 20, 30])</code> అని పిలిచి ఒక ఇటరేటర్ ఆబ్జెక్ట్‌ను పొందుతుంది.</li>
+        <li>ప్రతి లూప్ రౌండ్‌లో <code>x = next(iterator)</code> అని పిలిచి విలువను తీసుకుంటుంది.</li>
+        <li>లిస్ట్‌లోని అంశాలన్నీ పూర్తయినప్పుడు <code>next()</code> ఫంక్షన్ <strong><code>StopIteration</code></strong> అనే ఎక్సెప్షన్‌ను లేపుతుంది.</li>
+        <li>పైథాన్ సైలెంట్‌గా ఆ <code>StopIteration</code> ను క్యాచ్ చేసి ఎటువంటి ఎర్రర్ లేకుండా లూప్‌ను సురక్షితంగా ముగిస్తుంది!</li>
+      </ol>
+    </div>
+
+    <!-- SECTION 2 -->
+    <h2 class="section-title"><span class="num">2</span> <code>while</code> లూప్ — కండిషన్ ఆధారిత పునరావృతం (Condition-Controlled Loops)</h2>
+    <p>
+      ఒక పని ఎన్నిసార్లు జరగాలో ముందుగా తెలియనప్పుడు, ఒక నిర్దిష్ట షరతు నిజంగా (True) ఉన్నంతవరకు నడవడానికి <strong><code>while</code></strong> లూప్‌ను ఉపయోగిస్తాము:
+    </p>
+
+    <div style="background:#0f172a; padding:14px 20px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#38bdf8; margin:14px 0;">
+      while condition:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;# కండిషన్ True ఉన్నంతవరకు ఈ కోడ్ రన్ అవుతుంది<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;loop_body_statements<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;update_step (కండిషన్ ఎప్పటికైనా False అయ్యేలా వేరియబుల్‌ను మార్చాలి)
+    </div>
+
+    <p>
+      <code>while</code> లూప్ విజయవంతంగా పనిచేయడానికి 3 దశలు తప్పనిసరి:
+    </p>
+    <ol>
+      <li><strong>1. ఇనిషియలైజేషన్ (Initialization):</strong> లూప్ ప్రారంభానికి ముందు వేరియబుల్‌ను సృష్టించడం (ఉదా: <code>counter = 1</code>).</li>
+      <li><strong>2. కండిషన్ చెక్ (Condition Evaluation):</strong> ప్రతి రౌండ్ ప్రారంభంలో షరతును పరీక్షించడం (ఉదా: <code>while counter &lt;= 5:</code>).</li>
+      <li><strong>3. అప్‌డేట్ / ఇంక్రిమెంట్ (Update Step):</strong> లూప్ లోపల వేరియబుల్‌ను మార్చడం (ఉదా: <code>counter += 1</code>).</li>
+    </ol>
+
+    <!-- SECTION 3 -->
+    <h2 class="section-title"><span class="num">3</span> ఇన్ఫినైట్ లూప్స్ (Infinite Loops) — సమస్యలు &amp; ఉద్దేశపూర్వక వినియోగం</h2>
+    <p>
+      ఒకవేళ మీరు అప్‌డేట్ స్టెప్ (<code>counter += 1</code>) రాయడం మర్చిపోతే, కండిషన్ ఎప్పటికీ <code>True</code> గానే ఉండిపోయి లూప్ ఎప్పటికీ ఆగదు!
+      దీనినే <strong>ఇన్ఫినైట్ లూప్ (Infinite Loop)</strong> అంటారు.
+    </p>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#ef4444; margin-bottom:8px;">⚠️ ఇన్ఫినైట్ లూప్ వల్ల జరిగే నష్టాలు:</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        ఇన్ఫినైట్ లూప్ ఏర్పడినప్పుడు కంప్యూటర్ CPU 100% కి చేరుకుంటుంది, ఫ్యాన్లు వేగంగా తిరుగుతాయి, మరియు అప్లికేషన్ లేదా బ్రౌజర్ ట్యాబ్ పూర్తిగా ఫ్రీజ్ అయిపోతుంది (Hang)!
+        టెర్మినల్‌లో దీన్ని ఆపడానికి <strong>Ctrl + C</strong> నొక్కాలి.
+      </p>
+    </div>
+
+    <p>
+      అయితే వాస్తవ ప్రపంచంలో కొన్ని సందర్భాలలో ఉద్దేశపూర్వకంగానే ఇన్ఫినైట్ లూప్స్ వాడతారు:
+    </p>
+    <ul>
+      <li><strong>వెబ్ సర్వర్లు &amp; క్లౌడ్ లిజనర్లు:</strong> క్లయింట్ల నుండి రిక్వెస్ట్‌ల కోసం 24/7 ఎదురుచూసే సర్వర్ సాకెట్లు (<code>while True: client = server.accept()</code>).</li>
+      <li><strong>ATM మరియు కన్సోల్ మెనూలు:</strong> యూజర్ "Exit" ఆప్షన్ ఎంచుకునే వరకు మెనూని చూపిస్తూనే ఉండటానికి.</li>
+      <li><strong>గేమ్ ఇంజిన్స్:</strong> గేమ్ స్క్రీన్ ప్రతి సెకనుకు 60 సార్లు రీ-రెండర్ అవ్వడానికి (Game Loop).</li>
+    </ul>
+
+    <!-- SECTION 4 -->
+    <h2 class="section-title"><span class="num">4</span> కోడ్ డెమో 1: <code>while</code> లూప్ కౌంట్‌డౌన్ &amp; టెలిమెట్రీ సిమ్యులేషన్</h2>
+    <p>
+      స్పేస్ రాకెట్ లాంచ్ కౌంట్‌డౌన్ మరియు ఇన్-ప్లేస్ టెలిమెట్రీ డేటాను <code>while</code> లూప్ ద్వారా ఎలా సిమ్యులేట్ చేయవచ్చో పరిశీలించండి:
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">01_while_loop_rocket_launch.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># ISRO తరహా రాకెట్ లాంచ్ కౌంట్‌డౌన్ డెమో
+
+countdown = 5
+fuel_pressure_psi = 2800
+
+print("=" * 55)
+print("     🚀 ISRO మిషన్ కంట్రోల్ — ఫైనల్ కౌంట్‌డౌన్")
+print("=" * 55)
+
+# while లూప్ ద్వారా కౌంట్‌డౌన్ రన్
+while countdown > 0:
+    print(f"T-మైనస్ {countdown} సెకన్లు | ఇంధన పీడనం: {fuel_pressure_psi} PSI")
+    countdown -= 1  # అప్‌డేట్ స్టెప్ (లేకపోతే ఇన్ఫినైట్ లూప్ అవుతుంది!)
+    fuel_pressure_psi += 50
+
+print("-" * 55)
+print("🔥 ఇగ్నిషన్ ప్రారంభమైంది! 🚀 రాకెట్ నింగిలోకి దూసుకెళ్లింది!")
+print("=" * 55)
+
+# 2. అక్యుమ్యులేటర్ ప్యాటర్న్ (1 నుండి 100 వరకు సంఖ్యల కూడిక)
+total_sum = 0
+current_num = 1
+while current_num <= 100:
+    total_sum += current_num
+    current_num += 1
+
+print(f"\n1 నుండి 100 వరకు అన్ని సంఖ్యల మొత్తం: {total_sum}")
+</code></pre>
+    </div>
+
+    <!-- SECTION 5 -->
+    <h2 class="section-title"><span class="num">5</span> <code>for</code> లూప్ — సీక్వెన్స్ ఆధారిత పునరావృతం (Collection-Controlled Loops)</h2>
+    <p>
+      C, C++ లేదా Java లలో <code>for</code> లూప్ అంటే సాధారణంగా <code>for(int i = 0; i &lt; n; i++)</code> అని ఇండెక్స్ ఆధారంగా రాస్తారు.
+      కానీ <strong>పైథాన్‌లో <code>for</code> లూప్ పూర్తిగా భిన్నమైనది మరియు అద్భుతమైనది!</strong>
+    </p>
+    <p>
+      పైథాన్‌లో <code>for</code> లూప్ అనేది ఒక <strong>"For-Each"</strong> లూప్ లాగా పనిచేస్తుంది.
+      ఇది నేరుగా ఇచ్చిన లిస్ట్, స్ట్రింగ్ లేదా కలెక్షన్‌లోని ప్రతి ఎలిమెంట్‌ను ఒక్కొక్కటిగా బయటకు తీసి వేరియబుల్‌కు అందజేస్తుంది:
+    </p>
+
+    <div style="background:#0f172a; padding:14px 20px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#38bdf8; margin:14px 0;">
+      for item in collection:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;# కలెక్షన్‌లోని ప్రతి 'item' కోసం ఈ కోడ్ రన్ అవుతుంది<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;process(item)
+    </div>
+
+    <p>
+      ఉదాహరణకు నగరాల పేర్లను ప్రింట్ చేయడానికి ఎటువంటి <code>i = 0</code>, <code>len()</code>, <code>i++</code> లు అవసరం లేదు:
+      <br/>
+      <code>for city in ["హైదరాబాద్", "విజయవాడ", "విశాఖపట్నం", "తిరుపతి"]:</code>
+      <br/>
+      <code>&nbsp;&nbsp;&nbsp;&nbsp;print(f"నగరం: {city}")</code>
+    </p>
+
+    <!-- SECTION 6 -->
+    <h2 class="section-title"><span class="num">6</span> <code>range()</code> ఫంక్షన్ డీప్ డైవ్ — start, stop &amp; step పారామీటర్లు</h2>
+    <p>
+      ఒక పనిని నిర్దిష్ట సంఖ్యలో (ఉదాహరణకు 10 సార్లు లేదా 100 సార్లు) చేయవలసి వచ్చినప్పుడు పైథాన్‌లోని <strong><code>range()</code></strong> బిల్ట్-ఇన్ ఫంక్షన్‌ను ఉపయోగిస్తాము:
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>సింటాక్స్ శైలి</th>
+            <th>పారామీటర్ల అర్థం</th>
+            <th>జనరేట్ అయ్యే సంఖ్యలు</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>range(5)</code></td>
+            <td>కేవలం <code>stop</code> మాత్రమే ఇచ్చారు. డిఫాల్ట్‌గా 0 నుండి మొదలవుతుంది.</td>
+            <td><code>0, 1, 2, 3, 4</code> (గమనిక: 5 రాదు, ఎల్లప్పుడూ <code>stop - 1</code> వరకు మాత్రమే!)</td>
+          </tr>
+          <tr>
+            <td><code>range(1, 6)</code></td>
+            <td><code>start=1, stop=6</code></td>
+            <td><code>1, 2, 3, 4, 5</code></td>
+          </tr>
+          <tr>
+            <td><code>range(10, 50, 10)</code></td>
+            <td><code>start=10, stop=50, step=10</code> (ప్రతి అడుగుకు 10 కలుస్తుంది)</td>
+            <td><code>10, 20, 30, 40</code></td>
+          </tr>
+          <tr>
+            <td><code>range(5, 0, -1)</code></td>
+            <td>రివర్స్ స్టెప్ (వెనుకకు తగ్గించుకుంటూ వెళ్తుంది)</td>
+            <td><code>5, 4, 3, 2, 1</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:8px;">💡 range() మెమరీ సామర్థ్యం (Lazy Evaluation vs List):</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:8px;">
+        మీరు <code>range(1000000000)</code> (100 కోట్లు) అని రాసినప్పటికీ, పైథాన్ 100 కోట్ల సంఖ్యలను మెమరీలో సృష్టించదు!
+        <code>range</code> అనేది ఒక తేలికపాటి ఇమ్మ్యుటబుల్ సీక్వెన్స్ ఆబ్జెక్ట్. లూప్ తిరుగుతున్నప్పుడు ఒక్కొక్క సంఖ్యను మాత్రమే ఆన్-డిమాండ్‌గా గణిస్తుంది.
+      </p>
+      <div style="background:#0f172a; padding:12px 18px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:8px 0;">
+        import sys<br/>
+        r = range(10**9) # 100 కోట్ల రేంజ్<br/>
+        print("range ఆబ్జెక్ట్ తీసుకునే సైజు:", sys.getsizeof(r), "బైట్లు మాత్రమే!") # 48 Bytes<br/>
+        # అదే list(range(10**6)) చేస్తే సుమారు 8 MB RAM ఆక్రమిస్తుంది!
+      </div>
+      <p style="font-size:13px; color:var(--text2); line-height:1.6; margin-bottom:0;">
+        దీనివల్ల పైథాన్‌లో ఎంత భారీ పరిమాణం ఉన్న శ్రేణినైనా ఎటువంటి మెమరీ ఓవర్‌హెడ్ లేకుండా సెకన్లలో ప్రాసెస్ చేయవచ్చు.
+      </p>
+    </div>
+
+    <!-- SECTION 7 -->
+    <h2 class="section-title"><span class="num">7</span> కోడ్ డెమో 2: <code>range()</code> మల్టిప్లికేషన్ టేబుల్స్ &amp; అర్థమెటిక్ సిరీస్</h2>
+    <p>
+      క్రింది కోడ్‌లో <code>range()</code> ను ఉపయోగించి ఎక్కాలు (Multiplication Tables) మరియు బేసి/సరి సంఖ్యల సిరీస్‌లను రూపొందించడం చూద్దాం:
+    </p>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">02_range_multiplication_tables.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># range() ఫంక్షన్ మాస్టరీ డెమో
+
+# 1. 7వ ఎక్కం (Multiplication Table for 7)
+table_num = 7
+print(f"=== {table_num} వ ఎక్కం (1 నుండి 10 వరకు) ===")
+for i in range(1, 11):
+    print(f"{table_num} x {i:>2} = {table_num * i:>2}")
+
+# 2. స్టెప్ పారామీటర్ ద్వారా సరి సంఖ్యలు (Even numbers)
+print("\n1 నుండి 20 మధ్య గల సరి సంఖ్యలు:")
+even_nums = []
+for n in range(2, 21, 2):
+    even_nums.append(n)
+print(*even_nums, sep=" ──▶ ")
+
+# 3. రివర్స్ ఆర్డర్ లెక్కింపు
+print("\nరివర్స్ కౌంట్ (10 నుండి 1):")
+for r in range(10, 0, -2):
+    print(f"{r}..", end=" ")
+print("ముగిసింది!")
+</code></pre>
+    </div>
+
+    <!-- SECTION 8 -->
+    <h2 class="section-title"><span class="num">8</span> స్ట్రింగ్స్ &amp; డిక్షనరీలపై <code>for</code> లూపింగ్ (Iterating Strings &amp; Dicts)</h2>
+    <p>
+      పైథాన్‌లో <code>for</code> లూప్ ఏ ఇటరబుల్ ఆబ్జెక్ట్‌పైనైనా సులభంగా నడుస్తుంది:
+    </p>
+
+    <ul>
+      <li><strong>స్ట్రింగ్స్‌పై లూపింగ్:</strong> అక్షరాల వారీగా ప్రాసెస్ చేస్తుంది:
+        <br/><code>for char in "PYTHON": print(char)</code>
+      </li>
+      <li><strong>డిక్షనరీలపై లూపింగ్ (మూడు విధానాలు):</strong>
+        <ol>
+          <li><code>for key in user_dict:</code> (కేవలం కీలను మాత్రమే ఇస్తుంది).</li>
+          <li><code>for val in user_dict.values():</code> (విలువలను మాత్రమే ఇస్తుంది).</li>
+          <li><code>for key, val in user_dict.items():</code> (కీ మరియు విలువ జంటను టపుల్ అన్‌ప్యాకింగ్ ద్వారా ఒకేసారి ఇస్తుంది!).</li>
+        </ol>
+      </li>
+    </ul>
+
+    <!-- SECTION 9 -->
+    <h2 class="section-title"><span class="num">9</span> నెస్టెడ్ లూప్స్ (Nested Loops — 2D Matrix Grid Traversal)</h2>
+    <p>
+      ఒక లూప్ లోపల మరొక లూప్‌ను ఉంచడాన్ని <strong>నెస్టెడ్ లూప్ (Nested Loop)</strong> అంటారు.
+      బయటి లూప్ (Outer Loop) ఒక్కసారి తిరిగిన ప్రతిసారీ, లోపలి లూప్ (Inner Loop) ప్రారంభం నుండి చివరి వరకు పూర్తిగా తిరుగుతుంది.
+    </p>
+    <p>
+      బాహ్య లూప్ $N$ సార్లు, అంతర్గత లూప్ $M$ సార్లు తిరిగితే మొత్తం ఎగ్జిక్యూషన్లు $N 	imes M$ అవుతాయి ($O(N^2)$ టైమ్ కాంప్లెక్సిటీ).
+      2D మ్యాట్రిక్స్ గ్రిడ్స్, ఎక్సెల్ షీట్ రోస్ &amp; కాలమ్స్, మరియు ఇమేజ్ పిక్సెల్స్ ప్రాసెసింగ్ కోసం ఇది అత్యంత అవసరం.
+    </p>
+
+    <!-- SECTION 10 -->
+    <h2 class="section-title"><span class="num">10</span> కోడ్ డెమో 3: 2D మ్యాట్రిక్స్ గ్రిడ్ ట్రావర్సల్ &amp; ప్యాటర్న్స్</h2>
+    <p>
+      నెస్టెడ్ లూప్స్ ఉపయోగించి కోఆర్డినేట్ గ్రిడ్ మరియు అందమైన పిరమిడ్ ప్యాటర్న్‌ను ఎలా నిర్మించవచ్చో చూడండి:
+    </p>
+
+    <!-- CODE BLOCK 3 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">03_nested_loops_grid_patterns.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># నెస్టెడ్ లూప్స్ & 2D మ్యాట్రిక్స్ గ్రిడ్ డెమో
+
+print("1. 3x3 కోఆర్డినేట్ గ్రిడ్ సిస్టమ్:")
+for row in range(1, 4):
+    for col in range(1, 4):
+        print(f"({row},{col})", end="  ")
+    print() # ప్రతి అడ్డు వరుస తర్వాత కొత్త లైన్
+
+print("\n2. డైనమిక్ స్టార్ ప్యాటర్న్ (Right-angled Triangle):")
+rows = 5
+for i in range(1, rows + 1):
+    # పైథాన్ స్ట్రింగ్ గుణకారం ద్వారా సులభమైన ప్యాటర్న్
+    print("★ " * i)
+</code></pre>
+    </div>
+
+    <!-- SECTION 11 -->
+    <h2 class="section-title"><span class="num">11</span> <code>enumerate()</code> &amp; <code>zip()</code> — పైథానిక్ లూపింగ్ టూల్స్</h2>
+    <p>
+      సాంప్రదాయ భాషల నుండి వచ్చిన ప్రోగ్రామర్లు పైథాన్‌లో కూడా <code>i = 0</code> అని పెట్టి మాన్యువల్‌గా ఇండెక్స్ పెంచుకుంటూ ఉంటారు.
+      కానీ పైథాన్ దీని కోసం రెండు అద్భుతమైన ఇన్-బిల్ట్ ఫంక్షన్లను అందిస్తుంది:
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ఫంక్షన్</th>
+            <th>సింటాక్స్</th>
+            <th>వివరణ &amp; ప్రయోజనం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><code>enumerate()</code></strong></td>
+            <td><code>for idx, item in enumerate(seq, start=1):</code></td>
+            <td>ఎలిమెంట్‌తో పాటు దాని <strong>ఇండెక్స్ నంబర్‌ను</strong> ఆటోమేటిక్‌గా అందిస్తుంది. మాన్యువల్ కౌంటర్లు అవసరం లేదు.</td>
+          </tr>
+          <tr>
+            <td><strong><code>zip()</code></strong></td>
+            <td><code>for a, b in zip(list1, list2):</code></td>
+            <td>రెండు లేదా అంతకంటే ఎక్కువ లిస్ట్‌లను జతకట్టి, <strong>సమాంతరంగా (Parallel Iteration)</strong> లూప్ చేయడానికి వీలు కల్పిస్తుంది.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:#0f172a; padding:14px 20px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.7;">
+      names = ["రాము", "సోము", "గీత"]<br/>
+      scores = [95, 82, 88]<br/><br/>
+      # zip() ద్వారా ఇద్దరినీ ఒకేసారి కలపడం:<br/>
+      for rank, (name, score) in enumerate(zip(names, scores), start=1):<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;print(f"ర్యాంక్ {rank}: {name} - {score} మార్కులు")
+    </div>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #8b5cf6; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#8b5cf6; margin-bottom:8px;">🌟 ప్రో-టిప్: వేర్వేరు పొడవులు ఉన్న లిస్ట్‌లను ఎలా కలపాలి? (itertools.zip_longest)</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        సాధారణ <code>zip()</code> చిన్న లిస్ట్ ముగియగానే ఆగిపోతుంది. కానీ అన్ని లిస్ట్‌లు పూర్తయ్యే వరకు లూప్ చేయాలంటే పైథాన్ బిల్ట్-ఇన్ <strong><code>itertools.zip_longest(list1, list2, fillvalue="N/A")</code></strong> వాడవచ్చు! డేటా లేని చోట మనం ఇచ్చిన డిఫాల్ట్ ఫిల్ విలువను ఉంచుతుంది.
+      </p>
+    </div>
+
+    <!-- SECTION 12 -->
+    <h2 class="section-title"><span class="num">12</span> కామన్ బిగినర్స్ మిస్టేక్స్ &amp; లూప్ ఆప్టిమైజేషన్ టెక్నిక్స్</h2>
+    <ul>
+      <li><strong>Mistake 1: ఇటరేట్ అవుతున్న లిస్ట్‌ను లూప్ లోపల మోడిఫై చేయడం:</strong> <code>for x in my_list: my_list.remove(x)</code> అని రాస్తే పైథాన్ ఇండెక్స్ షిఫ్ట్ అయి కొన్ని అంశాలు దాటవేయబడతాయి! ఎల్లప్పుడూ కాపీపై లూప్ చేయాలి (<code>my_list.copy()</code>) లేదా లిస్ట్ కాంప్రహెన్షన్ వాడాలి.</li>
+      <li><strong>Mistake 2: <code>range(len(items))</code> అనవసరంగా వాడటం:</strong> కేవలం అంశాలను చూడటానికి <code>for i in range(len(items)): print(items[i])</code> రాయడం unpythonic. నేరుగా <code>for item in items: print(item)</code> అని రాయాలి.</li>
+      <li><strong>Mistake 3: <code>while</code> లూప్‌లో అప్‌డేట్ మర్చిపోవడం:</strong> <code>i += 1</code> మర్చిపోవడం వల్ల ఇన్ఫినైట్ లూప్ ఏర్పడి బ్రౌజర్ లేదా సర్వర్ ఫ్రీజ్ అవుతుంది.</li>
+      <li><strong>Optimization Tip: లూప్‌ల లోపల డాట్ లుకప్స్ (Dot Lookups) తగ్గించండి:</strong> లూప్‌లో పదే పదే <code>math.sqrt()</code> పిలిచే బదులు లూప్ బయట <code>sqrt = math.sqrt</code> అని లోకల్ వేరియబుల్‌కు బైండ్ చేసుకుంటే లూప్ దాదాపు 15-20% వేగంగా తిరుగుతుంది!</li>
+    </ul>
+
+    <!-- SECTION 13 -->
+    <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాజెక్ట్: "Automated Enterprise Payroll Salary &amp; Tax Processing Engine"</h2>
+    <p>
+      ఈ ఏడవ అధ్యాయంలో నేర్చుకున్న అన్ని అంశాలను (while లూప్స్, for లూప్స్, range, enumerate, zip, డిక్షనరీ ట్రావర్సల్, నెస్టెడ్ ఫార్మాటింగ్) కలగలిపి — ఒక ఎంటర్‌ప్రైజ్ సంస్థలో పనిచేసే ఉద్యోగులందరి వేతనాలు, PF, బోనస్‌లు, ఆదాయ పన్నును ఆటోమేటిక్‌గా లెక్కించే <strong>Automated Enterprise Payroll &amp; Tax Engine</strong> ప్రాజెక్ట్‌ను నిర్మిద్దాం!
+    </p>
+
+    <!-- CODE BLOCK 4: CAPSTONE MINI PROJECT -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">04_enterprise_payroll_engine.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 07 మినీ ప్రాజెక్ట్: Automated Enterprise Payroll & Tax Engine
+# కాన్సెప్ట్స్: for Loops, while Loops, enumerate(), zip(), Formatted Tables,
+#             Overtime Calculations, Tax Slabs & Department Summaries
+# =====================================================================
+
+def process_company_payroll(employee_roster: list):
+    """
+    ఉద్యోగుల డేటాను లూప్ ద్వారా ప్రాసెస్ చేసి పేరోల్ లెడ్జర్ ముద్రిస్తుంది.
+    """
+    print("\n" + "=" * 76)
+    print(f"{'💼 టెక్ ఇన్నోవేషన్స్ ప్రైవేట్ లిమిటెడ్ — అధికారిక జీతాల పట్టిక (PAYROLL 2026)':^76}")
+    print("=" * 76)
+    print(f"{'క్ర.సం':<6} {'ఉద్యోగి పేరు':<18} {'ప్రాథమిక వేతనం':>14} {'ఓవర్‌టైమ్':>10} {'PF/పన్ను':>12} {'నికర వేతనం (₹)':>14}")
+    print("-" * 76)
+
+    total_gross_payroll = 0.0
+    total_tax_deductions = 0.0
+    total_net_payout = 0.0
+
+    # enumerate() ద్వారా 1 నుండి ఆటోమేటిక్ సీరియల్ నంబర్
+    for sno, emp in enumerate(employee_roster, start=1):
+        emp_id = emp["id"]
+        name = emp["name"]
+        base_salary = emp["base"]
+        ot_hours = emp["ot_hrs"]
+        ot_rate = 350.0 # గంటకు రూ. 350/-
+
+        # 1. ఓవర్‌టైమ్ గణన
+        ot_pay = ot_hours * ot_rate
+        gross_salary = base_salary + ot_pay
+
+        # 2. పన్ను & ప్రావిడెంట్ ఫండ్ (PF 12%)
+        pf_deduction = base_salary * 0.12
+        income_tax = (gross_salary * 0.10) if gross_salary > 60000 else (gross_salary * 0.05)
+        total_deduction = pf_deduction + income_tax
+
+        # 3. నికర వేతనం (Net Take-home Pay)
+        net_pay = gross_salary - total_deduction
+
+        # కంపెనీ మొత్తం లెక్కలు కూడటం
+        total_gross_payroll += gross_salary
+        total_tax_deductions += total_deduction
+        total_net_payout += net_pay
+
+        print(f"{sno:<6} {name:<18} {base_salary:>14,.2f} {ot_pay:>10,.2f} {total_deduction:>12,.2f} {net_pay:>14,.2f}")
+
+    print("=" * 76)
+    print(f"{'కంపెనీ మొత్తం స్థూల వ్యయం (Total Gross):':<45} ₹ {total_gross_payroll:>28,.2f}")
+    print(f"{'మొత్తం PF & ప్రభుత్వ పన్ను మినహాయింపులు :':<45} ₹ {total_tax_deductions:>28,.2f}")
+    print(f"{'ఉద్యోగుల ఖాతాల్లో జమ అయ్యే మొత్తం (Net Payout):':<45} ₹ {total_net_payout:>28,.2f}")
+    print("=" * 76)
+    print(f"{'✅ నవంబర్ 2026 పేరోల్ విజయవంతంగా ప్రాసెస్ చేయబడింది!':^76}")
+    print("=" * 76 + "\n")
+
+# ఉద్యోగుల సమాచారం (Data List)
+company_employees = [
+    {"id": "EMP101", "name": "సురేష్ వర్మ", "base": 75000.00, "ot_hrs": 12},
+    {"id": "EMP102", "name": "లావణ్య రెడ్డి", "base": 92000.00, "ot_hrs": 5},
+    {"id": "EMP103", "name": "కార్తీక్ నాయుడు", "base": 48000.00, "ot_hrs": 20},
+    {"id": "EMP104", "name": "భవాని ప్రసాద్", "base": 115000.00, "ot_hrs": 0},
+    {"id": "EMP105", "name": "స్నిగ్ధ శర్మ", "base": 54000.00, "ot_hrs": 15}
+]
+
+process_company_payroll(company_employees)
+</code></pre>
+    </div>
+
+    <!-- 5 COLLAPSIBLE QUIZZES -->
+    <h2 class="section-title"><span class="num">★</span> ఈ అధ్యాయంపై ప్రాక్టీస్ క్విజ్ (Knowledge Check)</h2>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">1. while లూప్‌కు మరియు for లూప్‌కు మధ్య ప్రాథమిక వ్యత్యాసం ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>while</code> లూప్ అనేది ఒక షరతు ఆధారంగా నడుస్తుంది; పని ఎన్నిసార్లు జరగాలో ముందుగా తెలియనప్పుడు ఇది ఉపయోగపడుతుంది. <code>for</code> లూప్ అనేది ఒక నిర్దిష్ట సీక్వెన్స్ (లిస్ట్, టపుల్, range) లోని అన్ని అంశాలపై వరుసగా ఇటరేట్ అవ్వడానికి ఉపయోగపడుతుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">2. range(1, 10, 2) ఫంక్షన్ ఏయే సంఖ్యలను ఉత్పత్తి చేస్తుంది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> ఇది <code>1, 3, 5, 7, 9</code> సంఖ్యలను ఉత్పత్తి చేస్తుంది. <code>start=1</code> వద్ద ప్రారంభమై, ప్రతి రౌండ్‌కు 2 కలుపుతూ, <code>stop=10</code> కంటే తక్కువగా ఉన్నంతవరకు సంఖ్యలను ఇస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">3. range(1000000) మెమరీని ఖాళీ చేస్తుందా? Lazy Evaluation అంటే ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> లేదు, <code>range</code> చాలా తక్కువ స్థిరమైన మెమరీని (కేవలం 48 బైట్లు) మాత్రమే తీసుకుంటుంది. ఇది 10 లక్షల సంఖ్యలను ఒకేసారి RAM లో సృష్టించదు; లూప్ అడిగినప్పుడు ఒక్కొక్క సంఖ్యను మాత్రమే ఆన్-డిమాండ్‌గా జనింపజేస్తుంది. దీనినే లేజీ ఎవాల్యుయేషన్ అంటారు.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">4. లూప్‌లో enumerate() వాడటం వల్ల కలిగే ముఖ్య ప్రయోజనం ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> కలెక్షన్‌లోని అంశంతో పాటు దాని యొక్క ఇండెక్స్ నంబర్‌ను కూడా ఆటోమేటిక్‌గా పొందవచ్చు. మనం మాన్యువల్‌గా <code>i = 0</code> పెట్టి ప్రతి లూప్‌లో <code>i += 1</code> చేయాల్సిన అవసరం ఉండదు.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">5. రెండు వేర్వేరు లిస్ట్‌లను ఒకే లూప్‌లో సమాంతరంగా ఎలా నడపవచ్చు?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <strong><code>zip()</code></strong> ఫంక్షన్ ఉపయోగించి చేయవచ్చు (ఉదా: <code>for a, b in zip(list1, list2):</code>). ఇది రెండు లిస్ట్‌ల నుండి సంబంధిత ఎలిమెంట్లను జతలుగా (Tuples) అందిస్తుంది.
+      </div>
+    </details>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-python/06-python-conditional-statements-branching.html" style="text-decoration:none; color:var(--text); font-weight:600; display:inline-flex; align-items:center; gap:8px; background:var(--bg2); padding:10px 18px; border-radius:8px; border:1px solid var(--border);">
+        ← మునుపటి అధ్యాయం: 6. డెసిషన్ మేకింగ్
+      </a>
+      <a href="/blog-python/08-python-loop-control-break-continue-else.html" style="text-decoration:none; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; background:#10b981; padding:10px 22px; border-radius:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        తర్వాతి అధ్యాయం: 8. లూప్ కంట్రోల్ (break, continue, else) →
+      </a>
+    </div>
+
+    <!-- INTERACTIVE COMPILER CTA CARD -->
+    <div style="margin-top:40px; background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(56,189,248,0.1) 100%); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:24px; text-align:center;">
+      <h3 style="margin-top:0; color:var(--text); font-size:20px;">ఈ Enterprise Payroll Engine ని లైవ్‌గా మన కంపైలర్‌లో రన్ చేయండి!</h3>
+      <p style="color:var(--text2); max-width:650px; margin:8px auto 20px; font-size:14px; line-height:1.6;">
+        ఎటువంటి లోకల్ సెటప్ లేకుండా, బ్రౌజర్‌లోనే Modern Python 3 కంపైలర్‌లో ఈ కోడ్‌ను ఎగ్జిక్యూట్ చేసి అవుట్‌పుట్ తనిఖీ చేయండి.
+      </p>
+      <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; padding:12px 28px; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Launch Python Interactive Compiler
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER / NAV SCRIPTS -->
+<script src="/site-nav.js"></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = `# =====================================================================
+# చాప్టర్ 07 మినీ ప్రాజెక్ట్: Enterprise Payroll & Tax Engine (LIVE DEMO)
+# =====================================================================
+
+company_employees = [
+    {"id": "EMP101", "name": "సురేష్ వర్మ", "base": 75000.00, "ot_hrs": 12},
+    {"id": "EMP102", "name": "లావణ్య రెడ్డి", "base": 92000.00, "ot_hrs": 5},
+    {"id": "EMP103", "name": "కార్తీక్ నాయుడు", "base": 48000.00, "ot_hrs": 20},
+    {"id": "EMP104", "name": "భవాని ప్రసాద్", "base": 115000.00, "ot_hrs": 0},
+    {"id": "EMP105", "name": "స్నిగ్ధ శర్మ", "base": 54000.00, "ot_hrs": 15}
+]
+
+print("=" * 72)
+print(f"{'💼 టెక్ ఇన్నోవేషన్స్ — PAYROLL REGISTER 2026':^72}")
+print("=" * 72)
+print(f"{'క్ర.సం':<6} {'ఉద్యోగి పేరు':<16} {'ప్రాథమిక వేతనం':>14} {'ఓవర్‌టైమ్':>10} {'నికర వేతనం (₹)':>16}")
+print("-" * 72)
+
+total_net = 0.0
+
+for sno, emp in enumerate(company_employees, start=1):
+    base = emp["base"]
+    ot_pay = emp["ot_hrs"] * 350.0
+    gross = base + ot_pay
+    deductions = (base * 0.12) + (gross * 0.08) # PF + Tax
+    net_salary = gross - deductions
+    total_net += net_salary
+
+    print(f"{sno:<6} {emp['name']:<16} {base:>14,.2f} {ot_pay:>10,.2f} {net_salary:>16,.2f}")
+
+print("=" * 72)
+print(f"{'మొత్తం ఉద్యోగుల చెల్లింపు (Net Disbursed):':<42} ₹ {total_net:>26,.2f}")
+print("=" * 72)
+print("\n🎉 చాప్టర్ 07 ప్రాజెక్ట్ విజయవంతంగా రన్ అయ్యింది! 🚀")
+`;
+
+    try {
+      localStorage.setItem('code_python', projectCode);
+      localStorage.setItem('code_python3', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-python-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
