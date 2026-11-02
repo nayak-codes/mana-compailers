@@ -36,3 +36,4 @@ allHtml.forEach(file => {
 });
 
 console.log(`✅ Added AdSense meta tag to ${fixedCount} files.`);
+

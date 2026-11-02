@@ -112,6 +112,7 @@ const trustPages = [
   'contact.html',
   'privacy-policy.html',
   'terms-of-service.html',
+  'disclaimer.html',
   'features.html',
   'how-our-compiler-works.html',
   'code-privacy-and-storage.html',
@@ -194,3 +195,4 @@ console.log('Priority Breakdown:');
 Object.keys(breakdown).sort((a, b) => b - a).forEach(p => {
   console.log(`  Priority ${p}: ${breakdown[p]} URLs`);
 });
+
