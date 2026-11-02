@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modern Java — Lambda Expressions &amp; Stream API Pipelines తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా ల్యాంబ్డా ఎక్స్‌ప్రెషన్స్, ఫంక్షనల్ ఇంటర్‌ఫేస్‌లు (Predicate, Function, Consumer, Supplier), మెథడ్ రిఫరెన్సెస్ (::), స్ట్రీమ్ API పైప్‌లైన్స్, Intermediate &amp; Terminal Operations తెలుగులో నేర్చుకోండి." />
+  <meta name="keywords" content="java lambdas telugu, java streams api telugu, functional interfaces java telugu, predicate function consumer supplier, java stream filter map reduce telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/24-java-lambdas-and-stream-api.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const icon = btn.querySelector('.accordion-icon');
+      content.classList.toggle('open');
+      if (icon) {
+        icon.textContent = content.classList.contains('open') ? '▾' : '▸';
+      }
+    }
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre');
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 2000);
+      });
+    }
+
+    function runCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre');
+      localStorage.setItem('mana_java_run_code', pre.innerText);
+      window.open('/java.html', '_blank');
+    }
+  </script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen">
+
+<div style="display:flex; min-height:100vh; position:relative;">
+    <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Java Masterclass</div>
+
+    <div class="accordion">
+      <!-- Part 01: Basics & JVM -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 01</span>
+            <span class="phase-title">Basics & JVM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/01-java-introduction-features-and-jvm-architecture.html">1. Intro & JVM Architecture</a>
+        <a href="/blog-java/02-java-installation-ide-and-first-program.html">2. Setup & First Program</a>
+        <a href="/blog-java/03-java-syntax-class-structure-and-main-method.html">3. Syntax & Main Method</a>
+        <a href="/blog-java/04-java-variables-primitive-data-types-and-memory.html">4. Variables & Data Types</a>
+        <a href="/blog-java/05-java-operators-expressions-and-type-casting.html">5. Operators & Type Casting</a>
+      </div>
+
+      <!-- Part 02: Control Flow & Strings -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 02</span>
+            <span class="phase-title">Control Flow & Strings</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/06-java-conditional-statements-if-else.html">6. if, else-if & Ternary</a>
+        <a href="/blog-java/07-java-switch-statements-and-switch-expressions.html">7. switch Statements & Expressions</a>
+        <a href="/blog-java/08-java-loops-while-for-and-enhanced-foreach.html">8. Loops: while, for, foreach</a>
+        <a href="/blog-java/09-java-strings-memory-pool-and-immutability.html">9. Strings & Memory Pool</a>
+        <a href="/blog-java/10-java-stringbuilder-stringbuffer-and-methods.html">10. StringBuilder & StringBuffer</a>
+      </div>
+
+      <!-- Part 03: Arrays, Methods & OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 03</span>
+            <span class="phase-title">Arrays, Methods & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/11-java-arrays-multidimensional-and-algorithms.html">11. Arrays & Algorithms</a>
+        <a href="/blog-java/12-java-methods-call-stack-and-pass-by-value.html">12. Methods & Call Stack</a>
+        <a href="/blog-java/13-java-method-overloading-and-varargs.html">13. Method Overloading & Varargs</a>
+        <a href="/blog-java/14-java-oop-classes-objects-and-constructors.html">14. Classes, Objects & Heap</a>
+        <a href="/blog-java/15-java-constructors-this-keyword-and-chaining.html">15. Constructors & this Keyword</a>
+      </div>
+
+      <!-- Part 04: Core OOP & Exceptions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 04</span>
+            <span class="phase-title">Core OOP & Exceptions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/16-java-encapsulation-access-modifiers-and-records.html">16. Encapsulation & Records</a>
+        <a href="/blog-java/17-java-inheritance-super-keyword-and-object-class.html">17. Inheritance & super Keyword</a>
+        <a href="/blog-java/18-java-polymorphism-method-overriding-dynamic-binding.html">18. Polymorphism & Overriding</a>
+        <a href="/blog-java/19-java-abstract-classes-and-interfaces.html">19. Abstract Classes & Interfaces</a>
+        <a href="/blog-java/20-java-exception-handling-and-custom-exceptions.html">20. Exceptions & Custom Errors</a>
+      </div>
+
+      <!-- Part 05: Collections & Capstone -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 05</span>
+            <span class="phase-title">Collections & Capstone</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-java/21-java-collections-list-arraylist-linkedlist.html">21. List: ArrayList & LinkedList</a>
+        <a href="/blog-java/22-java-collections-set-and-map-deep-dive.html">22. Set & Map Deep Dive</a>
+        <a href="/blog-java/23-java-generics-and-type-safety.html">23. Generics & Type Safety</a>
+        <a href="/blog-java/24-java-lambdas-and-stream-api.html" class="active">24. Lambdas & Stream API</a>
+        <a href="/blog-java/25-java-capstone-project.html">25. Capstone: Banking Engine</a>
+      </div>
+
+    </div>
+
+    <div class="sidebar-heading">INTERACTIVE IDE</div>
+    <a href="/online-java-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Java Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">OTHER COURSES</div>
+    <a href="/blog-python.html">Python Course (25 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (25 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <main style="flex:1; max-width:980px; margin:0 auto; padding:32px 28px 80px 28px; overflow-x:hidden;">
+    
+    <!-- HEADER BADGES & META -->
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:16px;">
+      <span style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; font-size:12.5px; font-weight:700; padding:4px 12px; border-radius:20px; display:inline-flex; align-items:center; gap:6px;">
+        ☕ Java (Java 21+ LTS)
+      </span>
+      <span style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; font-size:12.5px; font-weight:700; padding:4px 12px; border-radius:20px; display:inline-flex; align-items:center; gap:6px;">
+        🟢 Lesson 24 of 25
+      </span>
+      <span style="background:#fef3c7; color:#b45309; border:1px solid #fde68a; font-size:12.5px; font-weight:700; padding:4px 12px; border-radius:20px; display:inline-flex; align-items:center; gap:6px;">
+        📂 Part 05: Collections &amp; Capstone (Page 4 of 5)
+      </span>
+      <span style="background:#f3e8ff; color:#7e22ce; border:1px solid #e9d5ff; font-size:12.5px; font-weight:700; padding:4px 12px; border-radius:20px; display:inline-flex; align-items:center; gap:6px;">
+        ⏱️ 25 min read
+      </span>
+    </div>
+
+    <!-- MAIN HEADING -->
+    <h1 style="font-size:32px; font-weight:800; line-height:1.3; margin:0 0 16px 0; color:var(--text); letter-spacing:-0.5px;">
+      Modern Java — Lambda Expressions &amp; Stream API Pipelines (ల్యాంబ్డా &amp; స్ట్రీమ్స్ ఆర్కిటెక్చర్)
+    </h1>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px 18px; margin-bottom:28px;">
+      <div style="font-size:13.5px; font-weight:700; color:#475569; margin-bottom:4px;">
+        📌 Covered in this lesson:
+      </div>
+      <div style="font-size:13px; line-height:1.6; color:#64748b;">
+        Factory Conveyor Belt &amp; Drone Remote Trigger Analogy · Functional Programming in Java 8+ · Functional Interfaces (@FunctionalInterface, Predicate, Function, Consumer, Supplier) · Lambda Expressions Syntax (-&gt;) · Method References (::) · Stream API Architecture · Intermediate vs Terminal Operations · Filtering, Mapping, Sorting, Reducing · Parallel Streams · Stock Market Trade Analytics Engine · 5 Production Pitfalls
+      </div>
+    </div>
+
+    <!-- WARM IVORY INTRO BOX (Strict JavaScript Masterclass Style) -->
+    <div class="intro-box">
+      <p style="margin:0 0 16px 0; font-size:15px; line-height:1.8; color:#1e293b;">
+        జావా చరిత్రను Java 8 కి ముందు, Java 8 కి తర్వాత అని రెండు యుగాలుగా విభజించవచ్చు. Java 8 కు పూర్వం జావా పూర్తిగా ఇంపరేటివ్ (Imperative) ఆబ్జెక్ట్-ఓరియెంటెడ్ పద్ధతిలోనే ఉండేది; అంటే కలెక్షన్లలోని డేటాను ప్రాసెస్ చేయడానికి పెద్ద పెద్ద ఫర్ లూప్‌లు (for-loops), ఇఫ్ కండిషన్లు, మరియు టెంపరరీ లిస్ట్‌లు నింపాల్సి వచ్చేది. కానీ Java 8 లో ప్రవేశపెట్టబడిన <strong>Lambda Expressions</strong> మరియు <strong>Stream API Pipelines</strong> జావా ప్రోగ్రామింగ్ శైలిని పూర్తిగా <strong>డిక్లరేటివ్ ఫంక్షనల్ స్టైల్ (Declarative Functional Programming)</strong> లోకి మార్చేశాయి. కోడ్ సైజు 70% తగ్గిపోవడమే కాకుండా, రీడబిలిటీ మరియు మల్టీ-కోర్ ప్రాసెసర్లలో సమాంతర ప్రాసెసింగ్ (Parallel Processing) అద్భుతంగా మెరుగయ్యాయి. ఆధునిక జావా డెవలపర్ నిత్యం వాడే ల్యాంబ్దాలు, స్ట్రీమ్ ఆపరేటర్లు, మరియు బిహైండ్-ద-సీన్స్ లేజీ ఎవాల్యుయేషన్ (Lazy Evaluation) గురించి ఈ అధ్యాయంలో లోతుగా నేర్చుకుందాం.
+      </p>
+
+      <h4 style="margin:0 0 10px 0; color:#047857; font-size:16px; font-weight:800;">
+        ఫ్యాక్టరీ కన్వేయర్ బెల్ట్ &amp; డ్రోన్ రిమోట్ ట్రిగ్గర్ అనాలజీ (The Factory Conveyor Belt &amp; Drone Remote Trigger Analogy):
+      </h4>
+      <ol style="margin:0; padding-left:22px; color:#334155; line-height:1.8; font-size:14.5px;">
+        <li style="margin-bottom:8px;">
+          <strong>1. Lambda Expressions (డ్రోన్ రిమోట్ సింగిల్-బటన్ ట్రిగ్గర్ - Anonymous Functions):</strong> పాత రోజుల్లో ఒక పని జరగాలంటే పెద్ద Anonymous Inner Class రాసి బోలెడు బాయిలర్‌ప్లేట్ కోడ్ నింపాల్సి వచ్చేది. లాంబ్డా ఎక్స్‌ప్రెషన్ అనేది ఒక డ్రోన్ రిమోట్ కంట్రోలర్ లాంటిది. మొత్తం రిమోట్ మిషనరీని మోయకుండా, కేవలం ఒక్క బటన్ ప్రెస్ చేయగానే జరిగే పనిని మాత్రమే సంక్షిప్తంగా <code>(param) -&gt; action</code> రూపంలో పంపడమే లాంబ్డా!
+        </li>
+        <li style="margin-bottom:8px;">
+          <strong>2. Stream API Pipelines (ఫ్యాక్టరీ కన్వేయర్ బెల్ట్ అసెంబ్లీ లైన్ - Stream Assembly Line):</strong> ఒక ఫ్యాక్టరీలో ముడి సరుకులు వేగంగా కదులుతున్న కన్వేయర్ బెల్ట్ పైకి వస్తాయి. అక్కడ వరుసగా వివిధ యంత్రాలు అమర్చబడి ఉంటాయి: మొదటి యంత్రం నాసిరకం వస్తువులను పక్కకు నెట్టివేస్తుంది (<code>filter</code>), రెండవ యంత్రం వస్తువులను ప్యాకింగ్ చేస్తుంది (<code>map</code>), మూడవ యంత్రం వాటిని సీరియల్ నంబర్ ప్రకారం క్రమపరుస్తుంది (<code>sorted</code>), చివరి స్టేషన్‌లో మొత్తం వస్తువులను ఒక బాక్సులో ప్యాక్ చేస్తారు (<code>collect</code>). ఈ మొత్తం ప్రక్రియలో ఒరిజినల్ ముడి సరుకులు ఏమాత్రం మార్పు చెందవు (Immutability).
+        </li>
+        <li style="margin-bottom:8px;">
+          <strong>3. Lazy Evaluation (ఆదేశం వచ్చేంతవరకు ఆన్ కాని మెషిన్లు):</strong> కన్వేయర్ బెల్ట్ చివరిలో ప్యాకింగ్ బాక్స్ (Terminal Operation) సిద్ధంగా లేకపోతే, ముందస్తు మెషిన్లు (Intermediate Operations) అసలు స్టార్ట్ కూడా కావు! జావా స్ట్రీమ్స్ సరిగ్గా అలాగే పనిచేస్తాయి — చివరి టెర్మినల్ ఆపరేషన్ పిలిచే వరకు ఒక్క లైన్ ప్రాసెసింగ్ కూడా జరగదు.
+        </li>
+      </ol>
+      <p style="margin:14px 0 0 0; font-size:14px; font-weight:600; color:#0f766e;">
+        💡 ఈ పాఠంలో మీరు ఫంక్షనల్ ఇంటర్‌ఫేస్‌లు, మెథడ్ రిఫరెన్సెస్, ఫిల్టర్-మ్యాప్-రెడ్యూస్ పైప్‌లైన్‌లు మరియు రియల్-టైమ్ స్టాక్ మార్కెట్ ట్రేడ్ అనలిటిక్స్ ఇంజిన్‌ను స్వయంగా నిర్మిస్తారు!
+      </p>
+    </div>
+
+    <!-- 3-COLUMN TABLE OF CONTENTS (TOC Card) -->
+    <div class="toc-card" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:24px; margin:32px 0; box-shadow:0 4px 16px rgba(0,0,0,0.03);">
+      <h3 style="margin:0 0 16px 0; font-size:18px; font-weight:800; color:#0f172a; display:flex; align-items:center; gap:8px;">
+        📑 పాఠ్యాంశ విషయ సూచిక (Table of Contents)
+      </h3>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
+        <div>
+          <a href="#sec-1" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">1. ఫంక్షనల్ ప్రోగ్రామింగ్ &amp; లాంబ్డా ఆవశ్యకత</a>
+          <a href="#sec-2" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">2. Functional Interfaces (@FunctionalInterface)</a>
+          <a href="#sec-3" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">3. Lambda Syntax &amp; Method References (::)</a>
+          <a href="#sec-4" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">4. ప్రాక్టికల్ కోడ్: Functional Interfaces Showcase</a>
+        </div>
+        <div>
+          <a href="#sec-5" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">5. Stream API ఆర్కిటెక్చర్ &amp; Lazy Evaluation</a>
+          <a href="#sec-6" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">6. Intermediate Operations: filter, map, sorted</a>
+          <a href="#sec-7" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">7. Terminal Operations: collect, reduce, count</a>
+          <a href="#sec-8" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">8. Parallel Streams &amp; ForkJoinPool</a>
+        </div>
+        <div>
+          <a href="#sec-9" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">9. ప్రాక్టికల్ కోడ్: Stream Analytics Benchmark</a>
+          <a href="#sec-10" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">10. క్యాప్‌స్టోన్: StockMarketTradeStreamEngine</a>
+          <a href="#sec-11" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">11. ప్రొడక్షన్ పిట్‌ఫాల్స్ &amp; ఆంటీ-పాటర్న్స్</a>
+          <a href="#sec-12" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">12. ఇంటర్వ్యూ క్విజ్ &amp; సెల్ఫ్-టెస్ట్</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section id="sec-1" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        1. ఫంక్షనల్ ప్రోగ్రామింగ్ &amp; లాంబ్డా ఆవశ్యకత (Why Lambdas Were Introduced)
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        జావా ఆరంభం నుండి <strong>First-Class Functions</strong> లేని లోటు స్పష్టంగా కనిపించేది. జావాలో ఒక పనిని లేదా ప్రవర్తనను (Behavior) వేరొక మెథడ్‌కు పంపించాలంటే, తప్పనిసరిగా ఒక క్లాస్ లేదా Anonymous Inner Class సృష్టించి, ఆ క్లాస్ ఆబ్జెక్ట్‌ను పంపాల్సి వచ్చేది.
+      </p>
+      <div style="background:#f8fafc; border:1px solid #cbd5e1; border-left:4px solid #0284c7; padding:16px; border-radius:6px; margin:20px 0; font-family:'JetBrains Mono', monospace; font-size:13px; color:#0f172a;">
+        // Java 7 పాత Anonymous Inner Class విధానం (Boilerplate):<br/>
+        Collections.sort(names, new Comparator&lt;String&gt;() {<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;@Override<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;public int compare(String s1, String s2) {<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return s1.compareTo(s2);<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+        });<br/><br/>
+        // Java 8+ ఆధునిక Lambda Expression విధానం (Clean &amp; Concise):<br/>
+        Collections.sort(names, (s1, s2) -&gt; s1.compareTo(s2));<br/><br/>
+        // మరింత క్లీన్ అయిన Method Reference:<br/>
+        Collections.sort(names, String::compareTo);
+      </div>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        లాంబ్డా ఎక్స్‌ప్రెషన్ వల్ల మనం ఒక ఫంక్షన్‌ను ఒక విలువలాగా (Functions as first-class citizens) ఇతర మెథడ్స్‌కు పాస్ చేయగలుగుతున్నాం.
+      </p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section id="sec-2" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        2. Functional Interfaces (@FunctionalInterface &amp; 4 Core Types)
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        కేవలం <strong>ఒకే ఒక అబ్‌స్ట్రాక్ట్ మెథడ్ (Single Abstract Method - SAM)</strong> ను కలిగి ఉండే ఇంటర్‌ఫేస్‌ను <strong>Functional Interface</strong> అంటారు. దీనిపై <code>@FunctionalInterface</code> అనే ఆప్షనల్ అనోటేషన్‌ను ఉంచడం ద్వారా భవిష్యత్తులో ఎవరైనా పొరపాటున రెండవ అబ్‌స్ట్రాక్ట్ మెథడ్‌ను జోడిస్తే కంపైలర్ అడ్డుకుంటుంది.
+      </p>
+      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-left:4px solid #2563eb; padding:16px; border-radius:6px; margin:20px 0;">
+        <h4 style="margin:0 0 10px 0; color:#1e3a8a; font-size:15.5px; font-weight:800;">
+          🌟 జావా 8 లోని 4 ప్రధాన ఫంక్షనల్ ఇంటర్‌ఫేస్‌లు:
+        </h4>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; font-size:13.5px; color:#1e40af;">
+          <div style="background:#ffffff; padding:12px; border-radius:6px; border:1px solid #dbeafe;">
+            <strong>1. Predicate&lt;T&gt;:</strong><br/>
+            <code>boolean test(T t)</code><br/>
+            ఇన్‌పుట్ తీసుకొని boolean (true/false) కండిషన్‌ను రిటర్న్ చేస్తుంది.
+          </div>
+          <div style="background:#ffffff; padding:12px; border-radius:6px; border:1px solid #dbeafe;">
+            <strong>2. Function&lt;T, R&gt;:</strong><br/>
+            <code>R apply(T t)</code><br/>
+            T ఇన్‌పుట్ తీసుకొని R అవుట్‌పుట్‌గా ట్రాన్స్‌ఫార్మ్ చేస్తుంది.
+          </div>
+          <div style="background:#ffffff; padding:12px; border-radius:6px; border:1px solid #dbeafe;">
+            <strong>3. Consumer&lt;T&gt;:</strong><br/>
+            <code>void accept(T t)</code><br/>
+            ఇన్‌పుట్ తీసుకుంటుంది కానీ ఏమీ రిటర్న్ చేయదు (Side-effects).
+          </div>
+          <div style="background:#ffffff; padding:12px; border-radius:6px; border:1px solid #dbeafe;">
+            <strong>4. Supplier&lt;T&gt;:</strong><br/>
+            <code>T get()</code><br/>
+            ఇన్‌పుట్ తీసుకోదు, కానీ ఒక కొత్త ఆబ్జెక్ట్‌ను జనరేట్ చేస్తుంది.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section id="sec-3" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        3. Lambda Syntax &amp; Method References (::)
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        లాంబ్డా ఎక్స్‌ప్రెషన్ యొక్క సింటాక్స్ మూడు భాగాలుగా ఉంటుంది:
+        <code>(parameters) -&gt; { expression / statements }</code>.
+        కేవలం ఒకే పారామీటర్ ఉన్నప్పుడు బ్రాకెట్లు <code>()</code> ఆప్షనల్; అలాగే కేవలం సింగిల్ లైన్ స్టేట్‌మెంట్ ఉన్నప్పుడు కర్లీ బ్రేసెస్ <code>{}</code> మరియు <code>return</code> కీవర్డ్ కూడా ఆప్షనల్!
+      </p>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        ఇప్పటికే ఉన్న మెథడ్‌ను లాంబ్డాలో నేరుగా కాల్ చేయాలనుకుంటే, మరింత క్లీన్ సింటాక్స్ అయిన <strong>Method Reference (<code>::</code>)</strong> ను వాడవచ్చు.
+        ఉదాహరణకు: <code>name -&gt; System.out.println(name)</code> కు బదులుగా <code>System.out::println</code> అని రాయవచ్చు.
+      </p>
+    </section>
+
+    <!-- SECTION 4: CODE BLOCK 1 -->
+    <section id="sec-4" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        4. ప్రాక్టికల్ కోడ్: Functional Interfaces &amp; Lambdas Showcase
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        క్రింది జావా ప్రోగ్రామ్‌లో నాలుగు కోర్ ఫంక్షనల్ ఇంటర్‌ఫేస్‌లు మరియు మెథడ్ రిఫరెన్సెస్ వాస్తవ ఎగ్జిక్యూషన్‌లో ఎలా ప్రవర్తిస్తాయో చూడండి.
+      </p>
+
+      <div class="code-block" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; margin:24px 0; overflow:hidden; box-shadow:0 4px 14px rgba(0,0,0,0.04);">
+        <div style="background:#f8fafc; border-bottom:1px solid #e2e8f0; padding:10px 16px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:700; color:#334155;">
+            📄 FunctionalInterfacesAndLambdasDemo.java
+          </span>
+          <div style="display:flex; gap:8px;">
+            <button onclick="copyCode(this)" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:5px 12px; font-size:12px; font-weight:600; cursor:pointer; color:#475569;">Copy Code</button>
+            <button onclick="runCode(this)" style="background:#047857; border:none; border-radius:6px; padding:5px 14px; font-size:12px; font-weight:700; cursor:pointer; color:#ffffff;">Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre style="margin:0; padding:18px; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.6; overflow-x:auto; background:#ffffff; color:#0f172a;">import java.util.*;
+import java.util.function.*;
+
+public class FunctionalInterfacesAndLambdasDemo {
+    public static void main(String[] args) {
+        System.out.println("=== 1. PREDICATE (CONDITION CHECK) ===");
+        Predicate&lt;Integer&gt; isEligibleForLoan = score -&gt; score &gt;= 750;
+        Predicate&lt;Integer&gt; isVIP = score -&gt; score &gt;= 820;
+
+        System.out.println("Credit Score 780 eligible? " + isEligibleForLoan.test(780));
+        System.out.println("Credit Score 720 eligible? " + isEligibleForLoan.test(720));
+        // Predicate Chaining (and, or, negate)
+        Predicate&lt;Integer&gt; eligibleNonVIP = isEligibleForLoan.and(isVIP.negate());
+        System.out.println("Score 780 is Eligible Non-VIP? " + eligibleNonVIP.test(780));
+
+        System.out.println("
+=== 2. FUNCTION (TRANSFORMATION) ===");
+        Function&lt;String, Integer&gt; parseWordLength = String::length; // Method reference
+        Function&lt;Integer, Double&gt; calculateGST = price -&gt; price * 1.18;
+
+        System.out.println("Length of 'Hyderabad': " + parseWordLength.apply("Hyderabad"));
+        System.out.println("Price ₹1000 + 18% GST: ₹" + calculateGST.apply(1000));
+
+        System.out.println("
+=== 3. CONSUMER (SIDE EFFECT) ===");
+        Consumer&lt;String&gt; auditLogger = msg -&gt; System.out.println("🔔 [AUDIT]: " + msg);
+        auditLogger.accept("User 'admin' changed production configuration.");
+
+        System.out.println("
+=== 4. SUPPLIER (LAZY GENERATION) ===");
+        Supplier&lt;String&gt; sessionTokenGenerator = () -&gt; "TOK-" + UUID.randomUUID().toString().substring(0, 8);
+        System.out.println("Generated New Token 1: " + sessionTokenGenerator.get());
+        System.out.println("Generated New Token 2: " + sessionTokenGenerator.get());
+    }
+}</pre>
+      </div>
+
+      <div class="code-output-card" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; margin:20px 0; overflow:hidden;">
+        <div style="background:#f1f5f9; padding:8px 16px; border-bottom:1px solid #e2e8f0; font-size:12.5px; font-weight:700; color:#475569; display:flex; align-items:center; gap:6px;">
+          💻 కన్సోల్ అవుట్‌పుట్ (Program Terminal Output)
+        </div>
+        <pre style="margin:0; padding:16px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#0f172a; line-height:1.6; background:#ffffff; overflow-x:auto;">=== 1. PREDICATE (CONDITION CHECK) ===
+Credit Score 780 eligible? true
+Credit Score 720 eligible? false
+Score 780 is Eligible Non-VIP? true
+
+=== 2. FUNCTION (TRANSFORMATION) ===
+Length of 'Hyderabad': 9
+Price ₹1000 + 18% GST: ₹1180.0
+
+=== 3. CONSUMER (SIDE EFFECT) ===
+🔔 [AUDIT]: User 'admin' changed production configuration.
+
+=== 4. SUPPLIER (LAZY GENERATION) ===
+Generated New Token 1: TOK-8B92C1D4
+Generated New Token 2: TOK-4F1A3E70</pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section id="sec-5" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        5. Stream API ఆర్కిటెక్చర్ &amp; Lazy Evaluation (స్ట్రీమ్ ఆర్కిటెక్చర్)
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        <code>java.util.stream.Stream</code> అనేది డేటా స్ట్రక్చర్ కాదు; ఇది డేటాను నిల్వ చేయదు. ఇది కలెక్షన్లు లేదా ఎరేల నుండి వచ్చే డేటా ప్రవాహాన్ని (Sequence of elements) ప్రాసెస్ చేయడానికి ఉపయోగపడే ఒక పైప్‌లైన్.
+      </p>
+      <div style="background:#fffbeb; border:1px solid #fde68a; border-left:4px solid #d97706; padding:16px; border-radius:6px; margin:20px 0;">
+        <h4 style="margin:0 0 8px 0; color:#b45309; font-size:15px; font-weight:800;">⚙️ స్ట్రీమ్ పైప్‌లైన్ యొక్క 3 ప్రధాన దశలు:</h4>
+        <ol style="margin:0; padding-left:20px; font-size:14px; color:#78350f; line-height:1.8;">
+          <li><strong>1. Source Creation:</strong> కలెక్షన్ నుండి స్ట్రీమ్ ప్రారంభించడం (<code>list.stream()</code> లేదా <code>Stream.of(...)</code>).</li>
+          <li><strong>2. Intermediate Operations:</strong> డేటాను ఫిల్టర్ చేయడం లేదా మార్చడం (<code>filter()</code>, <code>map()</code>, <code>sorted()</code>, <code>distinct()</code>). ఇవి ఎల్లప్పుడూ <strong>Lazy</strong> గా ఉంటాయి; టెర్మినల్ ఆపరేషన్ పిలిచే వరకు ఏ పనీ చేయవు.</li>
+          <li><strong>3. Terminal Operation:</strong> ఫలితాన్ని లెక్కించి స్ట్రీమ్‌ను ముగించడం (<code>collect()</code>, <code>reduce()</code>, <code>count()</code>, <code>forEach()</code>). టెర్మినల్ ఆపరేషన్ రన్ అయిన తర్వాత ఆ స్ట్రీమ్‌ను మళ్లీ వాడలేము (Streams cannot be reused).</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SECTION 6 & 7: OPERATIONS -->
+    <section id="sec-6" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        6. Intermediate Operations: filter, map, flatMap, sorted &amp; distinct
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        ఇంటర్మీడియట్ ఆపరేషన్లు ఒక స్ట్రీమ్‌ను తీసుకొని మరొక కొత్త స్ట్రీమ్‌ను రిటర్న్ చేస్తాయి. వీటిని ఒకదాని తర్వాత ఒకటి చైనింగ్ (Method Chaining) చేయవచ్చు:
+      </p>
+      <ul style="margin:0; padding-left:24px; font-size:14.5px; color:var(--text); line-height:1.8; margin-bottom:20px;">
+        <li><code>filter(Predicate)</code>: షరతును సంతృప్తిపరిచే ఎలిమెంట్లను మాత్రమే అనుమతిస్తుంది.</li>
+        <li><code>map(Function)</code>: ప్రతి ఎలిమెంట్‌ను వేరొక రూపంలోకి ట్రాన్స్‌ఫార్మ్ చేస్తుంది (ఉదాహరణకు Employee నుండి జీతం తీయడం).</li>
+        <li><code>flatMap(Function)</code>: లిస్ట్‌లలోని లిస్ట్‌లను ఒకే ఫ్లాట్ స్ట్రీమ్‌గా కలుపుతుంది (Flattens nested streams).</li>
+        <li><code>sorted(Comparator)</code>: సహజ క్రమంలో లేదా నిర్దిష్ట క్రమంలో అమరుస్తుంది.</li>
+        <li><code>distinct()</code>: <code>equals()</code> ఆధారంగా డూప్లికేట్లను తొలగిస్తుంది.</li>
+      </ul>
+    </section>
+
+    <section id="sec-7" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        7. Terminal Operations: collect, reduce, count &amp; Collectors
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        టెర్మినల్ ఆపరేషన్ పైప్‌లైన్‌ను ట్రిగ్గర్ చేసి అంతిమ ఫలితాన్ని ఇస్తుంది. <code>java.util.stream.Collectors</code> యుటిలిటీ క్లాస్ ద్వారా ఫలితాన్ని <code>List</code>, <code>Set</code>, లేదా గ్రూపింగ్ మ్యాప్‌లుగా మార్చవచ్చు:
+      </p>
+      <ul style="margin:0; padding-left:24px; font-size:14.5px; color:var(--text); line-height:1.8; margin-bottom:20px;">
+        <li><code>collect(Collectors.toList())</code> లేదా ఆధునిక Java 16+ <code>.toList()</code>: ఫలితాన్ని లిస్ట్‌గా ఇస్తుంది.</li>
+        <li><code>collect(Collectors.groupingBy(...))</code>: SQL GROUP BY లాగా డేటాను కేటగిరీల ప్రకారం వర్గీకరిస్తుంది.</li>
+        <li><code>reduce(initialVal, BinaryOperator)</code>: అన్ని ఎలిమెంట్లను కలిపి ఒకే విలువగా తగ్గిస్తుంది (ఉదాహరణకు మొత్తం కూడిక).</li>
+        <li><code>anyMatch()</code>, <code>allMatch()</code>, <code>noneMatch()</code>: షార్ట్-సర్క్యూట్ బూలియన్ చెక్స్.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section id="sec-8" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        8. Parallel Streams &amp; ForkJoinPool (సమాంతర ప్రాసెసింగ్)
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        లక్షల కొద్దీ రికార్డులను ప్రాసెస్ చేసేటప్పుడు కంప్యూటర్‌లోని అన్ని CPU కోర్లను సమానంగా ఉపయోగించడానికి <code>parallelStream()</code> ను పిలుస్తాము. ఇది అంతర్గతంగా JVM యొక్క కామన్ <strong>ForkJoinPool.commonPool()</strong> ని ఉపయోగించి డేటాను చిన్న చిన్న భాగాలుగా విభజించి సమాంతరంగా రన్ చేస్తుంది.
+      </p>
+      <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-left:5px solid #047857; padding:16px; border-radius:8px; margin:20px 0;">
+        <h4 style="margin:0 0 6px 0; color:#047857; font-size:15px; font-weight:800;">⚡ Parallel Streams గోల్డెన్ రూల్:</h4>
+        <p style="margin:0; font-size:14px; line-height:1.7; color:#064e3b;">
+          ఆపరేషన్లు <strong>Stateless</strong> మరియు <strong>Non-blocking</strong> గా ఉన్నప్పుడు మాత్రమే ప్యారలల్ స్ట్రీమ్స్ వాడాలి. షేర్డ్ మ్యూటబుల్ స్టేట్ ఉన్నప్పుడు లేదా I/O నెట్‌వర్క్ కాల్స్ చేసేటప్పుడు వాడితే రేస్ కండిషన్లు ఏర్పడతాయి.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 9: CODE BLOCK 2 -->
+    <section id="sec-9" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        9. ప్రాక్టికల్ కోడ్: Stream Pipeline Analytics Benchmark
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        క్రింది జావా ప్రోగ్రామ్‌లో ఎంప్లాయ్ డేటాబేస్ నుండి ఫిల్టరింగ్, సగటు జీతం లెక్కింపు, గ్రూపింగ్ బై డిపార్ట్‌మెంట్ మరియు రిడక్షన్ ఎలా సమర్థవంతంగా అమలవుతాయో పరిశీలించండి.
+      </p>
+
+      <div class="code-block" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; margin:24px 0; overflow:hidden; box-shadow:0 4px 14px rgba(0,0,0,0.04);">
+        <div style="background:#f8fafc; border-bottom:1px solid #e2e8f0; padding:10px 16px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:700; color:#334155;">
+            📄 StreamPipelineAnalyticsBenchmark.java
+          </span>
+          <div style="display:flex; gap:8px;">
+            <button onclick="copyCode(this)" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:5px 12px; font-size:12px; font-weight:600; cursor:pointer; color:#475569;">Copy Code</button>
+            <button onclick="runCode(this)" style="background:#047857; border:none; border-radius:6px; padding:5px 14px; font-size:12px; font-weight:700; cursor:pointer; color:#ffffff;">Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre style="margin:0; padding:18px; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.6; overflow-x:auto; background:#ffffff; color:#0f172a;">import java.util.*;
+import java.util.stream.Collectors;
+
+public class StreamPipelineAnalyticsBenchmark {
+
+    public record Employee(int id, String name, String dept, double salary) {}
+
+    public static void main(String[] args) {
+        System.out.println("=== STREAM PIPELINE ANALYTICS BENCHMARK ===");
+
+        List&lt;Employee&gt; employees = List.of(
+            new Employee(1, "Balaji", "Engineering", 125000),
+            new Employee(2, "Suresh", "Product", 95000),
+            new Employee(3, "Kavitha", "Engineering", 140000),
+            new Employee(4, "Ramesh", "Finance", 80000),
+            new Employee(5, "Anand", "Engineering", 110000),
+            new Employee(6, "Divya", "Finance", 92000)
+        );
+
+        // 1. FILTER &amp; MAP: ఇంజనీరింగ్ విభాగంలో ₹1,15,000 కంటే ఎక్కువ జీతం ఉన్నవారి పేర్లు
+        List&lt;String&gt; topEngineers = employees.stream()
+            .filter(e -&gt; "Engineering".equals(e.dept()))
+            .filter(e -&gt; e.salary() &gt; 115000)
+            .map(Employee::name)
+            .toList(); // Modern Java 16+
+        System.out.println("టాప్ ఇంజనీర్లు: " + topEngineers);
+
+        // 2. REDUCE: మొత్తం సంస్థ యొక్క శాలరీ బిల్లు
+        double totalSalaryBill = employees.stream()
+            .map(Employee::salary)
+            .reduce(0.0, Double::sum);
+        System.out.printf("మొత్తం జీతాల వ్యయం: ₹%,.2f%n", totalSalaryBill);
+
+        // 3. GROUPING BY: డిపార్ట్‌మెంట్ వారిగా ఉద్యోగుల వర్గీకరణ
+        Map&lt;String, List&lt;Employee&gt;&gt; employeesByDept = employees.stream()
+            .collect(Collectors.groupingBy(Employee::dept));
+        System.out.println("
+--- డిపార్ట్‌మెంట్ వారిగా ఉద్యోగులు ---");
+        employeesByDept.forEach((dept, list) -&gt; 
+            System.out.printf("  [%-12s] : %d ఉద్యోగులు%n", dept, list.size())
+        );
+
+        // 4. PARALLEL STREAM: సమాంతర గణన
+        long highEarnersCount = employees.parallelStream()
+            .filter(e -&gt; e.salary() &gt;= 100000)
+            .count();
+        System.out.println("
+₹1 లక్ష కంటే ఎక్కువ జీతం ఉన్న ఉద్యోగుల సంఖ్య: " + highEarnersCount);
+    }
+}</pre>
+      </div>
+
+      <div class="code-output-card" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; margin:20px 0; overflow:hidden;">
+        <div style="background:#f1f5f9; padding:8px 16px; border-bottom:1px solid #e2e8f0; font-size:12.5px; font-weight:700; color:#475569; display:flex; align-items:center; gap:6px;">
+          💻 కన్సోల్ అవుట్‌పుట్ (Program Terminal Output)
+        </div>
+        <pre style="margin:0; padding:16px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#0f172a; line-height:1.6; background:#ffffff; overflow-x:auto;">=== STREAM PIPELINE ANALYTICS BENCHMARK ===
+టాప్ ఇంజనీర్లు: [Balaji, Kavitha]
+మొత్తం జీతాల వ్యయం: ₹642,000.00
+
+--- డిపార్ట్‌మెంట్ వారిగా ఉద్యోగులు ---
+  [Finance     ] : 2 ఉద్యోగులు
+  [Product     ] : 1 ఉద్యోగులు
+  [Engineering ] : 3 ఉద్యోగులు
+
+₹1 లక్ష కంటే ఎక్కువ జీతం ఉన్న ఉద్యోగుల సంఖ్య: 3</pre>
+      </div>
+    </section>
+
+    <!-- SECTION 10: CAPSTONE CODE BLOCK 3 -->
+    <section id="sec-10" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        10. క్యాప్‌స్టోన్ ప్రాజెక్ట్: Stock Market High-Speed Trade Stream Analytics Engine
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        నేషనల్ స్టాక్ ఎక్స్ఛేంజ్ (NSE) లేదా NASDAQ లాంటి హై-ఫ్రీక్వెన్సీ ట్రేడింగ్ ప్లాట్‌ఫారమ్‌లలో ప్రతి మిల్లీసెకనుకు వేల కొద్దీ ట్రేడ్ ఆర్డర్లు వస్తాయి. ఈ ఆర్డర్లను ఫిల్టర్ చేసి, భారీ ట్రేడ్‌లను గుర్తించి, వాల్యూమ్‌లను సమ్మరైజ్ చేయడానికి Stream API ఒక అత్యుత్తమ టూల్. క్రింది ఎంటర్‌ప్రైజ్ ఇంజిన్ ఆర్కిటెక్చర్‌ను పరిశీలించండి:
+      </p>
+
+      <div class="code-block" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; margin:24px 0; overflow:hidden; box-shadow:0 4px 14px rgba(0,0,0,0.04);">
+        <div style="background:#f8fafc; border-bottom:1px solid #e2e8f0; padding:10px 16px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:700; color:#334155;">
+            📄 StockMarketTradeStreamEngine.java
+          </span>
+          <div style="display:flex; gap:8px;">
+            <button onclick="copyCode(this)" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:5px 12px; font-size:12px; font-weight:600; cursor:pointer; color:#475569;">Copy Code</button>
+            <button onclick="runCode(this)" style="background:#047857; border:none; border-radius:6px; padding:5px 14px; font-size:12px; font-weight:700; cursor:pointer; color:#ffffff;">Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre style="margin:0; padding:18px; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.6; overflow-x:auto; background:#ffffff; color:#0f172a;">import java.time.Instant;
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class StockMarketTradeStreamEngine {
+
+    public enum TradeType { BUY, SELL }
+
+    // Java 21 LTS ఇమ్యూటబుల్ ట్రేడ్ రికార్డ్
+    public record Trade(
+        String tradeId,
+        String ticker,
+        TradeType type,
+        double price,
+        int quantity,
+        Instant timestamp
+    ) {
+        public double getTotalValue() {
+            return price * quantity;
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=== REAL-TIME STOCK TRADE STREAM ANALYTICS ENGINE ===");
+
+        List&lt;Trade&gt; tradeBook = List.of(
+            new Trade("TR-101", "TCS", TradeType.BUY, 3850.50, 100, Instant.now()),
+            new Trade("TR-102", "INFY", TradeType.SELL, 1520.00, 250, Instant.now()),
+            new Trade("TR-103", "RELIANCE", TradeType.BUY, 2910.00, 500, Instant.now()),
+            new Trade("TR-104", "TCS", TradeType.BUY, 3860.00, 200, Instant.now()),
+            new Trade("TR-105", "HDFCBANK", TradeType.SELL, 1450.00, 800, Instant.now()),
+            new Trade("TR-106", "RELIANCE", TradeType.SELL, 2905.00, 150, Instant.now())
+        );
+
+        System.out.println("మొత్తం ఇన్కమింగ్ ట్రేడ్ ఆర్డర్లు: " + tradeBook.size());
+
+        // 1. ₹5,00,000 కంటే ఎక్కువ విలువైన బిగ్-బ్లాక్ ట్రేడ్స్ (Block Deals)
+        System.out.println("
+🔥 --- BLOCK DEALS (&gt; ₹5,00,000) ---");
+        tradeBook.stream()
+            .filter(t -&gt; t.getTotalValue() &gt;= 500000)
+            .sorted(Comparator.comparingDouble(Trade::getTotalValue).reversed())
+            .forEach(t -&gt; System.out.printf("  [%s] %-8s | %-4s | Qty: %-4d | Total: ₹%,.2f%n",
+                t.tradeId(), t.ticker(), t.type(), t.quantity(), t.getTotalValue()));
+
+        // 2. టిక్కర్ వారీగా మొత్తం ట్రేడింగ్ వాల్యూమ్ గ్రూపింగ్ (Grouping &amp; Summing)
+        System.out.println("
+📊 --- TICKER WISE TOTAL TURNOVER ---");
+        Map&lt;String, Double&gt; turnoverByTicker = tradeBook.stream()
+            .collect(Collectors.groupingBy(
+                Trade::ticker,
+                Collectors.summingDouble(Trade::getTotalValue)
+            ));
+
+        turnoverByTicker.forEach((ticker, turnover) -&gt; 
+            System.out.printf("  Ticker: %-10s -&gt; Turnover: ₹%,.2f%n", ticker, turnover)
+        );
+
+        // 3. మార్కెట్ సమ్మరీ గణాంకాలు (DoubleSummaryStatistics)
+        DoubleSummaryStatistics stats = tradeBook.stream()
+            .collect(Collectors.summarizingDouble(Trade::getTotalValue));
+
+        System.out.println("
+📈 --- LIVE MARKET METRICS ---");
+        System.out.printf("కనిష్ట ట్రేడ్ విలువ (Min) : ₹%,.2f%n", stats.getMin());
+        System.out.printf("గరిష్ట ట్రేడ్ విలువ (Max) : ₹%,.2f%n", stats.getMax());
+        System.out.printf("సగటు ట్రేడ్ విలువ  (Avg) : ₹%,.2f%n", stats.getAverage());
+        System.out.printf("మొత్తం టర్నోవర్   (Total): ₹%,.2f%n", stats.getSum());
+    }
+}</pre>
+      </div>
+
+      <div class="code-output-card" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; margin:20px 0; overflow:hidden;">
+        <div style="background:#f1f5f9; padding:8px 16px; border-bottom:1px solid #e2e8f0; font-size:12.5px; font-weight:700; color:#475569; display:flex; align-items:center; gap:6px;">
+          💻 కన్సోల్ అవుట్‌పుట్ (Program Terminal Output)
+        </div>
+        <pre style="margin:0; padding:16px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#0f172a; line-height:1.6; background:#ffffff; overflow-x:auto;">=== REAL-TIME STOCK TRADE STREAM ANALYTICS ENGINE ===
+మొత్తం ఇన్కమింగ్ ట్రేడ్ ఆర్డర్లు: 6
+
+🔥 --- BLOCK DEALS (&gt; ₹5,00,000) ---
+  [TR-103] RELIANCE | BUY  | Qty: 500  | Total: ₹1,455,000.00
+  [TR-105] HDFCBANK | SELL | Qty: 800  | Total: ₹1,160,000.00
+  [TR-104] TCS      | BUY  | Qty: 200  | Total: ₹772,000.00
+
+📊 --- TICKER WISE TOTAL TURNOVER ---
+  Ticker: TCS        -&gt; Turnover: ₹1,157,050.00
+  Ticker: INFY       -&gt; Turnover: ₹380,000.00
+  Ticker: RELIANCE   -&gt; Turnover: ₹1,890,750.00
+  Ticker: HDFCBANK   -&gt; Turnover: ₹1,160,000.00
+
+📈 --- LIVE MARKET METRICS ---
+కనిష్ట ట్రేడ్ విలువ (Min) : ₹380,000.00
+గరిష్ట ట్రేడ్ విలువ (Max) : ₹1,455,000.00
+సగటు ట్రేడ్ విలువ  (Avg) : ₹764,633.33
+మొత్తం టర్నోవర్   (Total): ₹4,587,800.00</pre>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section id="sec-11" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        11. ప్రొడక్షన్ పిట్‌ఫాల్స్ &amp; ఆంటీ-పాటర్న్స్ (5 Critical Production Traps)
+      </h2>
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div style="background:#ffffff; border:1px solid #fed7aa; border-left:5px solid #f97316; padding:16px; border-radius:8px;">
+          <h4 style="margin:0 0 6px 0; color:#c2410c; font-size:15px; font-weight:800;">1. Reusing an Already Consumed Stream (IllegalStateException)</h4>
+          <p style="margin:0; font-size:14px; line-height:1.7; color:#334155;">
+            జావా స్ట్రీమ్‌ను ఒకసారి టెర్మినల్ ఆపరేషన్ ద్వారా వినియోగించిన తర్వాత, దానిపై మళ్లీ మరొక ఆపరేషన్ చేయలేము! <code>Stream&lt;String&gt; s = list.stream(); s.forEach(...); s.count();</code> అని రాస్తే తక్షణమే <strong>IllegalStateException: stream has already been operated upon or closed</strong> వస్తుంది. ప్రతిసారీ కొత్త స్ట్రీమ్‌ను తెరవాలి.
+          </p>
+        </div>
+
+        <div style="background:#ffffff; border:1px solid #fed7aa; border-left:5px solid #f97316; padding:16px; border-radius:8px;">
+          <h4 style="margin:0 0 6px 0; color:#c2410c; font-size:15px; font-weight:800;">2. Side-Effects inside Intermediate Operations</h4>
+          <p style="margin:0; font-size:14px; line-height:1.7; color:#334155;">
+            <code>stream.map(x -&gt; externalList.add(x))</code> లాగా ఇంటర్మీడియట్ ఆపరేషన్లలో బయటి వేరియబుల్స్‌ను మార్చకూడదు (Side-effects). స్ట్రీమ్స్ లేజీగా ఉండటం వల్ల లేదా ప్యారలల్‌గా రన్ అయినప్పుడు డేటా అవినీతి మరియు తీవ్రమైన కన్‌కరెన్సీ బగ్స్ వస్తాయి. డేటాను కలెక్ట్ చేయడానికి <code>collect()</code> ని మాత్రమే వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:#ffffff; border:1px solid #fed7aa; border-left:5px solid #f97316; padding:16px; border-radius:8px;">
+          <h4 style="margin:0 0 6px 0; color:#c2410c; font-size:15px; font-weight:800;">3. Forgetting Terminal Operation (Ghost Pipeline Trap)</h4>
+          <p style="margin:0; font-size:14px; line-height:1.7; color:#334155;">
+            <code>list.stream().filter(x -&gt; x &gt; 10);</code> అని రాసి టెర్మినల్ ఆపరేషన్ (ఉదాహరణకు <code>.toList()</code>) పిలవడం మరిచిపోతే, ఆ ఫిల్టర్ కోడ్ అసలు ఎగ్జిక్యూట్ కూడా కాదు! ఎందుకంటే స్ట్రీమ్స్ Lazy గా పనిచేస్తాయి.
+          </p>
+        </div>
+
+        <div style="background:#ffffff; border:1px solid #fed7aa; border-left:5px solid #f97316; padding:16px; border-radius:8px;">
+          <h4 style="margin:0 0 6px 0; color:#c2410c; font-size:15px; font-weight:800;">4. Overusing parallelStream() on Small Collections</h4>
+          <p style="margin:0; font-size:14px; line-height:1.7; color:#334155;">
+            చిన్న కలెక్షన్లపై (కొన్ని వందల ఎలిమెంట్లు ఉన్నప్పుడు) <code>parallelStream()</code> వాడితే, థ్రెడ్ స్విచ్చింగ్ మరియు టాస్క్ స్ప్లిట్టింగ్ ఓవర్‌హెడ్ వల్ల ప్రోగ్రామ్ మరింత స్లో అవుతుంది. మిలియన్ల కొద్దీ ఎలిమెంట్లు మరియు భారీ కంప్యూటేషన్లు ఉన్నప్పుడు మాత్రమే ప్యారలల్ స్ట్రీమ్స్ వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:#ffffff; border:1px solid #fed7aa; border-left:5px solid #f97316; padding:16px; border-radius:8px;">
+          <h4 style="margin:0 0 6px 0; color:#c2410c; font-size:15px; font-weight:800;">5. Mutating Captured Variables in Lambdas</h4>
+          <p style="margin:0; font-size:14px; line-height:1.7; color:#334155;">
+            లాంబ్డా ఎక్స్‌ప్రెషన్ బయటి లోకల్ వేరియబుల్స్‌ను యాక్సెస్ చేయగలదు కానీ వాటిని మార్చలేదు! ఆ వేరియబుల్స్ తప్పనిసరిగా <strong>effectively final</strong> అయి ఉండాలి (అంటే వాటి విలువ ఎక్కడా రీ-అసైన్ కాకూడదు).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section id="sec-12" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        12. ఇంటర్వ్యూ క్విజ్ &amp; సెల్ఫ్-టెస్ట్ (5 Deep Interview Practice Quizzes)
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:20px;">
+        జావా ల్యాంబ్దాలు మరియు స్ట్రీమ్ API పై మీ నైపుణ్యాన్ని ఈ 5 లోతైన ప్రాక్టికల్ ప్రశ్నలతో నిరూపించుకోండి. సమాధానం కోసం ప్రశ్నపై క్లిక్ చేయండి:
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <details style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:14px 18px; cursor:pointer;">
+          <summary style="font-weight:700; color:#0f172a; font-size:14.5px;">
+            ప్రశ్న 1: Stream లో Lazy Evaluation అంటే ఏమిటి? ఇది పెర్ఫార్మెన్స్‌ను ఎలా పెంచుతుంది?
+          </summary>
+          <p style="margin:12px 0 0 0; font-size:14px; line-height:1.7; color:#334155;">
+            <strong>సమాధానం:</strong> స్ట్రీమ్ పైప్‌లైన్‌లోని ఇంటర్మీడియట్ ఆపరేషన్లు (<code>filter</code>, <code>map</code>) పైప్‌లైన్ చివరిలోని టెర్మినల్ ఆపరేషన్ (<code>collect</code>, <code>findFirst</code>) పిలిచే వరకు అసలు ఎగ్జిక్యూట్ కావు. దీనివలన జావా మొత్తం డేటాను ప్రాసెస్ చేయకుండా, అవసరమైన మొదటి ఎలిమెంట్ దొరకగానే ఆగిపోయే షార్ట్-సర్క్యూట్ (Short-circuiting) సామర్థ్యాన్ని పొందుతుంది, తద్వారా సిస్టమ్ వేగం అపారంగా పెరుగుతుంది.
+          </p>
+        </details>
+
+        <details style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:14px 18px; cursor:pointer;">
+          <summary style="font-weight:700; color:#0f172a; font-size:14.5px;">
+            ప్రశ్న 2: Functional Interface అంటే ఏమిటి? అందులో default మరియు static మెథడ్స్ ఉండవచ్చా?
+          </summary>
+          <p style="margin:12px 0 0 0; font-size:14px; line-height:1.7; color:#334155;">
+            <strong>సమాధానం:</strong> Functional Interface అంటే ఖచ్చితంగా <strong>కేవలం ఒకే ఒక అబ్‌స్ట్రాక్ట్ మెథడ్ (Single Abstract Method)</strong> మాత్రమే కలిగి ఉండే ఇంటర్‌ఫేస్. అయితే ఇందులో ఎన్ని <code>default</code> మెథడ్స్ మరియు ఎన్ని <code>static</code> మెథడ్స్ అయినా ఉండవచ్చు! ఎందుకంటే వాటికి బాడీ (Implementation) ఉంటుంది కాబట్టి అవి అబ్‌స్ట్రాక్ట్ కావు.
+          </p>
+        </details>
+
+        <details style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:14px 18px; cursor:pointer;">
+          <summary style="font-weight:700; color:#0f172a; font-size:14.5px;">
+            ప్రశ్న 3: map() మరియు flatMap() ల మధ్య తేడా ఏమిటి?
+          </summary>
+          <p style="margin:12px 0 0 0; font-size:14px; line-height:1.7; color:#334155;">
+            <strong>సమాధానం:</strong> <code>map()</code> అనేది 1-to-1 మ్యాపింగ్ చేస్తుంది (ఒక ఇన్‌పుట్‌కు ఒక ఔట్‌పుట్). కానీ <code>flatMap()</code> అనేది 1-to-Many మ్యాపింగ్ చేసి, నెస్టెడ్ కలెక్షన్లను (ఉదాహరణకు <code>List&lt;List&lt;String&gt;&gt;</code>) ఒకే సమాంతర స్ట్రీమ్‌గా (Flat Stream <code>Stream&lt;String&gt;</code>) చదును చేస్తుంది.
+          </p>
+        </details>
+
+        <details style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:14px 18px; cursor:pointer;">
+          <summary style="font-weight:700; color:#0f172a; font-size:14.5px;">
+            ప్రశ్న 4: జావాలో Method Reference (::) రకాలు ఎన్ని?
+          </summary>
+          <p style="margin:12px 0 0 0; font-size:14px; line-height:1.7; color:#334155;">
+            <strong>సమాధానం:</strong> నాలుగు రకాలు: 1) Static Method Reference (<code>Math::max</code>), 2) Instance Method of a particular object (<code>System.out::println</code>), 3) Instance Method of an arbitrary object of a particular type (<code>String::length</code>), 4) Constructor Reference (<code>ArrayList::new</code>).
+          </p>
+        </details>
+
+        <details style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:14px 18px; cursor:pointer;">
+          <summary style="font-weight:700; color:#0f172a; font-size:14.5px;">
+            ప్రశ్న 5: ఒక Stream ను ఒకసారి వాడిన తర్వాత మళ్లీ వాడటానికి ప్రయత్నిస్తే ఏమవుతుంది?
+          </summary>
+          <p style="margin:12px 0 0 0; font-size:14px; line-height:1.7; color:#334155;">
+            <strong>సమాధానం:</strong> జావా స్ట్రీమ్స్ కేవలం ఒకసారి మాత్రమే ప్రవహించే ఏకదిశా ప్రవాహాలు (Consumable Streams). టెర్మినల్ ఆపరేషన్ అమలు కాగానే స్ట్రీమ్ క్లోజ్ అవుతుంది. దానిని మళ్లీ వాడటానికి ప్రయత్నిస్తే JVM తక్షణమే <code>java.lang.IllegalStateException: stream has already been operated upon or closed</code> ఎర్రర్‌ను విసురుతుంది.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/23-java-generics-and-type-safety.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 23. Generics &amp; Type Safety
+      </a>
+      <a href="/blog-java/25-java-capstone-project.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 25. Capstone: Banking Engine →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>

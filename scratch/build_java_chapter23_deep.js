@@ -1,0 +1,765 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildJavaSidebar } = require('./java_curriculum_data.js');
+
+const currentLesson = LESSONS.find(l => l.num === 23);
+
+const chapter23Content = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Generics &amp; Type Safety — Classes, Methods &amp; Wildcards తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా జెనరిక్స్, Generic Classes, Interfaces &amp; Methods, Bounded Types, Wildcards, PECS ప్రిన్సిపల్ (Producer Extends Consumer Super) మరియు Type Erasure తెలుగులో నేర్చుకోండి." />
+  <meta name="keywords" content="java generics telugu, type safety java telugu, generic methods java telugu, pecs principle java, type erasure java bytecode telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/23-java-generics-and-type-safety.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const icon = btn.querySelector('.accordion-icon');
+      content.classList.toggle('open');
+      if (icon) {
+        icon.textContent = content.classList.contains('open') ? '▾' : '▸';
+      }
+    }
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre');
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 2000);
+      });
+    }
+
+    function runCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre');
+      localStorage.setItem('mana_java_run_code', pre.innerText);
+      window.open('/java.html', '_blank');
+    }
+  </script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen">
+
+<div style="display:flex; min-height:100vh; position:relative;">
+  ${buildJavaSidebar(23)}
+
+  <!-- MAIN CONTENT AREA -->
+  <main style="flex:1; max-width:980px; margin:0 auto; padding:32px 28px 80px 28px; overflow-x:hidden;">
+    
+    <!-- HEADER BADGES & META -->
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:16px;">
+      <span style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; font-size:12.5px; font-weight:700; padding:4px 12px; border-radius:20px; display:inline-flex; align-items:center; gap:6px;">
+        ☕ Java (Java 21+ LTS)
+      </span>
+      <span style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; font-size:12.5px; font-weight:700; padding:4px 12px; border-radius:20px; display:inline-flex; align-items:center; gap:6px;">
+        🟢 Lesson 23 of 25
+      </span>
+      <span style="background:#fef3c7; color:#b45309; border:1px solid #fde68a; font-size:12.5px; font-weight:700; padding:4px 12px; border-radius:20px; display:inline-flex; align-items:center; gap:6px;">
+        📂 Part 05: Collections &amp; Capstone (Page 3 of 5)
+      </span>
+      <span style="background:#f3e8ff; color:#7e22ce; border:1px solid #e9d5ff; font-size:12.5px; font-weight:700; padding:4px 12px; border-radius:20px; display:inline-flex; align-items:center; gap:6px;">
+        ⏱️ 22 min read
+      </span>
+    </div>
+
+    <!-- MAIN HEADING -->
+    <h1 style="font-size:32px; font-weight:800; line-height:1.3; margin:0 0 16px 0; color:var(--text); letter-spacing:-0.5px;">
+      Generics &amp; Type Safety — Classes, Methods &amp; Wildcards (జెనరిక్స్ &amp; టైప్ సేఫ్టీ ఆర్కిటెక్చర్)
+    </h1>
+
+    <!-- SUBTOPICS PILL BAR -->
+    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px 18px; margin-bottom:28px;">
+      <div style="font-size:13.5px; font-weight:700; color:#475569; margin-bottom:4px;">
+        📌 Covered in this lesson:
+      </div>
+      <div style="font-size:13px; line-height:1.6; color:#64748b;">
+        Custom Label Storage Crates &amp; Medical Pill Dispenser Analogy · Compile-Time Type Safety vs Runtime ClassCastException · Generic Classes &amp; Interfaces (&lt;T&gt;, &lt;K, V&gt;) · Generic Methods &amp; Type Inference · Bounded Type Parameters (&lt;T extends Comparable&lt;T&gt;&gt;) · Wildcards (?, ? extends T, ? super T) · The PECS Principle (Producer Extends, Consumer Super) · Type Erasure &amp; Bytecode Mechanics · Enterprise Generic CRUD Repository Engine · 5 Production Pitfalls
+      </div>
+    </div>
+
+    <!-- WARM IVORY INTRO BOX (Strict JavaScript Masterclass Style) -->
+    <div class="intro-box">
+      <p style="margin:0 0 16px 0; font-size:15px; line-height:1.8; color:#1e293b;">
+        సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌లో అత్యంత ప్రమాదకరమైన బగ్ ఏదైనా ఉందంటే అది — <strong>"ప్రొడక్షన్‌లో రన్‌టైమ్ వద్ద అకస్మాత్తుగా పేలిపోయే టైప్ కాస్టింగ్ ఎర్రర్" (Runtime ClassCastException)</strong>. జావా 5 కు పూర్వం కలెక్షన్లలో డేటాను నిల్వ చేయడానికి కేవలం సాధారణ <code>Object</code> రిఫరెన్సులను మాత్రమే ఉపయోగించేవారు. దీనివల్ల డెవలపర్లు ప్రతి వస్తువును బయటకు తీసినప్పుడు బలవంతంగా టైప్ క్యాస్ట్ చేయాల్సి వచ్చేది. ఈ భయంకరమైన బలహీనతను రూపుమాపి, ఆధునిక కంపైల్-టైమ్ టైప్ సేఫ్టీని అందించడానికి Java 5 లో ప్రవేశపెట్టబడిన విప్లవాత్మక ఫీచరే <strong>Generics</strong>. ఒకే కోడ్‌ను వివిధ డేటా టైపులకు అనుగుణంగా రీయూజ్ చేయడం, బౌండెడ్ టైపులు, వైల్డ్‌కార్డులు (<code>? extends</code>, <code>? super</code>), ప్రఖ్యాత <strong>PECS ప్రిన్సిపల్</strong> మరియు JVM లోపల <strong>Type Erasure</strong> ఎలా పనిచేస్తుందో ఈ సమగ్ర పాఠంలో సవివరంగా నేర్చుకుందాం.
+      </p>
+
+      <h4 style="margin:0 0 10px 0; color:#047857; font-size:16px; font-weight:800;">
+        కస్టమ్ లేబుల్ స్టోరేజ్ క్రేట్లు &amp; మెడికల్ పిల్ డిస్పెన్సర్ అనాలజీ (The Custom Label Storage Crates &amp; Medical Pill Dispenser Analogy):
+      </h4>
+      <ol style="margin:0; padding-left:22px; color:#334155; line-height:1.8; font-size:14.5px;">
+        <li style="margin-bottom:8px;">
+          <strong>1. Generics లేని పాత కాలం (స్పష్టమైన లేబుల్ లేని గందరగోళపు పెట్టె - Raw Types Chaos):</strong> జావా 5 కి ముందు కలెక్షన్స్ కేవలం సాధారణ <code>Object</code> లను మాత్రమే స్టోర్ చేసేవి. ఒక గదిలో ఏ లేబుల్ లేని ఒక పెద్ద పెట్టె ఉందనుకుందాం. అందులో యాపిల్స్, సుత్తులు, మందులు అన్నీ కలిసిపోయాయి. చీకట్లో చేతులు పెట్టి బయటకు తీసిన ప్రతిసారీ "ఇది కచ్చితంగా యాపిలేనా?" అని ధృవీకరించుకోవాలి (Explicit Casting). పొరపాటున సుత్తి వస్తే నోట్లో పెట్టుకోగానే పన్ను విరిగిపోతుంది (ClassCastException)!
+        </li>
+        <li style="margin-bottom:8px;">
+          <strong>2. Generics (కచ్చితమైన కస్టమ్ లేబుల్ కలిగిన స్టోరేజ్ క్రేట్ - Type Safe Containers):</strong> జావా 5 లో ప్రవేశపెట్టిన Generics <code>&lt;T&gt;</code> ద్వారా, మనం క్రేట్ పైన <code>Box&lt;Apple&gt;</code> అని కచ్చితమైన లేబుల్ వేస్తాము. ఇప్పుడు ఆ పెట్టెలోకి యాపిల్స్ తప్ప మరే ఇతర వస్తువునూ పెట్టడానికి వీల్లేదు. ఒకవేళ ఎవరైనా పొరపాటున సుత్తి పెట్టాలని చూస్తే, జావా కంపైలర్ అక్కడికక్కడే రెడ్ ఎర్రర్ ఇచ్చి అడ్డుకుంటుంది (Compile-Time Safety). పెట్టె నుండి బయటకు తీసేటప్పుడు కూడా ఎలాంటి టైప్ క్యాస్టింగ్ అవసరం లేకుండా నేరుగా <code>Apple</code> లభిస్తుంది.
+        </li>
+        <li style="margin-bottom:8px;">
+          <strong>3. PECS వైల్డ్‌కార్డ్స్ (మందుల డిస్పెన్సర్ సూత్రం - Producer Extends, Consumer Super):</strong> ఆసుపత్రిలోని ఒక మందుల డిస్పెన్సర్ నుండి రోగులకు మందులను పంపిణీ చేయడమే లక్ష్యమైతే (Read-Only Producer), మనం ఏదైనా నిర్దిష్ట యాంటీబయాటిక్ లేదా దాని సబ్‌క్లాస్‌లన్నింటినీ స్వీకరించవచ్చు (<code>? extends Antibiotic</code>). ఒకవేళ ఆ డిస్పెన్సర్‌లోకి ఫార్మసిస్ట్ కొత్త మందులను లోడ్ చేయడమే పని అయితే (Write-Only Consumer), మనం ఆ మందును లేదా దాని సూపర్ క్లాస్ కేటగిరీలను అనుమతించాలి (<code>? super Amoxicillin</code>). ఇదే ప్రసిద్ధ <strong>PECS ప్రిన్సిపల్: Producer Extends, Consumer Super</strong>!
+        </li>
+      </ol>
+      <p style="margin:14px 0 0 0; font-size:14px; font-weight:600; color:#0f766e;">
+        💡 ఈ పాఠంలో మీరు జెనరిక్ క్లాస్‌లు, మెథడ్స్, బౌండెడ్ టైప్ పారామీటర్లు, PECS రూల్స్ మరియు రియల్-వరల్డ్ స్ప్రింగ్ డేటా లాంటి ఎంటర్‌ప్రైజ్ టైప్-సేఫ్ రిపోజిటరీ ఆర్కిటెక్చర్‌ను స్వయంగా నిర్మిస్తారు!
+      </p>
+    </div>
+
+    <!-- 3-COLUMN TABLE OF CONTENTS (TOC Card) -->
+    <div class="toc-card" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:24px; margin:32px 0; box-shadow:0 4px 16px rgba(0,0,0,0.03);">
+      <h3 style="margin:0 0 16px 0; font-size:18px; font-weight:800; color:#0f172a; display:flex; align-items:center; gap:8px;">
+        📑 పాఠ్యాంశ విషయ సూచిక (Table of Contents)
+      </h3>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
+        <div>
+          <a href="#sec-1" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">1. Generics ఆవశ్యకత &amp; Type Safety</a>
+          <a href="#sec-2" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">2. Generic Classes &amp; Interfaces (&lt;T&gt;, &lt;K, V&gt;)</a>
+          <a href="#sec-3" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">3. Generic Methods &amp; Type Inference</a>
+          <a href="#sec-4" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">4. ప్రాక్టికల్ కోడ్: Generic Showcase</a>
+        </div>
+        <div>
+          <a href="#sec-5" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">5. Bounded Type Parameters (&lt;T extends Number&gt;)</a>
+          <a href="#sec-6" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">6. Wildcards: ?, ? extends T, ? super T</a>
+          <a href="#sec-7" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">7. PECS సూత్రం (Producer Extends, Consumer Super)</a>
+          <a href="#sec-8" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">8. Type Erasure &amp; Bytecode ఇంటర్నల్స్</a>
+        </div>
+        <div>
+          <a href="#sec-9" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">9. ప్రాక్టికల్ కోడ్: PECS Inventory Processor</a>
+          <a href="#sec-10" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">10. క్యాప్‌స్టోన్: Enterprise Generic Repository</a>
+          <a href="#sec-11" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">11. ప్రొడక్షన్ పిట్‌ఫాల్స్ &amp; ఆంటీ-పాటర్న్స్</a>
+          <a href="#sec-12" style="color:#0284c7; text-decoration:none; font-size:14px; font-weight:600; display:block; padding:4px 0;">12. ఇంటర్వ్యూ క్విజ్ &amp; సెల్ఫ్-టెస్ట్</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section id="sec-1" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        1. Generics ఆవశ్యకత &amp; Type Safety (Why Java Generics Matter)
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        జావా ప్రారంభమైనప్పుడు (Java 1.0 నుండి 1.4 వరకు), కలెక్షన్లు అన్నీ కేవలం <code>java.lang.Object</code> టైపును మాత్రమే పారామీటర్‌గా తీసుకునేవి. ఎందుకంటే జావాలో ప్రతి క్లాస్ కూడా Object యొక్క సబ్‌క్లాసే. అయితే దీనివల్ల రెండు తీవ్రమైన సమస్యలు ఉత్పన్నమయ్యాయి:
+      </p>
+      <div style="background:#fef2f2; border:1px solid #fecaca; border-left:4px solid #ef4444; padding:16px; border-radius:6px; margin:20px 0; font-size:14.5px; line-height:1.8; color:#991b1b;">
+        <strong>⚠️ పాత జావా కోడ్ యొక్క రెండు పెను ప్రమాదాలు:</strong><br/>
+        1. <strong>రుచించని బలవంతపు కాస్టింగ్ (Clunky Explicit Casting):</strong> <code>String name = (String) list.get(0);</code> అని ప్రతి లైనులో క్యాస్టింగ్ కోడ్ రాయాల్సి వచ్చేది.<br/>
+        2. <strong>రన్‌టైమ్ క్రాష్‌లు (Runtime ClassCastException):</strong> జావా కంపైలర్ లిస్ట్‌లోకి ఏ వస్తువు వెళుతుందో చెక్ చేయలేకపోయేది. ఒక డెవలపర్ లిస్ట్‌లో స్ట్రింగ్స్ ఉంటాయనుకుని లూప్ రాస్తే, అందులో ఎవరైనా పొరపాటున <code>Integer</code> పెడితే రన్‌టైమ్‌లో మొత్తం అప్లికేషన్ షట్‌డౌన్ అయ్యేది.
+      </div>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        Java 5 లో Generics ప్రవేశపెట్టడం వలన, ఈ సమస్యలన్నీ <strong>కంపైల్-టైమ్ (Compile-Time)</strong> లోనే పరిష్కరించబడ్డాయి. టైప్ తప్పులు జరిగితే ప్రోగ్రామ్ కంపైల్ కూడా కాదు. దీనివలన రన్‌టైమ్ వద్ద బగ్‌లు వచ్చే అవకాశమే ఉండదు.
+      </p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section id="sec-2" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        2. Generic Classes &amp; Interfaces (&lt;T&gt;, &lt;K, V&gt;)
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        మనం ఒక క్లాస్ లేదా ఇంటర్‌ఫేస్‌ను నిర్వచించేటప్పుడు నిర్దిష్ట డేటా టైపుకు పరిమితం కాకుండా, ఒక పారామీటరైజ్డ్ టైప్ (Type Parameter) ను ఉంచితే దానిని <strong>Generic Class</strong> అంటారు.
+        జావాలో ప్రామాణికంగా ఉపయోగించే టైప్ పారామీటర్ పేర్లు:
+      </p>
+      <ul style="margin:0; padding-left:24px; font-size:14.5px; color:var(--text); line-height:1.8; margin-bottom:20px;">
+        <li><code>T</code>: Type (ఏదైనా సాధారణ డేటా రకం)</li>
+        <li><code>E</code>: Element (కలెక్షన్లలోని మూలకం)</li>
+        <li><code>K, V</code>: Key &amp; Value (మ్యాప్‌లలో కీ మరియు విలువ జంటలు)</li>
+        <li><code>N</code>: Number (సంఖ్యా రకాలు)</li>
+        <li><code>R</code>: Return Type (ఫంక్షనల్ ఇంటర్‌ఫేస్‌లలో ఫలితం)</li>
+      </ul>
+
+      <div style="background:#f8fafc; border:1px solid #cbd5e1; border-left:4px solid #0284c7; padding:16px; border-radius:6px; margin:20px 0; font-family:'JetBrains Mono', monospace; font-size:13.5px; color:#0f172a;">
+        // Generic Class Definition:<br/>
+        public class ResultHolder&lt;T&gt; {<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;private final T data;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;private final boolean success;<br/><br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;public ResultHolder(T data, boolean success) {<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.data = data;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.success = success;<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+        &nbsp;&nbsp;&nbsp;&nbsp;public T getData() { return data; }<br/>
+        }
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section id="sec-3" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        3. Generic Methods &amp; Type Inference (మెథడ్ లెవల్ జెనరిక్స్)
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        మొత్తం క్లాస్‌ను జెనరిక్‌గా మార్చకుండా, కేవలం ఒకే ఒక్క మెథడ్‌ను మాత్రమే జెనరిక్‌గా రూపొందించవచ్చు. మెథడ్ యొక్క రిటర్న్ టైప్‌కు ముందు <code>&lt;T&gt;</code> లేదా <code>&lt;K, V&gt;</code> ను ప్రకటించడం ద్వారా ఇది సాధ్యమవుతుంది.
+      </p>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        అంతేకాకుండా, ఆధునిక జావా కంపైలర్ <strong>Type Inference (టైప్ ఇన్‌ఫరెన్స్)</strong> ను ఉపయోగిస్తుంది. మనం పంపిన ఆర్గ్యుమెంట్లను బట్టి ఏ టైప్ పాస్ చేయబడిందో కంపైలర్ స్వయంగా ఊహించగలదు. మనం మెథడ్‌ను కాల్ చేసేటప్పుడు ప్రత్యేకంగా <code>Class.&lt;String&gt;method()</code> అని చెప్పనవసరం లేదు; కేవలం <code>Class.method("Hello")</code> అంటే చాలు.
+      </p>
+    </section>
+
+    <!-- SECTION 4: CODE BLOCK 1 -->
+    <section id="sec-4" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        4. ప్రాక్టికల్ కోడ్: Generic Class &amp; Method Showcase
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        క్రింది జావా ప్రోగ్రామ్‌లో రీయూజబుల్ API రెస్పాన్స్ రాపర్ క్లాస్ (<code>ApiResponse&lt;T&gt;</code>) మరియు రెండు వేర్వేరు రకాల ఎరేలను లేదా లిస్ట్‌లను స్వాప్/ప్రింట్ చేసే జెనరిక్ మెథడ్స్ ఎలా పనిచేస్తాయో పరిశీలించండి.
+      </p>
+
+      <div class="code-block" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; margin:24px 0; overflow:hidden; box-shadow:0 4px 14px rgba(0,0,0,0.04);">
+        <div style="background:#f8fafc; border-bottom:1px solid #e2e8f0; padding:10px 16px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:700; color:#334155;">
+            📄 GenericClassAndMethodShowcase.java
+          </span>
+          <div style="display:flex; gap:8px;">
+            <button onclick="copyCode(this)" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:5px 12px; font-size:12px; font-weight:600; cursor:pointer; color:#475569;">Copy Code</button>
+            <button onclick="runCode(this)" style="background:#047857; border:none; border-radius:6px; padding:5px 14px; font-size:12px; font-weight:700; cursor:pointer; color:#ffffff;">Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre style="margin:0; padding:18px; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.6; overflow-x:auto; background:#ffffff; color:#0f172a;">import java.util.*;
+
+public class GenericClassAndMethodShowcase {
+
+    // 1. Generic API Response Wrapper Class (ఏ డేటా పేలోడ్‌నైనా మోయగలదు)
+    public static class ApiResponse&lt;T&gt; {
+        private final int statusCode;
+        private final String message;
+        private final T payload;
+
+        public ApiResponse(int statusCode, String message, T payload) {
+            this.statusCode = statusCode;
+            this.message = message;
+            this.payload = payload;
+        }
+
+        public int getStatusCode() { return statusCode; }
+        public String getMessage() { return message; }
+        public T getPayload() { return payload; }
+
+        @Override
+        public String toString() {
+            return "ApiResponse [code=" + statusCode + ", msg=" + message + ", data=" + payload + "]";
+        }
+    }
+
+    // 2. Generic Method: ఏ రకమైన లిస్ట్‌నైనా ఒకే విధంగా ప్రింట్ చేసే యుటిలిటీ
+    public static &lt;E&gt; void printListDetails(String label, List&lt;E&gt; list) {
+        System.out.println("🔹 " + label + " (Size: " + list.size() + "):");
+        for (E item : list) {
+            System.out.println("   -> Item: " + item + " [Type: " + item.getClass().getSimpleName() + "]");
+        }
+    }
+
+    // 3. Generic Method: రెండు ఆబ్జెక్టులలో ఏది పెద్దదో పోల్చే మెథడ్ (Bounded to Comparable)
+    public static &lt;T extends Comparable&lt;T&gt;&gt; T findMax(T a, T b) {
+        return a.compareTo(b) &gt;= 0 ? a : b;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=== 1. GENERIC API RESPONSE TEST ===");
+        
+        // String పేలోడ్‌తో ApiResponse
+        ApiResponse&lt;String&gt; authResponse = new ApiResponse&lt;&gt;(200, "Success", "JWT_TOKEN_ABC123");
+        System.out.println(authResponse);
+        String token = authResponse.getPayload(); // ఎటువంటి టైప్ క్యాస్టింగ్ అవసరం లేదు!
+        System.out.println("Extracted Token: " + token);
+
+        // List పేలోడ్‌తో ApiResponse
+        List&lt;Integer&gt; portNumbers = List.of(8080, 8443, 9092);
+        ApiResponse&lt;List&lt;Integer&gt;&gt; portsResponse = new ApiResponse&lt;&gt;(200, "Port List", portNumbers);
+        System.out.println("Configured Ports: " + portsResponse.getPayload());
+
+        System.out.println("\n=== 2. GENERIC METHOD UTILITY ===");
+        List&lt;String&gt; devTeams = List.of("Backend", "Frontend", "DevOps");
+        List&lt;Double&gt; latencies = List.of(12.4, 45.1, 8.9);
+        printListDetails("Engineering Teams", devTeams);
+        printListDetails("Server Latencies (ms)", latencies);
+
+        System.out.println("\n=== 3. BOUNDED GENERIC METHOD (MAX FINDER) ===");
+        System.out.println("Max of (150, 420): " + findMax(150, 420));
+        System.out.println("Max of ('Zebra', 'Apple'): " + findMax("Zebra", "Apple"));
+    }
+}</pre>
+      </div>
+
+      <div class="code-output-card" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; margin:20px 0; overflow:hidden;">
+        <div style="background:#f1f5f9; padding:8px 16px; border-bottom:1px solid #e2e8f0; font-size:12.5px; font-weight:700; color:#475569; display:flex; align-items:center; gap:6px;">
+          💻 కన్సోల్ అవుట్‌పుట్ (Program Terminal Output)
+        </div>
+        <pre style="margin:0; padding:16px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#0f172a; line-height:1.6; background:#ffffff; overflow-x:auto;">=== 1. GENERIC API RESPONSE TEST ===
+ApiResponse [code=200, msg=Success, data=JWT_TOKEN_ABC123]
+Extracted Token: JWT_TOKEN_ABC123
+Configured Ports: [8080, 8443, 9092]
+
+=== 2. GENERIC METHOD UTILITY ===
+🔹 Engineering Teams (Size: 3):
+   -> Item: Backend [Type: String]
+   -> Item: Frontend [Type: String]
+   -> Item: DevOps [Type: String]
+🔹 Server Latencies (ms) (Size: 3):
+   -> Item: 12.4 [Type: Double]
+   -> Item: 45.1 [Type: Double]
+   -> Item: 8.9 [Type: Double]
+
+=== 3. BOUNDED GENERIC METHOD (MAX FINDER) ===
+Max of (150, 420): 420
+Max of ('Zebra', 'Apple'): Zebra</pre>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section id="sec-5" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        5. Bounded Type Parameters (&lt;T extends Number&gt; &amp; Multiple Bounds)
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        సాధారణంగా <code>&lt;T&gt;</code> అంటే ఏ ఆబ్జెక్ట్ అయినా రావచ్చు. కానీ మనకు కేవలం సంఖ్యలు మాత్రమే కావాలన్నా (లేదా ఒక నిర్దిష్ట ఇంటర్‌ఫేస్‌ను అమలు చేసిన ఆబ్జెక్టులు మాత్రమే రావాలన్నా), మనం <strong>Bounded Type Parameters</strong> ను ఉపయోగిస్తాము.
+      </p>
+      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-left:4px solid #2563eb; padding:16px; border-radius:6px; margin:20px 0; font-size:14px; line-height:1.8; color:#1e3a8a;">
+        <strong>1. Upper Bound (&lt;T extends SuperClass/Interface&gt;):</strong><br/>
+        ఉదాహరణకు <code>public class NumericStats&lt;T extends Number&gt;</code> అని రాస్తే, ఈ క్లాస్ కేవలం <code>Integer</code>, <code>Double</code>, <code>Float</code>, <code>Long</code> వంటి Number సబ్‌క్లాస్‌లను మాత్రమే అంగీకరిస్తుంది. పొరపాటున ఎవరైనా <code>NumericStats&lt;String&gt;</code> అని రాస్తే కంపైలర్ అక్కడే తిరస్కరిస్తుంది.<br/><br/>
+        <strong>2. Multiple Bounds (&lt;T extends Class &amp; Interface1 &amp; Interface2&gt;):</strong><br/>
+        ఒక టైప్ ఒక నిర్దిష్ట క్లాస్‌ను ఎక్స్‌టెండ్ చేసి, అదే సమయంలో ఒకటి లేదా అంతకంటే ఎక్కువ ఇంటర్‌ఫేస్‌లను అమలు చేయాలని కోరవచ్చు: <code>&lt;T extends Number &amp; Comparable&lt;T&gt;&gt;</code>. (గుర్తుంచుకోండి: క్లాస్ పేరు ఎల్లప్పుడూ మొదట రావాలి, ఇంటర్‌ఫేస్‌లు <code>&amp;</code> గుర్తుతో తర్వాత రావాలి).
+      </div>
+    </section>
+
+    <!-- SECTION 6 & 7: WILDCARDS & PECS -->
+    <section id="sec-6" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        6. Wildcards: ?, ? extends T, ? super T (వైల్డ్‌కార్డ్స్ పరిచయం)
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        జావాలో ఒక అత్యంత కీలకమైన అంశాన్ని గమనించాలి: <code>Integer</code> అనేది <code>Number</code> యొక్క సబ్‌క్లాస్. కానీ <strong><code>List&lt;Integer&gt;</code> అనేది <code>List&lt;Number&gt;</code> యొక్క సబ్‌టైప్ కాదు!</strong> (Generics are Invariant).
+        దీనివల్ల మనం ఒక మెథడ్‌కు <code>List&lt;Number&gt;</code> ను పారామీటర్‌గా పెడితే, దానికి <code>List&lt;Integer&gt;</code> ను పాస్ చేయలేము (కంపైలర్ ఎర్రర్ వస్తుంది).
+      </p>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        ఈ పరిమితిని అధిగమించడానికి జావా <strong>వైల్డ్‌కార్డ్ గుర్తు <code>?</code> (Unknown Type)</strong> ను అందిస్తుంది:
+      </p>
+      <ul style="margin:0; padding-left:24px; font-size:14.5px; color:var(--text); line-height:1.8; margin-bottom:20px;">
+        <li><strong>Unbounded Wildcard (<code>List&lt;?&gt;</code>):</strong> ఏ రకమైన లిస్ట్‌నైనా అంగీకరిస్తుంది (Read-Only).</li>
+        <li><strong>Upper Bounded Wildcard (<code>List&lt;? extends Number&gt;</code>):</strong> Number లేదా దాని సబ్‌క్లాస్ లిస్ట్‌లను అంగీకరిస్తుంది (Covariance).</li>
+        <li><strong>Lower Bounded Wildcard (<code>List&lt;? super Integer&gt;</code>):</strong> Integer లేదా దాని సూపర్ క్లాస్ (Number, Object) లిస్ట్‌లను అంగీకరిస్తుంది (Contravariance).</li>
+      </ul>
+    </section>
+
+    <section id="sec-7" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        7. The PECS Principle (Producer Extends, Consumer Super)
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        ప్రపంచ ప్రఖ్యాత జావా పుస్తకం "Effective Java" గ్రంథకర్త జాషువా బ్లాచ్ (Joshua Bloch) రూపొందించిన అమూల్యమైన సూత్రమే <strong>PECS</strong>. ఇంటర్వ్యూలలో ఇది తరచుగా అడిగే గోల్డెన్ క్వశ్చన్:
+      </p>
+      <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-left:5px solid #047857; padding:18px; border-radius:8px; margin:20px 0;">
+        <h3 style="margin:0 0 10px 0; color:#064e3b; font-size:16px; font-weight:800;">
+          🌟 PECS సూత్రం: "Producer Extends, Consumer Super"
+        </h3>
+        <p style="margin:0 0 10px 0; font-size:14.5px; line-height:1.8; color:#064e3b;">
+          <strong>1. Producer Extends (<code>? extends T</code>):</strong> మీ కలెక్షన్ కేవలం డేటాను బయటకు ఉత్పత్తి చేయడానికే (Read-Only) వాడుతుంటే <code>extends</code> వాడాలి. ఎందుకంటే బయటకు వచ్చే ప్రతి వస్తువు కనీసం <code>T</code> అని గ్యారెంటీ ఉంటుంది. అయితే దీనిలోకి మనం కొత్త ఎలిమెంట్లను <code>add()</code> చేయలేము (కేవలం <code>null</code> తప్ప).
+        </p>
+        <p style="margin:0; font-size:14.5px; line-height:1.8; color:#064e3b;">
+          <strong>2. Consumer Super (<code>? super T</code>):</strong> మీ కలెక్షన్ కొత్త డేటాను లోపలికి వినియోగించుకోవడానికే (Write-Only) వాడుతుంటే <code>super</code> వాడాలి. ఎందుకంటే మనం <code>T</code> లేదా దాని సబ్‌క్లాస్ డేటాను సురక్షితంగా లోపలికి యాడ్ చేయవచ్చు.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section id="sec-8" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        8. Type Erasure &amp; Bytecode ఇంటర్నల్స్ (JVM Internals)
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        జావా 5 లో జెనరిక్స్‌ను ప్రవేశపెట్టినప్పుడు సన్ మైక్రోసిస్టమ్స్ ఇంజనీర్ల ముందు ఒక అతిపెద్ద సవాలు ఉంది: <em>"పాత జావా 1.4 క్లాసులతో బ్యాక్‌వర్డ్ కంపాటబిలిటీ (Backward Compatibility) దెబ్బతినకూడదు"</em>. దీని కోసం వారు <strong>Type Erasure (టైప్ ఎరేజర్)</strong> అనే టెక్నిక్‌ను ఎంచుకున్నారు.
+      </p>
+      <div style="background:#fffbeb; border:1px solid #fde68a; border-left:4px solid #d97706; padding:16px; border-radius:6px; margin:20px 0;">
+        <h4 style="margin:0 0 8px 0; color:#b45309; font-size:15px; font-weight:800;">⚙️ కంపైలేషన్ సమయంలో Type Erasure ఏం చేస్తుంది?</h4>
+        <ol style="margin:0; padding-left:20px; font-size:14px; color:#78350f; line-height:1.8;">
+          <li>కంపైలర్ అన్ని జెనరిక్ టైప్ పారామీటర్లను తొలగించి, వాటి స్థానంలో వాటి బౌండ్ (లేదా <code>Object</code>) ను బైట్‌కోడ్‌లో ప్రతిష్ఠిస్తుంది. ఉదాహరణకు <code>List&lt;String&gt;</code> అనేది బైట్‌కోడ్‌లో కేవలం సాధారణ <code>List</code> గా మారిపోతుంది!</li>
+          <li>టైప్ సేఫ్టీ కోసం అవసరమైన చోట్ల కంపైలర్ స్వయంగా సింథటిక్ కాస్ట్‌లను (Synthetic Type Casts) మరియు బ్రిడ్జ్ మెథడ్స్ (Bridge Methods) ను చొప్పిస్తుంది.</li>
+          <li><strong>రన్‌టైమ్‌లో JVM కు జెనరిక్ టైప్ సమాచారం తెలియదు!</strong> అందుకే <code>list instanceof List&lt;String&gt;</code> అని రాయడం చట్టవిరుద్ధం (కంపైలర్ ఒప్పుకోదు).</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SECTION 9: CODE BLOCK 2 -->
+    <section id="sec-9" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        9. ప్రాక్టికల్ కోడ్: PECS Wildcard Inventory Processor
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        క్రింది జావా ప్రోగ్రామ్‌లో ఎలక్ట్రానిక్స్ మరియు మొబైల్ ఫోన్ల ఇన్వెంటరీ ప్రాసెసింగ్ ద్వారా <code>? extends</code> (Producer - రీడ్ మాత్రమే) మరియు <code>? super</code> (Consumer - రైట్ మాత్రమే) వాస్తవ కోడ్‌లో ఎలా ప్రవర్తిస్తాయో స్పష్టంగా చూడండి.
+      </p>
+
+      <div class="code-block" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; margin:24px 0; overflow:hidden; box-shadow:0 4px 14px rgba(0,0,0,0.04);">
+        <div style="background:#f8fafc; border-bottom:1px solid #e2e8f0; padding:10px 16px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:700; color:#334155;">
+            📄 PecsWildcardInventoryProcessor.java
+          </span>
+          <div style="display:flex; gap:8px;">
+            <button onclick="copyCode(this)" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:5px 12px; font-size:12px; font-weight:600; cursor:pointer; color:#475569;">Copy Code</button>
+            <button onclick="runCode(this)" style="background:#047857; border:none; border-radius:6px; padding:5px 14px; font-size:12px; font-weight:700; cursor:pointer; color:#ffffff;">Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre style="margin:0; padding:18px; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.6; overflow-x:auto; background:#ffffff; color:#0f172a;">import java.util.*;
+
+public class PecsWildcardInventoryProcessor {
+
+    // డొమైన్ మోడల్స్: హైరార్కీ
+    static class Device {
+        final String model;
+        final double price;
+        public Device(String model, double price) { this.model = model; this.price = price; }
+        public double getPrice() { return price; }
+        @Override public String toString() { return model + " (₹" + price + ")"; }
+    }
+
+    static class Smartphone extends Device {
+        final String os;
+        public Smartphone(String model, double price, String os) {
+            super(model, price);
+            this.os = os;
+        }
+    }
+
+    static class Laptop extends Device {
+        final int ramGb;
+        public Laptop(String model, double price, int ramGb) {
+            super(model, price);
+            this.ramGb = ramGb;
+        }
+    }
+
+    // 1. PRODUCER EXTENDS (? extends Device): కేవలం రీడ్ చేయడానికి మాత్రమే (Calculates total value)
+    public static double calculateTotalInventoryValue(List&lt;? extends Device&gt; inventory) {
+        double total = 0.0;
+        for (Device d : inventory) {
+            total += d.getPrice(); // సురక్షితంగా Device గా రీడ్ చేయవచ్చు!
+        }
+        // inventory.add(new Device("Watch", 5000)); // కంపైలర్ ఒప్పుకోదు! (Producer cannot add)
+        return total;
+    }
+
+    // 2. CONSUMER SUPER (? super Smartphone): కొత్త స్మార్ట్‌ఫోన్లను లిస్ట్‌లోకి జోడించడానికి
+    public static void restockSmartphones(List&lt;? super Smartphone&gt; stockList, List&lt;Smartphone&gt; newArrivals) {
+        for (Smartphone phone : newArrivals) {
+            stockList.add(phone); // సురక్షితంగా Smartphone ని జోడించవచ్చు!
+            System.out.println("  + ఇన్వెంటరీలోకి చేర్చబడింది: " + phone);
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=== 1. PRODUCER EXTENDS TEST (? extends Device) ===");
+        List&lt;Smartphone&gt; phones = List.of(
+            new Smartphone("Pixel 8 Pro", 85000, "Android"),
+            new Smartphone("iPhone 15", 79000, "iOS")
+        );
+        List&lt;Laptop&gt; laptops = List.of(
+            new Laptop("MacBook Pro M3", 195000, 36),
+            new Laptop("Dell XPS 15", 145000, 32)
+        );
+
+        // List<Smartphone> మరియు List<Laptop> రెండింటినీ ఒకే మెథడ్‌లోకి పంపగలిగాం!
+        double phoneTotal = calculateTotalInventoryValue(phones);
+        double laptopTotal = calculateTotalInventoryValue(laptops);
+        System.out.println("స్మార్ట్‌ఫోన్ల మొత్తం విలువ: ₹" + phoneTotal);
+        System.out.println("ల్యాప్‌టాప్‌ల మొత్తం విలువ: ₹" + laptopTotal);
+
+        System.out.println("\n=== 2. CONSUMER SUPER TEST (? super Smartphone) ===");
+        // సూపర్ టైప్ అయిన List<Device> లోకి Smartphone లను రెస్పాన్సిబుల్‌గా యాడ్ చేస్తున్నాం
+        List&lt;Device&gt; generalWarehouse = new ArrayList&lt;&gt;();
+        generalWarehouse.add(new Laptop("ThinkPad T14", 95000, 16));
+
+        System.out.println("ప్రారంభ వేర్‌హౌస్ నిల్వ: " + generalWarehouse);
+        System.out.println("కొత్త స్మార్ట్‌ఫోన్ల స్టాక్ లోడింగ్...");
+        restockSmartphones(generalWarehouse, phones);
+
+        System.out.println("అప్‌డేట్ చేయబడిన వేర్‌హౌస్ మొత్తం నిల్వలు (Size: " + generalWarehouse.size() + "):");
+        for (Device d : generalWarehouse) {
+            System.out.println("  - " + d);
+        }
+    }
+}</pre>
+      </div>
+
+      <div class="code-output-card" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; margin:20px 0; overflow:hidden;">
+        <div style="background:#f1f5f9; padding:8px 16px; border-bottom:1px solid #e2e8f0; font-size:12.5px; font-weight:700; color:#475569; display:flex; align-items:center; gap:6px;">
+          💻 కన్సోల్ అవుట్‌పుట్ (Program Terminal Output)
+        </div>
+        <pre style="margin:0; padding:16px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#0f172a; line-height:1.6; background:#ffffff; overflow-x:auto;">=== 1. PRODUCER EXTENDS TEST (? extends Device) ===
+స్మార్ట్‌ఫోన్ల మొత్తం విలువ: ₹164000.0
+ల్యాప్‌టాప్‌ల మొత్తం విలువ: ₹340000.0
+
+=== 2. CONSUMER SUPER TEST (? super Smartphone) ===
+ప్రారంభ వేర్‌హౌస్ నిల్వ: [ThinkPad T14 (₹95000.0)]
+కొత్త స్మార్ట్‌ఫోన్ల స్టాక్ లోడింగ్...
+  + ఇన్వెంటరీలోకి చేర్చబడింది: Pixel 8 Pro (₹85000.0)
+  + ఇన్వెంటరీలోకి చేర్చబడింది: iPhone 15 (₹79000.0)
+అప్‌డేట్ చేయబడిన వేర్‌హౌస్ మొత్తం నిల్వలు (Size: 3):
+  - ThinkPad T14 (₹95000.0)
+  - Pixel 8 Pro (₹85000.0)
+  - iPhone 15 (₹79000.0)</pre>
+      </div>
+    </section>
+
+    <!-- SECTION 10: CAPSTONE CODE BLOCK 3 -->
+    <section id="sec-10" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        10. క్యాప్‌స్టోన్ ప్రాజెక్ట్: Enterprise Generic Repository Engine
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:16px;">
+        Spring Data JPA లేదా Hibernate లాంటి ఆధునిక ఎంటర్‌ప్రైజ్ ఫ్రేమ్‌వర్క్‌లు ఎలా పనిచేస్తాయో మీరు ఎప్పుడైనా ఆలోచించారా? అవి <code>JpaRepository&lt;Entity, ID&gt;</code> అనే జెనరిక్ ఇంటర్‌ఫేస్ ఆధారంగా పనిచేస్తాయి. ఇప్పుడు మనం స్వయంగా ఒక యూనివర్సల్, టైప్-సేఫ్ ఇన్-మెమరీ డేటాబేస్ రిపోజిటరీ ఇంజిన్‌ను నిర్మిద్దాం:
+      </p>
+
+      <div class="code-block" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; margin:24px 0; overflow:hidden; box-shadow:0 4px 14px rgba(0,0,0,0.04);">
+        <div style="background:#f8fafc; border-bottom:1px solid #e2e8f0; padding:10px 16px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:700; color:#334155;">
+            📄 EnterpriseGenericRepositoryEngine.java
+          </span>
+          <div style="display:flex; gap:8px;">
+            <button onclick="copyCode(this)" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:5px 12px; font-size:12px; font-weight:600; cursor:pointer; color:#475569;">Copy Code</button>
+            <button onclick="runCode(this)" style="background:#047857; border:none; border-radius:6px; padding:5px 14px; font-size:12px; font-weight:700; cursor:pointer; color:#ffffff;">Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre style="margin:0; padding:18px; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.6; overflow-x:auto; background:#ffffff; color:#0f172a;">import java.util.*;
+import java.util.function.Predicate;
+
+public class EnterpriseGenericRepositoryEngine {
+
+    // ప్రతి ఎంటిటీ తప్పనిసరిగా ఐడీని కలిగి ఉండాలని నిర్దేశించే ఇంటర్‌ఫేస్
+    public interface Identifiable&lt;ID&gt; {
+        ID getId();
+    }
+
+    // జెనరిక్ CRUD రిపోజిటరీ ఇంటర్‌ఫేస్
+    public interface CrudRepository&lt;T extends Identifiable&lt;ID&gt;, ID&gt; {
+        T save(T entity);
+        Optional&lt;T&gt; findById(ID id);
+        List&lt;T&gt; findAll();
+        List&lt;T&gt; findByCriteria(Predicate&lt;T&gt; predicate);
+        boolean deleteById(ID id);
+        long count();
+    }
+
+    // జెనరిక్ ఇన్-మెమరీ ఇంప్లిమెంటేషన్ (ఏ ఎంటిటీకైనా సమానంగా పనిచేస్తుంది)
+    public static class InMemoryRepository&lt;T extends Identifiable&lt;ID&gt;, ID&gt; implements CrudRepository&lt;T, ID&gt; {
+        private final Map&lt;ID, T&gt; storage = new HashMap&lt;&gt;();
+
+        @Override
+        public T save(T entity) {
+            Objects.requireNonNull(entity, "సేవ్ చేయాల్సిన ఎంటిటీ null కాకూడదు");
+            storage.put(entity.getId(), entity);
+            return entity;
+        }
+
+        @Override
+        public Optional&lt;T&gt; findById(ID id) {
+            return Optional.ofNullable(storage.get(id));
+        }
+
+        @Override
+        public List&lt;T&gt; findAll() {
+            return new ArrayList&lt;&gt;(storage.values());
+        }
+
+        @Override
+        public List&lt;T&gt; findByCriteria(Predicate&lt;T&gt; predicate) {
+            List&lt;T&gt; results = new ArrayList&lt;&gt;();
+            for (T item : storage.values()) {
+                if (predicate.test(item)) {
+                    results.add(item);
+                }
+            }
+            return results;
+        }
+
+        @Override
+        public boolean deleteById(ID id) {
+            return storage.remove(id) != null;
+        }
+
+        @Override
+        public long count() {
+            return storage.size();
+        }
+    }
+
+    // డొమైన్ మోడల్ 1: Customer Record (Java 21)
+    public record Customer(Long id, String name, String tier, double balance) implements Identifiable&lt;Long&gt; {
+        @Override public Long getId() { return id; }
+    }
+
+    // డొమైన్ మోడల్ 2: Order Record (Java 21)
+    public record Order(String orderNumber, double amount, String status) implements Identifiable&lt;String&gt; {
+        @Override public String getId() { return orderNumber; }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=== ENTERPRISE GENERIC REPOSITORY ENGINE ===");
+
+        // 1. కస్టమర్ రిపోజిటరీ (ID టైప్: Long)
+        CrudRepository&lt;Customer, Long&gt; customerRepo = new InMemoryRepository&lt;&gt;();
+        customerRepo.save(new Customer(101L, "Balaji Tech", "PLATINUM", 85000.0));
+        customerRepo.save(new Customer(102L, "Anand Kumar", "GOLD", 32000.0));
+        customerRepo.save(new Customer(103L, "Kavitha Reddy", "PLATINUM", 120000.0));
+
+        System.out.println("మొత్తం కస్టమర్ల సంఖ్య: " + customerRepo.count());
+        
+        // Predicate ఫిల్టర్ ద్వారా ప్లాటినమ్ కస్టమర్ల శోధన
+        List&lt;Customer&gt; platinumMembers = customerRepo.findByCriteria(c -&gt; "PLATINUM".equals(c.tier()));
+        System.out.println("ప్లాటినమ్ కస్టమర్లు: " + platinumMembers);
+
+        // 2. ఆర్డర్ రిపోజిటరీ (ID టైప్: String) - అదే ఇంజిన్ వేరొక టైప్‌కు క్లీన్‌గా పనిచేస్తుంది!
+        CrudRepository&lt;Order, String&gt; orderRepo = new InMemoryRepository&lt;&gt;();
+        orderRepo.save(new Order("ORD-2026-X1", 15400.0, "PAID"));
+        orderRepo.save(new Order("ORD-2026-X2", 4500.0, "PENDING"));
+
+        System.out.println("\nఆర్డర్ శోధన (ORD-2026-X1):");
+        orderRepo.findById("ORD-2026-X1").ifPresent(o -&gt; 
+            System.out.println("  లభించిన ఆర్డర్ వివరాలు: " + o + " | మొత్తం: ₹" + o.amount())
+        );
+
+        // ఆర్డర్ డిలీషన్
+        orderRepo.deleteById("ORD-2026-X2");
+        System.out.println("ఆర్డర్ తొలగింపు తర్వాత మిగిలిన ఆర్డర్లు: " + orderRepo.count());
+    }
+}</pre>
+      </div>
+
+      <div class="code-output-card" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; margin:20px 0; overflow:hidden;">
+        <div style="background:#f1f5f9; padding:8px 16px; border-bottom:1px solid #e2e8f0; font-size:12.5px; font-weight:700; color:#475569; display:flex; align-items:center; gap:6px;">
+          💻 కన్సోల్ అవుట్‌పుట్ (Program Terminal Output)
+        </div>
+        <pre style="margin:0; padding:16px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#0f172a; line-height:1.6; background:#ffffff; overflow-x:auto;">=== ENTERPRISE GENERIC REPOSITORY ENGINE ===
+మొత్తం కస్టమర్ల సంఖ్య: 3
+ప్లాటినమ్ కస్టమర్లు: [Customer[id=101, name=Balaji Tech, tier=PLATINUM, balance=85000.0], Customer[id=103, name=Kavitha Reddy, tier=PLATINUM, balance=120000.0]]
+
+ఆర్డర్ శోధన (ORD-2026-X1):
+  లభించిన ఆర్డర్ వివరాలు: Order[orderNumber=ORD-2026-X1, amount=15400.0, status=PAID] | మొత్తం: ₹15400.0
+ఆర్డర్ తొలగింపు తర్వాత మిగిలిన ఆర్డర్లు: 1</pre>
+      </div>
+    </section>
+
+    <!-- SECTION 11 -->
+    <section id="sec-11" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        11. ప్రొడక్షన్ పిట్‌ఫాల్స్ &amp; ఆంటీ-పాటర్న్స్ (5 Critical Production Traps)
+      </h2>
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div style="background:#ffffff; border:1px solid #fed7aa; border-left:5px solid #f97316; padding:16px; border-radius:8px;">
+          <h4 style="margin:0 0 6px 0; color:#c2410c; font-size:15px; font-weight:800;">1. Using Raw Types (రాతపూర్వక టైప్ లేని పాత పద్ధతి)</h4>
+          <p style="margin:0; font-size:14px; line-height:1.7; color:#334155;">
+            <code>List list = new ArrayList();</code> అని రా టైపులను వాడటం అత్యంత ప్రమాదకరం. ఇది కంపైలర్ టైప్ చెకింగ్‌ను పూర్తిగా నిలిపివేస్తుంది. ఆధునిక జావాలో ఎల్లప్పుడూ డైమండ్ ఆపరేటర్‌తో కూడిన స్పెసిఫిక్ టైపులనే వాడాలి: <code>List&lt;String&gt; list = new ArrayList&lt;&gt;();</code>.
+          </p>
+        </div>
+
+        <div style="background:#ffffff; border:1px solid #fed7aa; border-left:5px solid #f97316; padding:16px; border-radius:8px;">
+          <h4 style="margin:0 0 6px 0; color:#c2410c; font-size:15px; font-weight:800;">2. Generic Array Creation Trap (జెనరిక్ ఎరేల నిషేధం)</h4>
+          <p style="margin:0; font-size:14px; line-height:1.7; color:#334155;">
+            జావాలో <code>new T[10]</code> లేదా <code>new List&lt;String&gt;[10]</code> అని జెనరిక్ ఎరేలను నేరుగా క్రియేట్ చేయడానికి వీల్లేదు! ఎందుకంటే ఎరేలు రన్‌టైమ్‌లో తమ టైపును గుర్తుపెట్టుకుంటాయి (Reifiable), కానీ జెనరిక్స్ రన్‌టైమ్‌లో ఎరేజ్ అయిపోతాయి (Type Erasure). దీని పరిష్కారానికి <code>List&lt;List&lt;String&gt;&gt;</code> లేదా <code>Array.newInstance(clazz, size)</code> ని వాడాలి.
+          </p>
+        </div>
+
+        <div style="background:#ffffff; border:1px solid #fed7aa; border-left:5px solid #f97316; padding:16px; border-radius:8px;">
+          <h4 style="margin:0 0 6px 0; color:#c2410c; font-size:15px; font-weight:800;">3. Primitive Types as Type Arguments (ప్రిమిటివ్ టైపుల పరిమితి)</h4>
+          <p style="margin:0; font-size:14px; line-height:1.7; color:#334155;">
+            జెనరిక్స్ టైప్ ఆర్గ్యుమెంట్‌గా ప్రిమిటివ్ టైపులను అనుమతించవు: <code>List&lt;int&gt;</code> అని రాయలేము; తప్పనిసరిగా బాక్సింగ్ రాపర్ క్లాస్ <code>List&lt;Integer&gt;</code> నే వాడాలి. (ప్రాజెక్ట్ వల్హల్లా - Project Valhalla ద్వారా భవిష్యత్ జావాలో ఇది మారనుంది).
+          </p>
+        </div>
+
+        <div style="background:#ffffff; border:1px solid #fed7aa; border-left:5px solid #f97316; padding:16px; border-radius:8px;">
+          <h4 style="margin:0 0 6px 0; color:#c2410c; font-size:15px; font-weight:800;">4. Overloading Methods that Differ Only by Generic Type</h4>
+          <p style="margin:0; font-size:14px; line-height:1.7; color:#334155;">
+            ఒకే క్లాస్‌లో <code>void process(List&lt;String&gt; l)</code> మరియు <code>void process(List&lt;Integer&gt; l)</code> అని ఓవర్‌లోడ్ చేయలేము. ఎందుకంటే టైప్ ఎరేజర్ తర్వాత రెంటి సిగ్నేచర్ <code>void process(List l)</code> గా మారి డూప్లికేట్ మెథడ్ ఎర్రర్ వస్తుంది.
+          </p>
+        </div>
+
+        <div style="background:#ffffff; border:1px solid #fed7aa; border-left:5px solid #f97316; padding:16px; border-radius:8px;">
+          <h4 style="margin:0 0 6px 0; color:#c2410c; font-size:15px; font-weight:800;">5. Violating PECS Rule (Adding into ? extends Collection)</h4>
+          <p style="margin:0; font-size:14px; line-height:1.7; color:#334155;">
+            <code>List&lt;? extends Number&gt; list</code> అని రాసిన తర్వాత అందులోకి <code>list.add(10)</code> అని నంబర్‌ను యాడ్ చేయడానికి ప్రయత్నించడం బిగినర్స్ చేసే అతిపెద్ద తప్పు. లిస్ట్ అసలు రకం <code>List&lt;Double&gt;</code> అయి ఉండవచ్చు కాబట్టి కంపైలర్ ఏ వస్తువునూ యాడ్ చేయనివ్వదు.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 12 -->
+    <section id="sec-12" style="margin-top:40px;">
+      <h2 style="font-size:24px; font-weight:800; color:var(--text); border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:18px;">
+        12. ఇంటర్వ్యూ క్విజ్ &amp; సెల్ఫ్-టెస్ట్ (5 Deep Interview Practice Quizzes)
+      </h2>
+      <p style="font-size:15px; line-height:1.8; color:var(--text); margin-bottom:20px;">
+        జావా జెనరిక్స్, వైల్డ్‌కార్డ్స్ మరియు టైప్ ఎరేజర్‌పై మీ పట్టును ఈ 5 లోతైన ప్రాక్టికల్ ప్రశ్నలతో నిరూపించుకోండి. సమాధానం కోసం ప్రశ్నపై క్లిక్ చేయండి:
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <details style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:14px 18px; cursor:pointer;">
+          <summary style="font-weight:700; color:#0f172a; font-size:14.5px;">
+            ప్రశ్న 1: జావాలో Type Erasure అంటే ఏమిటి? ఇది ఎందుకు ప్రవేశపెట్టబడింది?
+          </summary>
+          <p style="margin:12px 0 0 0; font-size:14px; line-height:1.7; color:#334155;">
+            <strong>సమాధానం:</strong> జావా కంపైలర్ కోడ్‌ను బైట్‌కోడ్‌గా మార్చేటప్పుడు అన్ని జెనరిక్ టైప్ పారామీటర్లను తొలగించి వాటి స్థానంలో వాటి బౌండరీ (లేదా <code>Object</code>) ను రీప్లేస్ చేస్తుంది. దీనినే <strong>Type Erasure</strong> అంటారు. జావా 5 కంటే ముందు రాసిన లెగసీ కోడ్‌తో పూర్తి బ్యాక్‌వర్డ్ కంపాటబిలిటీని కాపాడటం కోసమే ఈ విధానాన్ని ఎంచుకున్నారు.
+          </p>
+        </details>
+
+        <details style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:14px 18px; cursor:pointer;">
+          <summary style="font-weight:700; color:#0f172a; font-size:14.5px;">
+            ప్రశ్న 2: PECS ప్రిన్సిపల్ అంటే ఏమిటి? ఎప్పుడు ఏ వైల్డ్‌కార్డ్ ఉపయోగించాలి?
+          </summary>
+          <p style="margin:12px 0 0 0; font-size:14px; line-height:1.7; color:#334155;">
+            <strong>సమాధానం:</strong> <strong>PECS</strong> అంటే <em>Producer Extends, Consumer Super</em>. కలెక్షన్ నుండి డేటాను కేవలం బయటకు రీడ్ చేయడమే మీ లక్ష్యమైతే <code>? extends T</code> వాడాలి (ఇది ప్రొడ్యూసర్). ఒకవేళ కలెక్షన్‌లోకి కొత్త డేటాను లోపలికి రైట్ చేయడమే మీ లక్ష్యమైతే <code>? super T</code> వాడాలి (ఇది కన్స్యూమర్).
+          </p>
+        </details>
+
+        <details style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:14px 18px; cursor:pointer;">
+          <summary style="font-weight:700; color:#0f172a; font-size:14.5px;">
+            ప్రశ్న 3: List&lt;Integer&gt; అనేది List&lt;Number&gt; కి సబ్‌టైప్ అవుతుందా? కారణం ఏమిటి?
+          </summary>
+          <p style="margin:12px 0 0 0; font-size:14px; line-height:1.7; color:#334155;">
+            <strong>సమాధానం:</strong> కాదు! <code>Integer</code> అనేది <code>Number</code> కి సబ్‌క్లాస్ అయినప్పటికీ, <code>List&lt;Integer&gt;</code> అనేది <code>List&lt;Number&gt;</code> కి సబ్‌టైప్ కాదు. ఎందుకంటే జెనరిక్స్ <strong>Invariable</strong> గా ఉంటాయి. ఒకవేళ అలా అనుమతిస్తే, <code>List&lt;Number&gt;</code> రిఫరెన్స్ ద్వారా అందులోకి ఎవరైనా <code>Double</code> ను ఇన్సర్ట్ చేసి, <code>Integer</code> లిస్ట్‌ను నాశనం చేసే ప్రమాదం ఉండేది.
+          </p>
+        </details>
+
+        <details style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:14px 18px; cursor:pointer;">
+          <summary style="font-weight:700; color:#0f172a; font-size:14.5px;">
+            ప్రశ్న 4: Java లో జెనరిక్ ఎరేలను (Generic Arrays - new T[10]) ఎందుకు సృష్టించలేము?
+          </summary>
+          <p style="margin:12px 0 0 0; font-size:14px; line-height:1.7; color:#334155;">
+            <strong>సమాధానం:</strong> ఎరేలు రన్‌టైమ్‌లో తమ ఖచ్చితమైన ఎలిమెంట్ రకాన్ని గుర్తుపెట్టుకుంటాయి (Arrays are Reifiable). కానీ జెనరిక్స్ రన్‌టైమ్‌లో ఎరేజ్ అయిపోతాయి (Type Erasure వలన). కనుక రన్‌టైమ్‌లో <code>new T[10]</code> ని ఏ టైప్ ఎరేగా అలోకేట్ చేయాలో JVM కి తెలియదు కాబట్టి కంపైలర్ దీనిని నిరోధిస్తుంది.
+          </p>
+        </details>
+
+        <details style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:14px 18px; cursor:pointer;">
+          <summary style="font-weight:700; color:#0f172a; font-size:14.5px;">
+            ప్రశ్న 5: Bounded Type Parameter లో Multiple Bounds సింటాక్స్ మరియు నిబంధనలు ఏమిటి?
+          </summary>
+          <p style="margin:12px 0 0 0; font-size:14px; line-height:1.7; color:#334155;">
+            <strong>సమాధానం:</strong> సింటాక్స్: <code>&lt;T extends ClassName &amp; Interface1 &amp; Interface2&gt;</code>. నిబంధన: జావాలో మల్టిపుల్ ఇన్హెరిటెన్స్ క్లాసులకు వర్తించదు కాబట్టి, గరిష్టంగా కేవలం ఒకే ఒక క్లాస్ మాత్రమే ఉండవచ్చు మరియు ఆ క్లాస్ పేరు తప్పనిసరిగా మొదటి స్థానంలోనే ఉండాలి. ఆ తర్వాత <code>&amp;</code> ఆపరేటర్‌తో ఎన్ని ఇంటర్‌ఫేస్‌లనైనా చేర్చవచ్చు.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/22-java-collections-set-and-map-deep-dive.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 22. Set &amp; Map Deep Dive
+      </a>
+      <a href="/blog-java/24-java-lambdas-and-stream-api.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 24. Lambdas &amp; Stream API →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>`;
+
+const outPath = path.join(__dirname, '..', 'public', 'blog-java', '23-java-generics-and-type-safety.html');
+fs.writeFileSync(outPath, chapter23Content, 'utf8');
+
+console.log('✅ Successfully generated Java Chapter 23 in exact JavaScript HTML style!');
+console.log('Target file:', outPath);
+console.log('Target file size:', chapter23Content.length, 'characters');

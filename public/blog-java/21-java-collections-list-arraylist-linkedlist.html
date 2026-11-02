@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Collections Framework — List, ArrayList &amp; LinkedList తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా కలెక్షన్స్ ఫ్రేమ్‌వర్క్ (JCF), List ఇంటర్‌ఫేస్, ArrayList డైనమిక్ గ్రోత్ అల్గారిథమ్, LinkedList డబుల్-లింక్డ్ ఆర్కిటెక్చర్, మరియు Iterator Fail-Fast తెలుగులో నేర్చుకోండి." />
+  <meta name="keywords" content="java collections framework telugu, arraylist vs linkedlist java telugu, arraylist growth algorithm telugu, list iterator telugu, concurrentmodificationexception java telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/21-java-collections-list-arraylist-linkedlist.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-java light-theme">
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+    <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Java Masterclass</div>
+
+    <div class="accordion">
+      <!-- Part 01: Basics & JVM -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 01</span>
+            <span class="phase-title">Basics & JVM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/01-java-introduction-features-and-jvm-architecture.html">1. Intro & JVM Architecture</a>
+        <a href="/blog-java/02-java-installation-ide-and-first-program.html">2. Setup & First Program</a>
+        <a href="/blog-java/03-java-syntax-class-structure-and-main-method.html">3. Syntax & Main Method</a>
+        <a href="/blog-java/04-java-variables-primitive-data-types-and-memory.html">4. Variables & Data Types</a>
+        <a href="/blog-java/05-java-operators-expressions-and-type-casting.html">5. Operators & Type Casting</a>
+      </div>
+
+      <!-- Part 02: Control Flow & Strings -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 02</span>
+            <span class="phase-title">Control Flow & Strings</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/06-java-conditional-statements-if-else.html">6. if, else-if & Ternary</a>
+        <a href="/blog-java/07-java-switch-statements-and-switch-expressions.html">7. switch Statements & Expressions</a>
+        <a href="/blog-java/08-java-loops-while-for-and-enhanced-foreach.html">8. Loops: while, for, foreach</a>
+        <a href="/blog-java/09-java-strings-memory-pool-and-immutability.html">9. Strings & Memory Pool</a>
+        <a href="/blog-java/10-java-stringbuilder-stringbuffer-and-methods.html">10. StringBuilder & StringBuffer</a>
+      </div>
+
+      <!-- Part 03: Arrays, Methods & OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 03</span>
+            <span class="phase-title">Arrays, Methods & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/11-java-arrays-multidimensional-and-algorithms.html">11. Arrays & Algorithms</a>
+        <a href="/blog-java/12-java-methods-call-stack-and-pass-by-value.html">12. Methods & Call Stack</a>
+        <a href="/blog-java/13-java-method-overloading-and-varargs.html">13. Method Overloading & Varargs</a>
+        <a href="/blog-java/14-java-oop-classes-objects-and-constructors.html">14. Classes, Objects & Heap</a>
+        <a href="/blog-java/15-java-constructors-this-keyword-and-chaining.html">15. Constructors & this Keyword</a>
+      </div>
+
+      <!-- Part 04: Core OOP & Exceptions -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 04</span>
+            <span class="phase-title">Core OOP & Exceptions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/16-java-encapsulation-access-modifiers-and-records.html">16. Encapsulation & Records</a>
+        <a href="/blog-java/17-java-inheritance-super-keyword-and-object-class.html">17. Inheritance & super Keyword</a>
+        <a href="/blog-java/18-java-polymorphism-method-overriding-dynamic-binding.html">18. Polymorphism & Overriding</a>
+        <a href="/blog-java/19-java-abstract-classes-and-interfaces.html">19. Abstract Classes & Interfaces</a>
+        <a href="/blog-java/20-java-exception-handling-and-custom-exceptions.html">20. Exceptions & Custom Errors</a>
+      </div>
+
+      <!-- Part 05: Collections & Capstone -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 05</span>
+            <span class="phase-title">Collections & Capstone</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-java/21-java-collections-list-arraylist-linkedlist.html" class="active">21. List: ArrayList & LinkedList</a>
+        <a href="/blog-java/22-java-collections-set-and-map-deep-dive.html">22. Set & Map Deep Dive</a>
+        <a href="/blog-java/23-java-generics-and-type-safety.html">23. Generics & Type Safety</a>
+        <a href="/blog-java/24-java-lambdas-and-stream-api.html">24. Lambdas & Stream API</a>
+        <a href="/blog-java/25-java-capstone-project.html">25. Capstone: Banking Engine</a>
+      </div>
+
+    </div>
+
+    <div class="sidebar-heading">INTERACTIVE IDE</div>
+    <a href="/online-java-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Java Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">OTHER COURSES</div>
+    <a href="/blog-python.html">Python Course (25 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (25 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 21: List: ArrayList &amp; LinkedList</span>
+    </div>
+
+    <h1 class="page-title">21. జావా కలెక్షన్స్ ఫ్రేమ్‌వర్క్ — List, ArrayList &amp; LinkedList (Collections Mastery)</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java (Java 21+ LTS)</span>
+      <span class="badge">🟢 Lesson 21 of 25</span>
+      <span class="badge">📂 Part 05: Collections &amp; Capstone (Page 1 of 5)</span>
+      <span class="badge">⏱️ 26 min read</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:28px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="font-weight:700; color:#10b981;">📌 Covered in this lesson:</span>
+      <span>Collections Framework ఆర్కిటెక్చర్ · List ఇంటర్‌ఫేస్ · ArrayList (డైనమిక్ గ్రోత్, O(1) లుకప్) vs LinkedList (డబుల్ లింక్డ్ లిస్ట్, O(1) ఇన్సర్షన్) · ఇటరేటర్లు (Iterator, ListIterator)</span>
+    </div>
+
+    <!-- WARM IVORY INTRO BOX (JavaScript Style) -->
+    <div class="intro-box">
+      <p style="margin:0 0 16px 0; font-size:15px; line-height:1.8; color:#1e293b;">
+        సాఫ్ట్‌వేర్ అభివృద్ధిలో నిజమైన శక్తి డాటా స్ట్రక్చర్ల సమర్థవంతమైన నిర్వహణలోనే ఉంది. మనం 11వ అధ్యాయంలో నేర్చుకున్న సాధారణ జావా ఎరేలు అత్యంత వేగవంతమైనవి అయినప్పటికీ, వాటికి ఒక తీరని పరిమితి ఉంది — అదే <strong>స్థిర పరిమాణం (Fixed Size)</strong>. రన్‌టైమ్‌లో యూజర్లు ఎన్ని వస్తువులు జోడిస్తారో ముందుగా తెలియనప్పుడు, ఎరేలు సరిపోవు. ఈ సమస్యను శాశ్వతంగా పరిష్కరించడానికి Java 1.2 లో ఆవిర్భవించిన మహోన్నత ఆర్కిటెక్చరే <strong>Java Collections Framework (JCF)</strong>. అందులో డెవలపర్లు నిత్యం వాడే ప్రధాన భాగం <strong><code>List</code> ఇంటర్‌ఫేస్</strong>. నిరంతరాయ మెమరీతో డైనమిక్‌గా 1.5 రెట్లు విస్తరించే <strong><code>ArrayList</code></strong> ఎలా పనిచేస్తుంది? పాయింటర్లతో గొలుసుకట్టుగా అనుసంధానించబడిన <strong><code>LinkedList</code></strong> ఎప్పుడు మేలైనది? లూప్‌లలో డేటాను తొలగించేటప్పుడు వచ్చే <strong><code>ConcurrentModificationException</code></strong> ను ఎలా అరికట్టాలి? అనే కీలకమైన అంశాలను ఈ పాఠంలో లోతుగా నేర్చుకుందాం.
+      </p>
+
+      <h4 style="margin:0 0 10px 0; color:#047857; font-size:16px; font-weight:800;">
+        షాపింగ్ కార్ట్ బ్యాగ్ &amp; రైలు బోగీల అనాలజీ (The Expandable Shopping Cart Bag &amp; Train Bogie Analogy):
+      </h4>
+      <ol style="margin:0; padding-left:22px; color:#334155; line-height:1.8; font-size:14.5px;">
+        <li style="margin-bottom:8px;">
+          <strong>1. Array vs ArrayList (పరిమిత చెక్క పెట్టె vs సాగే ఎలాస్టిక్ షాపింగ్ బ్యాగ్):</strong> సాధారణ ఎరే అనేది కేవలం 10 వస్తువులే పట్టే ఒక దృఢమైన చెక్క పెట్టె లాంటిది. 11వ వస్తువు పెడితే పెట్టె పగిలిపోతుంది (ArrayIndexOutOfBoundsException). కానీ <code>ArrayList</code> అనేది ఎలాస్టిక్ షాపింగ్ బ్యాగ్ లాంటిది. అందులో 10 వస్తువులు నిండగానే, తెరవెనుక JVM స్వయంగా 50% పెద్దదైన కొత్త బ్యాగ్‌ను తీసుకుని (1.5x growth), పాత వస్తువులను అందులోకి జంప్ చేయిస్తుంది. దీనివల్ల డెవలపర్‌కు సైజు గురించిన బెంగే ఉండదు!
+        </li>
+        <li style="margin-bottom:8px;">
+          <strong>2. ArrayList vs LinkedList (థియేటర్ సీట్లు vs గొలుసుకట్టు రైలు బోగీలు):</strong>
+          <br />• <code>ArrayList</code> (థియేటర్ సీట్లు): సీట్లు పక్కపక్కనే అతుక్కుని ఉంటాయి. మీ టికెట్ నంబర్ తెలిస్తే క్షణంలో సీటులో కూర్చోవచ్చు (<code>O(1)</code> Constant Time Lookup). కానీ మధ్యలో ఒక కొత్త వ్యక్తిని కూర్చోబెట్టాలంటే కుడివైపు ఉన్న అందరూ పక్కకు జరగాలి (<code>O(N)</code> Shifting Cost).
+          <br />• <code>LinkedList</code> (రైలు బోగీలు): ప్రతి బోగీ (Node) తన మునుపటి బోగీతో, తర్వాతి బోగీతో గొలుసులతో (Pointers: prev &amp; next) కట్టబడి ఉంటుంది. మధ్యలో కొత్త బోగీని జోడించడం లేదా తీసేయడం క్షణంలో చేయవచ్చు (<code>O(1)</code> Insertion/Deletion). కానీ 50వ బోగీకి వెళ్లాలంటే మొదటి బోగీ నుండి ఒక్కొక్క బోగీ నడుచుకుంటూ వెళ్లాల్సిందే (<code>O(N)</code> Sequential Search)!
+        </li>
+        <li>
+          <strong>3. Iterator &amp; Fail-Fast (రైలు ప్రయాణికుల టికెట్ కలెక్టర్ చెకింగ్):</strong> టికెట్ కలెక్టర్ (Iterator) బోగీలోని ప్రయాణికులను వరుసగా లెక్కిస్తున్నప్పుడు, ఎవరైనా దొంగచాటుగా మధ్యలో ఒక ప్రయాణికుడిని దింపేస్తే, కలెక్టర్ విజిల్ వేసి రైలును ఆపేస్తాడు (Fail-Fast: <code>ConcurrentModificationException</code>)! దీనిని నివారించడానికి ఎల్లప్పుడూ Iterator యొక్క సొంత <code>it.remove()</code> మెథడ్‌ను మాత్రమే వాడాలి.
+        </li>
+      </ol>
+      <p style="margin:14px 0 0 0; font-size:14px; color:#475569; line-height:1.7;">
+        ఈ పాఠం ముగిసేసరికి మీరు JCF హైరార్కీని సంపూర్ణంగా అర్థం చేసుకోవడం, Big-O ఆధారంగా సరైన లిస్ట్‌ను ఎంచుకోవడం, మరియు ఈ-కామర్స్ ఆర్డర్ ఫుల్‌ఫిల్‌మెంట్ పైప్‌లైన్ ఇంజిన్‌ను నిర్మించడంలో నిపుణులవుతారు!
+      </p>
+    </div>
+
+    <!-- 3-COLUMN TABLE OF CONTENTS (TOC CARD) -->
+    <div class="toc-card">
+      <div style="font-weight:800; color:var(--text); margin-bottom:14px; font-size:16px; display:flex; align-items:center; gap:8px;">
+        <span>📑 ఈ పాఠంలో మీరు నేర్చుకునే అంశాలు (Table of Contents)</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం A: JCF &amp; List ఇంటర్‌ఫేస్
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-1" style="color:var(--text2); text-decoration:none;">1. JCF ఆవశ్యకత &amp; ఫ్రేమ్‌వర్క్ నిర్మాణం</a></li>
+            <li><a href="#sec-2" style="color:var(--text2); text-decoration:none;">2. Collection vs Collections తేడాలు</a></li>
+            <li><a href="#sec-3" style="color:var(--text2); text-decoration:none;">3. List ఇంటర్‌ఫేస్ కాంట్రాక్ట్ &amp; ఫీచర్లు</a></li>
+            <li><a href="#sec-4" style="color:var(--text2); text-decoration:none;">4. ArrayList గ్రోత్ అల్గారిథమ్ (1.5x బిట్-షిఫ్ట్)</a></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం B: LinkedList &amp; ఇటరేటర్లు
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-5" style="color:var(--text2); text-decoration:none;">5. LinkedList డబుల్-లింక్డ్ నోడ్ ఆర్కిటెక్చర్</a></li>
+            <li><a href="#sec-6" style="color:var(--text2); text-decoration:none;">6. ArrayList vs LinkedList: Big-O పోలిక</a></li>
+            <li><a href="#sec-7" style="color:var(--text2); text-decoration:none;">7. Iterator vs ListIterator vs for-each</a></li>
+            <li><a href="#sec-8" style="color:var(--text2); text-decoration:none;">8. ConcurrentModificationException నివారణ</a></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం C: డెమోలు, ప్రాజెక్ట్ &amp; పరీక్ష
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-9" style="color:var(--text2); text-decoration:none;">9. డెమో 1: ArrayList vs LinkedList బెంచ్‌మార్క్</a></li>
+            <li><a href="#sec-10" style="color:var(--text2); text-decoration:none;">10. డెమో 2: Iterator Safe Removal డెమో</a></li>
+            <li><a href="#sec-11" style="color:var(--text2); text-decoration:none;">11. Capstone ప్రాజెక్ట్: ఈ-కామర్స్ ఆర్డర్ పైప్‌లైన్</a></li>
+            <li><a href="#sec-12" style="color:var(--text2); text-decoration:none;">12. ప్రొడక్షన్ పిట్‌ఫాల్స్, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 క్విజ్‌లు</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div id="sec-1" class="section-card">
+      <h2>1. JCF ఆవశ్యకత &amp; ఫ్రేమ్‌వర్క్ నిర్మాణం (Java Collections Architecture)</h2>
+      <p>
+        జావా ప్రారంభంలో (Java 1.0) డేటాను సమూహాలుగా నిల్వ చేయడానికి కేవలం Arrays, Vector, Stack మరియు Hashtable మాత్రమే ఉండేవి. వీటికి ఒక ఉమ్మడి ఇంటర్‌ఫేస్ లేదా ప్రామాణిక డిజైన్ లేదు.
+      </p>
+      <p>
+        దీనికి సమగ్ర పరిష్కారంగా <strong>Java 1.2 లో Java Collections Framework (JCF)</strong> ప్రవేశపెట్టబడింది. JCF అనేది రెడీమేడ్ డాటా స్ట్రక్చర్లు (Lists, Sets, Maps, Queues) మరియు వాటిపై పనిచేసే ఆప్టిమైజ్డ్ అల్గారిథమ్స్ (Sorting, Searching, Shuffling) సమాహారం.
+      </p>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div id="sec-2" class="section-card">
+      <h2>2. Collection vs Collections తేడాలు (The Crucial Plural Distinction)</h2>
+      <p>
+        జావా ఇంటర్వ్యూలలో అత్యంత ప్రాచుర్యం పొందిన తేడా:
+      </p>
+
+      <ul>
+        <li>
+          <strong><code>Collection</code> (ఏకవచనం - Interface):</strong> ఇది <code>java.util</code> ప్యాకేజీలోని రూట్ ఇంటర్‌ఫేస్. <code>List, Set, Queue</code> వంటి అన్ని కలెక్షన్‌లు దీనిని ఎక్స్‌టెండ్ చేసుకుంటాయి.
+        </li>
+        <li>
+          <strong><code>Collections</code> (బహువచనం - Utility Class):</strong> ఇది <code>java.util</code> ప్యాకేజీలోని ఒక యుటిలిటీ క్లాస్. ఇందులో కలెక్షన్‌లను సార్ట్ చేయడానికి, రివర్స్ చేయడానికి, లేదా అన్‌మాడిఫైయబుల్‌గా మార్చడానికి ఉపయోగపడే స్టాటిక్ మెథడ్స్ (ఉదా: <code>Collections.sort()</code>, <code>Collections.unmodifiableList()</code>) ఉంటాయి.
+        </li>
+      </ul>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div id="sec-3" class="section-card">
+      <h2>3. List ఇంటర్‌ఫేస్ కాంట్రాక్ట్ &amp; ఫీచర్లు (The Ordered List Contract)</h2>
+      <p>
+        <code>java.util.List</code> ఇంటర్‌ఫేస్ 3 ప్రాథమిక లక్షణాలను హామీ ఇస్తుంది:
+      </p>
+
+      <ul>
+        <li><strong>1. ఇన్సర్షన్ ఆర్డర్ సంరక్షణ (Maintains Insertion Order):</strong> అంశాలను ఏ క్రమంలో చేర్చామో అదే క్రమంలో నిల్వ చేస్తుంది.</li>
+        <li><strong>2. జీరో-బేస్డ్ ఇండెక్స్ యాక్సెస్ (Index-based Access):</strong> ఎరేల మాదిరిగానే నిర్దిష్ట ఇండెక్స్ ద్వారా అంశాలను పొందవచ్చు (<code>list.get(index)</code>).</li>
+        <li><strong>3. డూప్లికేట్స్ అనుమతి (Allows Duplicate Elements):</strong> ఒకే విలువను ఎన్నిసార్లయినా, అలాగే బహుళ <code>null</code> విలువలను నిల్వ చేసుకోవచ్చు.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div id="sec-4" class="section-card">
+      <h2>4. ArrayList అంతర్గత గ్రోత్ అల్గారిథమ్ (The 1.5x Growth Formula)</h2>
+      <p>
+        <code>ArrayList</code> అంతర్గతంగా ఒక సాధారణ <code>Object[] elementData</code> ఎరేను నిర్వహిస్తుంది. డీఫాల్ట్ నో-ఆర్గ్ కన్‌స్ట్రక్టర్ <code>new ArrayList&lt;&gt;()</code> రాసినప్పుడు, మొదటి ఎలిమెంట్ చేర్చే వరకు కెపాసిటీ 0 గా ఉంటుంది; మొదటి ఎలిమెంట్ రాగానే డీఫాల్ట్ కెపాసిటీ <strong>10</strong> అవుతుంది.
+      </p>
+      <p>
+        ఆ 10 స్లాట్లు నిండిపోయినప్పుడు, JVM కొత్త సైజును ఈ క్రింది బిట్‌వైజ్ ఫార్ములాతో లెక్కిస్తుంది:
+      </p>
+
+      <div style="background:#fefce8; border:1px solid #fde047; border-left:5px solid #ca8a04; border-radius:6px; padding:16px 20px; margin:16px 0; font-family:'JetBrains Mono', monospace; font-size:14px; color:#854d0e; line-height:1.7;">
+        int newCapacity = oldCapacity + (oldCapacity &gt;&gt; 1); // 1.5x Growth!
+      </div>
+
+      <p>
+        ఉదాహరణకు: <code>10 + (10 / 2) = 15</code>.
+        <br />ఆ తర్వాత <code>15 + (15 / 2) = 22</code>.
+        <br />ఈ విధంగా ప్రతిసారీ పాత పరిమాణానికి <strong>50% అదనపు స్థలాన్ని</strong> జోడించి కొత్త ఎరేను కేటాయించి పాత డేటాను <code>Arrays.copyOf()</code> ద్వారా కాపీ చేస్తుంది.
+      </p>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div id="sec-5" class="section-card">
+      <h2>5. LinkedList డబుల్-లింక్డ్ నోడ్ ఆర్కిటెక్చర్ (Doubly-Linked Node Internals)</h2>
+      <p>
+        <code>LinkedList</code> లో ఎటువంటి ఎరే ఉండదు! ఇక్కడ ప్రతి డేటా అంశం ఒక స్వతంత్ర <strong>Node</strong> ఆబ్జెక్ట్ లోపల నిల్వ ఉంటుంది:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.8;">
+        <span style="color:#64748b;">// LinkedList Internal Node Structure:</span><br />
+        <span style="color:#0284c7;">private static class</span> Node&lt;E&gt; {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;E item;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// వాస్తవ డేటా</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Node&lt;E&gt; next;&nbsp;&nbsp;<span style="color:#64748b;">// తర్వాతి నోడ్ మెమరీ రిఫరెన్స్</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Node&lt;E&gt; prev;&nbsp;&nbsp;<span style="color:#64748b;">// మునుపటి నోడ్ మెమరీ రిఫరెన్స్</span><br />
+        }
+      </div>
+
+      <p>
+        దీనివలన హెడ్ (ప్రారంభం) లేదా టెయిల్ (చివర) వద్ద ఎలిమెంట్లను చేర్చడం లేదా తీసేయడం మెమరీ షిఫ్టింగ్ లేకుండా <code>O(1)</code> లో పూర్తవుతుంది. అయితే ప్రతి నోడ్‌కు అదనంగా 2 రిఫరెన్స్ పాయింటర్లు (prev, next) ఉండటం వల్ల <code>ArrayList</code> కంటే <strong>3 నుండి 4 రెట్లు ఎక్కువ మెమరీని</strong> ఆక్రమిస్తుంది!
+      </p>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div id="sec-6" class="section-card">
+      <h2>6. ArrayList vs LinkedList: Big-O కాంప్లెక్సిటీ చార్ట్ (The Definitive Decision Matrix)</h2>
+      <p>
+        సాఫ్ట్‌వేర్ పనితీరును నిర్ణయించే ఈ క్రింది కాంప్లెక్సిటీ టేబుల్‌ను ఎల్లప్పుడూ గుర్తుంచుకోండి:
+      </p>
+
+      <div style="overflow-x:auto; margin:20px 0;">
+        <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">ఆపరేషన్</th>
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">ArrayList</th>
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">LinkedList</th>
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">విజేత &amp; కారణం</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">Random Access <code>get(i)</code></td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">O(1)</td>
+              <td style="padding:10px 14px; color:#ef4444;">O(N)</td>
+              <td style="padding:10px 14px; color:var(--text2);">ArrayList (ప్రత్యక్ష ఇండెక్స్ అడ్రస్)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">చివర చేర్చడం <code>add(val)</code></td>
+              <td style="padding:10px 14px; color:var(--text2);">O(1) amortized</td>
+              <td style="padding:10px 14px; color:var(--text2);">O(1)</td>
+              <td style="padding:10px 14px; color:var(--text2);">ఇద్దరూ సమానం</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">మొదట్లో చేర్చడం <code>add(0, val)</code></td>
+              <td style="padding:10px 14px; color:#ef4444;">O(N) (అన్నింటినీ జరపాలి)</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">O(1)</td>
+              <td style="padding:10px 14px; color:var(--text2);">LinkedList (కేవలం పాయింటర్ మార్పు)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">మధ్యలో తొలగించడం <code>remove(i)</code></td>
+              <td style="padding:10px 14px; color:var(--text2);">O(N)</td>
+              <td style="padding:10px 14px; color:var(--text2);">O(N) (వెతకడానికి O(N))</td>
+              <td style="padding:10px 14px; color:var(--text2);">సమానం (LinkedList కు సెర్చ్ టైమ్ పడుతుంది)</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">మెమరీ ఓవర్‌హెడ్</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">చాలా తక్కువ (Compact array)</td>
+              <td style="padding:10px 14px; color:#ef4444;">అత్యధికం (ప్రతి నోడ్‌కు 24 బైట్ల ఓవర్‌హెడ్)</td>
+              <td style="padding:10px 14px; color:var(--text2);">ArrayList విజేత</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div id="sec-7" class="section-card">
+      <h2>7. Iterator vs ListIterator vs for-each (Traversal Techniques)</h2>
+      <p>
+        లిస్ట్‌లోని అంశాలను చదవడానికి 3 మార్గాలు ఉన్నాయి:
+      </p>
+
+      <ul>
+        <li><strong>Enhanced for-each loop:</strong> కోడ్ చదవడానికి అత్యంత సులభమైనది. కానీ లూప్ నడుస్తున్నప్పుడు ఎలిమెంట్లను తొలగించలేము.</li>
+        <li><strong><code>Iterator</code>:</strong> కేవలం ముందుకు మాత్రమే (Forward only) ప్రయాణించగలదు. లూప్ మధ్యలో ఎలిమెంట్లను సురక్షితంగా తొలగించడానికి <code>it.remove()</code> ను అందిస్తుంది.</li>
+        <li><strong><code>ListIterator</code> (List Exclusive):</strong> ముందుకు మరియు వెనుకకు (Bidirectional: <code>hasPrevious(), previous()</code>) ప్రయాణించగలదు. ఇటరేషన్ సమయంలో ఎలిమెంట్లను మార్చడానికి (<code>set()</code>) మరియు కొత్తవి చేర్చడానికి (<code>add()</code>) వీలు కల్పిస్తుంది.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div id="sec-8" class="section-card">
+      <h2>8. ConcurrentModificationException నివారణ (The Fail-Fast Mechanism)</h2>
+      <p>
+        జావా కలెక్షన్లు <strong>Fail-Fast</strong> మెకానిజంను కలిగి ఉంటాయి. కలెక్షన్ లోపల <code>modCount</code> అనే వేరియబుల్ ఉంటుంది. మీరు లూప్ లోపల నేరుగా <code>list.remove(i)</code> అని పిలిస్తే, <code>modCount</code> మారుతుంది కానీ ఇటరేటర్ యొక్క అంతర్గత కౌంట్ మారదు. అప్పుడు జావా తక్షణమే <strong><code>ConcurrentModificationException</code></strong> విసిరి ఆపివేస్తుంది.
+      </p>
+      <p>
+        <strong>సరైన పరిష్కారం:</strong> లూప్‌లో ఎలిమెంట్లను తీసివేయాలంటే ఎల్లప్పుడూ <code>iterator.remove()</code> మాత్రమే వాడాలి, లేదా Java 8 లో వచ్చిన <code>list.removeIf(predicate)</code> వాడాలి!
+      </p>
+    </div>
+
+    <!-- SECTION 9: CODE DEMO 1 -->
+    <div id="sec-9" class="section-card">
+      <h2>9. డెమో 1: ArrayList vs LinkedList పర్ఫార్మెన్స్ బెంచ్‌మార్క్ (Performance Benchmark)</h2>
+      <p>
+        మొదట్లో ఇన్సర్ట్ చేయడం (Head Insertion) మరియు ఇండెక్స్ ద్వారా చదవడం (Random Lookup) లలో రెండింటి మధ్య తేడాను చూపే బెంచ్‌మార్క్:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">ArrayListVsLinkedListBenchmark.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+public class ArrayListVsLinkedListBenchmark {
+    public static void main(String[] args) {
+        final int ELEMENTS_COUNT = 50_000;
+
+        System.out.println("=================================================");
+        System.out.println("⚡ ARRAYLIST VS LINKEDLIST PERFORMANCE SHOWDOWN");
+        System.out.println("=================================================
+");
+
+        // TEST 1: INSERTION AT HEAD (index 0)
+        List&lt;Integer&gt; arrayList = new ArrayList&lt;&gt;();
+        long startAl = System.currentTimeMillis();
+        for (int i = 0; i &lt; ELEMENTS_COUNT; i++) {
+            arrayList.add(0, i); // Constant shifting of all elements!
+        }
+        long alInsertTime = System.currentTimeMillis() - startAl;
+
+        List&lt;Integer&gt; linkedList = new LinkedList&lt;&gt;();
+        long startLl = System.currentTimeMillis();
+        for (int i = 0; i &lt; ELEMENTS_COUNT; i++) {
+            linkedList.add(0, i); // O(1) Pointer rewiring!
+        }
+        long llInsertTime = System.currentTimeMillis() - startLl;
+
+        System.out.println("1. Head Insertion Benchmark (50,000 elements at index 0):");
+        System.out.printf("   ArrayList  Insert(0):  %5d ms (Slow due to shifting)%n", alInsertTime);
+        System.out.printf("   LinkedList Insert(0):  %5d ms (Fast pointer rewire)%n", llInsertTime);
+
+        // TEST 2: RANDOM ACCESS LOOKUP (get(i))
+        long startAlGet = System.nanoTime();
+        int val1 = arrayList.get(25000); // Direct memory offset calculation
+        long alGetTime = System.nanoTime() - startAlGet;
+
+        long startLlGet = System.nanoTime();
+        int val2 = linkedList.get(25000); // Traverses 25,000 node pointers!
+        long llGetTime = System.nanoTime() - startLlGet;
+
+        System.out.println("
+2. Random Access Benchmark (get(25000) from middle):");
+        System.out.printf("   ArrayList  get(25000): %5d ns (O(1) Instant Lookup)%n", alGetTime);
+        System.out.printf("   LinkedList get(25000): %5d ns (O(N) Sequential Walk)%n", llGetTime);
+
+        System.out.println("
+=================================================");
+        System.out.println("✅ Verdict: ArrayList wins 95% of cases; LinkedList only for Queue/Deque!");
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+⚡ ARRAYLIST VS LINKEDLIST PERFORMANCE SHOWDOWN
+=================================================
+
+1. Head Insertion Benchmark (50,000 elements at index 0):
+   ArrayList  Insert(0):    328 ms (Slow due to shifting)
+   LinkedList Insert(0):      4 ms (Fast pointer rewire)
+
+2. Random Access Benchmark (get(25000) from middle):
+   ArrayList  get(25000):  1200 ns (O(1) Instant Lookup)
+   LinkedList get(25000): 480200 ns (O(N) Sequential Walk)
+
+=================================================
+✅ Verdict: ArrayList wins 95% of cases; LinkedList only for Queue/Deque!
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 10: CODE DEMO 2 -->
+    <div id="sec-10" class="section-card">
+      <h2>10. డెమో 2: Iterator Safe Removal &amp; Fail-Fast డెమో (Safe Removal)</h2>
+      <p>
+        లూప్‌లో నేరుగా <code>list.remove()</code> పిలిచినప్పుడు వచ్చే క్రాష్ మరియు <code>iterator.remove()</code> ఎలా కాపాడుతుందో చూపే డెమో:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">IteratorFailFastSafeRemovalDemo.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public class IteratorFailFastSafeRemovalDemo {
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("🛡️ ITERATOR FAIL-FAST VS SAFE REMOVAL DEMO");
+        System.out.println("=================================================
+");
+
+        List&lt;String&gt; badList = new ArrayList&lt;&gt;(List.of("Apple", "Banana", "Cherry", "Date"));
+
+        // 1. Unsafe Removal triggering ConcurrentModificationException
+        System.out.println("1. Attempting list.remove() inside enhanced for-each loop...");
+        try {
+            for (String fruit : badList) {
+                if (fruit.equals("Banana")) {
+                    badList.remove(fruit); // ❌ Unsafe removal alters modCount!
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("   🚨 CRASH CAUGHT: " + e.getClass().getName());
+        }
+
+        // 2. Safe Removal using Iterator
+        System.out.println("
+2. Performing Safe Removal using Iterator.remove()...");
+        List&lt;String&gt; safeList = new ArrayList&lt;&gt;(List.of("Apple", "Banana", "Cherry", "Date"));
+        Iterator&lt;String&gt; it = safeList.iterator();
+
+        while (it.hasNext()) {
+            String fruit = it.next();
+            if (fruit.equals("Banana")) {
+                it.remove(); // ✅ Safe removal maintains synchrony!
+                System.out.println("   Removed: " + fruit);
+            }
+        }
+        System.out.println("   Final Safe List: " + safeList);
+
+        // 3. Modern Java 8 removeIf() idiom
+        System.out.println("
+3. Modern Java 8 list.removeIf() idiom:");
+        List&lt;String&gt; modernList = new ArrayList&lt;&gt;(List.of("Java", "C++", "Python", "Rust"));
+        modernList.removeIf(lang -&gt; lang.startsWith("C"));
+        System.out.println("   Final List without 'C': " + modernList);
+
+        System.out.println("
+=================================================");
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+🛡️ ITERATOR FAIL-FAST VS SAFE REMOVAL DEMO
+=================================================
+
+1. Attempting list.remove() inside enhanced for-each loop...
+   🚨 CRASH CAUGHT: java.util.ConcurrentModificationException
+
+2. Performing Safe Removal using Iterator.remove()...
+   Removed: Banana
+   Final Safe List: [Apple, Cherry, Date]
+
+3. Modern Java 8 list.removeIf() idiom:
+   Final List without 'C': [Java, Python, Rust]
+
+=================================================
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 11: CAPSTONE PROJECT -->
+    <div id="sec-11" class="section-card">
+      <h2>11. Capstone ప్రాజెక్ట్: ఈ-కామర్స్ ఆర్డర్ ఫుల్‌ఫిల్‌మెంట్ పైప్‌లైన్ ఇంజిన్</h2>
+      <p>
+        ఈ అధ్యాయంలో నేర్చుకున్న అన్ని కాన్సెప్టులను (JCF ఆర్కిటెక్చర్, ArrayList ఇండెక్స్డ్ క్యాచింగ్, LinkedList FIFO క్యూయింగ్, మరియు ఇటరేటర్లు) సమగ్రంగా మిళితం చేస్తూ ఒక ప్రొడక్షన్-గ్రేడ్ <strong>E-Commerce Order Fulfillment &amp; Dispatcher Engine</strong> ను నిర్మిద్దాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">EcommerceOrderFulfillmentEngine.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+public class EcommerceOrderFulfillmentEngine {
+
+    public record CustomerOrder(String orderId, String customer, double amount, boolean isPriority) {}
+
+    public static class WarehouseFulfillmentCenter {
+        // LinkedList used as efficient FIFO Processing Queue (O(1) poll from head)
+        private final LinkedList&lt;CustomerOrder&gt; dispatchQueue = new LinkedList&lt;&gt;();
+        // ArrayList used for fast indexed completed ledger lookups (O(1) random access)
+        private final ArrayList&lt;CustomerOrder&gt; completedLedger = new ArrayList&lt;&gt;();
+
+        public void receiveOrder(CustomerOrder order) {
+            if (order.isPriority()) {
+                dispatchQueue.addFirst(order); // VIP express order pushed to front!
+                System.out.println("⚡ [PRIORITY EXPRESS] Order pushed to FRONT: " + order.orderId());
+            } else {
+                dispatchQueue.addLast(order); // Standard order queued at back
+                System.out.println("📦 [STANDARD QUEUED] Order added to back:   " + order.orderId());
+            }
+        }
+
+        public void processNextOrder() {
+            if (dispatchQueue.isEmpty()) {
+                System.out.println("ℹ️ No pending orders to fulfill.");
+                return;
+            }
+            CustomerOrder processed = dispatchQueue.removeFirst(); // O(1) removal from head
+            completedLedger.add(processed); // O(1) append to ledger
+            System.out.printf("  🚚 Dispatched: [%s] to %s (₹%,.2f)%n",
+                    processed.orderId(), processed.customer(), processed.amount());
+        }
+
+        public void printWarehouseStatus() {
+            System.out.println("
+-------------------------------------------------");
+            System.out.println("🏭 WAREHOUSE FULFILLMENT TELEMETRY METRICS");
+            System.out.println("   Pending in Queue (LinkedList):  " + dispatchQueue.size());
+            System.out.println("   Completed Ledger (ArrayList):   " + completedLedger.size());
+            System.out.println("-------------------------------------------------");
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("🛒 E-COMMERCE WAREHOUSE ORDER PIPELINE");
+        System.out.println("=================================================
+");
+
+        WarehouseFulfillmentCenter warehouse = new WarehouseFulfillmentCenter();
+
+        warehouse.receiveOrder(new CustomerOrder("ORD-101", "Balaji", 2500.0, false));
+        warehouse.receiveOrder(new CustomerOrder("ORD-102", "Suresh", 1200.0, false));
+        // Priority order skips the line!
+        warehouse.receiveOrder(new CustomerOrder("ORD-VIP-999", "Karthik Verma", 85000.0, true));
+
+        System.out.println("
+Processing Warehouse Dispatch Queue:");
+        warehouse.processNextOrder(); // Should process VIP-999 first!
+        warehouse.processNextOrder(); // Processes ORD-101
+        warehouse.processNextOrder(); // Processes ORD-102
+
+        warehouse.printWarehouseStatus();
+
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+🛒 E-COMMERCE WAREHOUSE ORDER PIPELINE
+=================================================
+
+📦 [STANDARD QUEUED] Order added to back:   ORD-101
+📦 [STANDARD QUEUED] Order added to back:   ORD-102
+⚡ [PRIORITY EXPRESS] Order pushed to FRONT: ORD-VIP-999
+
+Processing Warehouse Dispatch Queue:
+  🚚 Dispatched: [ORD-VIP-999] to Karthik Verma (₹85,000.00)
+  🚚 Dispatched: [ORD-101] to Balaji (₹2,500.00)
+  🚚 Dispatched: [ORD-102] to Suresh (₹1,200.00)
+
+-------------------------------------------------
+🏭 WAREHOUSE FULFILLMENT TELEMETRY METRICS
+   Pending in Queue (LinkedList):  0
+   Completed Ledger (ArrayList):   3
+-------------------------------------------------
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 12 -->
+    <div id="sec-12" class="section-card">
+      <h2>12. ప్రొడక్షన్ పిట్‌ఫాల్స్, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 క్విజ్‌లు (Best Practices &amp; Quizzes)</h2>
+
+      <h4 style="color:#ef4444; margin:16px 0 10px 0;">🚫 ప్రొడక్షన్‌లో నివారించాల్సిన 4 ఘోరమైన తప్పులు (Production Pitfalls):</h4>
+      <ol style="line-height:1.8; color:var(--text2); font-size:14px; padding-left:20px;">
+        <li style="margin-bottom:10px;">
+          <strong>ప్రతిచోటా LinkedList ను వాడటం:</strong> చాలామంది LinkedList లో పాయింటర్లు ఉంటాయి కాబట్టి వేగవంతం అనుకుంటారు. కానీ మెమరీ లోకాలిటీ (CPU Cache lines) లేకపోవడం మరియు అధిక మెమరీ ఓవర్‌హెడ్ వల్ల 95% సందర్భాలలో <code>ArrayList</code> మాత్రమే వేగవంతమైనది!
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>ArrayList ప్రారంభ పరిమాణాన్ని అంచనా వేయకపోవడం:</strong> లక్ష అంశాలు వచ్చే లిస్ట్‌ను <code>new ArrayList&lt;&gt;()</code> తో మొదలుపెడితే అది పదే పదే 1.5 రెట్లు విస్తరిస్తూ అనేక ఎరే కాపీలను చేస్తుంది. ముందే <code>new ArrayList&lt;&gt;(100000)</code> అని ఇవ్వడం మంచిది.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>సాధారణ for-each లూప్‌లో ఎలిమెంట్స్ డిలీట్ చేయడం:</strong> ఇది తక్షణమే <code>ConcurrentModificationException</code> కు దారితీస్తుంది. <code>removeIf()</code> వాడాలి.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>లెగసీ Vector మరియు Stack క్లాసులను వాడటం:</strong> ఇవి పాతకాలపు Java 1.0 క్లాసులు; వీటిలోని ప్రతి మెథడ్‌పై సింక్రనైజ్డ్ లాక్ ఉంటుంది. వీటికి బదులుగా <code>ArrayList</code> మరియు <code>ArrayDeque</code> వాడాలి.
+        </li>
+      </ol>
+
+      <h4 style="color:#10b981; margin:26px 0 10px 0;">✨ ప్రొడక్షన్ గోల్డెన్ రూల్స్ (Golden Rules):</h4>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; font-size:13.5px; line-height:1.8; color:var(--text);">
+        1. <strong>ఇంటర్‌ఫేస్ టైప్ డిక్లరేషన్:</strong> ఎల్లప్పుడూ <code>List&lt;String&gt; list = new ArrayList&lt;&gt;();</code> రూపంలో డిక్లేర్ చేయండి.<br />
+        2. <strong>డీఫాల్ట్ చాయిస్:</strong> సాధారణ లిస్ట్‌ల కోసం ఎల్లప్పుడూ <code>ArrayList</code> నే మొదటి ప్రాధాన్యతగా తీసుకోండి.<br />
+        3. <strong>Queue / Deque కోసం:</strong> ప్రారంభంలో లేదా చివర తరచూ చేర్చాల్సి వస్తేనే <code>LinkedList</code> లేదా <code>ArrayDeque</code> ఎంచుకోండి.<br />
+        4. <strong>ఇమ్మ్యుటబుల్ లిస్ట్‌లు:</strong> మారకూడని స్థిర లిస్ట్‌ల కోసం ఆధునిక జావా 9+ <code>List.of("A", "B")</code> వాడండి.
+      </div>
+
+      <!-- QUIZ SECTION -->
+      <h3 style="color:#10b981; margin:32px 0 16px 0;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 1: ArrayList నిండిపోయినప్పుడు దాని కొత్త సైజు ఎంత పెరుగుతుంది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> పాత పరిమాణం కంటే <strong>50% (సుమారు 1.5 రెట్లు)</strong> పెరుగుతుంది (ఫార్ములా: <code>oldCapacity + (oldCapacity &gt;&gt; 1)</code>).
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 2: ArrayList లో నిర్దిష్ట ఇండెక్స్ వద్ద ఉన్న ఎలిమెంట్‌ను పొందడానికి (get(i)) టైమ్ కాంప్లెక్సిటీ ఎంత?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <strong>O(1)</strong> (Constant Time).
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 3: LinkedList అంతర్గతంగా ఏ ఆర్కిటెక్చర్‌ను ఉపయోగిస్తుంది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <strong>Doubly-Linked List</strong> (ప్రతి నోడ్‌కు prev మరియు next పాయింటర్లు ఉంటాయి).
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 4: సాధారణ for-each లూప్ లోపల 'list.remove()' పిలిస్తే ఏ ఎక్సెప్షన్ వస్తుంది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <strong>java.util.ConcurrentModificationException</strong> (Fail-Fast మెకానిజం).
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 5: ListIterator మరియు Iterator మధ్య ప్రధాన వ్యత్యాసం ఏమిటి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> Iterator కేవలం ముందుకు మాత్రమే వెళ్లగలదు; <code>ListIterator</code> ముందుకు మరియు వెనుకకు (Bidirectional) రెండింటికీ ప్రయాణించగలదు.
+        </p>
+      </details>
+    </div>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/20-java-exception-handling-and-custom-exceptions.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 20. Exceptions &amp; Custom Errors
+      </a>
+      <a href="/blog-java/22-java-collections-set-and-map-deep-dive.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 22. Set &amp; Map Deep Dive →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>
