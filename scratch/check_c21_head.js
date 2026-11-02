@@ -4,3 +4,4 @@ const c21 = fs.readFileSync('public/blog-java/21-java-collections-list-arraylist
 const headIdx = c21.indexOf('<head>');
 const bodyIdx = c21.indexOf('<body');
 console.log(c21.slice(headIdx, bodyIdx));
+

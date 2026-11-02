@@ -10,3 +10,4 @@ if (styleMatch) {
     console.log(`Style tag ${idx + 1} length:`, s.length);
   });
 }
+

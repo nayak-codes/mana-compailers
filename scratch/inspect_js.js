@@ -3,3 +3,4 @@ const js = fs.readFileSync('public/blog-javascript/destructuring-spread.html', '
 const idx = js.indexOf('class="code-block"');
 console.log('--- JS Code Block HTML ---');
 console.log(js.slice(idx, idx + 1000));
+

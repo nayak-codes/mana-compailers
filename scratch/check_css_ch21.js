@@ -4,3 +4,4 @@ const css = fs.readFileSync('public/blog-java/style.css', 'utf8');
   const idx = css.indexOf(sel);
   console.log(sel, idx !== -1 ? css.slice(idx, idx + 150) : 'none');
 });
+

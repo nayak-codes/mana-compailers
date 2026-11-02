@@ -3,3 +3,4 @@ const c21 = fs.readFileSync('public/blog-java/21-java-collections-list-arraylist
 
 const idx = c21.indexOf('code-output');
 console.log(c21.slice(idx - 20, idx + 400));
+
