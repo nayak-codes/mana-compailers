@@ -892,3 +892,4 @@ fs.writeFileSync(outputPath, chapter05Content, 'utf8');
 console.log('✅ Successfully generated deep high-value Python Chapter 05 in exact HTML style!');
 console.log('Target file:', currentLesson.file);
 console.log('Target file size:', chapter05Content.length, 'characters');
+

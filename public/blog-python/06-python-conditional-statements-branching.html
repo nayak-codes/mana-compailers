@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>డెసిషన్ మేకింగ్ (if, elif, else & match-case) — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Python 3 డెసిషన్ మేకింగ్ & కండిషనల్ స్టేట్‌మెంట్స్ సమగ్ర తెలుగు గైడ్: if, if-else, if-elif-else లాడర్, నెస్టెడ్ కండిషన్స్, టెర్నరీ ఆపరేటర్ (Ternary Operator), Modern Python 3.10+ Structural Pattern Matching (match-case), Guard Clauses, మరియు Automated Loan KYC & Risk Engine ప్రాజెక్ట్." />
+  <meta name="keywords" content="python if else in telugu, python decision making telugu, python match case telugu, structural pattern matching python telugu, python ternary operator, learn python in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/06-python-conditional-statements-branching.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-python/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "డెసిషన్ మేకింగ్ (if, elif, else & match-case) (Complete Guide to Python Decision Making, if-else and match-case in Telugu)",
+    "description": "Python 3 డెసిషన్ మేకింగ్ పూర్తి గైడ్: if, elif, else, Nested Conditions, Guard Clauses, Ternary Operator, Modern Python 3.10+ match-case, మరియు Automated Loan Approval & KYC Engine.",
+    "articleSection": "Phase 02: కంట్రోల్ ఫ్లో, లూప్స్ & స్ట్రింగ్స్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-01-20",
+    "dateModified": "2026-11-02"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Compiler Integration -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___PY_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|f?"[^"\\]*(?:\\.[^"\\]*)*"|f?'[^'\\]*(?:\\.[^'\\]*)*'|r"[^"\\]*(?:\\.[^"\\]*)*"|r'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'import','from','as','def','return','class','if','elif','else','while','for','in',
+        'break','continue','pass','try','except','finally','with','lambda','global','nonlocal',
+        'and','or','not','is','yield','async','await','raise','assert','True','False','None',
+        'match','case'
+      ];
+      const kwRegex = new RegExp('\\b(' + kwList.join('|') + ')\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'print','len','range','type','isinstance','id','input','int','float','str','list',
+        'dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted',
+        'abs','open','help','dir','filter','bool'
+      ];
+      const fnRegex = new RegExp('\\b(' + fnList.join('|') + ')\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('num', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split('___PY_TOK_' + idx + '___').join(tok);
+      });
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code.language-python').forEach(block => {
+        block.innerHTML = highlightPythonCode(block.innerText);
+      });
+    });
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      const code = pre.innerText;
+      try {
+        localStorage.setItem('code_python', code);
+        localStorage.setItem('code_python3', code);
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+      window.open('/online-python-compiler.html', '_blank');
+    }
+  </script>
+</head>
+
+<body class="lang-python light-theme">
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+  <!-- LEFT SIDEBAR ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Python 3 Master Course (తెలుగు)</div>
+    <a href="/blog-python.html" class="sidebar-home-link">🐍 Python Course HOME (ఇండెక్స్)</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">పైథాన్ ఫండమెంటల్స్ & బేసిక్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/01-python-introduction-features-and-setup.html">1. పైథాన్ పరిచయం, ఫీచర్లు & ఎన్విరాన్‌మెంట్ సెటప్</a>
+        <a href="/blog-python/02-python-syntax-indentation-and-comments.html">2. సింటాక్స్, ఇండెంటేషన్ & కామెంట్స్</a>
+        <a href="/blog-python/03-python-variables-data-types-and-naming.html">3. వేరియబుల్స్, డేటా టైప్స్ & టైప్ కాస్టింగ్</a>
+        <a href="/blog-python/04-python-input-output-formatting.html">4. ఇన్‌పుట్ & అవుట్‌పుట్ ఫార్మాటింగ్ (print, input & f-strings)</a>
+        <a href="/blog-python/05-python-operators-and-expressions.html">5. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్</a>
+      </div>
+
+      <!-- Phase 02 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో, లూప్స్ & స్ట్రింగ్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-python/06-python-conditional-statements-branching.html" class="active">6. డెసిషన్ మేకింగ్ (if, elif, else & match-case)</a>
+        <a href="/blog-python/07-python-loops-while-and-for.html">7. లూప్స్ — while & for లూప్స్</a>
+        <a href="/blog-python/08-python-loop-control-break-continue-else.html">8. లూప్ కంట్రోల్ — break, continue, pass & else</a>
+        <a href="/blog-python/09-python-strings-deep-dive-slicing.html">9. స్ట్రింగ్స్ డీప్ డైవ్ & స్లైసింగ్ (String Mastery)</a>
+        <a href="/blog-python/10-python-regular-expressions-regex.html">10. రెగ్యులర్ ఎక్స్‌ప్రెషన్స్ (Regex & Pattern Matching)</a>
+      </div>
+
+      <!-- Phase 03 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">డేటా స్ట్రక్చర్స్ & కలెక్షన్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/11-python-lists-and-comprehensions.html">11. లిస్ట్స్ (Lists) & లిస్ట్ కాంప్రహెన్షన్స్</a>
+        <a href="/blog-python/12-python-tuples-and-immutability.html">12. టుపుల్స్ (Tuples) & ఇమ్మ్యుటబిలిటీ</a>
+        <a href="/blog-python/13-python-dictionaries-deep-dive.html">13. డిక్షనరీలు (Dictionaries) & డిక్ట్ కాంప్రహెన్షన్స్</a>
+        <a href="/blog-python/14-python-sets-and-operations.html">14. సెట్స్ (Sets) & సెట్ మ్యాథమెటికల్ ఆపరేషన్స్</a>
+        <a href="/blog-python/15-python-collections-advanced-structures.html">15. కలెక్షన్స్ మాడ్యూల్ & అడ్వాన్స్‌డ్ డేటా స్ట్రక్చర్స్</a>
+      </div>
+
+      <!-- Phase 04 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">ఫంక్షన్స్, మాడ్యూల్స్ & ఫైల్ I/O</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/16-python-functions-fundamentals.html">16. ఫంక్షన్స్ ఫండమెంటల్స్ & ఆర్గ్యుమెంట్స్</a>
+        <a href="/blog-python/17-python-args-kwargs-variable-scope.html">17. వేరియబుల్ ఆర్గ్యుమెంట్స్ & స్కోప్ (*args, **kwargs & LEGB)</a>
+        <a href="/blog-python/18-python-lambda-recursion-functional.html">18. ల్యాంబ్డా, రికర్షన్ & ఫంక్షనల్ ప్రోగ్రామింగ్</a>
+        <a href="/blog-python/19-python-modules-packages-and-pip.html">19. మాడ్యూల్స్, ప్యాకేజీలు & వర్చువల్ ఎన్విరాన్‌మెంట్స్</a>
+        <a href="/blog-python/20-python-file-handling-and-json.html">20. ఫైల్ హ్యాండ్లింగ్, CSV & JSON ప్రాసెసింగ్</a>
+      </div>
+
+      <!-- Phase 05 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">OOP, ఎక్సెప్షన్స్ & ప్రాజెక్ట్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/21-python-exception-handling.html">21. ఎక్సెప్షన్ హ్యాండ్లింగ్ & కస్టమ్ ఎర్రర్స్</a>
+        <a href="/blog-python/22-python-oop-classes-and-objects.html">22. OOP బేసిక్స్ — క్లాసెస్, ఆబ్జెక్ట్స్ & __init__</a>
+        <a href="/blog-python/23-python-oop-inheritance-polymorphism.html">23. OOP పిల్లర్స్ — ఇన్హెరిటెన్స్, ఎన్‌క్యాప్సులేషన్ & పాలిమార్ఫిజమ్</a>
+        <a href="/blog-python/24-python-decorators-generators-dunder.html">24. అడ్వాన్స్‌డ్ పైథాన్ — డెకరేటర్లు, జెనరేటర్లు & డండర్ మెథడ్స్</a>
+        <a href="/blog-python/25-python-capstone-project.html">25. గ్రాండ్ ఫినాలే: రియల్-వరల్డ్ పైథాన్ క్యాప్‌స్టోన్ ప్రాజెక్ట్</a>
+      </div>
+
+    </div>
+
+    <div style="margin-top:24px; padding:16px; background:var(--bg2); border:1px solid var(--border); border-radius:10px; font-size:12px; text-align:center;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:4px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+      <a href="/online-python-compiler.html" style="color:var(--text); text-decoration:none; font-weight:600; display:inline-block; margin-top:6px; background:rgba(16,185,129,0.12); padding:6px 12px; border-radius:6px; border:1px solid rgba(16,185,129,0.3);">
+        ▶ Try Online Python Compiler
+      </a>
+      <a href="/blog.html" style="color:var(--text2); text-decoration:none; display:block; margin-top:8px;">
+        📁 All Tutorials Index
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="content">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a>
+      <span class="sep">›</span>
+      <a href="/blog-python.html">Python Masterclass</a>
+      <span class="sep">›</span>
+      <span>Chapter 6: డెసిషన్ మేకింగ్ (if, elif, else & match-case)</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">డెసిషన్ మేకింగ్ (if, elif, else & match-case)</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge badge-tech">🐍 Modern Python (Python 3.12+)</span>
+      <span class="badge badge-chapter">🎯 Chapter 6 of 25</span>
+      <span class="badge badge-phase">⚙️ Phase 02: కంట్రోల్ ఫ్లో, లూప్స్ &amp; స్ట్రింగ్స్</span>
+      <span class="badge badge-edition">📅 2026 Edition</span>
+    </div>
+
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin-bottom:24px; font-size:13px; line-height:1.7;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span style="color:var(--text2); margin-left:6px;">
+        కంట్రోల్ ఫ్లో &amp; బ్రాంచింగ్ · if, if-else, if-elif-else లాడర్ · Truth Value Testing · నెస్టెడ్ కండిషన్స్ &amp; గార్డ్ క్లాజులు (Guard Clauses) · సింగిల్-లైన్ టెర్నరీ ఆపరేటర్ · Modern Python 3.10+ Pattern Matching (match-case) · కేస్ గార్డ్స్ &amp; వైల్డ్‌కార్డ్స్ · Automated Loan KYC &amp; Risk Engine ప్రాజెక్ట్!
+      </span>
+    </div>
+
+    <!-- INTRO BOX (Warm Soft Ivory HTML5 Style) -->
+    <div class="intro-box">
+      కంప్యూటర్ కేవలం లెక్కలు చేసే క్యాలిక్యులేటర్ మాత్రమే కాదు; ఒక పరిస్థితిని విశ్లేషించి, సరైన నిర్ణయాన్ని తీసుకునే సామర్థ్యం ఉన్నప్పుడే అది నిజమైన ఇంటెలిజెంట్ సాఫ్ట్‌వేర్ అవుతుంది.
+      సాధారణంగా ప్రోగ్రామ్‌లు పైనుండి క్రిందికి వరుసగా (Sequentially) రన్ అవుతాయి. కానీ కొన్ని నిర్దిష్ట పరిస్థితుల ఆధారంగా ఏ కోడ్ నడవాలో, ఏ కోడ్‌ను దాటవేయాలో నిర్ణయించే ప్రక్రియనే <strong>డెసిషన్ మేకింగ్ లేదా కంట్రోల్ ఫ్లో (Control Flow &amp; Branching)</strong> అంటారు.
+      పైథాన్‌లో <code>if</code>, <code>elif</code>, <code>else</code> స్టేట్‌మెంట్‌లు ఇండెంటేషన్ ఆధారంగా ఎంతో స్వచ్ఛంగా ఉండటమే కాకుండా, Python 3.10 లో వచ్చిన గేమ్-చేంజర్ <strong>Structural Pattern Matching (match-case)</strong> ఇతర భాషల్లోని సాంప్రదాయ <code>switch</code> స్టేట్‌మెంట్ కంటే ఎన్నో రెట్లు శక్తివంతమైన ఆప్షన్లను అందిస్తుంది.
+      ఈ ఆరవ అధ్యాయంతో మనం <strong>Phase 02: కంట్రోల్ ఫ్లో, లూప్స్ &amp; స్ట్రింగ్స్</strong> ను అద్భుతంగా ప్రారంభిస్తూ — పూర్తి స్థాయి <strong>Automated Banking Loan Approval &amp; KYC Risk Engine</strong> ప్రాజెక్ట్ ద్వారా డెసిషన్ మేకింగ్‌పై పూర్తి ఆధిపత్యం సాధిద్దాం!
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 class="section-title"><span class="num">1</span> కంట్రోల్ ఫ్లో &amp; డెసిషన్ మేకింగ్ ఆర్కిటెక్చర్ (Control Flow &amp; Branching)</h2>
+    <p>
+      సాధారణ పైథాన్ స్క్రిప్ట్ లైన్ 1 నుండి మొదలై వరుసగా ఆఖరి లైన్ వరకు వెళ్తుంది. దీనిని <strong>సీక్వెన్షియల్ ఎగ్జిక్యూషన్ (Sequential Execution)</strong> అంటారు.
+      కానీ వాస్తవ ప్రపంచంలో యూజర్ సరైన పాస్‌వర్డ్ కొట్టాడా? అకౌంట్‌లో తగినంత డబ్బు ఉందా? లాంటి ప్రశ్నల ఆధారంగా ప్రోగ్రామ్ మార్గం మారాలి.
+      దీనినే <strong>కండిషనల్ బ్రాంచింగ్ (Conditional Branching)</strong> అంటారు.
+    </p>
+
+    <!-- ARCHITECTURE DIAGRAM -->
+    <div style="background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:20px; margin:20px 0; color:#e2e8f0; font-family:'JetBrains Mono', monospace; font-size:13px; overflow-x:auto;">
+<span style="color:#38bdf8; font-weight:700;">[పైథాన్ డెసిషన్ మేకింగ్ కంట్రోల్ ఫ్లో ఆర్కిటెక్చర్]</span>
+
+               ┌──────────────────────────┐
+               │    ప్రోగ్రామ్ ప్రారంభం   │
+               └────────────┬─────────────┘
+                            │
+                            ▼
+                    ╱───────────────╲
+                   ╱   కండిషన్ True? ╲────────────┐
+                   ╲                 ╱            │ (ఒకవేళ True అయితే)
+                    ╲───────────────╱             ▼
+                            │             ┌───────────────┐
+                            │ (False)     │  True బ్లాక్  │
+                            ▼             │ కోడ్ ఎగ్జిక్యూట్│
+                    ┌───────────────┐     └───────┬───────┘
+                    │  False బ్లాక్ │             │
+                    │ కోడ్ ఎగ్జిక్యూట్│             │
+                    └───────┬───────┘             │
+                            │                     │
+                            └──────────┬──────────┘
+                                       ▼
+                         ┌──────────────────────────┐
+                         │   తర్వాతి ప్రోగ్రామ్ ఫ్లో │
+                         └──────────────────────────┘
+    </div>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:8px;">💡 పైథాన్ Truth Value Testing (Truthiness) నియమాలు:</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        పైథాన్‌లో <code>if condition:</code> అని రాసినప్పుడు, ఆ కండిషన్ కేవలం బూలియన్ (<code>True/False</code>) మాత్రమే కానవసరం లేదు! 
+        ఏదైనా ఆబ్జెక్ట్ <strong>Falsy</strong> (<code>0</code>, <code>""</code>, <code>[]</code>, <code>{}</code>, <code>None</code>, <code>False</code>) అయితే ఫాల్స్ బ్రాంచ్‌కు వెళ్తుంది; ఏవైనా విలువలు ఉన్న ఆబ్జెక్ట్ <strong>Truthy</strong> అయి ట్రూ బ్రాంచ్‌కు వెళ్తుంది.
+      </p>
+    </div>
+
+    <!-- SECTION 2 -->
+    <h2 class="section-title"><span class="num">2</span> సింపుల్ <code>if</code> స్టేట్‌మెంట్ — సింటాక్స్ &amp; ఇండెంటేషన్ నియమాలు</h2>
+    <p>
+      ఒక నిర్దిష్ట షరతు నిజమైనప్పుడు మాత్రమే ఒక పని జరగాలి అనుకున్నప్పుడు సింపుల్ <code>if</code> స్టేట్‌మెంట్‌ను ఉపయోగిస్తాము:
+    </p>
+
+    <div style="background:#0f172a; padding:14px 20px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#38bdf8; margin:14px 0;">
+      if condition:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;# కండిషన్ True అయినప్పుడు మాత్రమే రన్ అయ్యే కోడ్ (4 spaces indentation)<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;statement_1<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;statement_2
+    </div>
+
+    <p>
+      <strong>ముఖ్యమైన నియమాలు:</strong>
+    </p>
+    <ul>
+      <li>షరతు చివరలో తప్పనిసరిగా <strong>కోలన్ <code>:</code></strong> పెట్టాలి.</li>
+      <li>C/C++/Java లలో లాగా కర్లీ బ్రేసెస్ <code>{}</code> ఉండవు; లోపలి కోడ్ బ్లాక్‌ను గుర్తించడానికి <strong>కచ్చితంగా 4 స్పేస్‌ల ఇండెంటేషన్</strong> ఉండాలి.</li>
+      <li>ఒకవేళ కండిషన్ False అయితే, ఆ ఇండెంటెడ్ బ్లాక్ మొత్తం దాటవేయబడి ప్రోగ్రామ్ తర్వాతి లైన్‌కు వెళ్లిపోతుంది.</li>
+    </ul>
+
+    <!-- SECTION 3 -->
+    <h2 class="section-title"><span class="num">3</span> <code>if-else</code> స్టేట్‌మెంట్ — ద్వంద్వ మార్గాల నియంత్రణ (Two-Way Branching)</h2>
+    <p>
+      ఒక షరతు నిజమైతే ఒక పని, అబద్ధమైతే మరొక పని చేయవలసి వచ్చినప్పుడు <strong><code>if-else</code></strong> జంటను వాడతాము:
+    </p>
+
+    <div style="background:#0f172a; padding:14px 20px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#38bdf8; margin:14px 0;">
+      if balance &gt;= withdrawal_amount:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;balance -= withdrawal_amount<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;print("✅ నగదు విత్‌డ్రా విజయవంతమైంది!")<br/>
+      else:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;print("❌ ఖాతాలో తగినంత నగదు నిల్వ లేదు (Insufficient Balance)!")
+    </div>
+
+    <p>
+      ఇక్కడ <code>if</code> బ్లాక్ లేదా <code>else</code> బ్లాక్ — ఈ రెండింటిలో ఏదో <strong>ఒక్కటి మాత్రమే</strong> ఎగ్జిక్యూట్ అవుతుంది; రెండూ ఒకేసారి రన్ అవ్వడం అసాధ్యం.
+    </p>
+
+    <!-- SECTION 4 -->
+    <h2 class="section-title"><span class="num">4</span> <code>if-elif-else</code> లాడర్ — బహుళ షరతుల తనిఖీ (Multi-Way Branching)</h2>
+    <p>
+      రెండు కంటే ఎక్కువ ఎంపికలు లేదా విభిన్న పరిస్థితులను వరుసగా తనిఖీ చేయాల్సి వచ్చినప్పుడు <strong><code>elif</code> (Else-If సంక్షిప్త రూపం)</strong> లాడర్‌ను ఉపయోగిస్తాము:
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>స్టేట్‌మెంట్</th>
+            <th>ఎప్పుడు ఎగ్జిక్యూట్ అవుతుంది?</th>
+            <th>పరిమితి</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>if condition_1:</code></td>
+            <td>మొదటి షరతును పరీక్షిస్తుంది.</td>
+            <td>తప్పనిసరిగా మొదట్లో ఒక్కటే ఉండాలి.</td>
+          </tr>
+          <tr>
+            <td><code>elif condition_2:</code></td>
+            <td>మునుపటి షరతులు ఫెయిల్ అయి, ఈ షరతు ట్రూ అయినప్పుడు.</td>
+            <td>ఎన్నైనా <code>elif</code> బ్లాక్‌లను అమర్చుకోవచ్చు.</td>
+          </tr>
+          <tr>
+            <td><code>else:</code></td>
+            <td>పైనున్న ఏ ఒక్క షరతు కూడా నిజం కానప్పుడు (డిఫాల్ట్ ఫాల్‌బ్యాక్).</td>
+            <td>ఐచ్ఛికం (Optional), చివరలో ఒక్కటే ఉండాలి.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #ef4444; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#ef4444; margin-bottom:8px;">⚠️ కండిషన్ల క్రమం (Order of Conditions) ఎందుకు అత్యంత ముఖ్యం?</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        పైథాన్ పైనుండి క్రిందికి ఒక్కొక్క కండిషన్‌ను మాత్రమే పరీక్షిస్తుంది. <strong>మొదటి ఏ కండిషన్ అయితే True అవుతుందో, ఆ బ్లాక్‌ను రన్ చేసి వెంటనే మొత్తం <code>if-elif-else</code> లాడర్ నుండి బయటకు వచ్చేస్తుంది!</strong>
+        కింద ఉన్న మిగిలిన <code>elif</code> కండిషన్లు True అయినప్పటికీ వాటిని పైథాన్ అస్సలు పరీక్షించదు. కాబట్టి ఎల్లప్పుడూ అత్యంత నిర్దిష్టమైన (Most specific) షరతులను పైన, సాధారణ షరతులను క్రింద రాయాలి.
+      </p>
+    </div>
+
+    <!-- SECTION 5 -->
+    <h2 class="section-title"><span class="num">5</span> కోడ్ డెమో 1: if-elif-else ఆధారిత స్టూడెంట్ గ్రేడింగ్ &amp; స్కాలర్‌షిప్</h2>
+    <p>
+      విద్యార్థి మార్కుల ఆధారంగా గ్రేడ్ కేటాయించడం మరియు స్కాలర్‌షిప్ అర్హతను నిర్ణయించే పూర్తి కోడ్‌ను పరిశీలించండి:
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">01_student_grading_scholarship.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># స్టూడెంట్ గ్రేడింగ్ & స్కాలర్‌షిప్ కాలిక్యులేటర్ డెమో
+
+student_name = "సాయి తేజ"
+marks = 88.5
+annual_income = 240000 # వార్షిక ఆదాయం
+
+print("=" * 55)
+print(f"విద్యార్థి పేరు : {student_name}")
+print(f"పొందిన మార్కులు : {marks}%")
+print("=" * 55)
+
+# 1. if-elif-else లాడర్ ద్వారా గ్రేడ్ నిర్ణయం
+if marks >= 90:
+    grade = "A+ (Out Standing)"
+    gpa = 10.0
+elif marks >= 80:
+    grade = "A (Excellent)"
+    gpa = 9.0
+elif marks >= 70:
+    grade = "B (Good)"
+    gpa = 8.0
+elif marks >= 60:
+    grade = "C (Average)"
+    gpa = 7.0
+elif marks >= 35:
+    grade = "D (Pass)"
+    gpa = 5.0
+else:
+    grade = "F (Failed)"
+    gpa = 0.0
+
+print(f"ఫలితం గ్రేడ్  : {grade}")
+print(f"గ్రేడ్ పాయింట్లు : {gpa} GPA")
+
+# 2. స్కాలర్‌షిప్ కోసం లాజికల్ కండిషన్స్
+if marks >= 80 and annual_income <= 300000:
+    scholarship_amount = 50000.00
+    print(f"స్కాలర్‌షిప్   : అర్హత ఉంది! మంజూరైన మొత్తం: ₹ {scholarship_amount:,.2f}")
+elif marks >= 70 and annual_income <= 150000:
+    scholarship_amount = 25000.00
+    print(f"స్కాలర్‌షిప్   : అర్హత ఉంది! మంజూరైన మొత్తం: ₹ {scholarship_amount:,.2f}")
+else:
+    print("స్కాలర్‌షిప్   : ఈ కేటగిరీలో స్కాలర్‌షిప్ వర్తించదు.")
+print("=" * 55)
+</code></pre>
+    </div>
+
+    <!-- SECTION 6 -->
+    <h2 class="section-title"><span class="num">6</span> నెస్టెడ్ కండిషన్స్ (Nested if-else) &amp; గార్డ్ క్లాజులు (Guard Clauses)</h2>
+    <p>
+      ఒక <code>if</code> లేదా <code>else</code> బ్లాక్ లోపల మరొక <code>if-else</code> ను ఉంచడాన్ని <strong>నెస్టెడ్ కండిషన్ (Nested if-else)</strong> అంటారు.
+      ఉదాహరణకు యూజర్ లాగిన్ అయ్యాడా? లాగిన్ అయితే అడ్మిన్ రోల్ ఉందా? అడ్మిన్ అయితే సూపర్-అడ్మిన్ పర్మిషన్స్ ఉన్నాయా? లాంటి సందర్భాలలో ఇది అవసరం అవుతుంది.
+    </p>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #f59e0b; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#f59e0b; margin-bottom:8px;">⚠️ ది పిరమిడ్ ఆఫ్ డూమ్ (Arrow Anti-Pattern) నివారించండి:</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:8px;">
+        చాలామంది బిగినర్స్ 4-5 స్థాయిల వరకు నెస్టెడ్ <code>if</code> లని లోపలికి తోసుకుంటూ పోతారు. దీనివల్ల కోడ్ చదవడం నరకంగా మారుతుంది (Pyramid of Doom).
+      </p>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        <strong>ప్రొడక్షన్ సొల్యూషన్ — గార్డ్ క్లాజులు (Guard Clauses / Return Early):</strong>
+        <br/>చెల్లని లేదా ఎర్రర్ పరిస్థితులను మొదట్లోనే చెక్ చేసి వెంటనే <code>return</code> లేదా <code>raise</code> చేయడం ద్వారా కోడ్‌ను ఫ్లాట్‌గా ఉంచవచ్చు!
+      </p>
+    </div>
+
+    <!-- SECTION 7 -->
+    <h2 class="section-title"><span class="num">7</span> సింగిల్-లైన్ టెర్నరీ ఆపరేటర్ (Conditional Expressions)</h2>
+    <p>
+      చిన్న చిన్న నిర్ణయాల కోసం 4 లైన్ల <code>if-else</code> బ్లాక్ రాయకుండా, ఒకే లైన్‌లో ఫలితాన్ని వేరియబుల్‌కు అసైన్ చేయడానికి పైథాన్‌లో <strong>కండిషనల్ ఎక్స్‌ప్రెషన్ (Ternary Operator)</strong> ఉంది:
+    </p>
+
+    <div style="background:#0f172a; padding:14px 20px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#38bdf8; margin:14px 0;">
+      variable = value_if_true if condition else value_if_false
+    </div>
+
+    <p>
+      C, C++, Java లేదా JavaScript లో <code>condition ? val1 : val2</code> లాగా పనిచేస్తుంది.
+      ఉదాహరణలు:
+    </p>
+    <ul>
+      <li><code>status = "మేజర్" if age &gt;= 18 else "మైనర్"</code></li>
+      <li><code>shipping_fee = 0.0 if cart_total &gt;= 500 else 40.0</code></li>
+      <li><code>user_badge = "👑 VIP" if is_premium else "🌱 Standard"</code></li>
+    </ul>
+
+    <!-- SECTION 8 -->
+    <h2 class="section-title"><span class="num">8</span> Modern Python 3.10+ Pattern Matching (match-case)</h2>
+    <p>
+      Python 3.10 లో ప్రవేశపెట్టబడిన అత్యంత శక్తివంతమైన ఆధునిక ఫీచర్ <strong>Structural Pattern Matching (PEP 634)</strong>.
+      ఇతర భాషల్లోని <code>switch-case</code> కంటే ఇది ఎన్నో రెట్లు ఉన్నతమైనది. ఎందుకంటే ఇది కేవలం సంఖ్యలను మాత్రమే కాకుండా డేటా స్ట్రక్చర్ల ఆకారాన్ని (Shapes, Tuples, Dictionaries) కూడా మ్యాచ్ చేస్తుంది!
+    </p>
+
+    <div style="background:#0f172a; padding:14px 20px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.7;">
+      match http_status:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;case 200:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("✅ విజయవంతమైంది (OK)")<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;case 400 | 404:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("❌ క్లయింట్ ఎర్రర్ (Bad Request or Not Found)")<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;case 500:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("🔥 సర్వర్ ఇంటర్నల్ ఎర్రర్")<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;case _: # వైల్డ్‌కార్డ్ (ఇతర భాషల్లో default కేస్ లాంటిది)<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(f"⚠️ తెలియని స్థితి కోడ్: {http_status}")
+    </div>
+
+    <!-- SECTION 9 -->
+    <h2 class="section-title"><span class="num">9</span> అడ్వాన్స్‌డ్ match-case: కేస్ గార్డ్స్ (if) &amp; సీక్వెన్స్ అన్‌ప్యాకింగ్</h2>
+    <p>
+      <code>match-case</code> యొక్క అసలైన సూపర్-పవర్ ఏమిటంటే ప్యాటర్న్ మ్యాచ్‌తో పాటు అదనపు షరతులను (Guard Conditions) జోడించగలగడం:
+    </p>
+
+    <ul>
+      <li><strong>పైప్ ఆపరేటర్ (<code>|</code> - Multiple matches):</strong> ఒకే పని కోసం బహుళ విలువలను కలపవచ్చు (ఉదా: <code>case "GET" | "POST":</code>).</li>
+      <li><strong>కేస్ గార్డ్స్ (<code>case ... if condition:</code>):</strong> మ్యాచ్ అయిన వేరియబుల్‌పై షరతు పెట్టడం:
+        <br/><code>case [x, y] if x == y: print("రెండు కోఆర్డినేట్స్ సమానం!")</code>
+      </li>
+      <li><strong>సీక్వెన్స్ అన్‌ప్యాకింగ్:</strong> కమాండ్ లెంత్ మరియు డేటాను ఒకేసారి విడగొట్టడం:
+        <br/><code>case ["move", direction, steps]: print(f"{direction} వైపు {steps} అడుగులు వెళ్లు")</code>
+      </li>
+      <li><strong>డిక్షనరీ ప్యాటర్న్ మ్యాచింగ్:</strong> నిర్దిష్ట కీస్ ఉన్నాయా లేదా అని తనిఖీ చేయడం:
+        <br/><code>case {"role": "admin", "active": True}: grant_root_access()</code>
+      </li>
+    </ul>
+
+    <!-- SECTION 10 -->
+    <h2 class="section-title"><span class="num">10</span> కోడ్ డెమో 2: Structural Pattern Matching &amp; API రెస్పాన్స్ హ్యాండ్లర్</h2>
+    <p>
+      ఆధునిక క్లౌడ్ మైక్రోసర్వీసెస్ API రెస్పాన్స్‌లను <code>match-case</code> ద్వారా ఎంత అందంగా మరియు క్లీన్‌గా హ్యాండిల్ చేయవచ్చో క్రింది కోడ్‌లో చూడండి:
+    </p>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">02_structural_pattern_matching.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># పైథాన్ 3.10+ Structural Pattern Matching డెమో
+
+def handle_cloud_api_event(event: dict):
+    """
+    వివిధ రకాల API ఈవెంట్‌లను ప్యాటర్న్ మ్యాచింగ్ ద్వారా ప్రాసెస్ చేస్తుంది.
+    """
+    match event:
+        # 1. సక్సెస్ రెస్పాన్స్ ప్యాటర్న్
+        case {"status": 200, "data": payload}:
+            print(f"✅ డేటా విజయవంతంగా అందింది: {payload}")
+
+        # 2. రీడైరెక్ట్ ప్యాటర్న్
+        case {"status": 301 | 302, "location": target_url}:
+            print(f"🔀 కొత్త URL కు రీడైరెక్ట్ చేయబడుతోంది: {target_url}")
+
+        # 3. రేట్ లిమిట్ గార్డ్ కండిషన్ (if retry_after)
+        case {"status": 429, "retry_after": seconds} if seconds > 60:
+            print(f"🛑 తీవ్రమైన రేట్ లిమిట్! {seconds} సెకన్ల పాటు సిస్టమ్ వేచి ఉంటుంది.")
+
+        case {"status": 429, "retry_after": seconds}:
+            print(f"⚠️ చిన్నపాటి వేచింపు: {seconds} సెకన్లలో మళ్లీ ప్రయత్నించండి.")
+
+        # 4. సర్వర్ ఎర్రర్
+        case {"status": 500 | 502 | 503, "error": err_msg}:
+            print(f"🔥 సర్వర్ డౌన్ అయ్యింది! ఎర్రర్: {err_msg}")
+
+        # 5. తెలియని ఏదైనా ఈవెంట్ (Default Wildcard)
+        case _:
+            print(f"❓ సరిపోలని గుర్తుతెలియని ఈవెంట్ ఫార్మాట్: {event}")
+
+# టెస్ట్ ఈవెంట్స్ రన్
+events = [
+    {"status": 200, "data": {"user_id": 901, "name": "బాలాజీ"}},
+    {"status": 429, "retry_after": 120},
+    {"status": 429, "retry_after": 15},
+    {"status": 500, "error": "Database connection timeout"}
+]
+
+for ev in events:
+    handle_cloud_api_event(ev)
+</code></pre>
+    </div>
+
+    <!-- SECTION 11 -->
+    <h2 class="section-title"><span class="num">11</span> డెసిషన్ మేకింగ్ ఆప్టిమైజేషన్: if-elif vs Dictionary vs match-case</h2>
+    <p>
+      పెద్ద ఎంటర్‌ప్రైజ్ అప్లికేషన్లలో వేలాది కండిషన్లను తనిఖీ చేయాల్సి వచ్చినప్పుడు ఏ విధానాన్ని ఎంచుకోవాలి?
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>విధానం (Approach)</th>
+            <th>టైమ్ కాంప్లెక్సిటీ</th>
+            <th>ఉత్తమ ఉపయోగ సందర్భం</th>
+            <th>ప్రయోజనాలు &amp; పరిమితులు</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><code>if-elif-else</code> లాడర్</strong></td>
+            <td>$O(N)$ లీనియర్</td>
+            <td>రేంజెస్ (ఉదా: <code>80 &lt;= score &lt;= 100</code>) మరియు విభిన్న వేరియబుల్స్ ఉన్నప్పుడు.</td>
+            <td>చాలా సులభం, కానీ 20+ కంటే ఎక్కువ కండిషన్లు ఉంటే నెమ్మదిస్తుంది.</td>
+          </tr>
+          <tr>
+            <td><strong>డిక్షనరీ డిస్పాచ్ (Dict Dispatch)</strong></td>
+            <td>$O(1)$ కాన్‌స్టాంట్</td>
+            <td>ఫిక్స్‌డ్ కమాండ్స్ లేదా కీస్ ఆధారంగా ఫంక్షన్లను పిలవడానికి.</td>
+            <td>అత్యంత వేగవంతమైనది, కానీ కాంప్లెక్స్ రేంజ్ చెక్స్ చేయలేదు.</td>
+          </tr>
+          <tr>
+            <td><strong>Modern <code>match-case</code></strong></td>
+            <td>ఆప్టిమైజ్డ్ బైట్‌కోడ్</td>
+            <td>స్ట్రక్చర్డ్ డేటా (JSON, Tuples, Objects) ను అన్‌ప్యాక్ చేయడానికి.</td>
+            <td>క్లీన్ రీడబిలిటీ మరియు టైప్-సేఫ్ గార్డ్స్ లభిస్తాయి.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 12 -->
+    <h2 class="section-title"><span class="num">12</span> కామన్ బిగినర్స్ మిస్టేక్స్ &amp; ప్రొడక్షన్ బెస్ట్ ప్రాక్టీసెస్</h2>
+    <ul>
+      <li><strong>Mistake 1: <code>if x == True:</code> అని అనవసరంగా రాయడం:</strong> పైథాన్‌లో బూలియన్లను సరిపోల్చడానికి <code>== True</code> రాయకూడదు. నేరుగా <strong><code>if x:</code></strong> అని రాయడమే సరైన శైలి.</li>
+      <li><strong>Mistake 2: కోలన్ <code>:</code> మరియు ఇండెంటేషన్ మర్చిపోవడం:</strong> <code>if</code>, <code>elif</code>, <code>else</code>, <code>case</code> ల చివర కోలన్ మర్చిపోతే <code>SyntaxError: expected ':'</code> వస్తుంది.</li>
+      <li><strong>Mistake 3: కండిషన్ల క్రమం తారుమారు చేయడం:</strong> మార్కుల లాడర్‌లో ముందుగానే <code>if marks &gt;= 35: print("పాస్")</code> అని పెడితే, 95 మార్కులు వచ్చిన విద్యార్థికి కూడా కేవలం "పాస్" మాత్రమే ప్రింట్ అవుతుంది; కింద ఉన్న 90+ గ్రేడ్ ఎప్పటికీ రన్ అవ్వదు!</li>
+      <li><strong>Mistake 4: <code>match-case</code> లో <code>case _:</code> మర్చిపోవడం:</strong> అనుకోని డేటా వచ్చినప్పుడు క్రాష్ అవ్వకుండా ఎల్లప్పుడూ ఒక డిఫాల్ట్ వైల్డ్‌కార్డ్ <code>case _:</code> ను రాయడం ఉత్తమ ప్రాక్టీస్.</li>
+    </ul>
+
+    <!-- SECTION 13 -->
+    <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాజెక్ట్: "Automated Banking Loan Approval &amp; KYC Risk Engine"</h2>
+    <p>
+      ఈ ఆరవ అధ్యాయంలో నేర్చుకున్న అన్ని కాన్సెప్ట్‌లను (కంట్రోల్ ఫ్లో, if-elif-else లాడర్, చైన్డ్ కంపారిజన్స్, టెర్నరీ ఆపరేటర్, Structural Pattern Matching, గార్డ్ క్లాజులు) కలగలిపి — బ్యాంకింగ్ రంగానికి చెందిన పూర్తి స్థాయి <strong>Automated Loan Eligibility &amp; KYC Risk Engine</strong> ను నిర్మిద్దాం!
+    </p>
+
+    <!-- CODE BLOCK 3: CAPSTONE MINI PROJECT -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">03_bank_loan_kyc_engine.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 06 మినీ ప్రాజెక్ట్: Automated Bank Loan Approval & KYC Engine
+# కాన్సెప్ట్స్: if-elif-else Ladder, Chained Range Checks, Ternary Ops,
+#             Modern match-case Pattern Matching & Risk Tiering
+# =====================================================================
+
+def evaluate_loan_application(
+    applicant_name: str,
+    age: int,
+    monthly_income: float,
+    cibil_score: int,
+    requested_amount: float,
+    loan_type: str,
+    kyc_status: str
+):
+    print("=" * 68)
+    print(f"{'🏦 MANA APEX BANK — AUTOMATED LOAN RISK ENGINE 2026':^68}")
+    print("=" * 68)
+    print(f"దరఖాస్తుదారుని పేరు : {applicant_name:<28} వయస్సు : {age} సం||")
+    print(f"నెలవారీ స్థూల ఆదాయం  : ₹ {monthly_income:>12,.2f}  CIBIL  : {cibil_score}")
+    print(f"కోరిన లోన్ మొత్తం   : ₹ {requested_amount:>12,.2f}  రకం    : {loan_type}")
+    print("-" * 68)
+
+    # 1. గార్డ్ క్లాజ్: వయస్సు మరియు KYC ప్రాథమిక ధృవీకరణ
+    if not (21 <= age <= 60):
+        print("❌ దరఖాస్తు తిరస్కరించబడింది: వయస్సు 21 నుండి 60 సంవత్సరాల మధ్య ఉండాలి.")
+        print("=" * 68 + "\n")
+        return
+
+    if kyc_status.upper() != "VERIFIED":
+        print(f"❌ దరఖాస్తు పెండింగ్‌లో ఉంది: KYC స్థితి '{kyc_status}' — ఆధార్/పాన్ వెరిఫికేషన్ అవసరం.")
+        print("=" * 68 + "\n")
+        return
+
+    # 2. CIBIL స్కోర్ ఆధారంగా క్రెడిట్ రిస్క్ అసెస్‌మెంట్ (if-elif-else)
+    if cibil_score >= 800:
+        risk_tier = "TIER_A"
+        risk_label = "చాలా తక్కువ రిస్క్ (Excellent Credit)"
+        base_rate = 8.5 # 8.5% వడ్డీ రేటు
+        approval_ratio = 1.0 # 100% కోరిన మొత్తం మంజూరు
+    elif 720 <= cibil_score < 800:
+        risk_tier = "TIER_B"
+        risk_label = "మితమైన రిస్క్ (Good Credit)"
+        base_rate = 9.8
+        approval_ratio = 0.85 # 85% మంజూరు
+    elif 650 <= cibil_score < 720:
+        risk_tier = "TIER_C"
+        risk_label = "అధిక రిస్క్ (Average Credit)"
+        base_rate = 12.0
+        approval_ratio = 0.60 # 60% మంజూరు
+    else:
+        print("❌ లోన్ తిరస్కరించబడింది: CIBIL స్కోర్ 650 కంటే తక్కువగా ఉంది.")
+        print("=" * 68 + "\n")
+        return
+
+    # 3. match-case ద్వారా లోన్ రకం ఆధారంగా ప్రత్యేక నిబంధనలు
+    match loan_type.lower():
+        case "home" | "గృహ రుణం":
+            tenure_years = 20
+            interest_rate = base_rate - 0.5 # గృహ రుణాలకు 0.5% రాయితీ
+            max_limit = monthly_income * 60
+
+        case "car" | "వాహన రుణం":
+            tenure_years = 7
+            interest_rate = base_rate + 0.2
+            max_limit = monthly_income * 24
+
+        case "personal" | "వ్యక్తిగత రుణం":
+            tenure_years = 5
+            interest_rate = base_rate + 2.5 # అన్‌సెక్యూర్డ్ లోన్ కాబట్టి అధిక వడ్డీ
+            max_limit = monthly_income * 12
+
+        case _:
+            print(f"⚠️ లోన్ రకం '{loan_type}' చెల్లదు. ప్రాసెస్ ఆపివేయబడింది.")
+            print("=" * 68 + "\n")
+            return
+
+    # 4. అర్హత గల తుది మంజూరు మొత్తం గణన
+    eligible_amount = min(requested_amount * approval_ratio, max_limit)
+
+    # టెర్నరీ ఆపరేటర్ ద్వారా VIP ప్రాసెసింగ్ ఫీజు నిర్ణయం
+    processing_fee = 0.0 if risk_tier == "TIER_A" else 2500.00
+    fee_status = "ఉచితం (Zero Fee Promo)" if processing_fee == 0.0 else f"₹ {processing_fee:,.2f}"
+
+    print(f"రిస్క్ కేటగిరీ        : [{risk_tier}] {risk_label}")
+    print(f"వడ్డీ రేటు (ROI)      : {interest_rate:.2f}% p.a.")
+    print(f"గరిష్ట కాలపరిమితి     : {tenure_years} సంవత్సరాలు")
+    print(f"ప్రాసెసింగ్ ఛార్జీలు    : {fee_status}")
+    print("-" * 68)
+    print(f"✅ మంజూరైన లోన్ మొత్తం: ₹ {eligible_amount:>15,.2f}")
+    print("=" * 68)
+    print("🎉 అభినందనలు! సూత్రప్రాయంగా మీ లోన్ ఆమోదించబడింది! 🚀\n")
+
+# లైవ్ రన్ టెస్ట్
+evaluate_loan_application(
+    applicant_name="రాజేశ్వరి దేవి",
+    age=34,
+    monthly_income=85000.00,
+    cibil_score=780,
+    requested_amount=1500000.00,
+    loan_type="home",
+    kyc_status="VERIFIED"
+)
+</code></pre>
+    </div>
+
+    <!-- 5 COLLAPSIBLE QUIZZES -->
+    <h2 class="section-title"><span class="num">★</span> ఈ అధ్యాయంపై ప్రాక్టీస్ క్విజ్ (Knowledge Check)</h2>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">1. if-elif-else లాడర్‌లో ఏవైనా రెండు కండిషన్లు True అయితే ఏది రన్ అవుతుంది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> పైనుండి క్రిందికి వచ్చే క్రమంలో <strong>మొట్టమొదటి True అయిన కండిషన్ మాత్రమే</strong> ఎగ్జిక్యూట్ అవుతుంది. ఆ తర్వాత ఉన్న మిగిలిన అన్ని <code>elif</code> మరియు <code>else</code> బ్లాక్‌లను పైథాన్ పూర్తిగా దాటవేసి లాడర్ నుండి బయటకు వచ్చేస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">2. టెర్నరీ ఆపరేటర్ (Ternary Operator) సింటాక్స్ ఏమిటి? ఒక ఉదాహరణ ఇవ్వండి.</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> సింటాక్స్: <code>x = value_if_true if condition else value_if_false</code>.
+        ఉదాహరణ: <code>fee = 0 if is_member else 100</code>. షరతు నిజమైతే 0, లేకపోతే 100 వేరియబుల్ లోకి అసైన్ అవుతుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">3. గార్డ్ క్లాజ్ (Guard Clause) అంటే ఏమిటి? దీని వల్ల కలిగే ప్రయోజనం ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> ఒక ఫంక్షన్ ప్రారంభంలోనే తప్పులు లేదా అసాధారణ పరిస్థితులను తనిఖీ చేసి తక్షణమే <code>return</code> లేదా <code>raise</code> చేయడాన్ని గార్డ్ క్లాజ్ అంటారు. ఇది 4-5 స్థాయిల నెస్టెడ్ <code>if</code> ల వల్ల కోడ్ పిరమిడ్ లాగా మారే సమస్యను నివారించి కోడ్‌ను ఫ్లాట్‌గా, క్లీన్‌గా ఉంచుతుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">4. match-case లో 'case _:' యొక్క ప్రాముఖ్యత ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> అండర్‌స్కోర్ <code>_</code> అనేది వైల్డ్‌కార్డ్ (Wildcard pattern). పైన పేర్కొన్న ఏ ఒక్క కేస్ కూడా మ్యాచ్ కానప్పుడు డిఫాల్ట్ ఫాల్‌బ్యాక్ లాగా ఇది ఎగ్జిక్యూట్ అవుతుంది. ఇది ఇతర భాషల్లోని <code>default:</code> లాంటిది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">5. Python match-case సాంప్రదాయ switch-case కంటే ఎందుకు ఉన్నతమైనది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> సాధారణ <code>switch</code> కేవలం సంఖ్యలు లేదా స్ట్రింగ్స్‌ను మాత్రమే పోల్చగలదు. కానీ పైథాన్ యొక్క Structural Pattern Matching లిస్ట్‌లు, టపుల్స్, డిక్షనరీల అంతర్గత నిర్మాణాన్ని అన్‌ప్యాక్ చేయగలదు, టైప్‌లను ధృవీకరించగలదు, మరియు <code>if</code> గార్డ్ కండిషన్లను కూడా నేరుగా సపోర్ట్ చేస్తుంది.
+      </div>
+    </details>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-python/05-python-operators-and-expressions.html" style="text-decoration:none; color:var(--text); font-weight:600; display:inline-flex; align-items:center; gap:8px; background:var(--bg2); padding:10px 18px; border-radius:8px; border:1px solid var(--border);">
+        ← మునుపటి అధ్యాయం: 5. ఆపరేటర్లు &amp; ఎక్స్‌ప్రెషన్స్
+      </a>
+      <a href="/blog-python/07-python-loops-while-and-for.html" style="text-decoration:none; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; background:#10b981; padding:10px 22px; border-radius:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        తర్వాతి అధ్యాయం: 7. లూప్స్ (while &amp; for) →
+      </a>
+    </div>
+
+    <!-- INTERACTIVE COMPILER CTA CARD -->
+    <div style="margin-top:40px; background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(56,189,248,0.1) 100%); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:24px; text-align:center;">
+      <h3 style="margin-top:0; color:var(--text); font-size:20px;">ఈ Loan KYC &amp; Risk Engine ను లైవ్‌గా మన కంపైలర్‌లో రన్ చేయండి!</h3>
+      <p style="color:var(--text2); max-width:650px; margin:8px auto 20px; font-size:14px; line-height:1.6;">
+        ఎటువంటి లోకల్ సెటప్ లేకుండా, బ్రౌజర్‌లోనే Modern Python 3 కంపైలర్‌లో ఈ కోడ్‌ను ఎగ్జిక్యూట్ చేసి లైవ్ అవుట్‌పుట్‌ను తనిఖీ చేయండి.
+      </p>
+      <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; padding:12px 28px; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Launch Python Interactive Compiler
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER / NAV SCRIPTS -->
+<script src="/site-nav.js"></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = `# =====================================================================
+# చాప్టర్ 06 మినీ ప్రాజెక్ట్: Automated Bank Loan Approval & KYC Engine
+# =====================================================================
+
+applicant_name = "రాజేశ్వరి దేవి"
+age = 34
+monthly_income = 85000.00
+cibil_score = 780
+requested_amount = 1500000.00
+loan_type = "home"
+kyc_status = "VERIFIED"
+
+print("=" * 65)
+print(f"{'🏦 MANA APEX BANK — LOAN RISK ENGINE (LIVE DEMO)':^65}")
+print("=" * 65)
+print(f"దరఖాస్తుదారుని పేరు : {applicant_name}")
+print(f"నెలవారీ ఆదాయం      : ₹ {monthly_income:>12,.2f} | CIBIL: {cibil_score}")
+print(f"కోరిన లోన్ మొత్తం   : ₹ {requested_amount:>12,.2f} | రకం : {loan_type}")
+print("-" * 65)
+
+if not (21 <= age <= 60):
+    print("❌ తిరస్కరించబడింది: వయస్సు నిబంధనలకు విరుద్ధం.")
+elif kyc_status.upper() != "VERIFIED":
+    print("❌ తిరస్కరించబడింది: KYC పూర్తి కాలేదు.")
+elif cibil_score < 650:
+    print("❌ తిరస్కరించబడింది: CIBIL స్కోర్ సరిపోదు.")
+else:
+    if cibil_score >= 800:
+        risk_tier = "TIER_A (Excellent)"
+        base_rate = 8.5
+        ratio = 1.0
+    elif cibil_score >= 720:
+        risk_tier = "TIER_B (Good)"
+        base_rate = 9.8
+        ratio = 0.85
+    else:
+        risk_tier = "TIER_C (Average)"
+        base_rate = 12.0
+        ratio = 0.60
+
+    match loan_type.lower():
+        case "home":
+            tenure = 20
+            roi = base_rate - 0.5
+            max_limit = monthly_income * 60
+        case "car":
+            tenure = 7
+            roi = base_rate + 0.2
+            max_limit = monthly_income * 24
+        case _:
+            tenure = 5
+            roi = base_rate + 2.5
+            max_limit = monthly_income * 12
+
+    approved = min(requested_amount * ratio, max_limit)
+    fee = 0.0 if "TIER_A" in risk_tier else 2500.00
+
+    print(f"రిస్క్ వర్గం          : {risk_tier}")
+    print(f"వడ్డీ రేటు (ROI)      : {roi:.2f}% p.a. ({tenure} సం||)")
+    print(f"ప్రాసెసింగ్ ఫీజు       : ₹ {fee:,.2f}")
+    print("-" * 65)
+    print(f"✅ మంజూరైన మొత్తం     : ₹ {approved:>15,.2f}")
+    print("=" * 65)
+    print("\n🎉 చాప్టర్ 06 ప్రాజెక్ట్ విజయవంతంగా రన్ అయ్యింది! 🚀")
+`;
+
+    try {
+      localStorage.setItem('code_python', projectCode);
+      localStorage.setItem('code_python3', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-python-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
