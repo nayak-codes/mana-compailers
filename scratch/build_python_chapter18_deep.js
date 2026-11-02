@@ -1,0 +1,638 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildPythonSidebar } = require('./python_curriculum_data.js');
+
+const currentLesson = LESSONS[17]; // Chapter 18 (0-indexed 17)
+const sidebarHtml = buildPythonSidebar(18);
+
+const chapter18Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Python 3 ల్యాంబ్డా, రికర్షన్ & ఫంక్షనల్ ప్రోగ్రామింగ్ సమగ్ర తెలుగు గైడ్: Anonymous Lambda Functions, map(), filter(), functools.reduce(), Recursion Base Cases, Recursion Limit, lru_cache Memoization, మరియు Financial Fraud Detection Pipeline ప్రాజెక్ట్." />
+  <meta name="keywords" content="python lambda in telugu, python recursion telugu, python map filter reduce telugu, functional programming python telugu, learn python in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-python/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Complete Guide to Python Lambda, Recursion and Functional Programming in Telugu)",
+    "description": "Python 3 ల్యాంబ్డా మరియు ఫంక్షనల్ ప్రోగ్రామింగ్ సమగ్ర గైడ్: Lambda, map(), filter(), reduce(), Recursion, lru_cache, మరియు Financial Fraud Pipeline.",
+    "articleSection": "Phase 04: ఫంక్షన్స్, మాడ్యూల్స్ & ఫైల్ I/O",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-01-26",
+    "dateModified": "2026-11-02"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Compiler Integration -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___PY_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/("""[\\s\\S]*?"""|'''[\\s\\S]*?'''|f?"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|f?'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'|r"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|r'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'import','from','as','def','return','class','if','elif','else','while','for','in',
+        'break','continue','pass','try','except','finally','with','lambda','global','nonlocal',
+        'and','or','not','is','yield','async','await','raise','assert','True','False','None'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'print','len','range','type','isinstance','id','input','int','float','str','list',
+        'dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted',
+        'abs','open','help','dir','filter','reduce','lru_cache'
+      ];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?)\\b/g, m => pushToken('num', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split('___PY_TOK_' + idx + '___').join(tok);
+      });
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code.language-python').forEach(block => {
+        block.innerHTML = highlightPythonCode(block.innerText);
+      });
+    });
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      const code = pre.innerText;
+      try {
+        localStorage.setItem('code_python', code);
+        localStorage.setItem('code_python3', code);
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+      window.open('/online-python-compiler.html', '_blank');
+    }
+  </script>
+</head>
+<body class="lang-python light-theme">
+
+<!-- Site Navigation Placeholder -->
+<div id="site-nav-placeholder"></div>
+
+<!-- Layout Container -->
+<div class="layout">
+
+  <!-- Single Sidebar Component -->
+  ${sidebarHtml}
+
+  <!-- Main Content Area -->
+  <main class="content">
+
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb" style="display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text2); margin-bottom:16px;">
+      <a href="/" style="color:var(--text2); text-decoration:none;">Home</a>
+      <span class="sep">›</span>
+      <a href="/tutorials" style="color:var(--text2); text-decoration:none;">Tutorials</a>
+      <span class="sep">›</span>
+      <a href="/blog-python/" style="color:var(--text2); text-decoration:none;">Python Masterclass</a>
+      <span class="sep">›</span>
+      <span style="color:var(--text); font-weight:600;">Chapter 18: ${currentLesson.title}</span>
+    </div>
+
+    <!-- MAIN PAGE TITLE -->
+    <h1 class="page-title" style="font-size:32px; font-weight:800; color:var(--text); margin-bottom:14px; line-height:1.25;">
+      ${currentLesson.title}
+    </h1>
+
+    <!-- 4 PAGE META BADGES -->
+    <div class="page-meta" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; font-size:12.5px;">
+      <span style="background:rgba(16,185,129,0.12); color:#10b981; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        🌐 Modern Python 3.12+
+      </span>
+      <span style="background:rgba(59,130,246,0.12); color:#3b82f6; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        📖 Chapter 18 of 25
+      </span>
+      <span style="background:rgba(245,158,11,0.12); color:#f59e0b; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        📁 Phase 04: ఫంక్షన్స్, మాడ్యూల్స్ &amp; ఫైల్ I/O
+      </span>
+      <span style="background:rgba(139,92,246,0.12); color:#8b5cf6; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        🗓️ 2026 Edition
+      </span>
+    </div>
+
+    <!-- COVERED PILL -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin-bottom:24px; font-size:13.5px; color:var(--text2); line-height:1.6;">
+      <strong style="color:var(--text); font-weight:700;">📌 Covered in this chapter:</strong>
+      ${currentLesson.subtopics} · Pure Functions &amp; Immutability · Anonymous Lambda Syntax · map(), filter(), and functools.reduce() · Lazy Evaluation Iterators · Recursion Base Cases &amp; Call Stack Limits · Memoization with @functools.lru_cache · Financial Fraud Detection Pipeline
+    </div>
+
+    <!-- WARM SOFT IVORY INTRO BOX -->
+    <div class="intro-box" style="background:#fffdf7; border:1px solid #fef3c7; border-left:4px solid #f59e0b; border-radius:10px; padding:20px 24px; margin-bottom:30px; font-size:15px; color:#451a03; line-height:1.75;">
+      మీరు ఒక చిన్న ఒకే ఒక్క లైన్ గణిత సమీకరణాన్ని రాయడానికి కూడా ప్రతిసారీ <code>def</code> అని పేరు పెట్టి, నాలుగైదు లైన్ల కోడ్ రాయడం కాస్త భారంగా అనిపించిందా? లేదా లక్షల రికార్డులు ఉన్న డేటాసెట్‌పై లూప్‌లు రాయకుండా, అత్యంత క్లీన్‌గా ఒక ఫంక్షనల్ పైప్‌లైన్ ద్వారా డేటాను ఫిల్టర్ చేసి, మార్పిడి చేసి, సారాంశాన్ని బయటకు తీయాలనుకుంటున్నారా?
+      <br/><br/>
+      ఇక్కడే మనకు <strong>ఫంక్షనల్ ప్రోగ్రామింగ్ (Functional Programming)</strong> పారడైమ్ పరిచయం అవుతుంది! పైథాన్‌లో పేర్లు లేని అజ్ఞాత ఫంక్షన్లను రెప్పపాటులో సృష్టించే <strong><code>lambda</code></strong> ఎక్స్‌ప్రెషన్లు, డేటా స్ట్రీమ్‌లను ప్రాసెస్ చేసే పవిత్ర త్రిమూర్తులు <strong><code>map()</code>, <code>filter()</code>, <code>reduce()</code></strong>, మరియు ఒక పెద్ద సమస్యను తనంతట తానే పిలుచుకుంటూ పరిష్కరించే కళాత్మక విధానం <strong>రికర్శన్ (Recursion)</strong> ప్రోగ్రామర్‌కు అపరిమితమైన ఆలోచనా స్వేచ్ఛను ఇస్తాయి. ఈ అధ్యాయంలో మనం ఈ ఫంక్షనల్ ఆయుధాలన్నింటినీ అన్వేషిస్తూ, బ్యాంకింగ్ లావాదేవీలలో మోసాలను గుర్తించే పూర్తి స్థాయి ఫ్రాడ్ డిటెక్షన్ పైప్‌లైన్ ప్రాజెక్ట్‌ను నిర్మిద్దాం!
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 class="section-title"><span class="num">1</span> ఫంక్షనల్ ప్రోగ్రామింగ్ అంటే ఏమిటి? (Functional Programming Paradigm)</h2>
+    <p>
+      పైథాన్ అనేది ఒక <strong>మల్టీ-పారడైమ్ (Multi-paradigm)</strong> ప్రోగ్రామింగ్ లాంగ్వేజ్. అంటే ఇందులో ఆబ్జెక్ట్ ఓరియెంటెడ్ కోడింగ్ చేయవచ్చు, అలాగే గణిత ఆధారిత <strong>ఫంక్షనల్ ప్రోగ్రామింగ్ (FP)</strong> శైలిని కూడా పూర్తి స్థాయిలో అనుసరించవచ్చు.
+    </p>
+    <p>
+      <strong>ఫంక్షనల్ ప్రోగ్రామింగ్ యొక్క ముఖ్య స్తంభాలు:</strong>
+    </p>
+    <ul>
+      <li><strong>First-Class Functions:</strong> పైథాన్‌లో ఫంక్షన్స్ అనేవి సాధారణ వేరియబుల్స్ లాంటివే. ఒక ఫంక్షన్‌ను వేరియబుల్‌కు అసైన్ చేయవచ్చు, మరొక ఫంక్షన్‌కు ఆర్గ్యుమెంట్‌గా పంపవచ్చు, లేదా ఫంక్షన్ నుండి రిటర్న్ చేయవచ్చు.</li>
+      <li><strong>Pure Functions (స్వచ్ఛమైన ఫంక్షన్లు):</strong> ఒకే ఇన్‌పుట్ ఇస్తే ఎల్లప్పుడూ ఒకే ఔట్‌పుట్ ఇచ్చే ఫంక్షన్లు. ఇవి బయటి గ్లోబల్ వేరియబుల్స్‌ను మార్చవు (No Side-Effects). ఇది టెస్టింగ్ మరియు మల్టీ-కోర్ కాన్‌కరెన్సీని ఎంతో సులభతరం చేస్తుంది.</li>
+      <li><strong>ఇమ్మ్యుటబిలిటీ (Immutability):</strong> డేటాను అక్కడికక్కడే మార్చడానికి బదులుగా, పాత డేటా ఆధారంగా సరికొత్త డేటా కలెక్షన్‌ను రూపొందించడం.</li>
+    </ul>
+    <div style="background:#0f172a; padding:12px 18px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:10px 0; line-height:1.6;">
+      # స్వచ్ఛమైన ఫంక్షన్ (Pure): సైడ్-ఎఫెక్ట్స్ లేవు<br/>
+      def add_tax(price, tax_rate=0.18):<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;return price + (price * tax_rate)<br/><br/>
+      # అపవిత్రమైన ఫంక్షన్ (Impure): బయటి గ్లోబల్ స్టేట్‌ను మారుస్తుంది!<br/>
+      cart_total = 0<br/>
+      def impure_add(price):<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;global cart_total<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;cart_total += price # Side effect!
+    </div>
+
+    <!-- SECTION 2 -->
+    <h2 class="section-title"><span class="num">2</span> ల్యాంబ్డా ఫంక్షన్స్ అంటే ఏమిటి? (Anonymous Functions)</h2>
+    <p>
+      పైథాన్‌లో <code>def</code> కీవర్డ్ లేకుండా, పేరు లేకుండా ఒకే ఒక్క లైన్‌లో రాసే చిన్న ఫంక్షన్లను <strong>ల్యాంబ్డా ఫంక్షన్స్ (Lambda Functions / Anonymous Functions)</strong> అంటారు.
+    </p>
+    <p>
+      <strong>ప్రాథమిక సింటాక్స్:</strong><br/>
+      <code style="background:#0f172a; color:#38bdf8; padding:8px 14px; border-radius:6px; display:inline-block; margin:6px 0;">
+        lambda arguments: expression
+      </code>
+    </p>
+    <ul>
+      <li>ల్యాంబ్డా ఎన్ని ఆర్గ్యుమెంట్లనైనా స్వీకరించగలదు (కామాలతో వేరుచేసి).</li>
+      <li>కానీ అందులో <strong>కేవలం ఒకే ఒక్క ఎక్స్‌ప్రెషన్ మాత్రమే ఉండాలి!</strong> ఇందులో లూప్‌లు (for, while), మల్టీ-లైన్ స్టేట్‌మెంట్లు, లేదా <code>return</code> కీవర్డ్ రాయకూడదు. ఎక్స్‌ప్రెషన్ యొక్క ఫలితం స్వయంచాలకంగా రిటర్న్ అవుతుంది.</li>
+      <li><strong>టర్నరీ ఆపరేటర్ సపోర్ట్ (Conditional Expressions):</strong> ల్యాంబ్డాలో if-else వాడటానికి సింగిల్ లైన్ టర్నరీ సింటాక్స్ వాడాలి:
+        <code>classify_age = lambda age: 'మేజర్' if age &gt;= 18 else 'మైనర్'</code>
+      </li>
+    </ul>
+
+    <!-- SECTION 3 -->
+    <h2 class="section-title"><span class="num">3</span> <code>lambda</code> ఎప్పుడు వాడాలి? PEP 8 గోల్డెన్ రూల్స్</h2>
+    <p>
+      పైథాన్ అధికారిక స్టైల్ గైడ్ <strong>PEP 8</strong> ప్రకారం, ల్యాంబ్డా ఫంక్షన్లను వేరియబుల్స్‌కు బైండ్ చేయడానికి వాడకూడదు (ఉదా: <code>f = lambda x: x*2</code> అని రాయడానికి బదులుగా <code>def f(x): return x*2</code> రాయాలి).
+    </p>
+    <p>
+      <strong>ల్యాంబ్డా వాడటానికి సరైన సందర్భాలు:</strong>
+    </p>
+    <ul>
+      <li><code>sorted()</code>, <code>min()</code>, <code>max()</code> లలో <strong><code>key=</code></strong> ఫంక్షన్‌గా:
+        <code>sorted(users, key=lambda u: u["age"])</code>
+      </li>
+      <li><code>map()</code> మరియు <code>filter()</code> లలో ఒకేసారి క్విక్‌గా ఆపరేషన్ చేయడానికి.</li>
+      <li>GUI లేదా ఈవెంట్ డ్రైవెన్ ప్రోగ్రామింగ్‌లో చిన్న కాల్‌బ్యాక్స్ (Callbacks) రూపంలో.</li>
+    </ul>
+
+    <!-- SECTION 4 -->
+    <h2 class="section-title"><span class="num">4</span> <code>map()</code> ఫంక్షన్ — లేజీ ఎవాల్యుయేషన్ &amp; డేటా ట్రాన్స్‌ఫార్మేషన్</h2>
+    <p>
+      <strong><code>map(func, iterable, ...)</code></strong> అనేది ఒక కలెక్షన్‌లోని ప్రతి ఒక్క ఎలిమెంట్‌పై పేర్కొన్న ఫంక్షన్‌ను అప్లై చేసి ఫలితాలను అందిస్తుంది.
+    </p>
+    <ul>
+      <li><strong>లేజీ ఎవాల్యుయేషన్ (Lazy Evaluation) మ్యాజిక్:</strong> <code>map()</code> తక్షణమే మొత్తం లిస్ట్‌ను మెమరీలో క్రియేట్ చేయదు! అది పైథాన్ <strong>ఇటరేటర్ (Iterator)</strong> ను రిటర్న్ చేస్తుంది. మనం <code>next()</code> అని అడిగినప్పుడు లేదా <code>for</code> లూప్‌లో తిరిగినప్పుడు మాత్రమే ఒక్కొక్క ఎలిమెంట్‌ను ఆన్-డిమాండ్ (Run-time on the fly) కాలిక్యులేట్ చేస్తుంది. ఫలితంగా 10 కోట్ల రికార్డులను ప్రాసెస్ చేస్తున్నప్పుడు కూడా రామ్ (RAM) మెమరీ ఏమాత్రం నిండదు!</li>
+      <li><strong>మల్టిపుల్ ఇటరబుల్స్ సపోర్ట్:</strong> <code>map()</code> లోకి ఒకేసారి రెండు వేర్వేరు లిస్ట్‌లను పాస్ చేయవచ్చు:
+        <div style="background:#0f172a; padding:10px 14px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12px; color:#38bdf8; margin:6px 0;">
+          prices = [100, 200, 300]<br/>
+          taxes = [18, 36, 54]<br/>
+          totals = list(map(lambda p, t: p + t, prices, taxes)) # [118, 236, 354]
+        </div>
+      </li>
+    </ul>
+
+    <!-- SECTION 5 -->
+    <h2 class="section-title"><span class="num">5</span> <code>filter()</code> ఫంక్షన్ — ప్రిడికేట్-బేస్డ్ షరతులతో కూడిన వడపోత</h2>
+    <p>
+      <strong><code>filter(predicate_func, iterable)</code></strong> అనేది ఇచ్చిన షరతును (Boolean Predicate) సంతృప్తిపరిచే ఎలిమెంట్లను మాత్రమే వడపోసి కొత్త ఇటరేటర్‌గా అందిస్తుంది. ఫంక్షన్ ఏ ఎలిమెంట్లకు అయితే <code>True</code> ఇస్తుందో వాటిని మాత్రమే ఉంచి, <code>False</code> లేదా ఫాల్సీ విలువలను తుడిచిపెడుతుంది.
+    </p>
+    <div style="background:#0f172a; padding:12px 18px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:10px 0; line-height:1.6;">
+      # ఖాళీ స్ట్రింగ్స్ మరియు None విలువలను సులభంగా ఫిల్టర్ చేయడం:<br/>
+      raw_inputs = ["హైదరాబాద్", "", None, "విజయవాడ", False, "తిరుపతి"]<br/>
+      clean_cities = list(filter(None, raw_inputs)) # ఫంక్షన్ స్థానంలో None పెడితే ట్రూతీ విలువలు మాత్రమే వస్తాయి!<br/>
+      print("క్లీన్ సిటీస్ :", clean_cities) # ['హైదరాబాద్', 'విజయవాడ', 'తిరుపతి']
+    </div>
+
+    <!-- SECTION 6 -->
+    <h2 class="section-title"><span class="num">6</span> <code>functools.reduce()</code> — డేటా అక్యుములేషన్ &amp; రోలింగ్ కంప్యూటేషన్</h2>
+    <p>
+      <strong><code>reduce(func, iterable, [initializer])</code></strong> అనేది కలెక్షన్‌లోని అంశాలను వరుసగా రెండేసి చొప్పున తీసుకుని ఫంక్షన్ అప్లై చేస్తూ, చివరికి మొత్తం డేటాను ఒకే ఒక్క విలువగా (సింగిల్ అక్యుములేటెడ్ వాల్యూ) కుదిస్తుంది.
+    </p>
+    <p>
+      <strong>అక్యుములేషన్ ఎలా పనిచేస్తుందో చూపే డయాగ్రమ్:</strong>
+    </p>
+    <div style="background:#0f172a; border:1px solid #1e293b; border-radius:8px; padding:16px; margin:14px 0; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#f8fafc; line-height:1.6;">
+      డేటా: [1, 2, 3, 4]  ──▶  ఫంక్షన్: lambda acc, x: acc + x<br/>
+      దశ 1: func(1, 2)  ──▶  3<br/>
+      దశ 2: func(3, 3)  ──▶  6<br/>
+      దశ 3: func(6, 4)  ──▶  10 (చివరి ఫలితం!)<br/>
+      ⚠️ Initializer ఎందుకు ముఖ్యం: ఖాళీ లిస్ట్‌పై reduce వాడితే TypeError రాకుండా <code>reduce(func, [], 0)</code> అని ఇనిషియలైజర్ ఇవ్వడం ప్రొడక్షన్ బెస్ట్ ప్రాక్టీస్!
+    </div>
+
+    <!-- SECTION 7 -->
+    <h2 class="section-title"><span class="num">7</span> కోడ్ డెమో 1: <code>map()</code>, <code>filter()</code>, <code>reduce()</code> తో డేటా పైప్‌లైన్</h2>
+    <p>
+      ఉద్యోగుల శాలరీ డేటా నుండి పన్ను మినహాయింపులు చేసి, అర్హులైన వారి మొత్తం వ్యయాన్ని లెక్కించే పైప్‌లైన్ డెమో:
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">01_functional_pipeline_demo.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 18 డెమో 1: map(), filter(), reduce() ఫంక్షనల్ పైప్‌లైన్
+# =====================================================================
+from functools import reduce
+
+salaries = [45000, 72000, 38000, 110000, 95000, 28000]
+
+# 1. FILTER: ₹50,000 కంటే ఎక్కువ జీతం ఉన్నవారిని మాత్రమే ఎంపిక చేయడం
+high_earners = list(filter(lambda s: s >= 50000, salaries))
+print("1. అర్హులైన జీతాలు (>= 50k) :", high_earners)
+
+# 2. MAP: 10% కార్పొరేట్ హైక్ ఇవ్వడం (1.10 తో గుణించడం)
+hiked_salaries = list(map(lambda s: round(s * 1.10), high_earners))
+print("2. 10% హైక్ తర్వాత జీతాలు   :", hiked_salaries)
+
+# 3. REDUCE: మొత్తం కంపెనీ చెల్లించాల్సిన బడ్జెట్ అక్యుములేషన్
+total_payroll = reduce(lambda acc, s: acc + s, hiked_salaries, 0)
+print(f"3. మొత్తం బడ్జెట్ వ్యయం     : ₹{total_payroll:,.2f}")
+</code></pre>
+    </div>
+
+    <!-- SECTION 8 -->
+    <h2 class="section-title"><span class="num">8</span> రికర్షన్ అంటే ఏమిటి? (What is Recursion in Python?)</h2>
+    <p>
+      ఒక ఫంక్షన్ తన పనిని పూర్తి చేయడానికి <strong>తనను తానే పిలుచుకునే (Self-Referential)</strong> ప్రోగ్రామింగ్ పద్ధతిని <strong>రికర్శన్ (Recursion)</strong> అంటారు.
+    </p>
+    <p>
+      <strong>ప్రతి రికర్సివ్ ఫంక్షన్‌లో రెండు విభాగాలు తప్పనిసరి:</strong>
+    </p>
+    <ul>
+      <li><strong>1. బేస్ కేస్ (Base Case):</strong> రికర్షన్ ఎక్కడ ఆగిపోవాలో నిర్ణయించే అత్యంత కీలకమైన నిష్క్రమణ షరతు (Exit Condition). ఇది లేకపోతే ఫంక్షన్ అనంతంగా తనను తాను పిలుచుకుంటూ వెళ్లిపోతుంది.</li>
+      <li><strong>2. రికర్సివ్ కేస్ (Recursive Case):</strong> సమస్యను ఒక చిన్న ఉప-సమస్యగా (Sub-problem) తగ్గించి, తిరిగి అదే ఫంక్షన్‌ను కాల్ చేసే విభాగం.</li>
+    </ul>
+
+    <!-- SECTION 9 -->
+    <h2 class="section-title"><span class="num">9</span> రికర్షన్ &amp; కాల్ స్టాక్ ఆర్కిటెక్చర్ (<code>sys.getrecursionlimit()</code>)</h2>
+    <p>
+      ప్రతి రికర్సివ్ కాల్‌కూ ఒక సరికొత్త స్టాక్ ఫ్రేమ్ మెమరీలో స్టోర్ అవుతుంది. బేస్ కేస్ తగిలేంతవరకు ఆ ఫ్రేమ్‌లు ఏవీ క్లియర్ కావు.
+    </p>
+    <ul>
+      <li><strong>పైథాన్ సేఫ్టీ లిమిట్:</strong> స్టాక్ ఓవర్‌ఫ్లో జరిగి ఆపరేటింగ్ సిస్టమ్ క్రాష్ అవ్వకుండా పైథాన్ డిఫాల్ట్‌గా గరిష్టంగా <strong>1,000 రికర్సివ్ కాల్స్</strong> మాత్రమే అనుమతిస్తుంది.</li>
+      <li>దీనిని <code>sys.getrecursionlimit()</code> ద్వారా చూడవచ్చు. అవసరమైతే <code>sys.setrecursionlimit(5000)</code> ద్వారా పెంచవచ్చు, కానీ ఇది సి-స్టాక్ ఓవర్‌ఫ్లో ప్రమాదాన్ని తెస్తుంది.</li>
+      <li><strong>పైథాన్‌లో Tail Call Optimization (TCO) ఎందుకు లేదు?</strong> ఇతర ఫంక్షనల్ భాషలైన Haskell లేదా Scheme లో టైల్ రికర్షన్‌ను లూప్‌గా ఆప్టిమైజ్ చేస్తాయి. కానీ పైథాన్ సృష్టికర్త <strong>గైడో వాన్ రోసమ్ (Guido van Rossum)</strong> ఉద్దేశపూర్వకంగా TCO ను తిరస్కరించారు! ఎందుకంటే ఎర్రర్ వచ్చినప్పుడు డీబగ్గింగ్ కోసం పూర్తి స్టాక్ ట్రేస్ (Full Traceback) ఉండటం అత్యంత విలువైందని ఆయన భావించారు.</li>
+      <li><strong>ప్రొడక్షన్ రికమెండేషన్:</strong> డీప్ రికర్షన్ అవసరమైనప్పుడు రికర్షన్‌కు బదులుగా సాధారణ <code>while</code> లూప్ మరియు పైథాన్ లిస్ట్‌ను ఒక స్పష్టమైన స్టాక్ (Explicit Stack) గా వాడటం సురక్షితమైన మార్గం.</li>
+    </ul>
+
+    <!-- SECTION 10 -->
+    <h2 class="section-title"><span class="num">10</span> కోడ్ డెమో 2: ఫ్యాక్టోరియల్, నెస్టెడ్ డేటా ట్రావర్సల్ రికర్షన్</h2>
+    <p>
+      నెస్టెడ్ డైరెక్టరీలు లేదా కేటగిరీ ట్రీలను రికర్షన్ ద్వారా ఎంత సరళంగా ట్రావర్స్ చేయవచ్చో పరిశీలిద్దాం:
+    </p>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">02_recursion_directory_traversal.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># రికర్సివ్ డేటా స్ట్రక్చర్ ట్రావర్సల్
+nested_categories = {
+    "ఎలక్ట్రానిక్స్": {
+        "మొబైల్స్": ["ఆండ్రాయిడ్", "ఐఫోన్"],
+        "ల్యాప్‌టాప్స్": ["గేమింగ్", "అల్ట్రాబుక్స్"]
+    },
+    "దుస్తులు": {
+        "పురుషులు": ["షర్టులు", "జీన్స్"],
+        "మహిళలు": ["చీరలు", "కుర్తీలు"]
+    }
+}
+
+def print_category_tree(tree, indent_level=0):
+    """నెస్టెడ్ డిక్షనరీ ట్రీని రికర్సివ్‌గా ప్రింట్ చేస్తుంది."""
+    indent = "    " * indent_level
+    if isinstance(tree, dict):
+        for key, value in tree.items():
+            print(f"{indent}📁 [{key}]")
+            print_category_tree(value, indent_level + 1) # Recursive Call
+    elif isinstance(tree, list):
+        for item in tree:
+            print(f"{indent}  📄 {item}") # Base Case Leaf
+
+print("=== రిటైల్ స్టోర్ కేటగిరీ ట్రీ (Recursive Walk) ===")
+print_category_tree(nested_categories)
+</code></pre>
+    </div>
+
+    <!-- SECTION 11 -->
+    <h2 class="section-title"><span class="num">11</span> ఫంక్షనల్ మెమోయిజేషన్ &amp; <code>functools.partial</code> (Currying)</h2>
+    <p>
+      ఫిబోనాకి వంటి సమస్యలలో సాధారణ రికర్షన్ $O(2^N)$ ఘాతాంక సమయం తీసుకుంటుంది (ఒకే లెక్కను లక్షల సార్లు పునరావృతం చేస్తుంది).
+    </p>
+    <p>
+      పైథాన్‌లోని <strong><code>@functools.lru_cache</code></strong> డెకరేటర్ గతంలో లెక్కించిన ఫలితాలను మెమరీలో క్యాష్ చేసి, రికర్షన్ వేగాన్ని O(N) లీనియర్ టైమ్‌కు పెంచుతుంది!
+    </p>
+    <div style="background:#0f172a; padding:12px 18px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:10px 0; line-height:1.6;">
+      from functools import lru_cache<br/><br/>
+      @lru_cache(maxsize=128)<br/>
+      def fib(n):<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;if n &lt;= 1: return n<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;return fib(n - 1) + fib(n - 2) # మెమోయిజేషన్ వల్ల మైక్రోసెకన్లలో రన్ అవుతుంది!
+    </div>
+    <p>
+      <strong><code>functools.partial</code> ద్వారా ఫంక్షన్ కరియింగ్ (Function Currying):</strong><br/>
+      ఒక ఫంక్షన్‌లోని కొన్ని ఆర్గ్యుమెంట్లను ముందుగానే ఫిక్స్ చేసి, తక్కువ ఆర్గ్యుమెంట్లు తీసుకునే ఒక సరికొత్త ప్రత్యేక ఫంక్షన్‌ను రూపొందించడాన్ని <strong>Partial Application</strong> అంటారు:
+    </p>
+    <div style="background:#0f172a; padding:12px 18px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:10px 0; line-height:1.6;">
+      from functools import partial<br/><br/>
+      def multiply(x, y): return x * y<br/>
+      double = partial(multiply, 2) # x=2 గా ఫిక్స్ చేయబడింది!<br/>
+      triple = partial(multiply, 3)<br/>
+      print("డబుల్ :", double(25)) # 50<br/>
+      print("ట్రిపుల్ :", triple(25)) # 75
+    </div>
+
+    <!-- SECTION 12 -->
+    <h2 class="section-title"><span class="num">12</span> కామన్ బిగినర్స్ మిస్టేక్స్ &amp; The Closure Late-Binding Trap</h2>
+    <ul>
+      <li><strong>The Closure Late-Binding Loop Trap (ప్రమాదకరమైన బగ్!):</strong>
+        <div style="background:#0f172a; padding:10px 14px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12px; color:#fca5a5; margin:6px 0;">
+          funcs = [lambda: i for i in range(4)]<br/>
+          print([f() for f in funcs]) # [3, 3, 3, 3] వస్తుంది! [0, 1, 2, 3] రాదు!
+        </div>
+        <strong>కారణం &amp; పరిష్కారం:</strong> ల్యాంబ్డాలు వేరియబుల్‌ను డిఫైన్ అయినప్పుడు కాకుండా, కాల్ అయినప్పుడు మాత్రమే చూస్తాయి (Late Binding). లూప్ ముగిసేసరికి <code>i = 3</code> ఉంటుంది కాబట్టి అన్నీ 3 ని ఇస్తాయి. దీనికి పరిష్కారం డీఫాల్ట్ ఆర్గ్యుమెంట్ బైండింగ్ వాడటం: <code>funcs = [lambda i=i: i for i in range(4)]</code>.
+      </li>
+      <li><strong>Mistake 2: రికర్శన్‌లో Base Case మర్చిపోవడం:</strong> బేస్ కేస్ లేకపోతే <code>RecursionError: maximum recursion depth exceeded</code> వస్తుంది. ఎల్లప్పుడూ మొదటి రెండు లైన్లలో నిష్క్రమణ షరతును రాయండి.</li>
+      <li><strong>Mistake 3: map() ఫలితాన్ని ప్రింట్ చేయడం:</strong> <code>print(map(f, nums))</code> అని రాస్తే <code>&lt;map object at 0x...&gt;</code> వస్తుంది. అది ఇటరేటర్ కాబట్టి <code>list(map(...))</code> అని మార్చి చూడాలి.</li>
+      <li><strong>Mistake 4: కాంప్లెక్స్ ల్యాంబ్డాలు రాయడం:</strong> ల్యాంబ్డాలో బహుళ if-else లు రాయడం వల్ల కోడ్ రీడబిలిటీ దెబ్బతింటుంది. రెండు లైన్ల కంటే ఎక్కువ ఉంటే సాధారణ <code>def</code> వాడండి.</li>
+      <li><strong>Best Practice: లిస్ట్ కాంప్రహెన్షన్ vs map/filter:</strong> సాధారణ ట్రాన్స్‌ఫార్మేషన్లకు పైథాన్‌లో <code>map/filter</code> కంటే లిస్ట్ కాంప్రహెన్షన్స్ ఎంతో రీడబుల్‌గా ఉంటాయి. కానీ లెక్కలు పెద్దవిగా ఉండి లేజీ ఎవాల్యుయేషన్ కావాలనుకున్నప్పుడు <code>map</code> అద్భుతమైనది.</li>
+    </ul>
+
+    <!-- SECTION 13 -->
+    <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాజెక్ట్: "Enterprise Financial Ledger &amp; Fraud Detection Pipeline"</h2>
+    <p>
+      ఈ పద్దెనిమిదవ అధ్యాయంలో నేర్చుకున్న అన్ని అంశాలను (ల్యాంబ్డా, map, filter, functools.reduce, ప్యూర్ ఫంక్షన్లు, రికర్సివ్ ఆడిట్) అనుసంధానిస్తూ — అనుమానాస్పద లావాదేవీలను గుర్తించి, కరెన్సీ కన్వర్షన్ చేసి, బ్యాలెన్స్ లెడ్జర్‌ను ఆడిట్ చేసే పూర్తి స్థాయి <strong>Enterprise Fraud Detection Pipeline Engine</strong> ను నిర్మిద్దాం!
+    </p>
+
+    <!-- CODE BLOCK 3: CAPSTONE MINI PROJECT -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">03_financial_fraud_detection_engine.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 18 మినీ ప్రాజెక్ట్: Financial Ledger & Fraud Detection Pipeline
+# కాన్సెప్ట్స్: Anonymous Lambdas, map(), filter(), functools.reduce(),
+#             Pure Functions, Recursive Account Reconciliation
+# =====================================================================
+from functools import reduce
+from datetime import datetime
+
+# బ్యాంకింగ్ లావాదేవీల డేటాసెట్
+RAW_TRANSACTIONS = [
+    {"id": "TXN-101", "user": "విజయ్", "amount_usd": 120.0, "status": "APPROVED", "is_international": False},
+    {"id": "TXN-102", "user": "ఆనంద్", "amount_usd": 4500.0, "status": "APPROVED", "is_international": True}, # Suspicious High Value!
+    {"id": "TXN-103", "user": "శ్రీధర్", "amount_usd": 15.0, "status": "REJECTED", "is_international": False},
+    {"id": "TXN-104", "user": "హరిత", "amount_usd": 850.0, "status": "APPROVED", "is_international": False},
+    {"id": "TXN-105", "user": "ఆనంద్", "amount_usd": 9200.0, "status": "APPROVED", "is_international": True}, # Fraud Alert!
+    {"id": "TXN-106", "user": "దివ్య", "amount_usd": 340.0, "status": "APPROVED", "is_international": False}
+]
+
+USD_TO_INR = 83.50
+
+def run_fraud_and_ledger_pipeline():
+    print("\\n" + "=" * 74)
+    print(f"{'🏦 మన బ్యాంకింగ్ — ఫైనాన్షియల్ లెడ్జర్ & ఫ్రాడ్ డిటెక్షన్ 2026':^74}")
+    print("=" * 74)
+
+    # 1. FILTER: ఆమోదించబడిన (APPROVED) లావాదేవీలను మాత్రమే వడపోయడం
+    approved_txns = list(filter(lambda t: t["status"] == "APPROVED", RAW_TRANSACTIONS))
+    print(f"మొత్తం లావాదేవీలు: {len(RAW_TRANSACTIONS)} | ఆమోదించబడినవి: {len(approved_txns)}")
+
+    # 2. MAP: USD నుండి INR కరెన్సీ కన్వర్షన్ చేసి నూతన లెడ్జర్ రికార్డులను సృష్టించడం (Pure Function)
+    inr_ledger = list(map(
+        lambda t: {
+            "id": t["id"],
+            "user": t["user"],
+            "amount_inr": round(t["amount_usd"] * USD_TO_INR, 2),
+            "is_intl": t["is_international"],
+            "risk_score": "HIGH" if (t["amount_usd"] > 3000 and t["is_international"]) else "NORMAL"
+        },
+        approved_txns
+    ))
+
+    # 3. FILTER: ఫ్రాడ్ అలర్ట్స్ (అంతర్జాతీయ హై-వాల్యూ రిస్క్ ట్రాన్సాక్షన్స్)
+    fraud_alerts = list(filter(lambda r: r["risk_score"] == "HIGH", inr_ledger))
+
+    # 4. REDUCE: మొత్తం సెటిల్ అయిన నికర లావాదేవీల విలువ (INR)
+    total_turnover_inr = reduce(lambda acc, item: acc + item["amount_inr"], inr_ledger, 0.0)
+
+    # ఆడిట్ నివేదిక ప్రింట్ చేయడం
+    print("-" * 74)
+    print(f"{'TXN ID':<10} {'వినియోగదారుడు':<16} {'మొత్తం (₹)':>14} {'రకం':<14} {'రిస్క్ స్థాయి':^14}")
+    print("-" * 74)
+
+    for record in inr_ledger:
+        intl_badge = "అంతర్జాతీయ" if record["is_intl"] else "దేశీయ"
+        risk_badge = "🚨 హై రిస్క్!" if record["risk_score"] == "HIGH" else "✅ క్లీన్"
+        print(f"{record['id']:<10} {record['user']:<16} ₹{record['amount_inr']:>12,.2f} {intl_badge:<14} {risk_badge:^14}")
+
+    print("=" * 74)
+    print(f"మొత్తం టర్నోవర్ క్లియరెన్స్ : ₹{total_turnover_inr:,.2f}")
+    print("-" * 74)
+
+    print("\\n🚨 అత్యవసర సెక్యూరిటీ సమీక్షకు పంపబడిన అనుమానాస్పద లావాదేవీలు:")
+    for alert in fraud_alerts:
+        print(f"  • [{alert['id']}] ఖాతాదారు: {alert['user']:<12} మొత్తం: ₹{alert['amount_inr']:,.2f} (అంతర్జాతీయ బదిలీ)")
+
+    print("=" * 74)
+    print(f"{'✅ ఫైనాన్షియల్ లెడ్జర్ ఆడిట్ విజయవంతంగా పూర్తయింది!':^74}")
+    print("=" * 74 + "\\n")
+
+run_fraud_and_ledger_pipeline()
+</code></pre>
+    </div>
+
+    <!-- 5 COLLAPSIBLE QUIZZES -->
+    <h2 class="section-title"><span class="num">★</span> ఈ అధ్యాయంపై ప్రాక్టీస్ క్విజ్ (Knowledge Check)</h2>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">1. ల్యాంబ్డా ఫంక్షన్‌లో return స్టేట్‌మెంట్‌ను ఎందుకు రాయకూడదు?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> ల్యాంబ్డా అనేది సింగిల్ ఎక్స్‌ప్రెషన్ కోసం ఉద్దేశించబడింది. ఆ ఎక్స్‌ప్రెషన్ యొక్క ఫలితం స్వయంచాలకంగా ఇంప్లిసిట్‌గా రిటర్న్ అవుతుంది. అక్కడ <code>return</code> అని రాస్తే పైథాన్ <code>SyntaxError</code> విసురుతుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">2. map() ఫంక్షన్ యొక్క లేజీ ఎవాల్యుయేషన్ (Lazy Evaluation) ప్రయోజనం ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>map()</code> అన్ని అంశాలను ఒకేసారి మెమరీలోకి లోడ్ చేసి లిస్ట్‌గా మార్చదు; అడిగినప్పుడు మాత్రమే ఒక్కొక్క ఎలిమెంట్‌ను ఉత్పత్తి చేసే ఇటరేటర్‌ను ఇస్తుంది. దీనివల్ల జీబీ పరిమాణంలో ఉన్న భారీ డేటాసెట్లను తక్కువ రామ్ (RAM) మెమరీతో సమర్థవంతంగా ప్రాసెస్ చేయవచ్చు.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">3. రికర్సివ్ ఫంక్షన్‌లో బేస్ కేస్ (Base Case) లేకపోతే ఏం జరుగుతుంది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> బేస్ కేస్ లేకపోతే ఫంక్షన్ అనంతంగా కాల్ అవుతూ ఉంటుంది. పైథాన్ కాల్ స్టాక్ లిమిట్ (1000) ను దాటగానే ఇంటర్ప్రెటర్ <code>RecursionError: maximum recursion depth exceeded</code> విసిరి ప్రోగ్రామ్‌ను ఆపేస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">4. functools.reduce() ఫంక్షన్ ఏం చేస్తుంది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> ఇది కలెక్షన్‌లోని అంశాలను వరుసగా రెండేసి చొప్పున తీసుకుని ఫంక్షన్ అప్లై చేస్తూ, చివరికి మొత్తం డేటాను ఒకే ఒక్క విలువగా (సింగిల్ అక్యుములేటెడ్ వాల్యూ) కుదిస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">5. @functools.lru_cache రికర్సివ్ ఫంక్షన్లను ఎలా వేగవంతం చేస్తుంది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> ఇది మెమోయిజేషన్ (Memoization) పద్ధతిని ఉపయోగిస్తుంది. గతంలో లెక్కించిన ఇన్‌పుట్‌లకు సంబంధించిన ఫలితాలను మెమరీలో క్యాష్ చేస్తుంది. తిరిగి అదే ఇన్‌పుట్ వచ్చినప్పుడు మళ్లీ రికర్షన్ చేయకుండా క్యాష్ నుండి తక్షణమే ఫలితాన్ని ఇస్తుంది.
+      </div>
+    </details>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-python/17-python-args-kwargs-variable-scope.html" style="text-decoration:none; color:var(--text); font-weight:600; display:inline-flex; align-items:center; gap:8px; background:var(--bg2); padding:10px 18px; border-radius:8px; border:1px solid var(--border);">
+        ← మునుపటి అధ్యాయం: 17. *args, **kwargs &amp; Scope
+      </a>
+      <a href="/blog-python/19-python-modules-packages-and-pip.html" style="text-decoration:none; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; background:#10b981; padding:10px 22px; border-radius:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        తర్వాతి అధ్యాయం: 19. మాడ్యూల్స్, ప్యాకేజీలు &amp; pip →
+      </a>
+    </div>
+
+    <!-- INTERACTIVE COMPILER CTA CARD -->
+    <div style="margin-top:40px; background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(56,189,248,0.1) 100%); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:24px; text-align:center;">
+      <h3 style="margin-top:0; color:var(--text); font-size:20px;">ఈ Financial Fraud Detection Engine ని లైవ్‌గా మన కంపైలర్‌లో రన్ చేయండి!</h3>
+      <p style="color:var(--text2); max-width:650px; margin:8px auto 20px; font-size:14px; line-height:1.6;">
+        ఎటువంటి లోకల్ సెటప్ లేకుండా, బ్రౌజర్‌లోనే Modern Python 3 కంపైలర్‌లో ఈ కోడ్‌ను ఎగ్జిక్యూట్ చేసి అవుట్‌పుట్ తనిఖీ చేయండి.
+      </p>
+      <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; padding:12px 28px; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Launch Python Interactive Compiler
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER / NAV SCRIPTS -->
+<script src="/site-nav.js"></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`# =====================================================================
+# చాప్టర్ 18 మినీ ప్రాజెక్ట్: Functional Data Pipeline (LIVE DEMO)
+# =====================================================================
+from functools import reduce
+
+prices = [1200, 4500, 300, 8900, 2200]
+
+# 1. 10% డిస్కౌంట్ వర్తింపజేయడం (map)
+discounted = list(map(lambda p: p * 0.90, prices))
+
+# 2. ₹1,000 కంటే ఎక్కువ ఉన్నవి ఫిల్టర్ చేయడం (filter)
+premium = list(filter(lambda p: p > 1000, discounted))
+
+# 3. మొత్తం బిల్లు అక్యుములేషన్ (reduce)
+total = reduce(lambda a, b: a + b, premium, 0)
+
+print("=" * 60)
+print(f"{'🛒 ఫంక్షనల్ ఈ-కామర్స్ బిల్లింగ్ పైప్‌లైన్ (LIVE)':^60}")
+print("=" * 60)
+print("డిస్కౌంట్ తర్వాత  :", discounted)
+print("ప్రీమియం ప్రోడక్ట్స్ :", premium)
+print(f"మొత్తం చెల్లింపు   : ₹{total:,.2f}")
+print("=" * 60)
+print("\\n🎉 చాప్టర్ 18 ప్రాజెక్ట్ విజయవంతంగా రన్ అయ్యింది! 🚀")
+\`;
+
+    try {
+      localStorage.setItem('code_python', projectCode);
+      localStorage.setItem('code_python3', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-python-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-python', currentLesson.file);
+fs.writeFileSync(outputPath, chapter18Content, 'utf8');
+console.log('✅ Successfully generated deep high-value Python Chapter 18 in exact HTML style!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter18Content.length, 'characters');

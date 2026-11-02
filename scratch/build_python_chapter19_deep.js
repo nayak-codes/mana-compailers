@@ -1,0 +1,651 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildPythonSidebar } = require('./python_curriculum_data.js');
+
+const currentLesson = LESSONS[18]; // Chapter 19 (0-indexed 18)
+const sidebarHtml = buildPythonSidebar(19);
+
+const chapter19Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Python 3 మాడ్యూల్స్, ప్యాకేజీలు & వర్చువల్ ఎన్విరాన్‌మెంట్స్ సమగ్ర తెలుగు గైడ్: CPython import సిస్టమ్, sys.path & sys.modules, __name__ == '__main__' గార్డ్‌రైల్, __init__.py ప్యాకేజీలు, pip & requirements.txt, venv వర్చువల్ ఎన్విరాన్‌మెంట్స్, మరియు Package Security Auditor ఇంజిన్ ప్రాజెక్ట్." />
+  <meta name="keywords" content="python modules in telugu, python packages telugu, python __name__ __main__ telugu, python venv pip telugu, learn python in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-python/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Complete Guide to Python Modules, Packages and Virtual Environments in Telugu)",
+    "description": "Python 3 మాడ్యూల్స్ మరియు ప్యాకేజీల పూర్తి గైడ్: import system, __name__ == '__main__', __init__.py, pip, venv, మరియు Dependency Security Auditor.",
+    "articleSection": "Phase 04: ఫంక్షన్స్, మాడ్యూల్స్ & ఫైల్ I/O",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-01-26",
+    "dateModified": "2026-11-02"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Compiler Integration -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___PY_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/("""[\\s\\S]*?"""|'''[\\s\\S]*?'''|f?"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|f?'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'|r"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|r'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'import','from','as','def','return','class','if','elif','else','while','for','in',
+        'break','continue','pass','try','except','finally','with','lambda','global','nonlocal',
+        'and','or','not','is','yield','async','await','raise','assert','True','False','None'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'print','len','range','type','isinstance','id','input','int','float','str','list',
+        'dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted',
+        'abs','open','help','dir','filter','__import__'
+      ];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?)\\b/g, m => pushToken('num', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split('___PY_TOK_' + idx + '___').join(tok);
+      });
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code.language-python').forEach(block => {
+        block.innerHTML = highlightPythonCode(block.innerText);
+      });
+    });
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      const code = pre.innerText;
+      try {
+        localStorage.setItem('code_python', code);
+        localStorage.setItem('code_python3', code);
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+      window.open('/online-python-compiler.html', '_blank');
+    }
+  </script>
+</head>
+<body class="lang-python light-theme">
+
+<!-- Site Navigation Placeholder -->
+<div id="site-nav-placeholder"></div>
+
+<!-- Layout Container -->
+<div class="layout">
+
+  <!-- Single Sidebar Component -->
+  ${sidebarHtml}
+
+  <!-- Main Content Area -->
+  <main class="content">
+
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb" style="display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text2); margin-bottom:16px;">
+      <a href="/" style="color:var(--text2); text-decoration:none;">Home</a>
+      <span class="sep">›</span>
+      <a href="/tutorials" style="color:var(--text2); text-decoration:none;">Tutorials</a>
+      <span class="sep">›</span>
+      <a href="/blog-python/" style="color:var(--text2); text-decoration:none;">Python Masterclass</a>
+      <span class="sep">›</span>
+      <span style="color:var(--text); font-weight:600;">Chapter 19: ${currentLesson.title}</span>
+    </div>
+
+    <!-- MAIN PAGE TITLE -->
+    <h1 class="page-title" style="font-size:32px; font-weight:800; color:var(--text); margin-bottom:14px; line-height:1.25;">
+      ${currentLesson.title}
+    </h1>
+
+    <!-- 4 PAGE META BADGES -->
+    <div class="page-meta" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; font-size:12.5px;">
+      <span style="background:rgba(16,185,129,0.12); color:#10b981; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        🌐 Modern Python 3.12+
+      </span>
+      <span style="background:rgba(59,130,246,0.12); color:#3b82f6; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        📖 Chapter 19 of 25
+      </span>
+      <span style="background:rgba(245,158,11,0.12); color:#f59e0b; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        📁 Phase 04: ఫంక్షన్స్, మాడ్యూల్స్ &amp; ఫైల్ I/O
+      </span>
+      <span style="background:rgba(139,92,246,0.12); color:#8b5cf6; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        🗓️ 2026 Edition
+      </span>
+    </div>
+
+    <!-- COVERED PILL -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin-bottom:24px; font-size:13.5px; color:var(--text2); line-height:1.6;">
+      <strong style="color:var(--text); font-weight:700;">📌 Covered in this chapter:</strong>
+      ${currentLesson.subtopics} · CPython Import System (sys.modules, sys.path) · __pycache__ Bytecode Caching · Custom Modules · if __name__ == '__main__' Guardrail · __init__.py Package Hierarchy · pip &amp; requirements.txt · venv Virtual Environments · Package Dependency Security Auditor Project
+    </div>
+
+    <!-- WARM SOFT IVORY INTRO BOX -->
+    <div class="intro-box" style="background:#fffdf7; border:1px solid #fef3c7; border-left:4px solid #f59e0b; border-radius:10px; padding:20px 24px; margin-bottom:30px; font-size:15px; color:#451a03; line-height:1.75;">
+      మీరు ఒక పూర్తి స్థాయి వెబ్ అప్లికేషన్, ఆర్టిఫిషియల్ ఇంటెలిజెన్స్ మోడల్ లేదా డేటాబేస్ ఇంజిన్‌ను నిర్మిస్తున్నప్పుడు — వేల లైన్ల కోడ్‌ను ఒకే ఒక్క <code>main.py</code> ఫైల్‌లో కుక్కడం ఆత్మహత్యతో సమానం. ఒక పెద్ద సాఫ్ట్‌వేర్ ఆర్కిటెక్చర్‌లో డేటాబేస్ కనెక్షన్లు ఒకచోట, బిజినెస్ లాజిక్ ఒకచోట, యూజర్ ఇంటర్‌ఫేస్ మరొకచోట విడివిడిగా అమర్చబడాలి.
+      <br/><br/>
+      కోడ్‌ను ఈ విధంగా అందమైన గదులుగా విభజించే కళాత్మక నిర్మాణమే <strong>మాడ్యూల్స్ (Modules) &amp; ప్యాకేజీలు (Packages)</strong>! ఒక ఫైల్‌లోని ఫంక్షన్లను మరొక ఫైల్‌లోకి ఆహ్వానించే <strong><code>import</code></strong> సిస్టమ్ తెరవెనుక CPython లో ఎలా పనిచేస్తుంది? ప్రతి ప్రొఫెషనల్ పైథాన్ డెవలపర్ ఫైల్ చివర రాసే మంత్రం <strong><code>if __name__ == '__main__':</code></strong> రహస్యం ఏమిటి? ప్రాజెక్టుల మధ్య లైబ్రరీ వెర్షన్లు కొట్టుకోకుండా కాపాడే <strong><code>venv</code> (Virtual Environments)</strong> మరియు <strong><code>pip</code></strong> ప్యాకేజీ మేనేజర్‌ను ప్రొడక్షన్‌లో ఎలా మాస్టర్ చేయాలి? ఈ అధ్యాయంలో మనం ఈ అంశాలన్నింటినీ సమగ్రంగా చర్చిస్తూ, సాఫ్ట్‌వేర్ ప్యాకేజీలలోని సెక్యూరిటీ లోపాలను ఆడిట్ చేసే రియల్-వరల్డ్ డిపెండెన్సీ ఆడిటర్ ప్రాజెక్ట్‌ను నిర్మిద్దాం!
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 class="section-title"><span class="num">1</span> మాడ్యూల్ అంటే ఏమిటి? (What is a Python Module?)</h2>
+    <p>
+      పైథాన్‌లో <strong>మాడ్యూల్ (Module)</strong> అనేది పైథాన్ కోడ్ (ఫంక్షన్లు, క్లాస్‌లు, వేరియబుల్స్) కలిగిన ఏదైనా ఒక సాధారణ <strong><code>.py</code> ఫైల్</strong>!
+    </p>
+    <p>
+      ఉదాహరణకు, మీరు <code>calculator.py</code> అనే ఫైల్‌ను సృష్టిస్తే, అది తక్షణమే ఒక మాడ్యూల్ అవుతుంది. దానిలోని ఫంక్షన్లను వేరే ఫైల్ నుండి <code>import calculator</code> అని రాసి నిశ్చింతగా ఉపయోగించుకోవచ్చు.
+    </p>
+    <ul>
+      <li><strong>నేమ్‌స్పేస్ ఐసోలేషన్ (Namespace Isolation):</strong> ఒక మాడ్యూల్‌లోని వేరియబుల్స్ మరొక మాడ్యూల్‌లోని వేరియబుల్స్‌తో ఘర్షణ పడకుండా (Name Collisions రాకుండా) పైథాన్ ప్రతి మాడ్యూల్‌కు ప్రత్యేకమైన నేమ్‌స్పేస్‌ను కేటాయిస్తుంది.</li>
+      <li><strong>కోడ్ రీ-యూజబిలిటీ:</strong> ఒకసారి రాసిన లైబ్రరీ కోడ్‌ను వందలాది ప్రాజెక్టులలో ఇంపోర్ట్ చేసుకోవచ్చు.</li>
+    </ul>
+
+    <!-- SECTION 2 -->
+    <h2 class="section-title"><span class="num">2</span> CPython <code>import</code> సిస్టమ్ అంతర్గత పనితీరు</h2>
+    <p>
+      మీరు <code>import math</code> అని రాసినప్పుడు తెరవెనుక CPython క్రింది ఖచ్చితమైన 3-దశల ఆర్కిటెక్చర్‌ను అమలు చేస్తుంది:
+    </p>
+
+    <div style="background:#0f172a; border:1px solid #1e293b; border-radius:8px; padding:18px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13px; color:#f8fafc; line-height:1.7;">
+      <div style="color:#10b981; font-weight:700; margin-bottom:8px;">[CPython Module Import Sequence]</div>
+      1. sys.modules Cache Check ─────▶ ఇప్పటికే మెమరీలో లోడ్ అయ్యి ఉందా?<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│ YES ──▶ Return cached module instantly! ⚡<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼ NO<br/>
+      2. sys.path Directory Search ───▶ ఫైల్ ఎక్కడ ఉందో వెతుకుతుంది:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [1] ప్రస్తుత వర్కింగ్ డైరెక్టరీ (Current Script Dir)<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [2] PYTHONPATH ఎన్విరాన్‌మెంట్ వేరియబుల్<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [3] పైథాన్ స్టాండర్డ్ లైబ్రరీ (Standard Library)<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• [4] థర్డ్ పార్టీ ప్యాకేజీలు (site-packages)<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;▼<br/>
+      3. Compilation &amp; Execution ─────▶ కోడ్‌ను బైట్‌కోడ్‌గా కంపైల్ చేసి __pycache__ లో .pyc ఫైల్‌గా రాస్తుంది. మాడ్యూల్ ఆబ్జెక్ట్‌ను ఎగ్జిక్యూట్ చేసి sys.modules లో భద్రపరుస్తుంది!
+    </div>
+
+    <!-- SECTION 3 -->
+    <h2 class="section-title"><span class="num">3</span> Import సింటాక్స్ వైవిధ్యాలు (Variants &amp; Best Practices)</h2>
+    <p>
+      పైథాన్‌లో మాడ్యూల్స్ ఇంపోర్ట్ చేయడానికి నాలుగు ప్రధాన పద్ధతులు ఉన్నాయి:
+    </p>
+    <ul>
+      <li><strong>1. <code>import module_name</code>:</strong> అత్యంత సురక్షితమైనది. ఫంక్షన్లను పిలిచేటప్పుడు <code>module_name.func()</code> అని స్పష్టంగా మాడ్యూల్ పేరుతో పిలుస్తాము:
+        <code>import math; print(math.sqrt(16))</code>
+      </li>
+      <li><strong>2. <code>from module_name import func1, func2</code>:</strong> నిర్దిష్టమైన ఫంక్షన్లను నేరుగా మన కరెంట్ నేమ్‌స్పేస్‌లోకి తెస్తుంది:
+        <code>from math import sqrt, pi; print(sqrt(25))</code>
+      </li>
+      <li><strong>3. <code>import module_name as alias</code>:</strong> మాడ్యూల్ పేరు పెద్దదిగా ఉన్నప్పుడు నిక్-నేమ్ (అలియాస్) ఇవ్వడం (డేటా సైన్స్‌లో పరిశ్రమ ప్రమాణం):
+        <code>import numpy as np; import pandas as pd</code>
+      </li>
+      <li><strong>4. <code>from module_name import *</code> (⚠️ డేంజరస్ యాంటీ-ప్యాటర్న్):</strong> ఆ మాడ్యూల్‌లోని అన్ని ఫంక్షన్లను ఒకేసారి గుడ్డిగా తెస్తుంది. దీనివల్ల మన వేరియబుల్స్ ఓవర్‌రైట్ అయిపోయి తీవ్రమైన బగ్‌లు వస్తాయి. ప్రొడక్షన్ కోడ్‌లో దీనిని ఎట్టి పరిస్థితుల్లోనూ వాడకూడదు!</li>
+    </ul>
+
+    <!-- SECTION 4 -->
+    <h2 class="section-title"><span class="num">4</span> కస్టమ్ మాడ్యూల్స్ సృష్టి &amp; లోకల్ ఇంపోర్ట్స్</h2>
+    <p>
+      ఒక కస్టమ్ మాడ్యూల్ ఎలా తయారు చేయాలో చూద్దాం. మీ ప్రాజెక్ట్ ఫోల్డర్‌లో <code>string_utils.py</code> అనే ఫైల్‌ను సృష్టించి అందులో ఫంక్షన్స్ రాసి, ప్రధాన అప్లికేషన్‌లో ఎలా ఇంపోర్ట్ చేయాలో క్రింది కోడ్‌లో చూడండి:
+    </p>
+
+    <!-- CODE BLOCK: CUSTOM MODULE DEMO -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">string_utils_and_usage.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# కస్టమ్ మాడ్యూల్ ఫంక్షన్ల డెమో: string_utils లాజిక్
+# =====================================================================
+
+def to_url_slug(title: str) -> str:
+    """ఒక ఆర్టికల్ శీర్షికను SEO-ఫ్రెండ్లీ URL స్లగ్‌గా మారుస్తుంది."""
+    clean = "".join([c.lower() if c.isalnum() or c == " " else "" for c in title])
+    return "-".join(clean.split())
+
+def mask_sensitive_aadhaar(aadhaar_num: str) -> str:
+    """ఆధార్ నంబర్‌లోని మొదటి 8 అంకెలను మాస్క్ చేస్తుంది (xxxx-xxxx-1234)."""
+    digits = aadhaar_num.replace("-", "").replace(" ", "")
+    if len(digits) != 12:
+        return "తప్పుడు ఆధార్ నంబర్!"
+    return f"XXXX-XXXX-{digits[-4:]}"
+
+# ప్రధాన స్క్రిప్ట్‌లో దీనిని వాడుకోవడం:
+blog_title = "Python 3 టుటోరియల్స్ ఇన్ తెలుగు 2026!"
+user_aadhaar = "1234-5678-9012"
+
+print("SEO స్లగ్    :", to_url_slug(blog_title))
+print("మాస్క్డ్ ఆధార్ :", mask_sensitive_aadhaar(user_aadhaar))
+</code></pre>
+    </div>
+
+    <!-- SECTION 5 -->
+    <h2 class="section-title"><span class="num">5</span> The Infamous <code>if __name__ == '__main__':</code> గార్డ్‌రైల్</h2>
+    <p>
+      పైథాన్ ప్రోగ్రామర్లు ప్రతి ఫైల్ చివర రాసే <code>if __name__ == '__main__':</code> వెనుక ఉన్న లోతైన రహస్యం ఏమిటో తెలుసా?
+    </p>
+    <p>
+      పైథాన్ ఒక ఫైల్‌ను రన్ చేస్తున్నప్పుడు, దానికి స్వయంచాలకంగా <strong><code>__name__</code></strong> అనే ప్రత్యేకమైన వేరియబుల్‌ను కేటాయిస్తుంది:
+    </p>
+    <ul>
+      <li><strong>నేరుగా రన్ చేసినప్పుడు:</strong> మీరు టెర్మినల్ నుండి <code>python my_script.py</code> అని ఫైల్‌ను నేరుగా రన్ చేస్తే, పైథాన్ దాని <code>__name__</code> విలువను <strong><code>'__main__'</code></strong> గా సెట్ చేస్తుంది.</li>
+      <li><strong>మరొక ఫైల్‌లోకి ఇంపోర్ట్ అయినప్పుడు:</strong> ఎవరైనా <code>import my_script</code> అని ఇంపోర్ట్ చేసుకుంటే, దాని <code>__name__</code> విలువ ఆ ఫైల్ పేరు <strong><code>'my_script'</code></strong> గా మారుతుంది!</li>
+    </ul>
+
+    <div style="background:rgba(16,185,129,0.08); border-left:4px solid #10b981; padding:14px 18px; border-radius:6px; margin:14px 0; font-size:13.5px; line-height:1.7;">
+      <strong>గార్డ్‌రైల్ ప్రయోజనం:</strong> మీరు రాసిన మాడ్యూల్‌లో టెస్ట్ కోడ్ ఉందనుకోండి. ఆ ఫైల్‌ను వేరేవాళ్ళు ఇంపోర్ట్ చేసుకున్నప్పుడు ఆ టెస్ట్ కోడ్ రన్ కాకుండా కేవలం ఫైల్‌ను నేరుగా రన్ చేసినప్పుడు మాత్రమే ఎగ్జిక్యూట్ అవ్వడానికి ఈ గార్డ్‌రైల్ రక్షణ కల్పిస్తుంది!
+    </div>
+
+    <!-- SECTION 6 -->
+    <h2 class="section-title"><span class="num">6</span> ప్యాకేజీలు అంటే ఏమిటి? (Packages &amp; <code>__init__.py</code>)</h2>
+    <p>
+      మాడ్యూల్ అనేది ఒక సింగిల్ ఫైల్ అయితే, <strong>ప్యాకేజీ (Package)</strong> అనేది అనేక మాడ్యూల్స్‌ను కలిగి ఉండే ఒక డైరెక్టరీ (ఫోల్డర్)!
+    </p>
+    <p>
+      ఒక ఫోల్డర్‌ను పైథాన్ అధికారిక ప్యాకేజీగా గుర్తించాలంటే అందులో సాంప్రదాయకంగా <strong><code>__init__.py</code></strong> అనే ప్రత్యేక ఫైల్ ఉండాలి.
+    </p>
+    <div style="background:#0f172a; padding:14px 18px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#f8fafc; line-height:1.6; margin:12px 0;">
+      my_ecommerce_app/<br/>
+      │── main.py<br/>
+      └── store/                   # Package Directory<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── __init__.py          # ప్యాకేజీ మార్కర్ & ఇనిషియలైజర్<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── products.py          # Module 1<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── orders.py            # Module 2<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;└── billing.py           # Module 3
+    </div>
+    <p>
+      పైథాన్ 3.3+ నుండి <code>__init__.py</code> లేకపోయినా <em>Namespace Packages</em> సపోర్ట్ ఉన్నప్పటికీ, ప్యాకేజీ ఎక్స్‌పోర్ట్‌లను (<code>__all__</code>) నియంత్రించడానికి మరియు ప్రారంభ లాజిక్ రన్ చేయడానికి <code>__init__.py</code> ఉంచడం నేటికీ బెస్ట్ ప్రాక్టీస్.
+    </p>
+
+    <!-- SECTION 7 -->
+    <h2 class="section-title"><span class="num">7</span> కోడ్ డెమో 1: మాడ్యూల్ ఇంట్రోస్పెక్షన్ &amp; <code>sys.modules</code></h2>
+    <p>
+      CPython లోడ్ చేసిన మాడ్యూల్స్ మరియు వాటి ఫైల్ పాత్‌లను ప్రోగ్రామాటిక్‌గా ఎలా పరిశీలించవచ్చో చూడండి:
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">01_module_system_introspection.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 19 డెమో 1: sys మాడ్యూల్ ఇంట్రోస్పెక్షన్ & sys.path సెర్చ్ ఆర్డర్
+# =====================================================================
+import sys
+import math
+
+print("=== 1. ప్రస్తుత స్క్రిప్ట్ __name__ వేరియబుల్ ===")
+print(f"__name__ విలువ : {__name__} (నేరుగా రన్ అయినందున '__main__' గా ఉంది)")
+
+print("\\n=== 2. sys.modules లో math మాడ్యూల్ ఉనికి ===")
+print(f"math క్యాష్ అయిందా? : {'math' in sys.modules}")
+print(f"math మాడ్యూల్ రిఫరెన్స్: {sys.modules['math']}")
+
+print("\\n=== 3. CPython సెర్చ్ పాత్స్ (sys.path Top 3) ===")
+for idx, p in enumerate(sys.path[:3], start=1):
+    print(f"  {idx}. {p}")
+</code></pre>
+    </div>
+
+    <!-- SECTION 8 -->
+    <h2 class="section-title"><span class="num">8</span> <code>pip</code> — పైథాన్ అఫీషియల్ ప్యాకేజీ మేనేజర్ &amp; PyPI</h2>
+    <p>
+      ప్రపంచవ్యాప్తంగా డెవలపర్లు తయారు చేసిన లక్షలాది ఓపెన్ సోర్స్ లైబ్రరీలు <strong>PyPI (Python Package Index - pypi.org)</strong> లో అందుబాటులో ఉంటాయి. వాటిని మన సిస్టమ్‌లో ఇన్‌స్టాల్ చేసుకోవడానికి ఉపయోగపడే టూలే <strong><code>pip</code></strong> (Pip Installs Packages).
+    </p>
+    <div style="background:#0f172a; padding:12px 18px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:10px 0; line-height:1.7;">
+      # ప్రధాన pip కమాండ్లు:<br/>
+      pip install requests          # ఒక ప్యాకేజీని ఇన్‌స్టాల్ చేయడం<br/>
+      pip install fastapi==0.110.0  # నిర్దిష్టమైన వెర్షన్‌ను ఇన్‌స్టాల్ చేయడం<br/>
+      pip list                      # ఇన్‌స్టాల్ అయిన ప్యాకేజీల లిస్ట్ చూడటం<br/>
+      pip freeze &gt; requirements.txt # ప్రాజెక్ట్ డిపెండెన్సీలను ఫైల్‌లో భద్రపరచడం<br/>
+      pip install -r requirements.txt # కొత్త సర్వర్‌లో అన్ని లైబ్రరీలను ఒకే కమాండ్‌తో ఇన్‌స్టాల్ చేయడం!
+    </div>
+
+    <!-- SECTION 9 -->
+    <h2 class="section-title"><span class="num">9</span> వర్చువల్ ఎన్విరాన్‌మెంట్స్ (<code>venv</code>) ఎందుకు తప్పనిసరి?</h2>
+    <p>
+      మీ కంప్యూటర్‌లో రెండు వేర్వేరు ప్రాజెక్టులు ఉన్నాయనుకోండి:
+    </p>
+    <ul>
+      <li><strong>Project A (పాత వెబ్‌సైట్):</strong> Django వెర్షన్ <code>3.2</code> పై నడుస్తుంది.</li>
+      <li><strong>Project B (నూతన AI పోర్టల్):</strong> Django తాజా వెర్షన్ <code>5.0</code> కావాలి.</li>
+    </ul>
+    <p>
+      మీరు గ్లోబల్ పైథాన్‌లో Django 5.0 ఇన్‌స్టాల్ చేస్తే, పాత Project A క్రాష్ అవుతుంది! ఈ ఘర్షణలను నివారించడానికి ప్రతి ప్రాజెక్ట్‌కు ఒక ప్రత్యేకమైన, ఒంటరి (Isolated) వాతావరణాన్ని సృష్టించే సాధనమే <strong>వర్చువల్ ఎన్విరాన్‌మెంట్ (<code>venv</code>)</strong>.
+    </p>
+
+    <!-- SECTION 10 -->
+    <h2 class="section-title"><span class="num">10</span> <code>venv</code> లైఫ్‌సైకిల్ కమాండ్స్ (Windows &amp; Linux)</h2>
+    <p>
+      పైథాన్ స్టాండర్డ్ లైబ్రరీలోనే <code>venv</code> అంతర్నిర్మితంగా లభిస్తుంది:
+    </p>
+    <div style="overflow-x:auto; margin:14px 0;">
+      <table style="width:100%; border-collapse:collapse; background:var(--bg2); font-size:13px; border-radius:8px; overflow:hidden;">
+        <thead>
+          <tr style="background:#0f172a; color:#f8fafc; text-align:left;">
+            <th style="padding:10px 14px;">దశ / ఆపరేషన్</th>
+            <th style="padding:10px 14px;">Windows కమాండ్ (PowerShell)</th>
+            <th style="padding:10px 14px;">Linux / macOS (Bash)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:600;">1. Create Virtual Env</td>
+            <td style="padding:10px 14px; font-family:'JetBrains Mono', monospace;">python -m venv .venv</td>
+            <td style="padding:10px 14px; font-family:'JetBrains Mono', monospace;">python3 -m venv .venv</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:600;">2. Activate Environment</td>
+            <td style="padding:10px 14px; font-family:'JetBrains Mono', monospace;">.venv\\Scripts\\Activate.ps1</td>
+            <td style="padding:10px 14px; font-family:'JetBrains Mono', monospace;">source .venv/bin/activate</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 14px; font-weight:600;">3. Deactivate</td>
+            <td style="padding:10px 14px; font-family:'JetBrains Mono', monospace;">deactivate</td>
+            <td style="padding:10px 14px; font-family:'JetBrains Mono', monospace;">deactivate</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 11 -->
+    <h2 class="section-title"><span class="num">11</span> ఆధునిక పైథాన్ టూలింగ్ (Poetry, UV, Pipenv)</h2>
+    <p>
+      ఆధునిక క్లౌడ్ నేటివ్ డెవలప్‌మెంట్‌లో సాధారణ pip కాకుండా వేగవంతమైన ప్యాకేజీ మేనేజర్లు ప్రాచుర్యం పొందాయి:
+    </p>
+    <ul>
+      <li><strong>UV (Astral):</strong> రస్ట్ (Rust) లో రాయబడిన అత్యంత వేగవంతమైన ప్యాకేజీ మేనేజర్. pip కంటే 10-100 రెట్లు వేగంగా లైబ్రరీలను ఇన్‌స్టాల్ చేస్తుంది.</li>
+      <li><strong>Poetry:</strong> డిపెండెన్సీ లాకింగ్ (<code>poetry.lock</code>) మరియు ప్రాజెక్ట్ ప్యాకేజింగ్ కోసం పరిశ్రమ ప్రామాణిక టూల్.</li>
+    </ul>
+
+    <!-- SECTION 12 -->
+    <h2 class="section-title"><span class="num">12</span> కామన్ బిగినర్స్ మిస్టేక్స్ &amp; మాడ్యూల్ షాడోయింగ్ ట్రాప్</h2>
+    <ul>
+      <li><strong>The File Name Shadowing Trap (ప్రమాదకరమైన తప్పు!):</strong> మీ ప్రాక్టీస్ స్క్రిప్ట్‌కు <code>math.py</code>, <code>random.py</code>, లేదా <code>email.py</code> అని పేరు పెట్టి, లోపల <code>import math</code> అని రాస్తే — పైథాన్ స్టాండర్డ్ లైబ్రరీని కాకుండా మీ ఫైల్‌నే ఇంపోర్ట్ చేసుకుంటుంది! ఫలితంగా <code>AttributeError: module 'math' has no attribute 'sqrt'</code> వచ్చి ప్రోగ్రామ్ క్రాష్ అవుతుంది! మీ ఫైళ్లకు ఎప్పుడూ పైథాన్ లైబ్రరీ పేర్లను పెట్టకండి.</li>
+      <li><strong>Circular Imports బగ్:</strong> File A File B ని, File B File A ని ఇంపోర్ట్ చేసుకోవడం వల్ల వచ్చే డెడ్‌లాక్ ఎర్రర్. దీనిని నివారించడానికి షేర్డ్ లాజిక్‌ను ఒక మూడవ ఫైల్ <code>common.py</code> లోకి తరలించాలి.</li>
+      <li><strong>వర్చువల్ ఎన్విరాన్‌మెంట్ యాక్టివేట్ చేయకుండా ఇన్‌స్టాల్ చేయడం:</strong> గ్లోబల్ మెషీన్‌లో లైబ్రరీలను కుక్కేయడం వల్ల పర్మిషన్ ఎర్రర్లు మరియు డిపెండెన్సీ గందరగోళం ఏర్పడుతుంది.</li>
+    </ul>
+
+    <!-- SECTION 13 -->
+    <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాజెక్ట్: "Package Dependency Security &amp; Vulnerability Auditor"</h2>
+    <p>
+      ఈ పంతొమ్మిదవ అధ్యాయంలో నేర్చుకున్న అన్ని అంశాలను (మాడ్యూల్స్, ప్యాకేజీలు, <code>__name__</code> గార్డ్‌రైల్, <code>sys.path</code>, <code>requirements.txt</code> పార్సింగ్) సమగ్రంగా అనుసంధానిస్తూ — సాఫ్ట్‌వేర్ డిపెండెన్సీలలో కాలం చెల్లిన లేదా ప్రమాదకరమైన లైబ్రరీలను గుర్తించే పూర్తి స్థాయి <strong>Enterprise Package Security Auditor Engine</strong> ను నిర్మిద్దాం!
+    </p>
+
+    <!-- CODE BLOCK 2: CAPSTONE MINI PROJECT -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">02_package_security_auditor.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 19 మినీ ప్రాజెక్ట్: Package Security & Dependency Audit Engine
+# కాన్సెప్ట్స్: Custom Modules Architecture, __name__ == '__main__' Guard,
+#             requirements.txt Parsing, Vulnerability Advisory Matching
+# =====================================================================
+
+# తెలిసిన సెక్యూరిటీ వల్నరబిలిటీస్ గ్లోబల్ డేటాబేస్ (CVE Advisory Mock)
+KNOWN_VULNERABLE_PACKAGES = {
+    "requests": {"vulnerable_below": "2.31.0", "cve": "CVE-2023-32681", "risk": "CRITICAL"},
+    "flask": {"vulnerable_below": "2.2.5", "cve": "CVE-2023-30861", "risk": "HIGH"},
+    "urllib3": {"vulnerable_below": "1.26.17", "cve": "CVE-2023-43804", "risk": "MEDIUM"},
+    "django": {"vulnerable_below": "4.2.4", "cve": "CVE-2023-36053", "risk": "CRITICAL"}
+}
+
+def parse_requirements_manifest(manifest_content: str) -> list[tuple[str, str]]:
+    """requirements.txt టెక్స్ట్ ఫైల్‌ను పార్స్ చేసి (ప్యాకేజీ, వెర్షన్) టుపుల్స్‌గా అందిస్తుంది."""
+    parsed_packages = []
+    lines = manifest_content.strip().split("\\n")
+
+    for line in lines:
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "==" in line:
+            pkg, ver = line.split("==")
+            parsed_packages.append((pkg.strip().lower(), ver.strip()))
+        elif ">=" in line:
+            pkg, ver = line.split(">=")
+            parsed_packages.append((pkg.strip().lower(), ver.strip()))
+
+    return parsed_packages
+
+def audit_project_dependencies(dependencies: list[tuple[str, str]]) -> dict:
+    """డిపెండెన్సీలను సెక్యూరిటీ డేటాబేస్‌తో పోల్చి సమగ్ర నివేదికను ఇస్తుంది."""
+    findings = []
+    clean_count = 0
+
+    for pkg_name, installed_ver in dependencies:
+        if pkg_name in KNOWN_VULNERABLE_PACKAGES:
+            advisory = KNOWN_VULNERABLE_PACKAGES[pkg_name]
+            # సాధారణ వెర్షన్ కంపారిజన్
+            if installed_ver < advisory["vulnerable_below"]:
+                findings.append({
+                    "package": pkg_name,
+                    "installed": installed_ver,
+                    "safe_version": advisory["vulnerable_below"],
+                    "cve": advisory["cve"],
+                    "risk": advisory["risk"]
+                })
+            else:
+                clean_count += 1
+        else:
+            clean_count += 1
+
+    return {
+        "total_audited": len(dependencies),
+        "clean_packages": clean_count,
+        "vulnerable_packages": findings
+    }
+
+def print_security_audit_report(report: dict):
+    """అందమైన సెక్యూరిటీ ఆడిట్ రిపోర్ట్ కన్సోల్ ప్రింటింగ్."""
+    print("\\n" + "=" * 74)
+    print(f"{'🛡️ మన సాఫ్ట్‌వేర్ — పైథాన్ ప్యాకేజీ సెక్యూరిటీ ఆడిట్ రిపోర్ట్ 2026':^74}")
+    print("=" * 74)
+    print(f"మొత్తం ఆడిట్ చేసిన లైబ్రరీలు : {report['total_audited']}")
+    print(f"సురక్షితమైన ప్యాకేజీలు       : {report['clean_packages']}")
+    print(f"గుర్తించిన సెక్యూరిటీ లోపాలు : {len(report['vulnerable_packages'])}")
+    print("-" * 74)
+
+    if not report["vulnerable_packages"]:
+        print("  🎉 అభినందనలు! ఎటువంటి సెక్యూరిటీ లోపాలు కనుగొనబడలేదు. అన్నీ సురక్షితం!")
+    else:
+        print(f"{'ప్యాకేజీ':<14} {'ఇన్‌స్టాల్ వెర్షన్':<18} {'సేఫ్ వెర్షన్':<16} {'CVE ఐడీ':<16} {'తీవ్రత':^10}")
+        print("-" * 74)
+        for issue in report["vulnerable_packages"]:
+            risk_badge = "🔴 CRITICAL" if issue["risk"] == "CRITICAL" else "🟡 " + issue["risk"]
+            print(f"{issue['package']:<14} {issue['installed']:<18} {issue['safe_version']:<16} {issue['cve']:<16} {risk_badge}")
+
+    print("=" * 74)
+    print(f"{'👉 తక్షణ చర్య: pip install --upgrade [package] ద్వారా సురక్షిత వెర్షన్‌కు మారండి!':^74}")
+    print("=" * 74 + "\\n")
+
+# ఆడిట్ డెమో ఎగ్జిక్యూషన్
+sample_requirements_file = """
+# ప్రొడక్షన్ మైక్రోసర్వీస్ డిపెండెన్సీలు
+fastapi==0.110.0
+requests==2.28.1
+urllib3==1.26.15
+pydantic==2.6.4
+flask==2.1.2
+uvicorn==0.28.0
+"""
+
+if __name__ == "__main__":
+    dependencies_list = parse_requirements_manifest(sample_requirements_file)
+    audit_results = audit_project_dependencies(dependencies_list)
+    print_security_audit_report(audit_results)
+</code></pre>
+    </div>
+
+    <!-- 5 COLLAPSIBLE QUIZZES -->
+    <h2 class="section-title"><span class="num">★</span> ఈ అధ్యాయంపై ప్రాక్టీస్ క్విజ్ (Knowledge Check)</h2>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">1. if __name__ == '__main__': గార్డ్‌రైల్ యొక్క అసలైన ప్రయోజనం ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> ఒక పైథాన్ స్క్రిప్ట్‌ను టెర్మినల్ నుండి నేరుగా రన్ చేసినప్పుడు మాత్రమే ఆ బ్లాక్ లోపలి కోడ్ ఎగ్జిక్యూట్ అయ్యేలా చూస్తుంది. వేరే ఫైల్ నుండి ఆ మాడ్యూల్‌ను ఇంపోర్ట్ చేసుకున్నప్పుడు ఆ టెస్ట్ కోడ్ లేదా స్క్రిప్ట్ రన్ కాకుండా నివారిస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">2. CPython ఒక మాడ్యూల్‌ను వెతకడానికి sys.path లో ఏ క్రమాన్ని పాటిస్తుంది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> 1. ప్రస్తుత వర్కింగ్ డైరెక్టరీ (Current Script Directory). 2. PYTHONPATH ఎన్విరాన్‌మెంట్ వేరియబుల్. 3. పైథాన్ స్టాండర్డ్ లైబ్రరీ డైరెక్టరీ. 4. థర్డ్ పార్టీ ప్యాకేజీలు ఉన్న site-packages డైరెక్టరీ.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">3. మీ ఫైల్‌కు math.py అని పేరు పెట్టడం ఎందుకు ప్రమాదకరం?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> sys.path లో ప్రస్తుత డైరెక్టరీ మొదటి స్థానంలో ఉంటుంది. అందువల్ల <code>import math</code> అన్నప్పుడు పైథాన్ స్టాండర్డ్ లైబ్రరీకి బదులుగా మీ లోకల్ ఫైల్‌నే ఇంపోర్ట్ చేసుకుంటుంది (Module Shadowing). ఫలితంగా <code>math.sqrt()</code> వంటి ఒరిజినల్ ఫంక్షన్లు పనిచేయక ఎర్రర్ వస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">4. వర్చువల్ ఎన్విరాన్‌మెంట్ (venv) వాడకపోతే వచ్చే నష్టం ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> అన్ని లైబ్రరీలు గ్లోబల్ పైథాన్‌లో ఇన్‌స్టాల్ అవుతాయి. వేర్వేరు ప్రాజెక్టులకు వేర్వేరు వెర్షన్లు అవసరమైనప్పుడు డిపెండెన్సీ కాన్‌ఫ్లిక్ట్‌లు (Dependency Conflicts) ఏర్పడి ఒక ప్రాజెక్ట్ నడవడానికి మరొక ప్రాజెక్ట్ క్రాష్ అయ్యే ప్రమాదం ఉంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">5. requirements.txt ఫైల్ ఎలా తయారు చేయాలి మరియు ఎలా ఇన్‌స్టాల్ చేయాలి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>pip freeze &gt; requirements.txt</code> కమాండ్ ద్వారా ప్రస్తుత ఎన్విరాన్‌మెంట్‌లోని అన్ని ప్యాకేజీలు మరియు వాటి వెర్షన్లను ఫైల్‌లో సేవ్ చేయవచ్చు. కొత్త కంప్యూటర్‌లో <code>pip install -r requirements.txt</code> ద్వారా వాటన్నింటినీ ఒకేసారి ఇన్‌స్టాల్ చేయవచ్చు.
+      </div>
+    </details>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-python/18-python-lambda-recursion-functional.html" style="text-decoration:none; color:var(--text); font-weight:600; display:inline-flex; align-items:center; gap:8px; background:var(--bg2); padding:10px 18px; border-radius:8px; border:1px solid var(--border);">
+        ← మునుపటి అధ్యాయం: 18. ల్యాంబ్డా &amp; రికర్షన్
+      </a>
+      <a href="/blog-python/20-python-file-handling-and-json.html" style="text-decoration:none; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; background:#10b981; padding:10px 22px; border-radius:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        తర్వాతి అధ్యాయం: 20. ఫైల్ హ్యాండ్లింగ్ &amp; JSON →
+      </a>
+    </div>
+
+    <!-- INTERACTIVE COMPILER CTA CARD -->
+    <div style="margin-top:40px; background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(56,189,248,0.1) 100%); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:24px; text-align:center;">
+      <h3 style="margin-top:0; color:var(--text); font-size:20px;">ఈ Package Security Auditor Engine ని లైవ్‌గా మన కంపైలర్‌లో రన్ చేయండి!</h3>
+      <p style="color:var(--text2); max-width:650px; margin:8px auto 20px; font-size:14px; line-height:1.6;">
+        ఎటువంటి లోకల్ సెటప్ లేకుండా, బ్రౌజర్‌లోనే Modern Python 3 కంపైలర్‌లో ఈ కోడ్‌ను ఎగ్జిక్యూట్ చేసి అవుట్‌పుట్ తనిఖీ చేయండి.
+      </p>
+      <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; padding:12px 28px; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Launch Python Interactive Compiler
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER / NAV SCRIPTS -->
+<script src="/site-nav.js"></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`# =====================================================================
+# చాప్టర్ 19 మినీ ప్రాజెక్ట్: Package Security Auditor (LIVE DEMO)
+# =====================================================================
+VULN_DB = {"requests": "2.31.0", "flask": "2.2.5"}
+installed = [("requests", "2.28.1"), ("fastapi", "0.110.0")]
+
+print("=" * 60)
+print(f"{'🛡️ డిపెండెన్సీ సెక్యూరిటీ ఆడిటర్ (LIVE)':^60}")
+print("=" * 60)
+
+for pkg, ver in installed:
+    if pkg in VULN_DB and ver < VULN_DB[pkg]:
+        print(f"[{pkg:<12}] 🚨 పాత వెర్షన్ ({ver})! సురక్షితమైనది: {VULN_DB[pkg]}")
+    else:
+        print(f"[{pkg:<12}] ✅ సురక్షిత వెర్షన్ ({ver})")
+
+print("=" * 60)
+print("\\n🎉 చాప్టర్ 19 ప్రాజెక్ట్ విజయవంతంగా రన్ అయ్యింది! 🚀")
+\`;
+
+    try {
+      localStorage.setItem('code_python', projectCode);
+      localStorage.setItem('code_python3', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-python-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-python', currentLesson.file);
+fs.writeFileSync(outputPath, chapter19Content, 'utf8');
+console.log('✅ Successfully generated deep high-value Python Chapter 19 in exact HTML style!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter19Content.length, 'characters');

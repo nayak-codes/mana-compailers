@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ఫైల్ హ్యాండ్లింగ్, CSV & JSON ప్రాసెసింగ్ — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Python 3 ఫైల్ హ్యాండ్లింగ్, CSV & JSON ప్రాసెసింగ్ సమగ్ర తెలుగు గైడ్: open() మోడ్స్ (r, w, a, x, b), with కంటెక్స్ట్ మేనేజర్, seek() & tell(), csv.DictReader & csv.DictWriter, json.dump() & json.load(), Unicode UTF-8 ఎన్‌కోడింగ్, మరియు Enterprise ETL Ingestion Pipeline ప్రాజెక్ట్." />
+  <meta name="keywords" content="python file handling in telugu, python with open telugu, python csv json processing telugu, python encoding utf-8 telugu, learn python in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/20-python-file-handling-and-json.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-python/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "ఫైల్ హ్యాండ్లింగ్, CSV & JSON ప్రాసెసింగ్ (Complete Guide to Python File Handling, CSV and JSON in Telugu)",
+    "description": "Python 3 ఫైల్ హ్యాండ్లింగ్ మరియు JSON పూర్తి గైడ్: with open(), CSV Processing, JSON Serialization, File Pointers, మరియు Enterprise ETL Ingestion Pipeline.",
+    "articleSection": "Phase 04: ఫంక్షన్స్, మాడ్యూల్స్ & ఫైల్ I/O",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-01-26",
+    "dateModified": "2026-11-02"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Compiler Integration -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___PY_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|f?"[^"\\]*(?:\\.[^"\\]*)*"|f?'[^'\\]*(?:\\.[^'\\]*)*'|r"[^"\\]*(?:\\.[^"\\]*)*"|r'[^'\\]*(?:\\.[^'\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'import','from','as','def','return','class','if','elif','else','while','for','in',
+        'break','continue','pass','try','except','finally','with','lambda','global','nonlocal',
+        'and','or','not','is','yield','async','await','raise','assert','True','False','None'
+      ];
+      const kwRegex = new RegExp('\\b(' + kwList.join('|') + ')\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'print','len','range','type','isinstance','id','input','int','float','str','list',
+        'dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted',
+        'abs','open','help','dir','filter','dump','load','dumps','loads','reader','writer'
+      ];
+      const fnRegex = new RegExp('\\b(' + fnList.join('|') + ')\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\b(\d+(?:\.\d+)?)\b/g, m => pushToken('num', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split('___PY_TOK_' + idx + '___').join(tok);
+      });
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code.language-python').forEach(block => {
+        block.innerHTML = highlightPythonCode(block.innerText);
+      });
+    });
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      const code = pre.innerText;
+      try {
+        localStorage.setItem('code_python', code);
+        localStorage.setItem('code_python3', code);
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+      window.open('/online-python-compiler.html', '_blank');
+    }
+  </script>
+</head>
+<body class="lang-python light-theme">
+
+<!-- Site Navigation Placeholder -->
+<div id="site-nav-placeholder"></div>
+
+<!-- Layout Container -->
+<div class="layout">
+
+  <!-- Single Sidebar Component -->
+    <!-- LEFT SIDEBAR ACCORDION -->
+  <aside class="sidebar">
+    <div class="sidebar-heading">Python 3 Master Course (తెలుగు)</div>
+    <a href="/blog-python.html" class="sidebar-home-link">🐍 Python Course HOME (ఇండెక్స్)</a>
+
+    <div class="sidebar-accordion">
+      <!-- Phase 01 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">⚡</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 01</span>
+            <span class="phase-title">పైథాన్ ఫండమెంటల్స్ & బేసిక్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/01-python-introduction-features-and-setup.html">1. పైథాన్ పరిచయం, ఫీచర్లు & ఎన్విరాన్‌మెంట్ సెటప్</a>
+        <a href="/blog-python/02-python-syntax-indentation-and-comments.html">2. సింటాక్స్, ఇండెంటేషన్ & కామెంట్స్</a>
+        <a href="/blog-python/03-python-variables-data-types-and-naming.html">3. వేరియబుల్స్, డేటా టైప్స్ & టైప్ కాస్టింగ్</a>
+        <a href="/blog-python/04-python-input-output-formatting.html">4. ఇన్‌పుట్ & అవుట్‌పుట్ ఫార్మాటింగ్ (print, input & f-strings)</a>
+        <a href="/blog-python/05-python-operators-and-expressions.html">5. ఆపరేటర్లు & ఎక్స్‌ప్రెషన్స్</a>
+      </div>
+
+      <!-- Phase 02 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 02</span>
+            <span class="phase-title">కంట్రోల్ ఫ్లో, లూప్స్ & స్ట్రింగ్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/06-python-conditional-statements-branching.html">6. డెసిషన్ మేకింగ్ (if, elif, else & match-case)</a>
+        <a href="/blog-python/07-python-loops-while-and-for.html">7. లూప్స్ — while & for లూప్స్</a>
+        <a href="/blog-python/08-python-loop-control-break-continue-else.html">8. లూప్ కంట్రోల్ — break, continue, pass & else</a>
+        <a href="/blog-python/09-python-strings-deep-dive-slicing.html">9. స్ట్రింగ్స్ డీప్ డైవ్ & స్లైసింగ్ (String Mastery)</a>
+        <a href="/blog-python/10-python-regular-expressions-regex.html">10. రెగ్యులర్ ఎక్స్‌ప్రెషన్స్ (Regex & Pattern Matching)</a>
+      </div>
+
+      <!-- Phase 03 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 03</span>
+            <span class="phase-title">డేటా స్ట్రక్చర్స్ & కలెక్షన్స్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/11-python-lists-and-comprehensions.html">11. లిస్ట్స్ (Lists) & లిస్ట్ కాంప్రహెన్షన్స్</a>
+        <a href="/blog-python/12-python-tuples-and-immutability.html">12. టుపుల్స్ (Tuples) & ఇమ్మ్యుటబిలిటీ</a>
+        <a href="/blog-python/13-python-dictionaries-deep-dive.html">13. డిక్షనరీలు (Dictionaries) & డిక్ట్ కాంప్రహెన్షన్స్</a>
+        <a href="/blog-python/14-python-sets-and-operations.html">14. సెట్స్ (Sets) & సెట్ మ్యాథమెటికల్ ఆపరేషన్స్</a>
+        <a href="/blog-python/15-python-collections-advanced-structures.html">15. కలెక్షన్స్ మాడ్యూల్ & అడ్వాన్స్‌డ్ డేటా స్ట్రక్చర్స్</a>
+      </div>
+
+      <!-- Phase 04 -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 04</span>
+            <span class="phase-title">ఫంక్షన్స్, మాడ్యూల్స్ & ఫైల్ I/O</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-python/16-python-functions-fundamentals.html">16. ఫంక్షన్స్ ఫండమెంటల్స్ & ఆర్గ్యుమెంట్స్</a>
+        <a href="/blog-python/17-python-args-kwargs-variable-scope.html">17. వేరియబుల్ ఆర్గ్యుమెంట్స్ & స్కోప్ (*args, **kwargs & LEGB)</a>
+        <a href="/blog-python/18-python-lambda-recursion-functional.html">18. ల్యాంబ్డా, రికర్షన్ & ఫంక్షనల్ ప్రోగ్రామింగ్</a>
+        <a href="/blog-python/19-python-modules-packages-and-pip.html">19. మాడ్యూల్స్, ప్యాకేజీలు & వర్చువల్ ఎన్విరాన్‌మెంట్స్</a>
+        <a href="/blog-python/20-python-file-handling-and-json.html" class="active">20. ఫైల్ హ్యాండ్లింగ్, CSV & JSON ప్రాసెసింగ్</a>
+      </div>
+
+      <!-- Phase 05 -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Phase 05</span>
+            <span class="phase-title">OOP, ఎక్సెప్షన్స్ & ప్రాజెక్ట్</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-python/21-python-exception-handling.html">21. ఎక్సెప్షన్ హ్యాండ్లింగ్ & కస్టమ్ ఎర్రర్స్</a>
+        <a href="/blog-python/22-python-oop-classes-and-objects.html">22. OOP బేసిక్స్ — క్లాసెస్, ఆబ్జెక్ట్స్ & __init__</a>
+        <a href="/blog-python/23-python-oop-inheritance-polymorphism.html">23. OOP పిల్లర్స్ — ఇన్హెరిటెన్స్, ఎన్‌క్యాప్సులేషన్ & పాలిమార్ఫిజమ్</a>
+        <a href="/blog-python/24-python-decorators-generators-dunder.html">24. అడ్వాన్స్‌డ్ పైథాన్ — డెకరేటర్లు, జెనరేటర్లు & డండర్ మెథడ్స్</a>
+        <a href="/blog-python/25-python-capstone-project.html">25. గ్రాండ్ ఫినాలే: రియల్-వరల్డ్ పైథాన్ క్యాప్‌స్టోన్ ప్రాజెక్ట్</a>
+      </div>
+
+    </div>
+
+    <div style="margin-top:24px; padding:16px; background:var(--bg2); border:1px solid var(--border); border-radius:10px; font-size:12px; text-align:center;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:4px;">ఇంటరాక్టివ్ ఎడిటర్</div>
+      <a href="/online-python-compiler.html" style="color:var(--text); text-decoration:none; font-weight:600; display:inline-block; margin-top:6px; background:rgba(16,185,129,0.12); padding:6px 12px; border-radius:6px; border:1px solid rgba(16,185,129,0.3);">
+        ▶ Try Online Python Compiler
+      </a>
+      <a href="/blog.html" style="color:var(--text2); text-decoration:none; display:block; margin-top:8px;">
+        📁 All Tutorials Index
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="content">
+
+    <!-- BREADCRUMBS -->
+    <div class="breadcrumb" style="display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text2); margin-bottom:16px;">
+      <a href="/" style="color:var(--text2); text-decoration:none;">Home</a>
+      <span class="sep">›</span>
+      <a href="/tutorials" style="color:var(--text2); text-decoration:none;">Tutorials</a>
+      <span class="sep">›</span>
+      <a href="/blog-python/" style="color:var(--text2); text-decoration:none;">Python Masterclass</a>
+      <span class="sep">›</span>
+      <span style="color:var(--text); font-weight:600;">Chapter 20: ఫైల్ హ్యాండ్లింగ్, CSV & JSON ప్రాసెసింగ్</span>
+    </div>
+
+    <!-- MAIN PAGE TITLE -->
+    <h1 class="page-title" style="font-size:32px; font-weight:800; color:var(--text); margin-bottom:14px; line-height:1.25;">
+      ఫైల్ హ్యాండ్లింగ్, CSV & JSON ప్రాసెసింగ్
+    </h1>
+
+    <!-- 4 PAGE META BADGES -->
+    <div class="page-meta" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; font-size:12.5px;">
+      <span style="background:rgba(16,185,129,0.12); color:#10b981; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        🌐 Modern Python 3.12+
+      </span>
+      <span style="background:rgba(59,130,246,0.12); color:#3b82f6; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        📖 Chapter 20 of 25
+      </span>
+      <span style="background:rgba(245,158,11,0.12); color:#f59e0b; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        📁 Phase 04: ఫంక్షన్స్, మాడ్యూల్స్ &amp; ఫైల్ I/O
+      </span>
+      <span style="background:rgba(139,92,246,0.12); color:#8b5cf6; padding:4px 12px; border-radius:20px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+        🗓️ 2026 Edition
+      </span>
+    </div>
+
+    <!-- COVERED PILL -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin-bottom:24px; font-size:13.5px; color:var(--text2); line-height:1.6;">
+      <strong style="color:var(--text); font-weight:700;">📌 Covered in this chapter:</strong>
+      open() మోడ్స్ (r, w, a, x, b) · with కంటెక్స్ట్ మేనేజర్ (ఆటో-క్లోజ్) · టెక్స్ట్ ఫైల్స్ రీడ్ & రైట్ · csv మాడ్యూల్ · json Serialization (dump, load) · File Persistence vs RAM Volatility · open() Access Modes (r, w, a, x, b) · The with Statement Context Managers · Line-by-Line Memory Streaming · seek() &amp; tell() Pointers · csv.DictReader &amp; csv.DictWriter · json.dump() vs json.dumps() · Unicode UTF-8 Encoding · Enterprise ETL Ingestion Pipeline
+    </div>
+
+    <!-- WARM SOFT IVORY INTRO BOX -->
+    <div class="intro-box" style="background:#fffdf7; border:1px solid #fef3c7; border-left:4px solid #f59e0b; border-radius:10px; padding:20px 24px; margin-bottom:30px; font-size:15px; color:#451a03; line-height:1.75;">
+      మీ ప్రోగ్రామ్ రన్ అవుతున్నంతసేపు వేరియబుల్స్, లిస్ట్‌లు మరియు డిక్షనరీలలో ఉండే డేటా అంతా కంప్యూటర్ యొక్క తాత్కాలిక రామ్ (RAM) మెమరీలో మాత్రమే ఉంటుంది. ప్రోగ్రామ్ ఆగిపోగానే లేదా సర్వర్ రీస్టార్ట్ అవ్వగానే ఆ డేటా మొత్తం గాల్లో కలిసిపోతుంది! మరి వినియోగదారుల ఖాతా వివరాలు, ట్రాన్సాక్షన్ లాగ్‌లు, మరియు వ్యాపార నివేదికలను ఎప్పటికీ పదిలంగా దాచిపెట్టాలంటే ఏం చేయాలి?
+      <br/><br/>
+      దానికే మనకు <strong>ఫైల్ హ్యాండ్లింగ్ (File I/O) &amp; డేటా పెర్సిస్టెన్స్ (Data Persistence)</strong> కావాలి! హార్డ్ డిస్క్‌పై ఫైళ్లను సృష్టించడం, చదవడం, మరియు సవరించడం నుండి — ఆపరేటింగ్ సిస్టమ్ ఫైల్ డిస్క్రిప్టర్ లీక్‌లను అరికట్టే మాయా కవచం <strong><code>with</code> కంటెక్స్ట్ మేనేజర్</strong> వరకు పైథాన్ అద్భుతమైన సామర్థ్యాన్ని అందిస్తుంది. అంతేకాకుండా కార్పొరేట్ డేటా ఎనలిటిక్స్ లో విరివిగా వాడే <strong>CSV (Comma-Separated Values)</strong> మరియు వెబ్ సర్వర్ల ప్రపంచ భాష అయిన <strong>JSON (JavaScript Object Notation)</strong> లను పైథాన్‌తో ఎలా డీల్ చేయాలో ఈ అధ్యాయంలో నేర్చుకుంటూ, Phase 04 కు ముగింపుగా పూర్తి స్థాయి ఎంటర్‌ప్రైజ్ <strong>ETL (Extract, Transform, Load) డేటా పైప్‌లైన్</strong> ప్రాజెక్ట్‌ను లైవ్‌గా నిర్మిద్దాం!
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 class="section-title"><span class="num">1</span> ఫైల్ హ్యాండ్లింగ్ ఎందుకు అవసరం? (Data Persistence)</h2>
+    <p>
+      కంప్యూటర్ మెమరీ రెండు రకాలుగా ఉంటుంది:
+    </p>
+    <ul>
+      <li><strong>వోలటైల్ మెమరీ (RAM):</strong> వేగవంతమైనది కానీ తాత్కాలికమైనది. విద్యుత్ పోయినా లేదా ప్రోగ్రామ్ ముగిసినా డేటా పూర్తిగా పోతుంది.</li>
+      <li><strong>నాన్-వోలటైల్ మెమరీ (Hard Disk / SSD):</strong> శాశ్వత నిల్వ. ఇక్కడే మనం ఫైళ్ల రూపంలో డేటాను భద్రపరుస్తాము. దీనినే <strong>డేటా పెర్సిస్టెన్స్ (Data Persistence)</strong> అంటారు.</li>
+    </ul>
+    <p>
+      పైథాన్‌లో ఫైల్ హ్యాండ్లింగ్ ద్వారా మనం టెక్స్ట్ ఫైల్స్ (.txt), కాన్ఫిగరేషన్ ఫైల్స్ (.ini, .env), డేటా రికార్డులు (.csv), మరియు వెబ్ పేలోడ్లను (.json) డిస్క్ నుండి చదవవచ్చు మరియు కొత్త డేటాను రాయవచ్చు.
+    </p>
+
+    <!-- SECTION 2 -->
+    <h2 class="section-title"><span class="num">2</span> <code>open()</code> ఫంక్షన్ &amp; ఫైల్ యాక్సెస్ మోడ్స్ మ్యాట్రిక్స్</h2>
+    <p>
+      పైథాన్‌లో ఒక ఫైల్‌ను తెరవడానికి బిల్ట్-ఇన్ <strong><code>open(filename, mode, encoding)</code></strong> ఫంక్షన్‌ను ఉపయోగిస్తాము. ఫైల్‌ను ఏ ఉద్దేశంతో తెరుస్తున్నామో తెలిపేదే <strong>మోడ్ (Mode)</strong>:
+    </p>
+
+    <div style="overflow-x:auto; margin:16px 0;">
+      <table style="width:100%; border-collapse:collapse; background:var(--bg2); font-size:13.5px; border-radius:8px; overflow:hidden;">
+        <thead>
+          <tr style="background:#0f172a; color:#f8fafc; text-align:left;">
+            <th style="padding:10px 14px;">మోడ్ (Mode)</th>
+            <th style="padding:10px 14px;">వివరణ &amp; ప్రవర్తన</th>
+            <th style="padding:10px 14px;">ఫైల్ లేకపోతే?</th>
+            <th style="padding:10px 14px;">ఫైల్ ఇప్పటికే ఉంటే?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700; color:#3b82f6;">'r' (Read)</td>
+            <td style="padding:10px 14px;">రీడ్-ఓన్లీ మోడ్ (డిఫాల్ట్). డేటాను చదవడానికి మాత్రమే.</td>
+            <td style="padding:10px 14px; color:#ef4444;">FileNotFoundError వస్తుంది!</td>
+            <td style="padding:10px 14px;">మొదటి నుండి చదువుతుంది.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700; color:#ef4444;">'w' (Write)</td>
+            <td style="padding:10px 14px;">రైట్-ఓన్లీ మోడ్. డేటాను రాయడానికి.</td>
+            <td style="padding:10px 14px; color:#10b981;">కొత్త ఫైల్‌ను సృష్టిస్తుంది.</td>
+            <td style="padding:10px 14px; color:#ef4444; font-weight:600;">పాత డేటా మొత్తం తుడిచిపెట్టుకుపోతుంది! ⚠️</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700; color:#10b981;">'a' (Append)</td>
+            <td style="padding:10px 14px;">అపెండ్ మోడ్. ఫైల్ చివరన కొత్త డేటాను జోడించడానికి.</td>
+            <td style="padding:10px 14px; color:#10b981;">కొత్త ఫైల్‌ను సృష్టిస్తుంది.</td>
+            <td style="padding:10px 14px; color:#10b981;">పాత డేటా అలాగే ఉంటుంది, చివర కలుస్తుంది.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700; color:#f59e0b;">'x' (Exclusive)</td>
+            <td style="padding:10px 14px;">ఎక్స్‌క్లూజివ్ క్రియేషన్. సరికొత్త ఫైల్ రాయడానికి మాత్రమే.</td>
+            <td style="padding:10px 14px; color:#10b981;">కొత్త ఫైల్‌ను సృష్టిస్తుంది.</td>
+            <td style="padding:10px 14px; color:#ef4444;">FileExistsError విసిరి రక్షణ కల్పిస్తుంది!</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 14px; font-weight:700; color:#8b5cf6;">'b' (Binary)</td>
+            <td style="padding:10px 14px;">బైనరీ మోడ్ (ఉదా: 'rb', 'wb'). ఇమేజెస్, PDFలు, ఆడియోల కోసం.</td>
+            <td style="padding:10px 14px;">మోడ్‌ను బట్టి</td>
+            <td style="padding:10px 14px;">రా బైట్స్ (raw bytes) చదువుతుంది.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 3 -->
+    <h2 class="section-title"><span class="num">3</span> The <code>with</code> స్టేట్‌మెంట్ &amp; కంటెక్స్ట్ మేనేజర్స్ (Zero Leaks)</h2>
+    <p>
+      సాంప్రదాయ పద్ధతిలో ఫైల్‌ను ఓపెన్ చేసిన తర్వాత తప్పనిసరిగా <code>f.close()</code> చేయాలి. కానీ కోడ్ మధ్యలో ఏదైనా ఎర్రర్ వస్తే <code>close()</code> లైన్ ఎగ్జిక్యూట్ కాక ఆపరేటింగ్ సిస్టమ్ యొక్క <strong>ఫైల్ డిస్క్రిప్టర్ లీక్ (File Descriptor Leak)</strong> అవుతుంది.
+    </p>
+    <p>
+      ఈ సమస్యకు పైథాన్ అందించే అంతిమ పరిష్కారమే <strong><code>with</code> కంటెక్స్ట్ మేనేజర్</strong>:
+    </p>
+    <div style="background:#0f172a; padding:12px 18px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:10px 0; line-height:1.6;">
+      # ప్రొడక్షన్ గోల్డెన్ ప్యాటర్న్:<br/>
+      with open("server_audit.log", "r", encoding="utf-8") as f:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;content = f.read()<br/>
+      # with బ్లాక్ ముగియగానే లేదా మధ్యలో ఎర్రర్ వచ్చినా సరే — ఫైల్ ఆటోమేటిక్‌గా క్లోజ్ అవుతుంది!
+    </div>
+    <p>
+      తెరవెనుక పైథాన్ <strong><code>__enter__()</code></strong> మరియు <strong><code>__exit__()</code></strong> అనే స్పెషల్ మెథడ్స్ ద్వారా ఫైల్ హ్యాండిల్ స్వయంచాలకంగా విడుదలయ్యేలా హామీ ఇస్తుంది.
+    </p>
+
+    <!-- SECTION 4 -->
+    <h2 class="section-title"><span class="num">4</span> టెక్స్ట్ ఫైల్స్ రీడింగ్ టెక్నిక్స్ (Memory-Efficient Streaming)</h2>
+    <p>
+      ఫైల్ నుండి డేటాను చదవడానికి నాలుగు విధానాలు ఉన్నాయి:
+    </p>
+    <ul>
+      <li><strong>1. <code>f.read()</code>:</strong> ఫైల్ మొత్తాన్ని ఒకే ఒక్క భారీ స్ట్రింగ్‌గా మెమరీలోకి లాగుతుంది. 10 GB ఫైల్‌పై ఇది వాడితే సర్వర్ రామ్ నిండిపోయి క్రాష్ అవుతుంది!</li>
+      <li><strong>2. <code>f.readline()</code>:</strong> కేవలం ఒక్క లైన్‌ను మాత్రమే చదివి పాయింటర్‌ను తర్వాతి లైన్‌కు జరుపుతుంది.</li>
+      <li><strong>3. <code>f.readlines()</code>:</strong> ఫైల్‌లోని అన్ని లైన్లను లిస్ట్ ఆఫ్ స్ట్రింగ్స్ (<code>list[str]</code>) గా అందిస్తుంది.</li>
+      <li><strong>4. లైన్-బై-లైన్ ఇటరేషన్ (The Industry Gold Standard):</strong>
+        <div style="background:#0f172a; padding:10px 14px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12px; color:#86efac; margin:6px 0;">
+          with open("huge_data.log", "r", encoding="utf-8") as f:<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;for line in f: # మెమరీలోకి కేవలం ఒకే ఒక్క లైన్ వస్తుంది! సూపర్ ఫాస్ట్!<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;process_log_line(line)
+        </div>
+      </li>
+    </ul>
+
+    <!-- SECTION 5 -->
+    <h2 class="section-title"><span class="num">5</span> టెక్స్ట్ ఫైల్స్ రైటింగ్ &amp; <code>flush()</code> ఇంటర్నల్స్</h2>
+    <p>
+      ఫైల్‌లోకి డేటాను రాయడానికి <strong><code>f.write(text)</code></strong> లేదా బహుళ లైన్లను రాయడానికి <strong><code>f.writelines(list_of_lines)</code></strong> వాడతాము.
+    </p>
+    <ul>
+      <li><code>write()</code> స్వయంచాలకంగా న్యూలైన్ (<code>
+</code>) ను జోడించదు. మనమే స్పష్టంగా <code>
+</code> ఇవ్వాలి.</li>
+      <li><strong>OS బఫరింగ్ &amp; <code>flush()</code>:</strong> మీరు <code>write()</code> కాల్ చేసిన వెంటనే డేటా హార్డ్ డిస్క్‌పై పడదు! వేగం కోసం ఆపరేటింగ్ సిస్టమ్ తన మెమరీ బఫర్‌లో ఉంచుకుంటుంది. తక్షణమే డిస్క్‌పై రాయాలంటే <code>f.flush()</code> కాల్ చేయాలి. <code>with</code> బ్లాక్ ముగియగానే ఆటో-ఫ్లష్ జరుగుతుంది.</li>
+    </ul>
+
+    <!-- SECTION 6 -->
+    <h2 class="section-title"><span class="num">6</span> ఫైల్ పాయింటర్ నావిగేషన్ (<code>tell()</code> &amp; <code>seek()</code>)</h2>
+    <p>
+      ఫైల్‌లో మనం ప్రస్తుతం ఎక్కడ చదువుతున్నామో తెలిపే కర్సర్ లేదా పాయింటర్‌ను నియంత్రించే మెథడ్స్:
+    </p>
+    <ul>
+      <li><strong><code>f.tell()</code>:</strong> ఫైల్ ప్రారంభం నుండి ప్రస్తుత పాయింటర్ ఎన్ని బైట్ల దూరంలో ఉందో పూర్ణాంక సంఖ్యగా అందిస్తుంది.</li>
+      <li><strong><code>f.seek(offset, whence)</code>:</strong> పాయింటర్‌ను నిర్దిష్ట స్థానానికి తరలిస్తుంది. ఉదాహరణకు <code>f.seek(0)</code> అని రాస్తే పాయింటర్ మళ్లీ ఫైల్ ప్రారంభానికి వెళ్లిపోతుంది, తద్వారా ఫైల్‌ను మళ్లీ మొదటి నుండి చదవవచ్చు!</li>
+    </ul>
+
+    <!-- SECTION 7 -->
+    <h2 class="section-title"><span class="num">7</span> కోడ్ డెమో 1: లైవ్ సిస్టమ్ లాగ్ ఫైల్ జనరేటర్ &amp; రీడర్</h2>
+    <p>
+      <code>with open()</code>, <code>append</code> మోడ్, మరియు లైన్-బై-లైన్ రీడింగ్ ద్వారా లైవ్ లాగర్ ఇంప్లిమెంటేషన్‌ను పరిశీలిద్దాం:
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">01_file_logging_and_streaming.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 20 డెమో 1: ఫైల్ రైటింగ్ & మెమరీ-ఎఫిషియంట్ లైన్ స్ట్రీమింగ్
+# =====================================================================
+import os
+from datetime import datetime
+
+log_file_name = "app_runtime_audit.txt"
+
+# 1. WRITE & APPEND: లాగ్ డేటాను ఫైల్‌లో నమోదు చేయడం
+audit_events = [
+    ("INFO", "డేటాబేస్ సర్వర్ కనెక్షన్ విజయవంతం"),
+    ("WARNING", "మెమరీ వినియోగం 82% కి చేరింది"),
+    ("CRITICAL", "పేమెంట్ గేట్‌వే రెస్పాన్స్ టైమౌట్!"),
+    ("INFO", "ఆటోమేటిక్ బ్యాకప్ ప్రక్రియ పూర్తయింది")
+]
+
+with open(log_file_name, "w", encoding="utf-8") as f:
+    for level, msg in audit_events:
+        t_stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        f.write(f"[{t_stamp}] [{level:<8}] {msg}\n")
+
+print(f"✅ లాగ్ డేటా విజయవంతంగా '{log_file_name}' లో రాయబడింది!")
+
+# 2. READ: లైన్-బై-లైన్ స్ట్రీమింగ్ ద్వారా ఫైల్‌ను చదవడం
+print("\n=== ఫైల్ నుండి చదివిన లాగ్స్ (Line-by-Line Streaming) ===")
+with open(log_file_name, "r", encoding="utf-8") as f:
+    for line_num, line in enumerate(f, start=1):
+        print(f"వరుస {line_num}: {line.strip()}")
+
+# క్లీనప్ (టెస్ట్ ఫైల్ తొలగింపు)
+if os.path.exists(log_file_name):
+    os.remove(log_file_name)
+</code></pre>
+    </div>
+
+    <!-- SECTION 8 -->
+    <h2 class="section-title"><span class="num">8</span> <code>csv</code> మాడ్యూల్ — స్ప్రెడ్‌షీట్ డేటా రీడింగ్ &amp; రైటింగ్</h2>
+    <p>
+      <strong>CSV (Comma-Separated Values)</strong> అనేది ఎక్సెల్ స్ప్రెడ్‌షీట్‌లు మరియు డేటాబేస్ టేబుల్స్ మధ్య సమాచారాన్ని ఇచ్చిపుచ్చుకోవడానికి వాడే అత్యంత ప్రసిద్ధ ఫార్మాట్.
+    </p>
+    <p>
+      పైథాన్ స్టాండర్డ్ <strong><code>csv</code></strong> మాడ్యూల్ దీనికి రెండు ఉన్నతమైన క్లాస్‌లను అందిస్తుంది:
+    </p>
+    <ul>
+      <li><strong><code>csv.DictReader(f)</code>:</strong> మొదటి లైన్‌ను హెడర్‌గా తీసుకుని, ప్రతి వరుసను స్వయంచాలకంగా ఒక <strong>డిక్షనరీ</strong> రూపంలో అందిస్తుంది (ఉదా: <code>row['Name']</code>, <code>row['Salary']</code>).</li>
+      <li><strong><code>csv.DictWriter(f, fieldnames)</code>:</strong> డిక్షనరీల లిస్ట్‌ను నేరుగా CSV ఫార్మాట్‌లోకి రాస్తుంది.</li>
+      <li><strong>⚠️ The Windows Newline Pitfall:</strong> CSV ఫైల్‌ను రాసేటప్పుడు ఎల్లప్పుడూ <code>open('file.csv', 'w', newline='', encoding='utf-8')</code> అని <strong><code>newline=''</code></strong> ఇవ్వాలి! లేకపోతే విండోస్‌లో ప్రతి వరుస తర్వాత అనవసరంగా ఒక ఖాళీ లైన్ వస్తుంది.</li>
+    </ul>
+
+    <!-- SECTION 9 -->
+    <h2 class="section-title"><span class="num">9</span> <code>json</code> మాడ్యూల్ — వెబ్ API డేటా సీరియలైజేషన్</h2>
+    <p>
+      <strong>JSON (JavaScript Object Notation)</strong> అనేది వెబ్ APIలు, క్లౌడ్ సర్వీసులు మరియు కాన్ఫిగరేషన్లలో వాడే గ్లోబల్ స్టాండర్డ్.
+    </p>
+    <p>
+      పైథాన్ అంతర్నిర్మిత <strong><code>json</code></strong> మాడ్యూల్‌లోని 4 ప్రధాన మెథడ్స్ మధ్య వ్యత్యాసం:
+    </p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0;">
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+        <h4 style="margin-top:0; color:#3b82f6; font-size:14.5px;">1. మెమరీ స్ట్రింగ్స్: <code>dumps</code> &amp; <code>loads</code> (s = string)</h4>
+        <p style="font-size:13px; color:var(--text2); line-height:1.6; margin:6px 0;">
+          పైథాన్ ఆబ్జెక్ట్‌ను JSON స్ట్రింగ్‌గా మార్చడానికి <code>json.dumps()</code>, JSON స్ట్రింగ్‌ను పైథాన్ డిక్షనరీగా మార్చడానికి <code>json.loads()</code> వాడతాము.
+        </p>
+        <code style="display:block; background:#0f172a; color:#93c5fd; padding:8px 12px; border-radius:6px; font-size:12px;">
+          json_str = json.dumps({"active": True})<br/>
+          py_dict = json.loads(json_str)
+        </code>
+      </div>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px;">
+        <h4 style="margin-top:0; color:#10b981; font-size:14.5px;">2. డిస్క్ ఫైల్స్: <code>dump</code> &amp; <code>load</code> (File Pointers)</h4>
+        <p style="font-size:13px; color:var(--text2); line-height:1.6; margin:6px 0;">
+          నేరుగా ఫైల్ పాయింటర్‌లోకి రాయడానికి <code>json.dump(obj, f)</code>, ఫైల్ నుండి చదవడానికి <code>json.load(f)</code> వాడతాము.
+        </p>
+        <code style="display:block; background:#0f172a; color:#86efac; padding:8px 12px; border-radius:6px; font-size:12px;">
+          json.dump(data, f, indent=2)<br/>
+          data = json.load(f)
+        </code>
+      </div>
+    </div>
+
+    <!-- SECTION 10 -->
+    <h2 class="section-title"><span class="num">10</span> కోడ్ డెమో 2: తెలుగు యూనికోడ్ సపోర్ట్‌తో JSON ప్రాసెసింగ్</h2>
+    <p>
+      డిఫాల్ట్‌గా <code>json.dumps()</code> తెలుగు అక్షరాలను <code>తె</code> వంటి ఎస్కేప్ కోడ్స్‌గా మారుస్తుంది. స్పష్టమైన తెలుగు అక్షరాలు కనిపించాలంటే <strong><code>ensure_ascii=False</code></strong> అని పేర్కొనాలి:
+    </p>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">02_json_unicode_serialization.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># JSON సీరియలైజేషన్ & తెలుగు యూనికోడ్ డెమో
+import json
+
+app_config = {
+    "app_name": "మన కంపైలర్ పోర్టల్",
+    "version": "3.12.2",
+    "supported_languages": ["పైథాన్", "జావా", "సి++", "సి#"],
+    "settings": {
+        "theme": "లైట్ మోడ్",
+        "auto_save": True,
+        "max_timeout_sec": 15
+    }
+}
+
+# ensure_ascii=False ద్వారా స్పష్టమైన తెలుగు ప్రింటింగ్
+json_output = json.dumps(app_config, indent=2, ensure_ascii=False)
+print("=== ఫార్మాట్ చేయబడిన JSON అవుట్‌పుట్ ===")
+print(json_output)
+</code></pre>
+    </div>
+
+    <!-- SECTION 11 -->
+    <h2 class="section-title"><span class="num">11</span> బైనరీ ఫైల్స్ హ్యాండ్లింగ్ (<code>rb</code> &amp; <code>wb</code>)</h2>
+    <p>
+      చిత్రాలు (PNG/JPG), ఆడియో ఫైల్స్, లేదా PDFలను టెక్స్ట్ మోడ్‌లో చదివితే కరప్ట్ అయిపోతాయి. వాటిని <strong>బైనరీ మోడ్ (<code>'rb'</code>, <code>'wb'</code>)</strong> లో మాత్రమే చదవాలి.
+    </p>
+    <div style="background:#0f172a; padding:12px 18px; border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#38bdf8; margin:10px 0; line-height:1.6;">
+      # ఒక ఇమేజ్ ఫైల్‌ను మరొక చోటుకి బైట్-బై-బైట్ కాపీ చేయడం:<br/>
+      with open("source_logo.png", "rb") as src, open("backup_logo.png", "wb") as dst:<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;while chunk := src.read(4096): # 4 KB Chunks లో చదవడం<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dst.write(chunk)
+    </div>
+
+    <!-- SECTION 12 -->
+    <h2 class="section-title"><span class="num">12</span> కామన్ బిగినర్స్ మిస్టేక్స్ &amp; ప్రొడక్షన్ బెస్ట్ ప్రాక్టీసెస్</h2>
+    <ul>
+      <li><strong>The Encoding Trap (<code>UnicodeDecodeError</code>):</strong> విండోస్‌లో డిఫాల్ట్‌గా 'charmap' లేదా 'cp1252' ఎన్‌కోడింగ్ ఉంటుంది. దీనివల్ల తెలుగు లేదా ఎమోజీలు ఉన్న ఫైల్‌ను చదివినప్పుడు క్రాష్ అవుతుంది! <strong>పరిష్కారం:</strong> ప్రతి <code>open()</code> కాల్‌లోనూ తప్పనిసరిగా <code>encoding="utf-8"</code> అని రాయడం అలవాటు చేసుకోవాలి.</li>
+      <li><strong>'w' మోడ్‌తో డేటా కోల్పోవడం:</strong> పాత ఫైల్‌కు డేటా జోడించాలనుకున్నప్పుడు పొరపాటున <code>'w'</code> మోడ్ వాడితే క్షణంలో మొత్తం పాత డేటా శాశ్వతంగా తుడిచిపెట్టుకుపోతుంది! ఎల్లప్పుడూ <code>'a'</code> (Append) మోడ్ వాడండి.</li>
+      <li><strong>with స్టేట్‌మెంట్ లేకుండా ఫైల్స్ ఓపెన్ చేయడం:</strong> సర్వర్లలో వేలాది రిక్వెస్ట్‌లు వచ్చేటప్పుడు ఫైల్స్ క్లోజ్ కాకపోతే OS <code>Too many open files</code> ఎర్రర్ ఇచ్చి సర్వర్‌ను ఆపేస్తుంది.</li>
+      <li><strong>CSV లో <code>newline=''</code> మర్చిపోవడం:</strong> విండోస్ ఎక్సెల్ షీట్లలో ప్రతి వరుస మధ్య ఒక ఖాళీ లైన్ రాకుండా <code>newline=''</code> తప్పనిసరి.</li>
+    </ul>
+
+    <!-- SECTION 13 -->
+    <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాజెక్ట్: "Enterprise ETL Data Ingestion &amp; Customer Audit Pipeline"</h2>
+    <p>
+      ఈ ఇరవైయవ అధ్యాయంలో నేర్చుకున్న అన్ని అంశాలను (ఫైల్ I/O, <code>with open()</code>, CSV DictReader, JSON serialization, UTF-8 ఎన్‌కోడింగ్, డేటా ట్రాన్స్‌ఫార్మేషన్) మిళితం చేస్తూ — ఒక రా CSV కస్టమర్ ట్రాన్సాక్షన్ డేటాను వెలికితీసి (Extract), క్లీన్ చేసి (Transform), మరియు ఆడిట్ అయిన JSON డేటాబేస్‌గా లోడ్ చేసే (Load) పూర్తి స్థాయి <strong>Enterprise ETL Data Ingestion Pipeline</strong> ను నిర్మిద్దాం!
+    </p>
+
+    <!-- CODE BLOCK 3: CAPSTONE MINI PROJECT -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">03_enterprise_etl_pipeline.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 20 మినీ ప్రాజెక్ట్: Enterprise ETL Data Ingestion Pipeline
+# కాన్సెప్ట్స్: File I/O, csv.DictReader, json.dump, UTF-8 Encoding,
+#             Data Transformation, Error Resilience, Audit Persistence
+# =====================================================================
+import csv
+import json
+import os
+
+CSV_SOURCE_FILE = "raw_customer_transactions.csv"
+JSON_AUDIT_DEST = "clean_customer_audit.json"
+
+# 1. రా CSV డేటాను ఫైల్‌లో సిమ్యులేట్ చేయడం (Extract Phase)
+raw_csv_content = """cust_id,cust_name,city,plan,amount_paid,status
+C101,సురేష్ వర్మ,హైదరాబాద్,Enterprise,45000.0,SUCCESS
+C102,కవిత రాణి,విజయవాడ,Professional,18500.0,SUCCESS
+C103,అశోక్ కుమార్,విశాఖపట్నం,Basic,4999.0,PENDING
+C104,మనోజ్ కృష్ణ,వరంగల్,Enterprise,45000.0,SUCCESS
+C105,దివ్య శర్మ,తిరుపతి,Professional,18500.0,FAILED
+"""
+
+with open(CSV_SOURCE_FILE, "w", encoding="utf-8", newline="") as f:
+    f.write(raw_csv_content.strip())
+
+def execute_enterprise_etl_pipeline():
+    """రా CSV నుండి డేటాను చదివి, ట్రాన్స్‌ఫార్మ్ చేసి, JSON లోకి లోడ్ చేస్తుంది."""
+    print("\n" + "=" * 74)
+    print(f"{'🔄 మన ఎంటర్‌ప్రైజ్ — ETL డేటా ప్రాసెసింగ్ & ఆడిట్ పైప్‌లైన్ 2026':^74}")
+    print("=" * 74)
+
+    extracted_records = []
+    total_revenue_inr = 0.0
+
+    # 1. EXTRACT: csv.DictReader ద్వారా చదవడం
+    with open(CSV_SOURCE_FILE, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            # 2. TRANSFORM: డేటా క్లీనింగ్ & బిజినెస్ లాజిక్
+            status = row["status"].strip().upper()
+            amount = float(row["amount_paid"])
+
+            is_verified = (status == "SUCCESS")
+            if is_verified:
+                total_revenue_inr += amount
+
+            transformed_cust = {
+                "customer_id": row["cust_id"],
+                "full_name": row["cust_name"],
+                "location": row["city"],
+                "subscription_tier": row["plan"],
+                "payment": {
+                    "amount_inr": amount,
+                    "payment_status": status,
+                    "verified": is_verified
+                }
+            }
+            extracted_records.append(transformed_cust)
+
+    # ఆడిట్ సమ్మరీ కంటైనర్
+    final_audit_payload = {
+        "pipeline_version": "2026.1",
+        "total_records_ingested": len(extracted_records),
+        "total_revenue_cleared_inr": total_revenue_inr,
+        "customers": extracted_records
+    }
+
+    # 3. LOAD: json.dump ద్వారా శాశ్వత డిస్క్ ఫైల్‌లోకి భద్రపరచడం
+    with open(JSON_AUDIT_DEST, "w", encoding="utf-8") as f:
+        json.dump(final_audit_payload, f, indent=2, ensure_ascii=False)
+
+    print(f"✅ మొత్తం సేకరించిన రికార్డులు  : {len(extracted_records)}")
+    print(f"✅ క్లియర్ అయిన మొత్తం రాబడి   : ₹{total_revenue_inr:,.2f}")
+    print(f"📁 డేటా విజయవంతంగా భద్రపరచబడింది: '{JSON_AUDIT_DEST}'")
+    print("-" * 74)
+
+    # ధృవీకరణ కోసం JSON నుండి తిరిగి చదవడం (Verification)
+    with open(JSON_AUDIT_DEST, "r", encoding="utf-8") as f:
+        saved_audit = json.load(f)
+
+    print(f"{'కస్టమర్ ID':<12} {'పేరు':<18} {'నగరం':<14} {'ప్లాన్':<14} {'చెల్లింపు స్థితి':^12}")
+    print("-" * 74)
+    for c in saved_audit["customers"]:
+        p_status = c["payment"]["payment_status"]
+        status_icon = "🟢 సక్సెస్" if p_status == "SUCCESS" else ("🟡 పెండింగ్" if p_status == "PENDING" else "🔴 విఫలం")
+        print(f"{c['customer_id']:<12} {c['full_name']:<18} {c['location']:<14} {c['subscription_tier']:<14} {status_icon:^12}")
+
+    print("=" * 74)
+    print(f"{'🎉 Phase 04 ముగింపు ETL పైప్‌లైన్ విజయవంతంగా పూర్తయింది!':^74}")
+    print("=" * 74 + "\n")
+
+    # క్లీనప్
+    if os.path.exists(CSV_SOURCE_FILE): os.remove(CSV_SOURCE_FILE)
+    if os.path.exists(JSON_AUDIT_DEST): os.remove(JSON_AUDIT_DEST)
+
+execute_enterprise_etl_pipeline()
+</code></pre>
+    </div>
+
+    <!-- 5 COLLAPSIBLE QUIZZES -->
+    <h2 class="section-title"><span class="num">★</span> ఈ అధ్యాయంపై ప్రాక్టీస్ క్విజ్ (Knowledge Check)</h2>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">1. ఫైల్స్ తెరిచేటప్పుడు with స్టేట్‌మెంట్‌ను ఎందుకు తప్పనిసరిగా వాడాలి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>with</code> స్టేట్‌మెంట్ ఒక కంటెక్స్ట్ మేనేజర్‌గా పనిచేస్తుంది. కోడ్ బ్లాక్ పూర్తయిన వెంటనే లేదా మధ్యలో ఏదైనా రన్‌టైమ్ ఎక్సెప్షన్ వచ్చినా సరే, అది స్వయంచాలకంగా <code>f.close()</code> ను కాల్ చేసి ఆపరేటింగ్ సిస్టమ్ మెమరీ లీక్స్ రాకుండా రక్షిస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">2. json.dumps() మరియు json.dump() ల మధ్య తేడా ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> <code>json.dumps()</code> పైథాన్ ఆబ్జెక్ట్‌ను ఒక <strong>స్ట్రింగ్ (String)</strong> రూపంలోకి మారుస్తుంది. <code>json.dump()</code> నేరుగా ఒక తెరిచిన ఫైల్ పాయింటర్‌లోకి (File Stream) డేటాను రాస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">3. ఫైల్ ఓపెన్ చేసేటప్పుడు encoding='utf-8' పేర్కొనకపోతే ఏం జరుగుతుంది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> పైథాన్ ఆపరేటింగ్ సిస్టమ్ యొక్క డిఫాల్ట్ ఎన్‌కోడింగ్‌ను (విండోస్‌లో cp1252/charmap) తీసుకుంటుంది. అందువల్ల తెలుగు అక్షరాలు, యూనికోడ్ క్యారెక్టర్లు లేదా ఎమోజీలు ఉన్నప్పుడు <code>UnicodeDecodeError</code> వచ్చి ప్రోగ్రామ్ క్రాష్ అవుతుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">4. CSV ఫైల్ రాసేటప్పుడు newline='' ఎందుకు ఇవ్వాలి?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> విండోస్ సిస్టమ్స్‌లో పైథాన్ సాధారణంగా <code>
+</code> న్యూలైన్లను రాస్తుంది. CSV మాడ్యూల్ కూడా తన స్వంత న్యూలైన్‌ను జోడించడం వల్ల ప్రతి రెండు వరుసల మధ్య ఒక ఖాళీ లైన్ వస్తుంది. <code>newline=''</code> ఇవ్వడం వల్ల ఈ డబుల్ న్యూలైన్ ట్రాప్ నివారించబడుతుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">5. f.seek(0) కమాండ్ ఏం చేస్తుంది?</summary>
+      <div style="font-size:13.5px; color:var(--text); line-height:1.7; margin-top:10px;">
+        <strong>సమాధానం:</strong> ఫైల్ కర్సర్ లేదా పాయింటర్‌ను ఫైల్ యొక్క మొట్టమొదటి బైట్‌కు (ప్రారంభ స్థానానికి) తరలిస్తుంది. దీని ద్వారా ఫైల్‌ను క్లోజ్ చేసి మళ్లీ ఓపెన్ చేయాల్సిన అవసరం లేకుండానే మొదటి నుండి చదవవచ్చు.
+      </div>
+    </details>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-python/19-python-modules-packages-and-pip.html" style="text-decoration:none; color:var(--text); font-weight:600; display:inline-flex; align-items:center; gap:8px; background:var(--bg2); padding:10px 18px; border-radius:8px; border:1px solid var(--border);">
+        ← మునుపటి అధ్యాయం: 19. మాడ్యూల్స్ &amp; pip
+      </a>
+      <a href="/blog-python/21-python-oop-classes-and-objects.html" style="text-decoration:none; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; background:#10b981; padding:10px 22px; border-radius:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        తర్వాతి అధ్యాయం: 21. OOP క్లాసెస్ &amp; ఆబ్జెక్ట్స్ →
+      </a>
+    </div>
+
+    <!-- INTERACTIVE COMPILER CTA CARD -->
+    <div style="margin-top:40px; background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(56,189,248,0.1) 100%); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:24px; text-align:center;">
+      <h3 style="margin-top:0; color:var(--text); font-size:20px;">ఈ Enterprise ETL Ingestion Pipeline ని లైవ్‌గా మన కంపైలర్‌లో రన్ చేయండి!</h3>
+      <p style="color:var(--text2); max-width:650px; margin:8px auto 20px; font-size:14px; line-height:1.6;">
+        ఎటువంటి లోకల్ సెటప్ లేకుండా, బ్రౌజర్‌లోనే Modern Python 3 కంపైలర్‌లో ఈ కోడ్‌ను ఎగ్జిక్యూట్ చేసి అవుట్‌పుట్ తనిఖీ చేయండి.
+      </p>
+      <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; padding:12px 28px; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Launch Python Interactive Compiler
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER / NAV SCRIPTS -->
+<script src="/site-nav.js"></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = `# =====================================================================
+# చాప్టర్ 20 మినీ ప్రాజెక్ట్: JSON Data Serialization (LIVE DEMO)
+# =====================================================================
+import json
+
+data = {
+    "portal": "మన కంపైలర్ 2026",
+    "students": [
+        {"name": "సురేష్", "branch": "CSE", "passed": True},
+        {"name": "అంజలి", "branch": "AI/ML", "passed": True}
+    ]
+}
+
+json_str = json.dumps(data, indent=2, ensure_ascii=False)
+print("=" * 60)
+print(f"{'📁 JSON డేటా సీరియలైజేషన్ డెమో (LIVE)':^60}")
+print("=" * 60)
+print(json_str)
+print("=" * 60)
+print("\n🎉 చాప్టర్ 20 ప్రాజెక్ట్ విజయవంతంగా రన్ అయ్యింది! 🚀")
+`;
+
+    try {
+      localStorage.setItem('code_python', projectCode);
+      localStorage.setItem('code_python3', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-python-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
