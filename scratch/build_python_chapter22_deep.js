@@ -68,10 +68,35 @@ const chapter22Content = `<!DOCTYPE html>
     <p>
       పైథాన్ ఒక మల్టీ-పారడైమ్ (Multi-paradigm) ప్రోగ్రామింగ్ లాంగ్వేజ్. మీరు ఫంక్షనల్ శైలిలో కోడ్ రాయవచ్చు, ప్రొసీజరల్ శైలిలో రాయవచ్చు, లేదా ఆబ్జెక్ట్ ఓరియెంటెడ్ పద్ధతిలో రూపొందించవచ్చు. ఈ రెండింటి మధ్య ప్రాథమిక తేడాను గ్రహించడం సాఫ్ట్‌వేర్ ఆర్కిటెక్ట్‌గా మారడానికి మొదటి మెట్టు:
     </p>
-    <ul>
-      <li><strong>Procedural Programming (విధానాత్మక విధానం):</strong> ఇక్కడ ప్రాధాన్యత ఫంక్షన్ల పైన మరియు వరుస క్రమ చర్యల పైన ఉంటుంది. డేటా వేరుగా (గ్లోబల్ లేదా లోకల్ వేరియబుల్స్‌గా) ఉంటుంది, ఫంక్షన్లు వేరుగా ఉంటాయి. డేటా పెద్దదవుతున్న కొద్దీ ఏ ఫంక్షన్ ఏ వేరియబుల్‌ను మారుస్తోందో ట్రాక్ చేయడం అసాధ్యంగా మారి "స్పాఘెట్టి కోడ్" (Spaghetti Code) ఏర్పడుతుంది.</li>
-      <li><strong>Object-Oriented Programming (ఆబ్జెక్ట్ ఆధారిత విధానం):</strong> ఇక్కడ డేటా (Attributes/State) మరియు దానిపై చర్యలు జరిపే ఫంక్షన్లు (Methods/Behavior) ఒకే ఆబ్జెక్ట్ లోపల ఒకదానితో ఒకటి గట్టిగా బంధించబడతాయి (Encapsulated). నిజ జీవితంలో ఒక కారును చూస్తే — రంగు, స్పీడ్, ఇంధనం అనేవి దాని లక్షణాలు (State); డ్రైవ్ చేయడం, బ్రేక్ వేయడం, హారన్ కొట్టడం అనేవి దాని చర్యలు (Behavior). సరిగ్గా ఇదే సూత్రాన్ని కంప్యూటర్ కోడ్‌లో వర్తింపజేయడమే OOP!</li>
-    </ul>
+
+    <div style="overflow-x:auto; margin:16px 0;">
+      <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+        <thead>
+          <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+            <th style="padding:10px 14px;">ఫీచర్</th>
+            <th style="padding:10px 14px; color:#38bdf8;">ప్రొసీజరల్ ప్రోగ్రామింగ్ (C / Basic Python)</th>
+            <th style="padding:10px 14px; color:#10b981;">ఆబ్జెక్ట్ ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700;">కేంద్ర బిందువు</td>
+            <td style="padding:10px 14px;">ఫంక్షన్లు మరియు ఆపరేషన్ల క్రమం (Actions &amp; Algorithms).</td>
+            <td style="padding:10px 14px;">డేటా మరియు రియల్-వరల్డ్ ఎంటిటీలు (Objects &amp; State).</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700;">డేటా భద్రత</td>
+            <td style="padding:10px 14px;">డేటా గ్లోబల్‌గా లేదా బహిరంగంగా ఉంటుంది; ఏ ఫంక్షన్ అయినా మార్చవచ్చు.</td>
+            <td style="padding:10px 14px;">డేటా ఆబ్జెక్ట్ లోపల ఎన్‌క్యాప్సులేట్ చేయబడి బయటి జోక్యం నుండి రక్షించబడుతుంది.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700;">స్కేలబిలిటీ &amp; మెయింటెనెన్స్</td>
+            <td style="padding:10px 14px;">కోడ్ సైజు పెరిగేకొద్దీ ఫంక్షన్ల మధ్య గందరగోళం ("స్పాఘెట్టి కోడ్") ఏర్పడుతుంది.</td>
+            <td style="padding:10px 14px;">మాడ్యులారిటీ, కోడ్ పునర్వినియోగం (Reusability), మరియు క్లీన్ ఆర్కిటెక్చర్ సాధ్యమవుతాయి.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!-- SECTION 2 -->
     <h2 class="section-title"><span class="num">2</span> క్లాస్ (Class) మరియు ఆబ్జెక్ట్ (Object) — Blueprint vs Building</h2>
@@ -79,110 +104,94 @@ const chapter22Content = `<!DOCTYPE html>
       బిగినర్స్ ఎక్కువగా గందరగోళానికి గురయ్యే అంశం: క్లాస్‌కు మరియు ఆబ్జెక్ట్‌కు మధ్య వ్యత్యాసం ఏమిటి?
     </p>
     <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:20px; margin:16px 0;">
-      <h3 style="margin-top:0; color:#10b981; font-size:16px;">ఆర్కిటెక్చర్ అనాలజీ (Real-world Visual):</h3>
+      <h3 style="margin-top:0; color:#10b981; font-size:16px;">ఆర్కిటెక్చర్ అనాలజీ (Real-world Visual Model):</h3>
       <p style="margin-bottom:12px; font-size:14px; line-height:1.7;">
-        <strong>క్లాస్ (Class) అనేది కేవలం బ్లూప్రింట్ (డిజైన్ నమూనా):</strong> ఒక ఇంటిని నిర్మించడానికి ఇంజనీర్ కాగితంపై గీసిన ప్లాన్ క్లాస్ వంటిది. ఆ ప్లాన్ కాగితం మాత్రమే; మీరు ఆ ప్లాన్‌లో నివసించలేరు, అది భూమిపై ఎటువంటి స్థలాన్ని (RAM మెమరీని) ఆక్రమించదు. అందులో బెడ్‌రూమ్ ఎక్కడ ఉండాలి, కిచెన్ ఎక్కడ ఉండాలి అనే నియమాలు మాత్రమే ఉంటాయి.
+        <strong>క్లాస్ (Class) అనేది కేవలం బ్లూప్రింట్ (డిజైన్ నమూనా):</strong> ఒక ఇంటిని నిర్మించడానికి ఆర్కిటెక్ట్ కాగితంపై గీసిన ఇంజనీరింగ్ ప్లాన్ క్లాస్ వంటిది. ఆ ప్లాన్ కాగితం మాత్రమే; మీరు ఆ ప్లాన్‌లో నివసించలేరు, అది భూమిపై ఎటువంటి స్థలాన్ని (RAM మెమరీని) ఆక్రమించదు. అందులో బెడ్‌రూమ్ ఎక్కడ ఉండాలి, తలుపులు ఎలా ఉండాలి అనే వర్ణనలు మాత్రమే ఉంటాయి.
       </p>
       <p style="margin-bottom:0; font-size:14px; line-height:1.7;">
-        <strong>ఆబ్జెక్ట్ (Object లేదా Instance) అనేది నిజమైన భవనం:</strong> ఆ బ్లూప్రింట్‌ను ఆధారంగా చేసుకుని కాంక్రీట్, ఇటుకలతో భూమిపై నిర్మించిన నిజమైన ఇల్లు ఆబ్జెక్ట్. ఒకే బ్లూప్రింట్ ఆధారంగా మీరు 10 విభిన్న రంగులు, విభిన్న ఫర్నిచర్ ఉన్న 10 ఇళ్లను నిర్మించవచ్చు. కంప్యూటర్‌లో ప్రతి ఇల్లు ర్యామ్ (RAM) లో ఒక ప్రత్యేక మెమరీ అడ్రస్‌ను కలిగి ఉంటుంది.
+        <strong>ఆబ్జెక్ట్ (Object లేదా Instance) అనేది నిజమైన భవనం:</strong> ఆ బ్లూప్రింట్‌ను ఆధారంగా చేసుకుని కాంక్రీట్, ఇటుకలతో భూమిపై నిర్మించిన వాస్తవమైన ఇల్లు ఆబ్జెక్ట్. ఒకే బ్లూప్రింట్ ఆధారంగా మీరు 10 వేర్వేరు రంగులు, వేర్వేరు ఫర్నిచర్ ఉన్న 10 ఇళ్లను నిర్మించవచ్చు. కంప్యూటర్‌లో ప్రతి ఇల్లు ర్యామ్ (RAM) లో ఒక ప్రత్యేకమైన మెమరీ అడ్రస్‌ను (Memory Location) కలిగి ఉంటుంది.
       </p>
     </div>
 
     <!-- SECTION 3 -->
-    <h2 class="section-title"><span class="num">3</span> క్లాస్ డిక్లరేషన్ &amp; ఇన్స్టాన్షియేషన్ సింటాక్స్</h2>
+    <h2 class="section-title"><span class="num">3</span> క్లాస్ డిక్లరేషన్ &amp; ఇన్స్టాన్షియేషన్ మెకానిక్స్</h2>
     <p>
-      పైథాన్‌లో క్లాస్‌ను డిక్లేర్ చేయడానికి <code>class</code> అనే రిజర్వ్‌డ్ కీవర్డ్‌ను ఉపయోగిస్తాము. PEP 8 కన్వెన్షన్ ప్రకారం క్లాస్ పేర్లను ఎల్లప్పుడూ <strong>PascalCase</strong> (ప్రతి పదం మొదటి అక్షరం క్యాపిటల్) లో రాయాలి (ఉదాహరణకు: <code>BankAccount</code>, <code>NetworkConnectionManager</code>):
+      పైథాన్‌లో క్లాస్‌ను డిక్లేర్ చేయడానికి <code>class</code> అనే రిజర్వ్‌డ్ కీవర్డ్‌ను ఉపయోగిస్తాము. PEP 8 ప్రమాణాల ప్రకారం క్లాస్ పేర్లను ఎల్లప్పుడూ <strong>PascalCase</strong> (ప్రతి పదం మొదటి అక్షరం క్యాపిటల్) లో రాయాలి (ఉదా: <code>BankAccount</code>, <code>NetworkConnectionManager</code>):
     </p>
 
-    <div style="background:#0f172a; border-radius:8px; padding:16px; font-family:Consolas, monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.6;">
-      # 1. సరళమైన ఎంప్టీ క్లాస్ డిక్లరేషన్<br/>
-      class Car:<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;pass  # భవిష్యత్తులో కోడ్ రాయడానికి ప్లేస్‌హోల్డర్<br/><br/>
-      # 2. ఆబ్జెక్ట్‌ను సృష్టించడం (Instantiation)<br/>
-      car1 = Car()<br/>
-      car2 = Car()<br/><br/>
-      print(type(car1))      # &lt;class '__main__.Car'&gt;<br/>
-      print(hex(id(car1)))   # RAM లో ప్రత్యేక మెమరీ అడ్రస్: 0x7fa8901b<br/>
-      print(hex(id(car2)))   # మరొక ప్రత్యేక మెమరీ అడ్రస్: 0x7fa890a4<br/>
-      print(car1 is car2)    # False (రెండు పూర్తిగా విభిన్న ఆబ్జెక్టులు!)
-    </div>
+    <ul>
+      <li><strong>క్లాస్ నేమ్‌స్పేస్:</strong> క్లాస్ డిక్లేర్ అయిన వెంటనే పైథాన్ దానికి ఒక ప్రత్యేకమైన నేమ్‌స్పేస్ డిక్షనరీని (<code>ClassName.__dict__</code>) సృష్టిస్తుంది.</li>
+      <li><strong>ఇన్స్టాన్షియేషన్ (Instantiation):</strong> క్లాస్ పేరు పక్కన బ్రాకెట్లను ఉంచి పిలిచినప్పుడు (ఉదా: <code>c = Car()</code>), పైథాన్ రన్‌టైమ్ ఆ క్లాస్ ఆధారంగా RAM లో కొత్త మెమరీ స్పేస్‌ను కేటాయించి కొత్త ఆబ్జెక్ట్‌ను అందిస్తుంది.</li>
+      <li><strong>ఆబ్జెక్ట్ ఐడెంటిటీ:</strong> <code>id(obj1)</code> మరియు <code>id(obj2)</code> లను తనిఖీ చేస్తే, ఒకే క్లాస్ నుండి పుట్టినప్పటికీ ప్రతి ఆబ్జెక్ట్ సంపూర్ణంగా విభిన్నమైన మెమరీ లొకేషన్‌ను కలిగి ఉంటుందని స్పష్టంగా గమనించవచ్చు.</li>
+    </ul>
 
     <!-- SECTION 4 -->
     <h2 class="section-title"><span class="num">4</span> <code>__init__</code> మెథడ్ డీప్ డైవ్ (Constructor Lifecycle &amp; <code>__new__</code>)</h2>
     <p>
       ఆబ్జెక్ట్ సృష్టించబడిన వెంటనే దానికి అవసరమైన ప్రారంభ విలువలను (Initial State) కేటాయించడానికి పైథాన్‌లో ప్రత్యేకమైన డండర్ (Double Underscore) మెథడ్ <code>__init__</code> ను వాడతాము. దీనిని సాంప్రదాయ ప్రోగ్రామింగ్‌లో <strong>Constructor</strong> అని పిలుస్తారు:
     </p>
-    <ul>
-      <li><strong>ఆబ్జెక్ట్ సృష్టి ప్రయాణం (__new__ vs __init__):</strong> వాస్తవానికి పైథాన్ అంతర్గతంగా మొదట <code>__new__(cls, ...)</code> అనే స్టాటిక్ మెథడ్‌ను పిలుస్తుంది. ఇది రన్‌టైమ్‌లో ఆబ్జెక్ట్‌కు అవసరమైన అసలైన మెమరీ బ్లాక్‌ను RAM లో కేటాయించి కొత్త ఇన్స్టాన్స్‌ను సృష్టించి రిటర్న్ చేస్తుంది. ఆ తర్వాత వెంటనే పైథాన్ <code>__init__(self, ...)</code> ను పిలిచి ఆ మెమరీ బ్లాక్‌లోని అట్రిబ్యూట్లను యూజర్ అందించిన విలువల ఆధారంగా ఇనిషియలైజ్ చేస్తుంది. Singleton Design Pattern వంటి ఆధునిక ఆర్కిటెక్చర్లలో ఒకే ఒక్క ఆబ్జెక్ట్ ఉండాలని నియంత్రించడానికి నిపుణులు <code>__new__</code> ను ఓవర్‌రైడ్ చేస్తారు.</li>
-      <li><strong>రిటర్న్ నియమం:</strong> <code>__init__</code> మెథడ్ ఎప్పుడూ ఏ విలువనూ రిటర్న్ చేయకూడదు (అది అంతర్గతంగా కేవలం <code>None</code> ను మాత్రమే అనుమతిస్తుంది). మీరు పొరపాటున <code>return 100</code> అని రాస్తే పైథాన్ రన్‌టైమ్ <code>TypeError: __init__() should return None</code> ఎర్రర్‌ను విసురుతుంది!</li>
-    </ul>
 
-    <div style="background:#0f172a; border-radius:8px; padding:14px; font-family:Consolas, monospace; font-size:12.5px; color:#38bdf8; margin:12px 0; line-height:1.6;">
-      # ఆబ్జెక్ట్ లైఫ్‌సైకిల్ ఇంటర్నల్స్:<br/>
-      class LifecycleTracker:<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def __new__(cls, *args, **kwargs):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("1. [__new__] మెమరీలో రా ఆబ్జెక్ట్ సృష్టించబడింది")<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance = super().__new__(cls)<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return instance<br/><br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def __init__(self, name):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("2. [__init__] ఆబ్జెక్ట్ అట్రిబ్యూట్స్ ఇనిషియలైజ్ అవుతున్నాయి")<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.name = name
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+      <h4 style="margin-top:0; color:#10b981;">ఆబ్జెక్ట్ సృష్టి ప్రయాణం: __new__ vs __init__ అంతర్గత రహస్యం:</h4>
+      <p style="font-size:13.5px; line-height:1.7; margin-bottom:10px;">
+        చాలామంది <code>__init__</code> ఆబ్జెక్ట్‌ను సృష్టిస్తుందని అనుకుంటారు. కానీ వాస్తవానికి పైథాన్ అంతర్గతంగా రెండు వేర్వేరు దశలను నిర్వహిస్తుంది:
+      </p>
+      <ol style="font-size:13.5px; line-height:1.7; margin-bottom:0; padding-left:20px;">
+        <li><strong>దశ 1: <code>__new__(cls, ...)</code> (ది క్రియేటర్):</strong> ఇది స్టాటిక్ మెథడ్. ఇది ఆపరేటింగ్ సిస్టమ్ నుండి కొత్త మెమరీ బ్లాక్‌ను కేటాయించి, ఒక ఖాళీ "రా ఆబ్జెక్ట్" (Uninitialized Instance) ను సృష్టించి రిటర్న్ చేస్తుంది. Singleton Design Pattern వంటి ఆర్కిటెక్చర్లలో ఆబ్జెక్ట్ సృష్టిని నియంత్రించడానికి దీనిని ఓవర్‌రైడ్ చేస్తారు.</li>
+        <li><strong>దశ 2: <code>__init__(self, ...)</code> (ది ఇనిషియలైజర్):</strong> <code>__new__</code> సృష్టించిన ఆబ్జెక్ట్‌ను మొదటి పారామీటర్ (<code>self</code>) గా అందుకుని, దానికి అవసరమైన వేరియబుల్స్ (పేరు, వయస్సు, శాలరీ) ను అమర్చుతుంది. ఇది ఎల్లప్పుడూ <code>None</code> మాత్రమే రిటర్న్ చేయాలి.</li>
+      </ol>
     </div>
 
     <!-- SECTION 5 -->
-    <h2 class="section-title"><span class="num">5</span> <code>self</code> పారామీటర్ అంతర్గత రహస్యం (Runtime Mechanics)</h2>
+    <h2 class="section-title"><span class="num">5</span> <code>self</code> పారామీటర్ అంతర్గత రహస్యం (Method Binding Mechanics)</h2>
     <p>
       పైథాన్ క్లాసులలో ప్రతి ఇన్స్టాన్స్ మెథడ్ మొదటి ఆర్గ్యుమెంట్‌గా <code>self</code> ఎందుకు ఉండాలి? C++ లేదా Java లో <code>this</code> కీవర్డ్ కనిపించకుండా దాగి ఉంటుంది (Implicit), కానీ పైథాన్‌లో <strong>Explicit is better than implicit</strong> (ది జెన్ ఆఫ్ పైథాన్ సూత్రం) ప్రకారం <code>self</code> స్పష్టంగా మొదటి పారామీటర్‌గా ఉండాలి:
     </p>
-    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
-      <h4 style="margin-top:0; color:#10b981;">పైథాన్ ఇంటర్‌ప్రీటర్ తెరవెనుక ఏమి చేస్తుంది?</h4>
-      <p style="font-size:13.5px; line-height:1.7; margin-bottom:8px;">
-        మీరు కోడ్‌లో <code>car1.drive(60)</code> అని పిలిచినప్పుడు, పైథాన్ ఇంటర్‌ప్రీటర్ దానిని వెనువెంటనే ఈ క్రింది విధంగా రీరైట్ చేస్తుంది:
-      </p>
-      <div style="background:#0f172a; border-radius:6px; padding:10px 14px; font-family:Consolas, monospace; font-size:13px; color:#38bdf8;">
-        Car.drive(car1, 60)
-      </div>
-      <p style="font-size:13.5px; line-height:1.7; margin-top:8px; margin-bottom:0;">
-        అంటే క్లాస్ స్థాయి ఫంక్షన్‌కు మొదటి ఆర్గ్యుమెంట్‌గా మీరు పిలిచిన ఆబ్జెక్ట్ రెఫరెన్స్‌నే (<code>car1</code>) పాస్ చేస్తుంది! ఆ ఆబ్జెక్ట్ రిఫరెన్స్‌ను పట్టుకునే పారామీటరే <code>self</code>. సంప్రదాయం ప్రకారం దీనిని <code>self</code> అంటారు (మీరు కావాలంటే వేరే పేరు పెట్టవచ్చు కానీ పైథాన్ కమ్యూనిటీ నిబంధనల ప్రకారం ఎల్లప్పుడూ <code>self</code> అనే వాడాలి).
-      </p>
+
+    <div style="background:var(--bg2); border-left:4px solid #10b981; padding:14px 18px; border-radius:0 8px 8px 0; margin:14px 0; font-size:13.5px; line-height:1.7;">
+      <strong>⚙️ పైథాన్ రన్‌టైమ్ తెరవెనుక ఏమి చేస్తుంది?</strong><br/>
+      మీరు కోడ్‌లో <code>my_car.drive(60)</code> అని పిలిచినప్పుడు, పైథాన్ ఇంటర్‌ప్రీటర్ దానిని వెనువెంటనే <code>Car.drive(my_car, 60)</code> గా మారుస్తుంది! అంటే క్లాస్ యొక్క సాధారణ ఫంక్షన్‌కు మీరు పిలిచిన ఆబ్జెక్ట్ రెఫరెన్స్‌నే (<code>my_car</code>) మొదటి ఆర్గ్యుమెంట్‌గా పాస్ చేస్తుంది. ఆ కరెంట్ ఆబ్జెక్ట్‌ను పట్టుకునే పారామీటరే <code>self</code>.
     </div>
 
     <!-- SECTION 6 -->
-    <h2 class="section-title"><span class="num">6</span> ఇన్స్టాన్స్ వేరియబుల్స్ vs క్లాస్ వేరియబుల్స్ &amp; <code>__dict__</code> నేమ్‌స్పేస్</h2>
+    <h2 class="section-title"><span class="num">6</span> ఇన్స్టాన్స్ వేరియబుల్స్ vs క్లాస్ వేరియబుల్స్ &amp; <code>__slots__</code> ఆప్టిమైజేషన్</h2>
     <p>
-      పైథాన్‌లో వేరియబుల్స్ ఏ స్థాయిలో డిక్లేర్ చేయబడ్డాయో అనేదానిపై వాటి ప్రవర్తన ఆధారపడి ఉంటుంది:
+      పైథాన్‌లో వేరియబుల్స్ ఏ స్థాయిలో డిక్లేర్ చేయబడ్డాయో అనేదానిపై వాటి ప్రవర్తన మరియు మెమరీ వినియోగం ఆధారపడి ఉంటుంది:
     </p>
-    <table style="width:100%; border-collapse:collapse; margin:16px 0; font-size:13.5px; text-align:left;">
-      <thead>
-        <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
-          <th style="padding:10px 12px;">ఫీచర్</th>
-          <th style="padding:10px 12px; color:#10b981;">ఇన్స్టాన్స్ వేరియబుల్ (Instance Attribute)</th>
-          <th style="padding:10px 12px; color:#38bdf8;">క్లాస్ వేరియబుల్ (Class Attribute)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="border-bottom:1px solid var(--border);">
-          <td style="padding:10px 12px; font-weight:600;">డిక్లరేషన్ లొకేషన్</td>
-          <td style="padding:10px 12px;"><code>__init__</code> లేదా మెథడ్స్ లోపల <code>self.name</code> తో</td>
-          <td style="padding:10px 12px;">క్లాస్ బాడీలో ఏ మెథడ్ బయటైనా నేరుగా</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border);">
-          <td style="padding:10px 12px; font-weight:600;">మెమరీ షేరింగ్</td>
-          <td style="padding:10px 12px;">ప్రతి ఆబ్జెక్ట్‌కు స్వంత ప్రత్యేక మెమరీ కాపీ ఉంటుంది</td>
-          <td style="padding:10px 12px;">అన్ని ఆబ్జెక్టులు ఒకే ఒక కాపీని పంచుకుంటాయి (Shared)</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border);">
-          <td style="padding:10px 12px; font-weight:600;">యాక్సెస్ పద్ధతి</td>
-          <td style="padding:10px 12px;"><code>object.attribute</code></td>
-          <td style="padding:10px 12px;"><code>ClassName.attribute</code> లేదా <code>object.attribute</code></td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border);">
-          <td style="padding:10px 12px; font-weight:600;">ఇంటర్నల్ స్టోరేజ్</td>
-          <td style="padding:10px 12px;">ఆబ్జెక్ట్ యొక్క <code>self.__dict__</code> లో నిల్వ ఉంటుంది</td>
-          <td style="padding:10px 12px;">క్లాస్ యొక్క <code>ClassName.__dict__</code> లో నిల్వ ఉంటుంది</td>
-        </tr>
-      </tbody>
-    </table>
+
+    <div style="overflow-x:auto; margin:16px 0;">
+      <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+        <thead>
+          <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+            <th style="padding:10px 12px;">ఫీచర్</th>
+            <th style="padding:10px 12px; color:#10b981;">ఇన్స్టాన్స్ వేరియబుల్ (Instance Attribute)</th>
+            <th style="padding:10px 12px; color:#38bdf8;">క్లాస్ వేరియబుల్ (Class Attribute)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 12px; font-weight:600;">డిక్లరేషన్ లొకేషన్</td>
+            <td style="padding:10px 12px;"><code>__init__</code> లేదా మెథడ్స్ లోపల <code>self.name</code> తో</td>
+            <td style="padding:10px 12px;">క్లాస్ బాడీలో ఏ మెథడ్ బయటైనా నేరుగా</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 12px; font-weight:600;">మెమరీ షేరింగ్</td>
+            <td style="padding:10px 12px;">ప్రతి ఆబ్జెక్ట్‌కు స్వంత ప్రత్యేక మెమరీ కాపీ ఉంటుంది</td>
+            <td style="padding:10px 12px;">అన్ని ఆబ్జెక్టులు ఒకే ఒక కాపీని పంచుకుంటాయి (Shared)</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 12px; font-weight:600;">యాక్సెస్ పద్ధతి</td>
+            <td style="padding:10px 12px;"><code>object.attribute</code></td>
+            <td style="padding:10px 12px;"><code>ClassName.attribute</code> లేదా <code>object.attribute</code></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 12px; font-weight:600;">ఇంటర్నల్ స్టోరేజ్</td>
+            <td style="padding:10px 12px;">ఆబ్జెక్ట్ యొక్క <code>self.__dict__</code> లో నిల్వ ఉంటుంది</td>
+            <td style="padding:10px 12px;">క్లాస్ యొక్క <code>ClassName.__dict__</code> లో నిల్వ ఉంటుంది</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <div style="background:var(--bg2); border-left:4px solid #10b981; padding:12px 16px; margin:14px 0; border-radius:0 8px 8px 0; font-size:13.5px; line-height:1.7;">
       <strong>🚀 ప్రో టిప్ — మెమరీ ఆప్టిమైజేషన్ with <code>__slots__</code>:</strong> పైథాన్‌లో ప్రతి సాధారణ ఆబ్జెక్ట్ డైనమిక్ అట్రిబ్యూట్ల కోసం లోపల ఒక డిక్షనరీని (<code>__dict__</code>) నిర్వహిస్తుంది. దీనివల్ల వేల కొద్దీ ఆబ్జెక్టులు ఉన్నప్పుడు భారీగా RAM వృథా అవుతుంది. మీరు క్లాస్‌లో <code>__slots__ = ('name', 'salary')</code> అని డిఫైన్ చేస్తే, పైథాన్ <code>__dict__</code> ను తొలగించి స్థిరమైన C-స్ట్రక్చర్ శైలిలో మెమరీని కేటాయిస్తుంది. దీనివల్ల మెమరీ వినియోగం దాదాపు <strong>40% నుండి 50% వరకు తగ్గుతుంది!</strong>
@@ -191,51 +200,58 @@ const chapter22Content = `<!DOCTYPE html>
     <!-- SECTION 7 -->
     <h2 class="section-title"><span class="num">7</span> ఇన్స్టాన్స్ మెథడ్స్ (Instance Methods)</h2>
     <p>
-      క్లాస్‌లో డిఫాల్ట్‌గా రాసే మెథడ్స్ అన్నీ ఇన్స్టాన్స్ మెథడ్లే. వీటి మొదటి పారామీటర్ <code>self</code>. ఇవి ఆబ్జెక్ట్ యొక్క స్టేట్‌ను (Instance Attributes) చదవగలవు, సవరించగలవు, అలాగే ఇతర ఇన్స్టాన్స్ మెథడ్లను పిలవగలవు:
+      క్లాస్‌లో డిఫాల్ట్‌గా రాసే మెథడ్స్ అన్నీ ఇన్స్టాన్స్ మెథడ్లే. వీటి మొదటి పారామీటర్ ఎల్లప్పుడూ <code>self</code>. ఇవి నిర్దిష్ట ఆబ్జెక్ట్ యొక్క స్టేట్‌ను చదవగలవు, విలువలను మార్చగలవు, అలాగే ఇతర ఇన్స్టాన్స్ మెథడ్లను పిలవగలవు. ఉదాహరణకు ఒక బ్యాంకింగ్ అకౌంట్‌లో డిపాజిట్ చేయడం లేదా విత్‌డ్రా చేయడం వంటి చర్యలు ఆ నిర్దిష్ట వ్యక్తి బ్యాలెన్స్‌ను మాత్రమే మార్చాలి కాబట్టి అవి ఇన్స్టాన్స్ మెథడ్స్‌గా రూపొందించబడతాయి.
     </p>
-    <div style="background:#0f172a; border-radius:8px; padding:16px; font-family:Consolas, monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.6;">
-      class BankAccount:<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def __init__(self, owner, balance=0.0):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.owner = owner<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.balance = balance<br/><br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def deposit(self, amount):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if amount &lt;= 0:<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;raise ValueError("డిపాజిట్ మొత్తం పాజిటివ్‌గా ఉండాలి!")<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.balance += amount<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return self.balance
-    </div>
 
     <!-- SECTION 8 -->
     <h2 class="section-title"><span class="num">8</span> క్లాస్ మెథడ్స్ (<code>@classmethod</code> &amp; <code>cls</code> పారామీటర్)</h2>
     <p>
-      కొన్ని సందర్భాలలో మనకు ప్రత్యేకంగా ఒక ఆబ్జెక్ట్ స్టేట్‌తో పని ఉండదు; బదులుగా మొత్తం క్లాస్ స్టేట్‌ను మార్చాల్సి ఉంటుంది లేదా <strong>Alternative Constructors</strong> (వివిధ ఫార్మాట్లలోని డేటా నుండి ఆబ్జెక్టులను సృష్టించే ఫ్యాక్టరీ మెథడ్స్) నిర్మించాల్సి ఉంటుంది. దీని కోసం <code>@classmethod</code> డెకరేటర్‌ను మరియు మొదటి పారామీటర్‌గా <code>cls</code> (క్లాస్ రెఫరెన్స్) ను ఉపయోగిస్తాము:
+      కొన్ని సందర్భాలలో మనకు ఒక నిర్దిష్ట ఆబ్జెక్ట్ డేటాతో పని ఉండదు; బదులుగా మొత్తం క్లాస్ వేరియబుల్స్‌ను మార్చాల్సి ఉంటుంది లేదా <strong>Alternative Constructors (వివిధ ఫార్మాట్ల డేటా నుండి ఆబ్జెక్టులను సృష్టించే ఫ్యాక్టరీ మెథడ్స్)</strong> నిర్మించాల్సి ఉంటుంది. దీని కోసం <code>@classmethod</code> డెకరేటర్‌ను మరియు మొదటి పారామీటర్‌గా <code>cls</code> (క్లాస్ రెఫరెన్స్) ను ఉపయోగిస్తాము:
     </p>
-    <div style="background:#0f172a; border-radius:8px; padding:16px; font-family:Consolas, monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.6;">
-      class Employee:<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;base_raise_percentage = 0.05  # 5% క్లాస్ వేరియబుల్<br/><br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def __init__(self, name, salary):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.name = name<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.salary = salary<br/><br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;@classmethod<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def from_csv_string(cls, data_str):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"""స్ట్రింగ్ నుండి ఆబ్జెక్ట్‌ను సృష్టించే ఫ్యాక్టరీ మెథడ్."""<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name, salary_str = data_str.split(",")<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return cls(name.strip(), float(salary_str.strip()))<br/><br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;@classmethod<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def update_raise_rate(cls, new_rate):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cls.base_raise_percentage = new_rate
-    </div>
+
+    <ul>
+      <li><strong>ఫ్యాక్టరీ కన్‌స్ట్రక్టర్లు:</strong> డేటాబేస్ JSON డిక్షనరీ నుండి (<code>from_dict</code>), లేదా CSV లైన్ నుండి (<code>from_csv</code>), లేదా వెబ్ రిక్వెస్ట్ నుండి నేరుగా ఆబ్జెక్ట్‌ను ఇన్స్టాన్షియేట్ చేయడానికి క్లాస్ మెథడ్స్ అద్భుతంగా తోడ్పడతాయి.</li>
+      <li><strong>సబ్‌క్లాసింగ్ సేఫ్టీ:</strong> <code>cls(...)</code> అని పిలవడం వల్ల, భవిష్యత్తులో ఈ క్లాస్‌ను ఇన్హెరిట్ చేసుకున్న చైల్డ్ క్లాస్ నుండి పిలిచినా సరైన చైల్డ్ క్లాస్ ఆబ్జెక్టే సృష్టించబడుతుంది!</li>
+    </ul>
 
     <!-- SECTION 9 -->
-    <h2 class="section-title"><span class="num">9</span> స్టాటిక్ మెథడ్స్ (<code>@staticmethod</code>) &amp; త్రయం పోలిక</h2>
+    <h2 class="section-title"><span class="num">9</span> స్టాటిక్ మెథడ్స్ (<code>@staticmethod</code>) &amp; మెథడ్స్ త్రయం సమగ్ర పోలిక</h2>
     <p>
       ఒక మెథడ్‌కు ఆబ్జెక్ట్ డేటాతో (<code>self</code>) పని లేదు, మరియు క్లాస్ వేరియబుల్స్‌తో (<code>cls</code>) కూడా పని లేదు; కానీ లాజికల్‌గా ఆ క్లాస్‌కు సంబంధించిన యుటిలిటీ లేదా వాలిడేషన్ ఫంక్షన్ అయితే, దానిని <code>@staticmethod</code> గా డిక్లేర్ చేస్తాము:
     </p>
-    <ul>
-      <li><strong>Instance Method (<code>self</code>):</strong> నిర్దిష్ట ఆబ్జెక్ట్ స్టేట్‌ను చదువుతుంది/మారుస్తుంది. అత్యధికంగా వాడబడుతుంది.</li>
-      <li><strong>Class Method (<code>cls</code>):</strong> క్లాస్ స్టేట్‌ను మార్చగలదు, సబ్-క్లాసింగ్‌కు అనుకూలంగా ఉండే ఆల్టర్నేటివ్ కన్‌స్ట్రక్టర్లను సమకూరుస్తుంది.</li>
-      <li><strong>Static Method (స్వతంత్రమైనది):</strong> కేవలం సాధారణ ఫంక్షన్ లాంటిదే, కానీ ఆర్గనైజేషన్ కోసం క్లాస్ నేమ్‌స్పేస్ లోపల బంధించబడి ఉంటుంది (ఉదాహరణకు ఈమెయిల్ ఫార్మాట్ లేదా ఫోన్ నంబర్ వాలిడేషన్).</li>
-    </ul>
+
+    <div style="overflow-x:auto; margin:16px 0;">
+      <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+        <thead>
+          <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+            <th style="padding:10px 14px;">లక్షణం</th>
+            <th style="padding:10px 14px; color:#10b981;">Instance Method</th>
+            <th style="padding:10px 14px; color:#38bdf8;">Class Method (@classmethod)</th>
+            <th style="padding:10px 14px; color:#f59e0b;">Static Method (@staticmethod)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700;">మొదటి పారామీటర్</td>
+            <td style="padding:10px 14px;"><code>self</code> (ఆబ్జెక్ట్ రెఫరెన్స్)</td>
+            <td style="padding:10px 14px;"><code>cls</code> (క్లాస్ రెఫరెన్స్)</td>
+            <td style="padding:10px 14px;">ఏదీ లేదు (సాధారణ పారామీటర్లు మాత్రమే)</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700;">స్టేట్ మోడిఫికేషన్</td>
+            <td style="padding:10px 14px;">ఆబ్జెక్ట్ స్టేట్‌ను మార్చగలదు</td>
+            <td style="padding:10px 14px;">క్లాస్ స్టేట్‌ను మార్చగలదు</td>
+            <td style="padding:10px 14px;">ఆబ్జెక్ట్ లేదా క్లాస్ స్టేట్‌ను మార్చలేదు</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700;">వాడాల్సిన ప్రధాన సందర్భం</td>
+            <td style="padding:10px 14px;">బిజినెస్ బిహేవియర్ &amp; డేటా ఆపరేషన్లు</td>
+            <td style="padding:10px 14px;">ఫ్యాక్టరీ మెథడ్స్, ఆల్టర్నేటివ్ కన్‌స్ట్రక్టర్లు</td>
+            <td style="padding:10px 14px;">వాలిడేషన్, యుటిలిటీ గణనలు, హెల్పర్ లాజిక్</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!-- SECTION 10 -->
     <h2 class="section-title"><span class="num">10</span> కోడ్ డెమో 1: బ్యాంకింగ్ అకౌంట్ మోడలింగ్ (Complete Implementation)</h2>
@@ -264,7 +280,7 @@ class BankAccount:
         self.transactions = []
 
     def deposit(self, amount: float):
-        if amount &lt;= 0:
+        if amount <= 0:
             print("❌ డిపాజిట్ మొత్తం పాజిటివ్‌గా ఉండాలి!")
             return False
         self.balance += amount
@@ -273,7 +289,7 @@ class BankAccount:
         return True
 
     def withdraw(self, amount: float):
-        if amount &gt; self.balance:
+        if amount > self.balance:
             print(f"❌ విత్‌డ్రా విఫలం! ఖాతాలో తగినంత నగదు లేదు (బ్యాలెన్స్: ₹{self.balance:,.2f})")
             return False
         self.balance -= amount
@@ -409,7 +425,7 @@ class AutonomousVehicle:
             print(f"⚠️ [{self.vehicle_id}] రైడ్‌కు సిద్ధంగా లేదు! ప్రస్తుత స్థితి: {self.status}")
             return False
 
-        if (self.battery_percentage - battery_required) &lt; AutonomousVehicle.min_battery_threshold:
+        if (self.battery_percentage - battery_required) < AutonomousVehicle.min_battery_threshold:
             print(f"❌ [{self.vehicle_id}] బ్యాటరీ సరిపోదు! అవసరమైనది: {battery_required:.1f}%, ఉన్నది: {self.battery_percentage:.1f}%")
             self.status = "CHARGING"
             return False
@@ -460,7 +476,7 @@ class AutonomousVehicle:
         print(f"సగటు బ్యాటరీ శాతం: {avg_bat:.1f}%")
         print("-" * 65)
         for v in cls.fleet_registry:
-            print(f"• ID: {v.vehicle_id:&lt;8} | మోడల్: {v.model:&lt;12} | బాటరీ: {v.battery_percentage:&gt;5.1f}% | ఓడోమీటర్: {v.odometer_km:&gt;6.1f} KM | స్టేటస్: {v.status}")
+            print(f"• ID: {v.vehicle_id:<8} | మోడల్: {v.model:<12} | బాటరీ: {v.battery_percentage:>5.1f}% | ఓడోమీటర్: {v.odometer_km:>6.1f} KM | స్టేటస్: {v.status}")
         print("=" * 65 + "\n")
 
     # 5. స్టాటిక్ మెథడ్: వెహికల్ ID ఫార్మాట్ వాలిడేషన్ (ఉదా: EV-HYD-101)

@@ -80,42 +80,44 @@ const chapter25Content = `<!DOCTYPE html>
     <!-- 25-CHAPTER RETROSPECTIVE TABLE -->
     <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:20px 0;">
       <h4 style="margin-top:0; color:#10b981;">🎓 25 అధ్యాయాల సమగ్ర నైపుణ్యాల పటం (Complete 25-Chapter Retrospective):</h4>
-      <table style="width:100%; border-collapse:collapse; margin-top:12px; font-size:13px; text-align:left;">
-        <thead>
-          <tr style="border-bottom:2px solid var(--border); background:rgba(16,185,129,0.08);">
-            <th style="padding:8px 10px;">దశ (Phase)</th>
-            <th style="padding:8px 10px;">అధ్యాయాలు</th>
-            <th style="padding:8px 10px;">సాధించిన ముఖ్య సామర్థ్యాలు</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:8px 10px; font-weight:700; color:#10b981;">Phase 01</td>
-            <td style="padding:8px 10px;">Ch 01 – 05</td>
-            <td style="padding:8px 10px;">పైథాన్ రన్‌టైమ్, వేరియబుల్స్, టైప్ సిస్టమ్, ఆపరేటర్లు, మెమరీ మోడల్ (id &amp; reference counting).</td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:8px 10px; font-weight:700; color:#38bdf8;">Phase 02</td>
-            <td style="padding:8px 10px;">Ch 06 – 10</td>
-            <td style="padding:8px 10px;">కంట్రోల్ ఫ్లో, if-elif-else, match-case, for/while లూప్‌లు, స్ట్రింగ్ అల్గారిథమ్స్, నంబర్ గేసింగ్ ప్రాజెక్ట్.</td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:8px 10px; font-weight:700; color:#a855f7;">Phase 03</td>
-            <td style="padding:8px 10px;">Ch 11 – 15</td>
-            <td style="padding:8px 10px;">డేటా స్ట్రక్చర్స్ మాస్టరీ: Lists, Tuples, Dictionaries (Hash Tables), Sets, Collections (deque, Counter).</td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:8px 10px; font-weight:700; color:#f59e0b;">Phase 04</td>
-            <td style="padding:8px 10px;">Ch 16 – 20</td>
-            <td style="padding:8px 10px;">ఫంక్షన్స్, *args/**kwargs, LEGB స్కోప్, Lambda &amp; రికర్షన్, మాడ్యూల్స్, ఫైల్ I/O &amp; JSON డేటా పర్సిస్టెన్స్.</td>
-          </tr>
-          <tr style="border-bottom:1px solid var(--border);">
-            <td style="padding:8px 10px; font-weight:700; color:#ef4444;">Phase 05</td>
-            <td style="padding:8px 10px;">Ch 21 – 25</td>
-            <td style="padding:8px 10px;">ఎక్సెప్షన్ హ్యాండ్లింగ్, OOP Classes &amp; Objects, Inheritance &amp; Polymorphism, డెకరేటర్లు &amp; జెనరేటర్లు, ఎంటర్‌ప్రైజ్ క్యాప్‌స్టోన్!</td>
-          </tr>
-        </tbody>
-      </table>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; margin-top:12px; font-size:13px; text-align:left;">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border); background:rgba(16,185,129,0.08);">
+              <th style="padding:10px 12px;">దశ (Phase)</th>
+              <th style="padding:10px 12px;">అధ్యాయాలు</th>
+              <th style="padding:10px 12px;">సాధించిన ముఖ్య సామర్థ్యాలు &amp; ఆర్కిటెక్చర్ నాలెడ్జ్</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 12px; font-weight:700; color:#10b981;">Phase 01</td>
+              <td style="padding:10px 12px;">Ch 01 – 05</td>
+              <td style="padding:10px 12px;">పైథాన్ రన్‌టైమ్, వేరియబుల్స్, టైప్ సిస్టమ్, ఆపరేటర్లు, మెమరీ మోడల్ (id &amp; reference counting).</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 12px; font-weight:700; color:#38bdf8;">Phase 02</td>
+              <td style="padding:10px 12px;">Ch 06 – 10</td>
+              <td style="padding:10px 12px;">కంట్రోల్ ఫ్లో, if-elif-else, match-case, for/while లూప్‌లు, స్ట్రింగ్ అల్గారిథమ్స్, నంబర్ గేసింగ్ ప్రాజెక్ట్.</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 12px; font-weight:700; color:#a855f7;">Phase 03</td>
+              <td style="padding:10px 12px;">Ch 11 – 15</td>
+              <td style="padding:10px 12px;">డేటా స్ట్రక్చర్స్ మాస్టరీ: Lists, Tuples, Dictionaries (Hash Tables), Sets, Collections (deque, Counter).</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 12px; font-weight:700; color:#f59e0b;">Phase 04</td>
+              <td style="padding:10px 12px;">Ch 16 – 20</td>
+              <td style="padding:10px 12px;">ఫంక్షన్స్, *args/**kwargs, LEGB స్కోప్, Lambda &amp; రికర్షన్, మాడ్యూల్స్, ఫైల్ I/O &amp; JSON డేటా పర్సిస్టెన్స్.</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 12px; font-weight:700; color:#ef4444;">Phase 05</td>
+              <td style="padding:10px 12px;">Ch 21 – 25</td>
+              <td style="padding:10px 12px;">ఎక్సెప్షన్ హ్యాండ్లింగ్, OOP Classes &amp; Objects, Inheritance &amp; Polymorphism, డెకరేటర్లు &amp; జెనరేటర్లు, ఎంటర్‌ప్రైజ్ క్యాప్‌స్టోన్!</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- SECTION 2 -->
@@ -139,60 +141,96 @@ const chapter25Content = `<!DOCTYPE html>
     <p>
       మన సిస్టమ్‌లోని బేస్ క్లాస్ మరియు ఇతర మోడల్స్ నిర్మాణం:
     </p>
-    <div style="background:#0f172a; border-radius:8px; padding:16px; font-family:Consolas, monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.6;">
-      # ఆర్కిటెక్చర్ క్లాస్ పటం:<br/>
-      # &nbsp;&nbsp;Person (Base Class)<br/>
-      # &nbsp;&nbsp;&nbsp;&nbsp;├── Student (wallet, enrolled_courses)<br/>
-      # &nbsp;&nbsp;&nbsp;&nbsp;└── Instructor (department, courses_taught)<br/>
-      # &nbsp;&nbsp;Course (code, title, fee, capacity, enrolled_students)<br/>
-      # &nbsp;&nbsp;AcademyEngine (singleton manager orchestrating business logic)
+
+    <div style="overflow-x:auto; margin:16px 0;">
+      <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+        <thead>
+          <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+            <th style="padding:10px 14px;">ఎంటిటీ మోడల్</th>
+            <th style="padding:10px 14px;">పేరెంట్ క్లాస్</th>
+            <th style="padding:10px 14px;">ఫీల్డ్స్ / అట్రిబ్యూట్స్</th>
+            <th style="padding:10px 14px;">కీలకమైన బిహేవియర్ / మెథడ్స్</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700;"><code>Person</code> (Base)</td>
+            <td style="padding:10px 14px;"><code>object</code></td>
+            <td style="padding:10px 14px;"><code>person_id</code>, <code>name</code>, <code>email</code></td>
+            <td style="padding:10px 14px;"><code>__repr__</code>, బేస్ గుర్తింపు లాజిక్</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700;"><code>Student</code></td>
+            <td style="padding:10px 14px;"><code>Person</code></td>
+            <td style="padding:10px 14px;"><code>wallet_balance</code>, <code>enrolled_courses</code></td>
+            <td style="padding:10px 14px;"><code>deduct_fee()</code>, <code>to_dict()</code>, వాలెట్ వాలిడేషన్</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700;"><code>Course</code></td>
+            <td style="padding:10px 14px;"><code>object</code></td>
+            <td style="padding:10px 14px;"><code>code</code>, <code>title</code>, <code>fee</code>, <code>capacity</code>, <code>roster</code></td>
+            <td style="padding:10px 14px;"><code>is_full</code> property, <code>enroll_student()</code></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700;"><code>AcademyEngine</code></td>
+            <td style="padding:10px 14px;"><code>object</code></td>
+            <td style="padding:10px 14px;"><code>students</code> dict, <code>courses</code> dict</td>
+            <td style="padding:10px 14px;">ఆర్కెస్ట్రేషన్, ఆడిట్ లాగింగ్, రెవెన్యూ స్ట్రీమింగ్ జెనరేటర్</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- SECTION 4 -->
     <h2 class="section-title"><span class="num">4</span> కస్టమ్ ఎక్సెప్షన్ల రూపకల్పన (Academy Domain Exceptions)</h2>
     <p>
-      అకాడమీ సిస్టమ్‌కు అవసరమైన ప్రత్యేక ఎర్రర్లను బేస్ క్లాస్ నుండి డెరైవ్ చేసుకుందాం:
+      అకాడమీ సిస్టమ్‌కు అవసరమైన ప్రత్యేక ఎర్రర్లను బేస్ క్లాస్ <code>AcademyError</code> నుండి డెరైవ్ చేసుకుంటాం:
     </p>
-    <div style="background:#0f172a; border-radius:8px; padding:16px; font-family:Consolas, monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.6;">
-      class AcademyException(Exception):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;"""అకాడమీ ఎర్రర్లన్నింటికీ బేస్ క్లాస్."""<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;pass<br/><br/>
-      class CourseCapacityFullError(AcademyException):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;pass<br/><br/>
-      class StudentAlreadyEnrolledError(AcademyException):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;pass<br/><br/>
-      class InsufficientFundsError(AcademyException):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;pass
+
+    <div style="overflow-x:auto; margin:16px 0;">
+      <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+        <thead>
+          <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+            <th style="padding:10px 14px;">కస్టమ్ ఎక్సెప్షన్</th>
+            <th style="padding:10px 14px;">ట్రిగ్గర్ అయ్యే సందర్భం</th>
+            <th style="padding:10px 14px;">సిస్టమ్ స్పందన &amp; రికవరీ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700; color:#ef4444;"><code>SeatFullError</code></td>
+            <td style="padding:10px 14px;">కోర్సులో గరిష్ట సీట్లు (Capacity) నిండిపోయినప్పుడు.</td>
+            <td style="padding:10px 14px;">ఎన్‌రోల్‌మెంట్‌ను నిలిపివేసి యూజర్‌ను వెయిట్‌లిస్ట్‌లో ఉంచడం.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700; color:#f59e0b;"><code>LowBalanceError</code></td>
+            <td style="padding:10px 14px;">స్టూడెంట్ వాలెట్‌లో కోర్సు ఫీజు కంటే తక్కువ నగదు ఉన్నప్పుడు.</td>
+            <td style="padding:10px 14px;">ఖచ్చితమైన లోటు మొత్తాన్ని (Shortfall) యూజర్‌కు తెలిపి రీఛార్జ్ ప్రాంప్ట్ ఇవ్వడం.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700; color:#38bdf8;"><code>DuplicateEnrollmentError</code></td>
+            <td style="padding:10px 14px;">విద్యార్థి ఇప్పటికే అదే కోర్సులో నమోదై ఉన్నప్పుడు.</td>
+            <td style="padding:10px 14px;">అనవసరంగా మళ్లీ ఫీజు కట్ కాకుండా కాపాడటం.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- SECTION 5 -->
     <h2 class="section-title"><span class="num">5</span> ఆడిట్ &amp; పెర్ఫార్మెన్స్ డెకరేటర్లు</h2>
     <p>
-      సిస్టమ్‌లో ప్రతి ఆపరేషన్‌ను సమగ్రంగా మానిటర్ చేయడానికి మరియు డీబగ్ చేయడానికి <code>@audit_action</code> మరియు <code>@time_execution</code> డెకరేటర్లను ఉపయోగిస్తాము:
+      సిస్టమ్‌లో ప్రతి అడ్మిన్ ఆపరేషన్‌ను సమగ్రంగా మానిటర్ చేయడానికి మరియు డీబగ్ చేయడానికి <code>@audit_logged</code> డెకరేటర్‌ను ఉపయోగిస్తాము. ఇది ఆపరేషన్ ప్రారంభ సమయాన్ని, ముగింపు సమయాన్ని (మిల్లీసెకన్లలో), మరియు ఏవైనా లోపాలు వస్తే ఆ ఎర్రర్ అలర్టులను ఆటోమేటిక్‌గా లాగ్ చేస్తుంది.
     </p>
-    <div style="background:#0f172a; border-radius:8px; padding:16px; font-family:Consolas, monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.6;">
-      import functools<br/>
-      import time<br/><br/>
-      def audit_action(action_name):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def decorator(func):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@functools.wraps(func)<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;def wrapper(*args, **kwargs):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(f"📝 [AUDIT LOG] '{action_name}' ఆపరేషన్ ప్రారంభమైంది...")<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result = func(*args, **kwargs)<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(f"✅ [AUDIT LOG] '{action_name}' విజయవంతంగా ముగిసింది.")<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return result<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return wrapper<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;return decorator
-    </div>
 
     <!-- SECTION 6 -->
-    <h2 class="section-title"><span class="num">6</span> డేటా పర్సిస్టెన్స్ లేయర్ (Atomic JSON Storage)</h2>
+    <h2 class="section-title"><span class="num">6</span> డేటా పర్సిస్టెన్స్ లేయర్ (Atomic JSON Storage &amp; Crash Safety)</h2>
     <p>
-      సాధారణంగా ఫైల్ రైట్ చేసేటప్పుడు ప్రోగ్రామ్ క్రాష్ అయితే పాత డేటా మొత్తం నాశనమయ్యే (Data Corruption) ప్రమాదం ఉంది. దీనిని నివారించడానికి ప్రొడక్షన్ సిస్టమ్స్‌లో <strong>Atomic Write Pattern</strong> ఉపయోగిస్తారు:
+      సాధారణంగా ఫైల్ రైట్ చేసేటప్పుడు ప్రోగ్రామ్ క్రాష్ అయితే పాత డేటా మొత్తం పాక్షికంగా రాసి వదిలేయడం వల్ల డేటా కరప్షన్ (Data Corruption) జరిగే ప్రమాదం ఉంది. ప్రొడక్షన్ ఎంటర్‌ప్రైజ్ సిస్టమ్స్‌లో దీనిని నివారించడానికి <strong>Atomic Write Pattern</strong> మరియు <strong>Write-Ahead Logging (WAL)</strong> సూత్రాలను పాటిస్తారు:
     </p>
     <ul>
-      <li>మొదట డేటాను ఒక తాత్కాలిక ఫైల్‌లోకి (<code>academy_data.json.tmp</code>) రాయడం.</li>
-      <li>రైట్ పూర్తిగా విజయవంతమైన తర్వాత మాత్రమే <code>os.replace()</code> ద్వారా ఒరిజినల్ ఫైల్‌ను అటామిక్‌గా రీప్లేస్ చేయడం!</li>
+      <li><strong>Temporary Buffer Write:</strong> డేటాను నేరుగా ఒరిజినల్ ప్రొడక్షన్ ఫైల్‌లోకి రాయకుండా, మొదట ఒక ప్రత్యేక తాత్కాలిక ఫైల్‌లోకి (<code>academy_db.json.tmp</code>) రాయడం జరుగుతుంది.</li>
+      <li><strong>Atomic Renaming via OS Kernel:</strong> రైట్ ఆపరేషన్, బఫర్ ఫ్లష్ (<code>f.flush()</code>), మరియు ఓఎస్ సింక్ (<code>os.fsync()</code>) విజయవంతంగా పూర్తయిన తర్వాత మాత్రమే <code>os.replace()</code> సిస్టమ్ కాల్ ద్వారా సింగిల్ అటామిక్ ఇన్వోకేషన్‌తో ఒరిజినల్ ఫైల్‌ను భర్తీ చేస్తారు. ఆ సమయంలో సిస్టమ్ పవర్ ఆఫ్ అయినా పాత డేటా లేదా కొత్త పూర్తి డేటా మాత్రమే ఉంటుంది కానీ సగంలో ఆగిన కరప్టెడ్ డేటా మిగలదు!</li>
+      <li><strong>Schema Versioning &amp; Migrations:</strong> JSON పేలోడ్‌లో <code>"version": "2026.1"</code> వంటి ఫీల్డ్‌ను ఉంచడం ద్వారా భవిష్యత్తులో కొత్త ఫీల్డ్స్ (ఉదాహరణకు Student కి GPA లేదా Address) చేరినప్పుడు డేటా మైగ్రేషన్ సులభతరం అవుతుంది.</li>
     </ul>
 
     <!-- SECTION 7 -->
@@ -204,43 +242,8 @@ const chapter25Content = `<!DOCTYPE html>
     <!-- SECTION 8 -->
     <h2 class="section-title"><span class="num">8</span> మెను డ్రివెన్ CLI ఇంటర్‌ఫేస్ ఆర్కిటెక్చర్</h2>
     <p>
-      యూజర్ ఫ్రెండ్లీ కమాండ్ లైన్ మెను ద్వారా అడ్మిన్లు విద్యార్థులను చేర్చడం, కోర్సులను లిస్ట్ చేయడం, కొత్త ఎన్‌రోల్‌మెంట్లను ప్రాసెస్ చేయడం మరియు ఫైనాన్షియల్ రిపోర్టులను వీక్షించడం సాధ్యమవుతుంది:
+      యూజర్ ఫ్రెండ్లీ కమాండ్ లైన్ మెను ద్వారా అడ్మిన్లు విద్యార్థులను చేర్చడం, కోర్సులను లిస్ట్ చేయడం, కొత్త ఎన్‌రోల్‌మెంట్లను ప్రాసెస్ చేయడం మరియు ఫైనాన్షియల్ రిపోర్టులను వీక్షించడం సాధ్యమవుతుంది.
     </p>
-
-    <!-- CODE BLOCK 0: INTERACTIVE CLI MENU ARCHITECTURE -->
-    <div class="code-block">
-      <div class="code-header">
-        <span class="file-name">00_interactive_cli_menu.py</span>
-        <div class="btn-group">
-          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
-          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
-        </div>
-      </div>
-      <pre><code class="language-python"># ఇంటరాక్టివ్ కన్సోల్ మెను ఆర్కిటెక్చర్
-def render_cli_banner():
-    banner = """
-    ╔═══════════════════════════════════════════════════════════════╗
-    ║       🎓 CYBERABAD ACADEMY OF ADVANCED SOFTWARE (2026)        ║
-    ║             Enterprise Course Enrollment System               ║
-    ╚═══════════════════════════════════════════════════════════════╝
-    """
-    print(banner)
-
-def display_main_menu():
-    print("\n📋 [ముఖ్య మెనూ ఎంపికలు]:")
-    print("  1. 👤 కొత్త విద్యార్థిని నమోదు చేయండి (Register Student)")
-    print("  2. 📚 అందుబాటులో ఉన్న కోర్సుల జాబితా (List Courses)")
-    print("  3. 💳 కోర్సులో ఎన్‌రోల్ చేయండి (Enroll Student)")
-    print("  4. 📊 ఎగ్జిక్యూటివ్ ఫైనాన్షియల్ రిపోర్ట్ (Executive Dashboard)")
-    print("  5. 💾 డేటాబేస్ సేవ్ చేసి నిష్క్రమించండి (Save & Exit)")
-    print("-" * 65)
-
-# మెను సిమ్యులేషన్ డెమో
-render_cli_banner()
-display_main_menu()
-print("💡 యూజర్ ప్రాంప్ట్ సిద్ధంగా ఉంది: 'ఎంపికను ఎంచుకోండి [1-5]: '")
-</code></pre>
-    </div>
 
     <!-- SECTION 9 -->
     <h2 class="section-title"><span class="num">9</span> కోడ్ డెమో 1: మోడల్స్ &amp; కస్టమ్ ఎక్సెప్షన్స్</h2>
@@ -281,7 +284,7 @@ class Student(Person):
         self.enrolled_courses = []
 
     def deduct_fee(self, amount: float):
-        if self.wallet_balance &lt; amount:
+        if self.wallet_balance < amount:
             shortfall = amount - self.wallet_balance
             raise InsufficientFundsError(f"వాలెట్‌లో ₹{shortfall:,.2f} తక్కువగా ఉంది!")
         self.wallet_balance -= amount
@@ -305,8 +308,8 @@ class Course:
         self.enrolled_students = []
 
     @property
-    def is_full(self) -&gt; bool:
-        return len(self.enrolled_students) &gt;= self.max_capacity
+    def is_full(self) -> bool:
+        return len(self.enrolled_students) >= self.max_capacity
 
     def enroll_student(self, student: Student):
         if self.is_full:
@@ -409,10 +412,10 @@ def audit_logged(action_name: str):
             try:
                 res = func(*args, **kwargs)
                 elapsed = (time.perf_counter() - t0) * 1000
-                print(f"✅ [SUCCESS] '{action_name}' ముగిసింది ({elapsed:.2f}ms)\\n")
+                print(f"✅ [SUCCESS] '{action_name}' ముగిసింది ({elapsed:.2f}ms)\n")
                 return res
             except Exception as e:
-                print(f"❌ [ALERT] '{action_name}' లో లోపం: {e}\\n")
+                print(f"❌ [ALERT] '{action_name}' లో లోపం: {e}\n")
                 raise
         return wrapper
     return decorator
@@ -472,7 +475,7 @@ class CyberAcademyEngine:
         course = self.courses[code]
 
         # సీట్ల తనిఖీ
-        if len(course.roster) &gt;= course.capacity:
+        if len(course.roster) >= course.capacity:
             raise SeatFullError(f"కోర్సు '{course.title}' లో సీట్లు నిండిపోయాయి! గరిష్ట పరిమితి: {course.capacity}")
 
         # డూప్లికేట్ తనిఖీ
@@ -480,14 +483,14 @@ class CyberAcademyEngine:
             raise DuplicateEnrollmentError(f"{student.name} ఇప్పటికే '{course.title}' లో చేరారు!")
 
         # వాలెట్ తనిఖీ &amp; ఫీజు కటింగ్
-        if student.wallet &lt; course.fee:
+        if student.wallet < course.fee:
             shortfall = course.fee - student.wallet
             raise LowBalanceError(f"ఖాతాలో తగినంత నగదు లేదు! తక్కువ ఉన్న మొత్తం: ₹{shortfall:,.2f}")
 
         student.wallet -= course.fee
         student.courses.append(code)
         course.roster.append(student.sid)
-        print(f"🎉 విజయవంతంగా ఎన్‌రోల్ అయ్యారు! {student.name} -&gt; {course.title} (మిగిలిన వాలెట్: ₹{student.wallet:,.2f})")
+        print(f"🎉 విజయవంతంగా ఎన్‌రోల్ అయ్యారు! {student.name} -> {course.title} (మిగిలిన వాలెట్: ₹{student.wallet:,.2f})")
 
     # జెనరేటర్: ఫైనాన్షియల్ రెవెన్యూ స్ట్రీమ్ విశ్లేషణ
     def revenue_stream(self):
@@ -500,20 +503,20 @@ class CyberAcademyEngine:
         print(f"🎓 {self.academy_name} — ఎగ్జిక్యూటివ్ అకాడమీ డాష్‌బోర్డ్")
         print("=" * 70)
         total_rev = 0.0
-        print(f"{'కోర్సు కోడ్':&lt;12} | {'కోర్సు పేరు':&lt;24} | {'విద్యార్థులు':&lt;12} | {'రాబడి'}")
+        print(f"{'కోర్సు కోడ్':<12} | {'కోర్సు పేరు':<24} | {'విద్యార్థులు':<12} | {'రాబడి'}")
         print("-" * 70)
         for code, title, count, rev in self.revenue_stream():
             total_rev += rev
-            print(f"{code:&lt;12} | {title:&lt;24} | {count:&lt;12} | ₹{rev:,.2f}")
+            print(f"{code:<12} | {title:<24} | {count:<12} | ₹{rev:,.2f}")
         print("=" * 70)
         print(f"💰 మొత్తం అకాడమీ ఫీజు రాబడి (Total Revenue): ₹{total_rev:,.2f}")
-        print("=" * 70 + "\\n")
+        print("=" * 70 + "\n")
 
 
 # =====================================================================
 # గ్రాండ్ ఫినాలే ఎగ్జిక్యూషన్ డ్రైవర్
 # =====================================================================
-print("🚀 NextGen Cyber Academy Management Engine ప్రారంభమవుతోంది...\\n")
+print("🚀 NextGen Cyber Academy Management Engine ప్రారంభమవుతోంది...\n")
 
 engine = CyberAcademyEngine("హైదరాబాద్ ఇంటర్నేషనల్ పైథాన్ అకాడమీ")
 
@@ -532,7 +535,7 @@ engine.register_student(s1)
 engine.register_student(s2)
 engine.register_student(s3)
 
-print("\\n--- ఎన్‌రోల్‌మెంట్ ప్రాసెసింగ్ మొదలైంది ---")
+print("\n--- ఎన్‌రోల్‌మెంట్ ప్రాసెసింగ్ మొదలైంది ---")
 
 # 1. సక్సెస్ ఎన్‌రోల్‌మెంట్
 engine.process_enrollment("STU-01", "PY-101")
@@ -558,50 +561,18 @@ engine.print_executive_dashboard()
     </div>
 
     <!-- SECTION 12 -->
-    <h2 class="section-title"><span class="num">12</span> ప్రొడక్షన్ బెస్ట్ ప్రాక్టీసెస్, సాఫ్ట్‌వేర్ ప్యాకేజింగ్ &amp; డిప్లాయ్‌మెంట్</h2>
+    <h2 class="section-title"><span class="num">12</span> ప్రొడక్షన్ బెస్ట్ ప్రాక్టీసెస్ &amp; ఎంటర్‌ప్రైజ్ CI/CD ప్యాకేజింగ్</h2>
+    <p>
+      ఒక ఎంటర్‌ప్రైజ్ పైథాన్ అప్లికేషన్‌ను స్థానిక లాప్‌టాప్ నుండి ప్రొడక్షన్ క్లౌడ్ సర్వర్లకు చేర్చడానికి పరిశ్రమలో పాటించే ఉత్తమ ప్రమాణాలు:
+    </p>
     <ul>
       <li><strong>వర్చువల్ ఎన్విరాన్‌మెంట్స్ (Virtualenv / venv):</strong> గ్లోబల్ పైథాన్ ఎన్విరాన్‌మెంట్‌ను కలుషితం చేయకుండా ప్రతి ప్రాజెక్ట్‌కు <code>python -m venv venv</code> ద్వారా ఐసోలేటెడ్ ఎన్విరాన్‌మెంట్‌ను రూపొందించండి.</li>
       <li><strong>డిపెండెన్సీ మేనేజ్‌మెంట్:</strong> <code>pip freeze &gt; requirements.txt</code> లేదా ఆధునిక <code>poetry</code> / <code>uv</code> టూల్స్‌ను ఉపయోగించి లైబ్రరీల వెర్షన్లను ఖచ్చితంగా లాక్ చేయండి.</li>
+      <li><strong>ఆటోమేటెడ్ యూనిట్ టెస్టింగ్ (pytest):</strong> మోడల్స్ మరియు ఎక్సెప్షన్ల కోసం ప్రత్యేక టెస్ట్ సూట్‌లను <code>pytest</code> ద్వారా రూపొందించి ఎన్‌రోల్‌మెంట్ మరియు బ్యాలెన్స్ లోపాలను కవరేజ్ చేయండి.</li>
+      <li><strong>స్ట్రక్చర్డ్ లాగింగ్ (Logging Module):</strong> కేవలం <code>print()</code> స్టేట్‌మెంట్లపై ఆధారపడకుండా పైథాన్ బిల్ట్-ఇన్ <code>logging</code> మాడ్యూల్ ఉపయోగించి టైమ్‌స్టాంప్, లాగ్ లెవెల్ (INFO, WARNING, ERROR) మరియు రోటేటింగ్ ఫైల్ హ్యాండ్లర్లతో లాగ్స్ రాయండి.</li>
       <li><strong>లించర్స్ &amp; ఫార్మాటర్స్:</strong> కోడ్ నాణ్యత మరియు స్టైల్ కోసం <code>ruff</code>, <code>black</code> మరియు టైప్ చెకింగ్ కోసం <code>mypy</code> ను తప్పనిసరిగా మీ CI/CD పైప్‌లైన్‌లో ఉపయోగించండి.</li>
-      <li><strong>కంటైనరైజేషన్ (Docker):</strong> మీ పైథాన్ అప్లికేషన్‌ను <code>Dockerfile</code> ద్వారా ప్యాకేజ్ చేసి క్లౌడ్‌లో (AWS, GCP, Azure, Kubernetes) ఏకరీతిగా డిప్లాయ్ చేయండి.</li>
+      <li><strong>కంటైనరైజేషన్ &amp; CI/CD:</strong> మీ పైథాన్ అప్లికేషన్‌ను <code>Dockerfile</code> ద్వారా ప్యాకేజ్ చేసి GitHub Actions లేదా GitLab CI ద్వారా ఆటోమేటెడ్ బిల్డ్, టెస్ట్ మరియు క్లౌడ్ (AWS, GCP, Azure, Kubernetes) డిప్లాయ్మెంట్ చేయండి.</li>
     </ul>
-
-    <!-- PRODUCTION ARTIFACTS TEMPLATES -->
-    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
-      <h4 style="margin-top:0; color:#10b981;">📦 ఆధునిక పైథాన్ ప్రాజెక్ట్ కాన్ఫిగరేషన్ ఫైల్స్:</h4>
-      
-      <p style="font-size:13px; font-weight:600; margin-bottom:6px; color:var(--text);">1. ఆధునిక PEP 621 ప్రమాణం (pyproject.toml):</p>
-      <div style="background:#0f172a; border-radius:6px; padding:12px; font-family:Consolas, monospace; font-size:12px; color:#38bdf8; line-height:1.5;">
-        [project]<br/>
-        name = "cyber-academy-engine"<br/>
-        version = "2026.1.0"<br/>
-        description = "Enterprise Student Academy Management System"<br/>
-        requires-python = "&gt;=3.12"<br/>
-        dependencies = [<br/>
-        &nbsp;&nbsp;&nbsp;&nbsp;"fastapi&gt;=0.110.0",<br/>
-        &nbsp;&nbsp;&nbsp;&nbsp;"uvicorn&gt;=0.29.0",<br/>
-        &nbsp;&nbsp;&nbsp;&nbsp;"pydantic&gt;=2.6.0"<br/>
-        ]<br/><br/>
-        [build-system]<br/>
-        requires = ["hatchling"]<br/>
-        build-backend = "hatchling.build"
-      </div>
-
-      <p style="font-size:13px; font-weight:600; margin:14px 0 6px; color:var(--text);">2. ప్రొడక్షన్-రెడీ మల్టీ-స్టేజ్ Dockerfile:</p>
-      <div style="background:#0f172a; border-radius:6px; padding:12px; font-family:Consolas, monospace; font-size:12px; color:#38bdf8; line-height:1.5;">
-        # అధికారిక అల్ట్రా-లైట్‌వెయిట్ పైథాన్ ఇమేజ్<br/>
-        FROM python:3.12-slim-bookworm<br/><br/>
-        # వర్కింగ్ డైరెక్టరీ సెటప్<br/>
-        WORKDIR /app<br/><br/>
-        # డిపెండెన్సీలను కాపీ చేసి ఇన్‌స్టాల్ చేయడం<br/>
-        COPY requirements.txt .<br/>
-        RUN pip install --no-cache-dir -r requirements.txt<br/><br/>
-        # సోర్స్ కోడ్ కాపీ చేయడం<br/>
-        COPY . .<br/><br/>
-        # అప్లికేషన్ స్టార్టప్ కమాండ్<br/>
-        CMD ["python", "03_nextgen_academy_main_engine.py"]
-      </div>
-    </div>
 
     <!-- SECTION 13 -->
     <h2 class="section-title"><span class="num">13</span> ముగింపు &amp; మీ భవిష్యత్తు పైథాన్ ప్రయాణం (Next Steps Roadmap)</h2>

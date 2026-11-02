@@ -69,48 +69,65 @@ const chapter23Content = `<!DOCTYPE html>
     <p>
       ప్రపంచ స్థాయి సాఫ్ట్‌వేర్ ఆర్కిటెక్చర్లు అన్నీ నాలుగు మౌలిక సిద్ధాంతాలపై ఆధారపడి నిర్మించబడతాయి:
     </p>
-    <ul>
-      <li><strong>1. Encapsulation (నిక్షిప్తీకరణ):</strong> డేటాను (Fields) మరియు ఆ డేటాపై పనిచేసే పద్ధతులను (Methods) ఒకే యూనిట్‌గా బంధించి, బయటి ప్రపంచం నుండి అనవసరంగా లేదా నేరుగా మార్చకుండా రక్షణ కల్పించడం.</li>
-      <li><strong>2. Abstraction (సారాంశీకరణ):</strong> క్లిష్టమైన అంతర్గత పనితీరును (Internal Implementation) దాచిపెట్టి, యూజర్‌కు కేవలం అవసరమైన సులభతరమైన ఇంటర్‌ఫేస్‌ను మాత్రమే ప్రదర్శించడం (ఉదా: కార్ డ్రైవింగ్ చేసేటప్పుడు ఆక్సిలరేటర్ పెడల్ మాత్రమే కనిపిస్తుంది; ఇంజిన్ లోపల ఇంధనం ఇంజెక్షన్ అయ్యే సంక్లిష్టత డ్రైవర్‌కు అవసరం లేదు).</li>
-      <li><strong>3. Inheritance (వారసత్వం):</strong> ఇప్పటికే ఉన్న క్లాస్ యొక్క లక్షణాలను మరియు ప్రవర్తనలను కొత్త క్లాస్‌లోకి విస్తరింపజేయడం ("is-a" సంబంధం). దీనివల్ల కోడ్ డూప్లికేషన్ పూర్తిగా నశిస్తుంది (DRY: Don't Repeat Yourself).</li>
-      <li><strong>4. Polymorphism (బహురూపత):</strong> ఒకే ఇంటర్‌ఫేస్ లేదా మెథడ్ పేరు ద్వారా విభిన్న రకాల ఆబ్జెక్టులు వాటికి తగినట్లుగా ప్రత్యేకంగా స్పందించే సామర్థ్యం ("Poly" = అనేక, "Morph" = రూపాలు).</li>
-    </ul>
+
+    <div style="overflow-x:auto; margin:16px 0;">
+      <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+        <thead>
+          <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+            <th style="padding:10px 14px;">OOP పిల్లర్</th>
+            <th style="padding:10px 14px;">నిర్వచనం &amp; ప్రధాన లక్ష్యం</th>
+            <th style="padding:10px 14px;">రియల్-వరల్డ్ అనాలజీ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700; color:#10b981;">1. Encapsulation (నిక్షిప్తీకరణ)</td>
+            <td style="padding:10px 14px;">డేటా (Fields) మరియు దానిపై పనిచేసే మెథడ్స్‌ను ఒకే యూనిట్‌గా బంధించి, బయటి అనధికార మార్పుల నుండి రక్షించడం.</td>
+            <td style="padding:10px 14px;">మెడిసిన్ క్యాప్సూల్ (లోపలి ఔషధాలు బయటి వాతావరణం నుండి సురక్షితంగా ఉంటాయి).</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700; color:#38bdf8;">2. Abstraction (సారాంశీకరణ)</td>
+            <td style="padding:10px 14px;">క్లిష్టమైన అంతర్గత పనితీరును దాచిపెట్టి, కేవలం అవసరమైన సులభతరమైన ఇంటర్‌ఫేస్‌ను మాత్రమే బయటకు ప్రదర్శించడం.</td>
+            <td style="padding:10px 14px;">కార్ డ్రైవింగ్ పెడల్ (ఆక్సిలరేటర్ నొక్కితే చాలు, ఇంజిన్ ఇంజెక్షన్ అంతర్గత సంక్లిష్టత డ్రైవర్‌కు అవసరం లేదు).</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700; color:#a855f7;">3. Inheritance (వారసత్వం)</td>
+            <td style="padding:10px 14px;">ఇప్పటికే ఉన్న బేస్ క్లాస్ లక్షణాలను మరియు ప్రవర్తనలను కొత్త క్లాస్‌లోకి విస్తరింపజేయడం ("is-a" సంబంధం).</td>
+            <td style="padding:10px 14px;">తల్లిదండ్రుల నుండి పిల్లలకు జన్యుపరమైన లక్షణాలు సంక్రమించడం.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:700; color:#f59e0b;">4. Polymorphism (బహురూపత)</td>
+            <td style="padding:10px 14px;">ఒకే ఇంటర్‌ఫేస్ లేదా మెథడ్ పేరు ద్వారా విభిన్న రకాల ఆబ్జెక్టులు వాటికి తగినట్లుగా ప్రత్యేకంగా స్పందించే సామర్థ్యం.</td>
+            <td style="padding:10px 14px;">ఒకే సౌండ్ కంట్రోలర్ ద్వారా స్పీకర్, హెడ్‌ఫోన్, బ్లూటూత్ డివైజ్‌లు వేర్వేరుగా స్పందించడం.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!-- SECTION 2 -->
-    <h2 class="section-title"><span class="num">2</span> ఇన్హెరిటెన్స్ (Inheritance) — బేస్ మరియు డిరైవ్డ్ క్లాస్ బంధం</h2>
+    <h2 class="section-title"><span class="num">2</span> ఇన్హెరిటెన్స్ (Inheritance) — "is-a" రిలేషన్షిప్ ఆర్కిటెక్చర్</h2>
     <p>
       ఒక సాధారణ క్లాస్ (Base Class లేదా Parent Class) లోని ఫీచర్లను మరొక ప్రత్యేక క్లాస్ (Derived Class లేదా Child Class) పొందడాన్ని ఇన్హెరిటెన్స్ అంటారు. పేరెంట్ క్లాస్‌లో రాసిన కోడ్‌ను చైల్డ్ క్లాస్ ఉచితంగా పొందుతుంది:
     </p>
-    <div style="background:#0f172a; border-radius:8px; padding:16px; font-family:Consolas, monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.6;">
-      # Base / Parent Class<br/>
-      class Animal:<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def __init__(self, name):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.name = name<br/><br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def eat(self):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(f"{self.name} ఆహారం తింటోంది.")<br/><br/>
-      # Derived / Child Class (Animal ని ఇన్హెరిట్ చేసుకుంది)<br/>
-      class Dog(Animal):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def bark(self):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(f"{self.name} మొరుగుతోంది: భౌ భౌ!")<br/><br/>
-      d = Dog("టామీ")<br/>
-      d.eat()   # Animal క్లాస్ నుండి ఉచితంగా లభించింది!<br/>
-      d.bark()  # Dog క్లాస్ యొక్క సొంత స్పెషలైజ్డ్ మెథడ్
-    </div>
+
+    <ul>
+      <li><strong>కోడ్ పునర్వినియోగం (DRY Principle):</strong> పది వేర్వేరు వాహనాలకు (కారు, బైక్, ట్రక్) సంబంధించిన కామన్ ఫీచర్లను (ఇంజిన్ స్టార్ట్, బ్రేక్ వేయడం) ఒక్కసారి బేస్ క్లాస్‌లో రాస్తే, అన్ని చైల్డ్ క్లాసులు వాటిని మళ్లీ రాయకుండా వాడుకోగలవు.</li>
+      <li><strong>"is-a" సంబంధం:</strong> ఇన్హెరిటెన్స్ వర్తింపజేసే ముందు ఎల్లప్పుడూ ప్రశ్నించుకోవాలి — "కారు అనేది ఒక వాహనమా?" (Car is a Vehicle? -> అవును). అప్పుడే ఇన్హెరిటెన్స్ ఉపయోగించాలి. ఒకవేళ "కారుకు ఒక ఇంజిన్ ఉందా?" (Car has an Engine? -> Composition) అయితే ఇన్హెరిటెన్స్ వాడకూడదు!</li>
+    </ul>
 
     <!-- SECTION 3 -->
     <h2 class="section-title"><span class="num">3</span> మెథడ్ ఓవర్‌రైడింగ్ (Method Overriding)</h2>
     <p>
-      పేరెంట్ క్లాస్ అందించిన మెథడ్ బిహేవియర్ చైల్డ్ క్లాస్‌కు సరిపోకపోతే, చైల్డ్ క్లాస్ అదే పేరుతో కొత్త మెథడ్‌ను డిఫైన్ చేసి పేరెంట్ మెథడ్‌ను రీప్లేస్ చేయవచ్చు. దీనిని <strong>Method Overriding</strong> అంటారు:
+      పేరెంట్ క్లాస్ అందించిన డిఫాల్ట్ ప్రవర్తన చైల్డ్ క్లాస్‌కు సరిపోకపోతే, చైల్డ్ క్లాస్ అదే పేరుతో కొత్త మెథడ్‌ను డిఫైన్ చేసి పేరెంట్ మెథడ్‌ను రీప్లేస్ చేయవచ్చు. దీనిని <strong>Method Overriding</strong> అంటారు:
     </p>
-    <div style="background:#0f172a; border-radius:8px; padding:16px; font-family:Consolas, monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.6;">
-      class Bird:<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def fly(self):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("పక్షి ఆకాశంలో ఎగురుతోంది.")<br/><br/>
-      class Penguin(Bird):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def fly(self):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("పెంగ్విన్ ఎగరలేదు! ఇది నీటిలో వేగంగా ఈదుతుంది.")<br/><br/>
-      p = Penguin()<br/>
-      p.fly()  # ప్రింట్ అయ్యేది: పెంగ్విన్ ఎగరలేదు! ఇది నీటిలో వేగంగా ఈదుతుంది.
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+      <h4 style="margin-top:0; color:#10b981;">మెథడ్ ఓవర్‌రైడింగ్ యొక్క ముఖ్య నియమాలు:</h4>
+      <ul style="font-size:13.5px; line-height:1.7; margin-bottom:0;">
+        <li>చైల్డ్ క్లాస్ మెథడ్ పేరు మరియు పేరెంట్ క్లాస్ మెథడ్ పేరు ఖచ్చితంగా ఒకేలా ఉండాలి.</li>
+        <li>రన్‌టైమ్‌లో పైథాన్ డైనమిక్ బైండింగ్ ద్వారా ఆబ్జెక్ట్ రకాన్ని బట్టి అత్యంత నిర్దిష్టమైన (Most Specific) చైల్డ్ క్లాస్ మెథడ్‌ను ముందుగా పిలుస్తుంది.</li>
+        <li>పేరెంట్ మెథడ్ పూర్తిగా వద్దనుకుంటే ఓవర్‌రైడ్ చేయవచ్చు, లేదా పేరెంట్ పనికి అదనపు ఫీచర్ జోడించాలంటే <code>super()</code> ను పిలిచి కొనసాగించవచ్చు.</li>
+      </ul>
     </div>
 
     <!-- SECTION 4 -->
@@ -118,46 +135,22 @@ const chapter23Content = `<!DOCTYPE html>
     <p>
       చైల్డ్ క్లాస్ స్వంత <code>__init__</code> ను కలిగి ఉన్నప్పుడు, అది పేరెంట్ క్లాస్ యొక్క <code>__init__</code> ను ఓవర్‌రైడ్ చేస్తుంది. దీనివల్ల పేరెంట్ క్లాస్ వేరియబుల్స్ ఇనిషియలైజ్ కావు. పేరెంట్ క్లాస్ కన్‌స్ట్రక్టర్ లేదా మెథడ్‌ను చైల్డ్ క్లాస్ నుండి సేఫ్‌గా పిలవడానికి <code>super()</code> ఫంక్షన్‌ను ఉపయోగిస్తాము:
     </p>
-    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
-      <h4 style="margin-top:0; color:#10b981;">super() ఎందుకు బెస్ట్ ప్రాక్టీస్?</h4>
-      <p style="font-size:13.5px; line-height:1.7; margin-bottom:8px;">
-        సాంప్రదాయకంగా <code>ParentClass.__init__(self, name)</code> అని క్లాస్ పేరును హార్డ్‌కోడ్ చేసి పిలిచేవారు. కానీ భవిష్యత్తులో క్లాస్ పేరు మారినా లేదా మల్టిపుల్ ఇన్హెరిటెన్స్ వచ్చినప్పుడు అది విఫలమవుతుంది. <code>super().__init__(name)</code> అని రాస్తే పైథాన్ స్వయంగా MRO ప్రకారం సరైన పేరెంట్ క్లాస్‌ను డైనమిక్‌గా పిలుస్తుంది (మరియు <code>self</code> ను కూడా మనం అందించాల్సిన అవసరం లేదు!).
-      </p>
+
+    <div style="background:var(--bg2); border-left:4px solid #10b981; padding:14px 18px; border-radius:0 8px 8px 0; margin:14px 0; font-size:13.5px; line-height:1.7;">
+      <strong>super() ఎందుకు బెస్ట్ ప్రాక్టీస్?</strong><br/>
+      సాంప్రదాయకంగా <code>ParentClass.__init__(self, name)</code> అని క్లాస్ పేరును హార్డ్‌కోడ్ చేసి పిలిచేవారు. కానీ భవిష్యత్తులో క్లాస్ పేరు మారినా లేదా మల్టిపుల్ ఇన్హెరిటెన్స్ వచ్చినప్పుడు అది విఫలమవుతుంది. <code>super().__init__(name)</code> అని రాస్తే పైథాన్ స్వయంగా MRO ప్రకారం సరైన పేరెంట్ క్లాస్‌ను డైనమిక్‌గా పిలుస్తుంది (మరియు <code>self</code> ను కూడా మనం అందించాల్సిన అవసరం లేదు!).
     </div>
 
     <!-- SECTION 5 -->
     <h2 class="section-title"><span class="num">5</span> మల్టిపుల్ ఇన్హెరిటెన్స్, డైమండ్ ప్రాబ్లమ్ &amp; MRO (C3 Linearization)</h2>
     <p>
-      జావా వంటి భాషలు మల్టిపుల్ ఇన్హెరిటెన్స్‌ను (ఒక క్లాస్ బహుళ క్లాసులను నేరుగా ఇన్హెరిట్ చేసుకోవడం) అనుమతించవు, కానీ పైథాన్ పూర్తి మల్టిపుల్ ఇన్హెరిటెన్స్‌ను సమర్థిస్తుంది. అయితే దీనివల్ల ప్రసిద్ధ <strong>Diamond Problem</strong> ఏర్పడే అవకాశం ఉంది:
-    </p>
-    <div style="background:#0f172a; border-radius:8px; padding:16px; font-family:Consolas, monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.6;">
-      # డైమండ్ హైరార్కీ:<br/>
-      # &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A<br/>
-      # &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ \\<br/>
-      # &nbsp;&nbsp;&nbsp;&nbsp;B &nbsp;&nbsp;C<br/>
-      # &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\ /<br/>
-      # &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D<br/><br/>
-      class A:<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def ping(self): print("A ping")<br/><br/>
-      class B(A):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def ping(self): print("B ping")<br/><br/>
-      class C(A):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def ping(self): print("C ping")<br/><br/>
-      class D(B, C):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;pass<br/><br/>
-      d = D()<br/>
-      d.ping()  # ఏది పిలవబడుతుంది? B నా లేక C నా? -> "B ping"<br/>
-      print(D.mro())  # [D, B, C, A, object]
-    </div>
-    <p>
-      పైథాన్ ఈ గందరగోళాన్ని నివారించడానికి <strong>C3 Linearization Algorithm</strong> ను ఉపయోగిస్తుంది. దీని ఆధారంగా <strong>Method Resolution Order (MRO)</strong> నిర్ధారించబడుతుంది:
-      <code>D.__mro__</code> లేదా <code>D.mro()</code> ను తనిఖీ చేస్తే పైథాన్ మొదట D లో, తర్వాత B లో, ఆపై C లో, చివరగా A లో వెతుకుతుందని స్పష్టంగా చూడవచ్చు.
+      జావా వంటి భాషలు మల్టిపుల్ ఇన్హెరిటెన్స్‌ను (ఒక క్లాస్ బహుళ క్లాసులను నేరుగా ఇన్హెరిట్ చేసుకోవడం) అనుమతించవు, కానీ పైథాన్ పూర్తి మల్టిపుల్ ఇన్హెరిటెన్స్‌ను సమర్థిస్తుంది. అయితే దీనివల్ల ప్రసిద్ధ <strong>Diamond Problem</strong> ఏర్పడే అవకాశం ఉంది (ఉదాహరణకు A అనే క్లాస్ నుండి B మరియు C పుట్టి, ఆ రెండింటి నుండి D పుట్టినప్పుడు — B మరియు C రెండింటిలోనూ ఒకే పేరుతో ఉన్న మెథడ్‌ను D పిలిస్తే ఏది రన్ కావాలి?).
     </p>
 
     <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
-      <h4 style="margin-top:0; color:#10b981;">C3 Linearization అల్గారిథమ్ ప్రాధాన్యత సూత్రాలు:</h4>
+      <h4 style="margin-top:0; color:#10b981;">C3 Linearization అల్గారిథమ్ &amp; MRO ప్రాధాన్యత సూత్రాలు:</h4>
       <p style="font-size:13.5px; line-height:1.7; margin-bottom:10px;">
-        పైథాన్ 2.2 వరకు వాడిన డెప్త్-ఫస్ట్ సెర్చ్ (DFS) లో డైమండ్ ఇన్హెరిటెన్స్ వచ్చినప్పుడు పేరెంట్ క్లాస్ మెథడ్ చైల్డ్ క్లాస్ కంటే ముందే రన్ అయ్యే ప్రమాదం ఉండేది. దీనిని సరిచేయడానికి పైథాన్ 2.3 నుండి C3 లీనియరైజేషన్‌ను అమలు చేసింది. ఇది 3 ప్రధాన నియమాలను స్థిరంగా పాటిస్తుంది:
+        పైథాన్ ఈ గందరగోళాన్ని నివారించడానికి <strong>C3 Linearization Algorithm</strong> ను ఉపయోగిస్తుంది. దీని ఆధారంగా <strong>Method Resolution Order (MRO)</strong> నిర్ధారించబడుతుంది (<code>ClassName.mro()</code> ద్వారా చూడవచ్చు). ఇది 3 ప్రధాన నియమాలను పాటిస్తుంది:
       </p>
       <ol style="font-size:13.5px; line-height:1.7; margin-bottom:0; padding-left:20px;">
         <li><strong>చైల్డ్ క్లాస్ ఎల్లప్పుడూ పేరెంట్ క్లాస్ కంటే ముందే పరిశీలించబడుతుంది.</strong></li>
@@ -171,75 +164,48 @@ const chapter23Content = `<!DOCTYPE html>
     <p>
       పైథాన్‌లో C++ లేదా Java లాంటి కఠినమైన <code>private</code> కీవర్డ్స్ లేవు. అయితే పైథాన్ కమ్యూనిటీ స్పష్టమైన కన్వెన్షన్లు మరియు రన్‌టైమ్ ట్రాన్స్‌ఫార్మేషన్లను కలిగి ఉంది:
     </p>
-    <table style="width:100%; border-collapse:collapse; margin:16px 0; font-size:13.5px; text-align:left;">
-      <thead>
-        <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
-          <th style="padding:10px 12px;">యాక్సెస్ లెవల్</th>
-          <th style="padding:10px 12px;">సింటాక్స్</th>
-          <th style="padding:10px 12px;">ఉద్దేశం మరియు ప్రవర్తన</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="border-bottom:1px solid var(--border);">
-          <td style="padding:10px 12px; font-weight:600; color:#10b981;">Public</td>
-          <td style="padding:10px 12px;"><code>self.balance</code></td>
-          <td style="padding:10px 12px;">ఎక్కడి నుంచైనా స్వేచ్ఛగా చదవవచ్చు మరియు మార్చవచ్చు.</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border);">
-          <td style="padding:10px 12px; font-weight:600; color:#f59e0b;">Protected</td>
-          <td style="padding:10px 12px;"><code>self._balance</code></td>
-          <td style="padding:10px 12px;">ఒక సింగిల్ అండర్‌స్కోర్. ఇది కేవలం కన్వెన్షన్ మాత్రమే (హెచ్చరిక: "ఈ వేరియబుల్‌ను బయట నేరుగా ముట్టుకోవద్దు"). పైథాన్ దీనికి ఎలాంటి యాక్సెస్ రెస్ట్రిక్షన్ విధించదు.</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--border);">
-          <td style="padding:10px 12px; font-weight:600; color:#ef4444;">Private (Mangled)</td>
-          <td style="padding:10px 12px;"><code>self.__balance</code></td>
-          <td style="padding:10px 12px;">రెండు లీడింగ్ అండర్‌స్కోర్లు. పైథాన్ రన్‌టైమ్ దీని పేరును అంతర్గతంగా <code>_ClassName__balance</code> గా మారుస్తుంది (Name Mangling). దీనివల్ల సబ్‌క్లాస్‌లలో యాక్సిడెంటల్ ఓవర్‌రైడింగ్ జరగదు.</td>
-        </tr>
-      </tbody>
-    </table>
+
+    <div style="overflow-x:auto; margin:16px 0;">
+      <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+        <thead>
+          <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+            <th style="padding:10px 14px;">యాక్సెస్ లెవల్</th>
+            <th style="padding:10px 14px;">సింటాక్స్</th>
+            <th style="padding:10px 14px;">ఉద్దేశం మరియు ప్రవర్తన</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:600; color:#10b981;">Public</td>
+            <td style="padding:10px 14px;"><code>self.balance</code></td>
+            <td style="padding:10px 14px;">ఎక్కడి నుంచైనా స్వేచ్ఛగా చదవవచ్చు మరియు మార్చవచ్చు.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:600; color:#f59e0b;">Protected</td>
+            <td style="padding:10px 14px;"><code>self._balance</code></td>
+            <td style="padding:10px 14px;">ఒక సింగిల్ అండర్‌స్కోర్. ఇది కేవలం కన్వెన్షన్ మాత్రమే (హెచ్చరిక: "ఈ వేరియబుల్‌ను బయట నేరుగా ముట్టుకోవద్దు"). పైథాన్ దీనికి ఎలాంటి యాక్సెస్ రెస్ట్రిక్షన్ విధించదు.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 14px; font-weight:600; color:#ef4444;">Private (Mangled)</td>
+            <td style="padding:10px 14px;"><code>self.__balance</code></td>
+            <td style="padding:10px 14px;">రెండు లీడింగ్ అండర్‌స్కోర్లు. పైథాన్ రన్‌టైమ్ దీని పేరును అంతర్గతంగా <code>_ClassName__balance</code> గా మారుస్తుంది (Name Mangling). దీనివల్ల సబ్‌క్లాస్‌లలో యాక్సిడెంటల్ ఓవర్‌రైడింగ్ జరగదు.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!-- SECTION 7 -->
-    <h2 class="section-title"><span class="num">7</span> పైథానిక్ గెట్టర్స్ &amp; సెట్టర్స్: <code>@property</code> డెకరేటర్లు</h2>
+    <h2 class="section-title"><span class="num">7</span> పైథానిక్ గెట్టర్స్ &amp; సెట్టర్స్: <code>@property</code> &amp; <code>@cached_property</code></h2>
     <p>
       Java లో లాగా <code>get_balance()</code> మరియు <code>set_balance(amt)</code> అని అగ్లీ మెథడ్స్ రాయడం పైథానిక్ శైలి కాదు. పైథాన్‌లో <strong>@property</strong> డెకరేటర్‌ను ఉపయోగించి మెథడ్‌ను సాధారణ అట్రిబ్యూట్ లాగా (<code>obj.balance</code>) యాక్సెస్ చేయవచ్చు, అదే సమయంలో వాలిడేషన్ లాజిక్‌ను అమలు చేయవచ్చు:
     </p>
-    <div style="background:#0f172a; border-radius:8px; padding:16px; font-family:Consolas, monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.6;">
-      class SecureAccount:<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def __init__(self, initial_balance):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self._balance = initial_balance  # ప్రొటెక్టెడ్ ఇంటర్నల్ వేరియబుల్<br/><br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;@property<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def balance(self):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"""Getter: అట్రిబ్యూట్ లాగా చదవడానికి."""<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return self._balance<br/><br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;@balance.setter<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;def balance(self, value):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"""Setter: వాలిడేషన్ చేసి మాత్రమే అప్‌డేట్ చేయడానికి."""<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if value &lt; 0:<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;raise ValueError("బ్యాలెన్స్ నెగెటివ్ ఉండకూడదు!")<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self._balance = value<br/><br/>
-      acc = SecureAccount(5000)<br/>
-      print(acc.balance)      # Getter కాల్ అవుతుంది -> 5000<br/>
-      acc.balance = 7500      # Setter కాల్ అవుతుంది<br/>
-      # acc.balance = -100   # ValueError రేజ్ అవుతుంది!
-    </div>
 
-    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:16px; margin:14px 0;">
-      <h4 style="margin-top:0; color:#10b981;">ఆధునిక పైథాన్ 3: @cached_property ఫీచర్</h4>
-      <p style="font-size:13.5px; line-height:1.7; margin-bottom:8px;">
-        పైథాన్ 3.8 లో ప్రవేశపెట్టబడిన <code>functools.cached_property</code> డెకరేటర్ భారీ గణనలు లేదా డేటాబేస్ నుండి లోడ్ చేసే ప్రాపర్టీలకు గేమ్ ఛేంజర్. ఇది మొదటిసారి మాత్రమే ఆ మెథడ్‌ను రన్ చేసి ఫలితాన్ని ఆబ్జెక్ట్ యొక్క <code>__dict__</code> లో క్యాష్ చేస్తుంది; ఆ తర్వాత ఎన్నిసార్లు పిలిచినా ఎటువంటి అదనపు రన్ టైమ్ ఖర్చు లేకుండా తక్షణమే క్యాష్డ్ విలువను అందిస్తుంది!
-      </p>
-      <div style="background:#0f172a; border-radius:6px; padding:10px 14px; font-family:Consolas, monospace; font-size:12.5px; color:#38bdf8;">
-        from functools import cached_property<br/><br/>
-        class DataSetAnalytics:<br/>
-        &nbsp;&nbsp;&nbsp;&nbsp;def __init__(self, data_list):<br/>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.data = data_list<br/><br/>
-        &nbsp;&nbsp;&nbsp;&nbsp;@cached_property<br/>
-        &nbsp;&nbsp;&nbsp;&nbsp;def variance(self):<br/>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("⚡ భారీ గణన జరుగుతోంది (కేవలం 1st time మాత్రమే)...")<br/>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mean = sum(self.data) / len(self.data)<br/>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return sum((x - mean) ** 2 for x in self.data) / len(self.data)
-      </div>
-    </div>
+    <ul>
+      <li><strong>Getter (<code>@property</code>):</strong> మెథడ్‌ను బ్రాకెట్లు లేకుండా వేరియబుల్ లాగా చదవడానికి వీలు కల్పిస్తుంది.</li>
+      <li><strong>Setter (<code>@attr.setter</code>):</strong> వినియోగదారుడు విలువను మార్చాలని ప్రయత్నించినప్పుడు వాలిడేషన్ చేసి (ఉదా: బ్యాలెన్స్ నెగెటివ్ ఉండకూడదు) మాత్రమే అనుమతిస్తుంది.</li>
+      <li><strong>Deleter (<code>@attr.deleter</code>):</strong> <code>del obj.attr</code> చేసినప్పుడు క్లీనప్ లేదా రీసెట్ చేయడానికి వాడుతారు.</li>
+      <li><strong><code>@functools.cached_property</code> (Modern Python 3.8+):</strong> భారీ డేటా గణనలు లేదా రిమోట్ డేటాబేస్ నుండి లోడ్ చేసే ప్రాపర్టీలకు గేమ్ ఛేంజర్. ఇది మొదటిసారి మాత్రమే మెథడ్‌ను రన్ చేసి ఫలితాన్ని ఆబ్జెక్ట్ యొక్క <code>__dict__</code> లో క్యాష్ చేస్తుంది; ఆ తర్వాత ఎన్నిసార్లు పిలిచినా ఎటువంటి అదనపు సమయం తీసుకోకుండా తక్షణమే విలువను అందిస్తుంది!</li>
+    </ul>
 
     <!-- SECTION 8 -->
     <h2 class="section-title"><span class="num">8</span> పాలిమార్ఫిజమ్ (Polymorphism), డక్ టైపింగ్ &amp; Static Protocols</h2>
@@ -247,29 +213,39 @@ const chapter23Content = `<!DOCTYPE html>
       పైథాన్‌లో పాలిమార్ఫిజమ్ చాలా సహజంగా మరియు అద్భుతంగా పనిచేస్తుంది. ప్రసిద్ధ పైథానిక్ సూత్రం:
     </p>
     <div style="background:var(--bg2); border-left:4px solid #10b981; padding:12px 18px; margin:14px 0; font-style:italic;">
-      "If it walks like a duck and quacks like a duck, it's a duck." (ఒక పక్షి బాతు లాగా నడిచి, బాతు లాగా అరిస్తే, అది బాతు అనే నిర్ధారించుకోవచ్చు — అది ఏ క్లాస్‌కు చెందినదో కఠినంగా తనిఖీ చేయాల్సిన పనిలేదు).
+      "If it walks like a duck and quacks like a duck, it's a duck." (ఒక పక్షి బాతు లాగా నడిచి, బాతు లాగా అరిస్తే, అది బాతు అనే నిర్ధారించుకోవచ్చు — అది ఏ నిర్దిష్ట క్లాస్‌కు చెందినదో కఠినంగా తనిఖీ చేయాల్సిన పనిలేదు).
     </div>
     <p>
-      అంటే ఒక ఫంక్షన్‌కు వచ్చే ఆబ్జెక్ట్ ఏ క్లాస్‌కు చెందినదో చూడకుండా, దానికి మనం కోరుకున్న మెథడ్ (ఉదా: <code>process_payment()</code>) ఉందా లేదా అనేది మాత్రమే చూస్తాము:
+      అంటే ఒక ఫంక్షన్‌కు వచ్చే ఆబ్జెక్ట్ ఏ క్లాస్‌కు చెందినదో పరిశీలించకుండా, దానికి మనం కోరుకున్న మెథడ్ (ఉదా: <code>process_payment()</code>) ఉందా లేదా అనేది మాత్రమే చూస్తాము.
     </p>
-    <div style="background:#0f172a; border-radius:8px; padding:16px; font-family:Consolas, monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.6;">
-      def process_checkout(payment_provider, amount):<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;# payment_provider ఏ క్లాస్ అయినా సంబంధం లేదు, அதற்கு pay() ఉంటే చాలు!<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;payment_provider.pay(amount)
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+      <h4 style="margin-top:0; color:#10b981;">ఆధునిక పైథాన్ 3.8+: Structural Subtyping vs Nominal Subtyping (PEP 544):</h4>
+      <p style="font-size:13.5px; line-height:1.7; margin-bottom:10px;">
+        సాంప్రదాయ స్టాటిక్ లాంగ్వేజెస్ (Java, C++) లో <strong>Nominal Subtyping</strong> ఉంటుంది — అంటే రెండు క్లాసులు ఒకే రకమైన మెథడ్లను కలిగి ఉన్నప్పటికీ, అవి స్పష్టంగా ఒక కామన్ ఇంటర్‌ఫేస్‌ను <code>implements</code> చేస్తే తప్ప కంపైలర్ వాటిని ఒకే రకంగా అంగీకరించదు. కానీ మోడ్రన్ పైథాన్ <strong>Structural Subtyping (Protocols)</strong> ను సమర్థిస్తుంది:
+      </p>
+      <ul style="font-size:13.5px; line-height:1.7; margin-bottom:0;">
+        <li><code>typing.Protocol</code> ద్వారా మీరు ఒక రూల్ లేదా కాంట్రాక్ట్‌ను డిక్లేర్ చేయవచ్చు.</li>
+        <li>ఏదైనా యూజర్ క్లాస్ ఆ ప్రొటోకాల్‌లోని మెథడ్స్‌ను అమలు చేస్తే చాలు — అది ఆ ప్రొటోకాల్‌ను ఇన్హెరిట్ చేసుకోకపోయినా, Mypy / Pyright ఆటోమేటిక్‌గా దానిని సరైన టైప్‌గా గుర్తిస్తాయి!</li>
+        <li><code>@runtime_checkable</code> డెకరేటర్‌ను ఉపయోగించడం ద్వారా <code>isinstance(obj, MyProtocol)</code> ను రన్‌టైమ్‌లో కూడా సురక్షితంగా తనిఖీ చేయవచ్చు.</li>
+      </ul>
     </div>
-    <p>
-      ఆధునిక పైథాన్ 3.8+ లో <strong>typing.Protocol</strong> (PEP 544) ను ప్రవేశపెట్టారు. దీనిని <strong>Static Duck Typing</strong> అంటారు. దీనివల్ల రన్‌టైమ్‌లో ఇన్హెరిటెన్స్ భారం లేకుండానే, Mypy / Pyright వంటి టైప్ చెకర్లు ఆబ్జెక్ట్ సరైన పద్ధతులను కలిగి ఉందో లేదో కంపైల్/లింట్ సమయంలోనే ఖచ్చితంగా వెరిఫై చేయగలవు!
-    </p>
 
     <!-- SECTION 9 -->
     <h2 class="section-title"><span class="num">9</span> అబ్‌స్ట్రాక్ట్ బేస్ క్లాసెస్ (Abstract Base Classes - ABC)</h2>
     <p>
       పెద్ద ఎంటర్‌ప్రైజ్ సిస్టమ్స్‌లో టీమ్‌లోని డెవలపర్లు నిర్దిష్టమైన రూల్స్‌ను తప్పనిసరిగా అమలు చేసేలా బలవంతం చేయడానికి (Enforce Interface Contracts) పైథాన్ యొక్క <code>abc</code> మాడ్యూల్‌ను ఉపయోగిస్తాము:
     </p>
-    <ul>
-      <li><strong><code>from abc import ABC, abstractmethod</code>:</strong> బేస్ క్లాస్‌ను <code>ABC</code> నుండి డిరైవ్ చేయాలి.</li>
-      <li><strong><code>@abstractmethod</code>:</strong> ఏ మెథడ్ ముందైతే ఈ డెకరేటర్ ఉంటుందో, ఆ మెథడ్‌ను చైల్డ్ క్లాస్ తప్పనిసరిగా స్వయంగా ఇంప్లిమెంట్ చేయాలి! లేకపోతే చైల్డ్ క్లాస్ ఆబ్జెక్ట్‌ను సృష్టించడానికి ప్రయత్నించినప్పుడు పైథాన్ <code>TypeError: Can't instantiate abstract class with abstract method</code> అని నిరోధిస్తుంది.</li>
-    </ul>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; margin:16px 0;">
+      <h4 style="margin-top:0; color:#10b981;">అబ్‌స్ట్రాక్ట్ క్లాసెస్ యొక్క ప్రాముఖ్యత మరియు నియమాలు:</h4>
+      <ul style="font-size:13.5px; line-height:1.7; margin-bottom:0;">
+        <li><strong><code>from abc import ABC, abstractmethod</code>:</strong> బేస్ క్లాస్ <code>ABC</code> నుండి డిరైవ్ కావాలి.</li>
+        <li><strong><code>@abstractmethod</code> రక్షణ:</strong> ఏ మెథడ్ ముందైతే <code>@abstractmethod</code> ఉంటుందో, చైల్డ్ క్లాస్ ఆ మెథడ్‌ను తప్పనిసరిగా ఇంప్లిమెంట్ చేయాలి! ఒక్క మెథడ్ మర్చిపోయినా కూడా పైథాన్ ఆ చైల్డ్ క్లాస్ ఆబ్జెక్ట్‌ను క్రియేట్ చేయనివ్వదు (<code>TypeError: Can't instantiate abstract class with abstract method</code>).</li>
+        <li><strong>ఇంటర్‌ఫేస్ మరియు బేస్ ఇంప్లిమెంటేషన్ కలయిక:</strong> అబ్‌స్ట్రాక్ట్ క్లాస్ కేవలం ఎంప్టీ మెథడ్స్ మాత్రమే కాకుండా, కామన్ లాజిక్ ఉన్న కాంక్రీట్ మెథడ్స్‌ను కూడా కలిగి ఉండవచ్చు.</li>
+        <li><strong>ఎంటర్‌ప్రైజ్ ఆర్కిటెక్చర్ బెనిఫిట్:</strong> కోర్ సిస్టమ్ బేస్ క్లాస్ ఇంటర్‌ఫేస్‌పై మాత్రమే ఆధారపడుతుంది; భవిష్యత్తులో కొత్త ప్లగిన్‌లు లేదా గేట్‌వేలు (ఉదా: ApplePay, Crypto) వచ్చినప్పుడు కోర్ కోడ్‌లో ఒక్క లైన్ కూడా మార్చకుండా సులభంగా ప్లగ్ చేయవచ్చు (Open/Closed Principle).</li>
+      </ul>
+    </div>
 
     <!-- SECTION 10 -->
     <h2 class="section-title"><span class="num">10</span> కోడ్ డెమో 1: పేమెంట్ గేట్‌వే ఆర్కిటెక్చర్ (ABC &amp; Polymorphism)</h2>
@@ -374,11 +350,11 @@ class BaseEmployee:
 
     @salary.setter
     def salary(self, value):
-        if value &lt; 20000.0:
+        if value < 20000.0:
             raise ValueError("కనీస వేతనం ₹20,000 కన్నా తక్కువ ఉండకూడదు!")
         self._salary = value
 
-    def calculate_annual_ctc(self) -&gt; float:
+    def calculate_annual_ctc(self) -> float:
         return self._salary * 12
 
 # సాఫ్ట్‌వేర్ ఇంజనీర్ సబ్‌క్లాస్
@@ -387,7 +363,7 @@ class SoftwareEngineer(BaseEmployee):
         super().__init__(emp_id, name, base_salary)
         self.tech_stack = tech_stack
 
-    def calculate_annual_ctc(self) -&gt; float:
+    def calculate_annual_ctc(self) -> float:
         base_annual = super().calculate_annual_ctc()
         tech_allowance = 50000.0  # టెక్నాలజీ అలవెన్స్
         return base_annual + tech_allowance
@@ -398,7 +374,7 @@ class EngineeringManager(BaseEmployee):
         super().__init__(emp_id, name, base_salary)
         self.team_size = team_size
 
-    def calculate_annual_ctc(self) -&gt; float:
+    def calculate_annual_ctc(self) -> float:
         base_annual = super().calculate_annual_ctc()
         mgmt_bonus = self.team_size * 25000.0  # ప్రతి టీమ్ మెంబర్‌కు బోనస్
         return base_annual + mgmt_bonus
@@ -457,17 +433,17 @@ class BaseShipment(ABC):
 
     @weight_kg.setter
     def weight_kg(self, value):
-        if value &lt;= 0:
+        if value <= 0:
             raise ValueError("కార్గో బరువు సున్నా కన్నా ఎక్కువ ఉండాలి!")
         self._weight_kg = value
 
     @abstractmethod
-    def calculate_cost(self) -&gt; float:
+    def calculate_cost(self) -> float:
         """ప్రతి రవాణా విధానం స్వంత ధర లెక్కించే లాజిక్."""
         pass
 
     @abstractmethod
-    def estimated_delivery_days(self) -&gt; int:
+    def estimated_delivery_days(self) -> int:
         """డెలివరీకి పట్టే రోజుల అంచనా."""
         pass
 
@@ -477,12 +453,12 @@ class RoadSurfaceShipment(BaseShipment):
         super().__init__(tracking_id, origin, dest, weight_kg)
         self.distance_km = distance_km
 
-    def calculate_cost(self) -&gt; float:
+    def calculate_cost(self) -> float:
         base_rate = 50.0  # ప్రారంభ ఛార్జ్
         cost = base_rate + (self.weight_kg * 12.0) + (self.distance_km * 3.5)
         return cost
 
-    def estimated_delivery_days(self) -&gt; int:
+    def estimated_delivery_days(self) -> int:
         return max(2, int(self.distance_km / 400) + 1)
 
 # 3. ఎయిర్ కార్గో (ఎక్స్‌ప్రెస్ డెలివరీ)
@@ -491,12 +467,12 @@ class AirExpressShipment(BaseShipment):
         super().__init__(tracking_id, origin, dest, weight_kg)
         self.is_hazardous = is_hazardous
 
-    def calculate_cost(self) -&gt; float:
+    def calculate_cost(self) -> float:
         flat_air_surcharge = 500.0
         haz_fee = 1200.0 if self.is_hazardous else 0.0
         return flat_air_surcharge + haz_fee + (self.weight_kg * 65.0)
 
-    def estimated_delivery_days(self) -&gt; int:
+    def estimated_delivery_days(self) -> int:
         return 1  # నెక్స్ట్ డే ఎక్స్‌ప్రెస్
 
 # 4. సెంట్రల్ లాజిస్టిక్స్ డిస్పాచర్ ఇంజిన్ (పాలిమార్ఫిక్ ప్రాసెసర్)
@@ -513,7 +489,7 @@ class LogisticsDispatcher:
         
         print(f"📦 [ట్రాకింగ్: {shipment.tracking_id}] డిస్పాచ్ అయింది!")
         print(f"   • రకం: {shipment.__class__.__name__}")
-        print(f"   • మార్గం: {shipment.origin} -&gt; {shipment.dest} (బరువు: {shipment.weight_kg} KG)")
+        print(f"   • మార్గం: {shipment.origin} -> {shipment.dest} (బరువు: {shipment.weight_kg} KG)")
         print(f"   • షిప్పింగ్ ఛార్జ్: ₹{cost:,.2f} | అంచనా డెలివరీ: {days} రోజు(లు)")
         print("-" * 65)
 
