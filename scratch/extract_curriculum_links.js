@@ -28,3 +28,4 @@ courses.forEach(c => {
   console.log(`Total linked chapters: ${all.length}`);
   console.log('Sample chapters:', all.slice(0, 5));
 });
+

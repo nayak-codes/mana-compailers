@@ -162,3 +162,4 @@ console.log('Priority Breakdown:');
 Object.keys(pCounts).sort((a,b) => b - a).forEach(p => {
   console.log(`  Priority ${p}: ${pCounts[p]} URLs`);
 });
+

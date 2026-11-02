@@ -39,3 +39,4 @@ courses.forEach(c => {
 });
 
 console.log(`Verified ${allChapterUrls.length} chapter URLs on disk.`);
+
