@@ -2656,7 +2656,7 @@ const LangLogos = {
 const LANG_CARDS = [
   { id: 'python3',  label: 'Python 3 Compiler',    accentColor: '#3776AB', bgGlow: 'rgba(55,118,171,0.18)' },
   { id: 'java',     label: 'Java Compiler',          accentColor: '#f0a500', bgGlow: 'rgba(240,165,0,0.15)' },
-  { id: 'html',     label: 'HTML/CSS/JS Editor',     accentColor: '#E44D26', bgGlow: 'rgba(228,77,38,0.18)', badge: 'Live Preview' },
+  { id: 'html',     label: 'HTML/CSS/JS Editor',     accentColor: '#E44D26', bgGlow: 'rgba(228,77,38,0.18)' },
   { id: 'c',        label: 'C Compiler',             accentColor: '#659AD3', bgGlow: 'rgba(101,154,211,0.18)' },
   { id: 'cpp17',    label: 'C++ Compiler',           accentColor: '#9C033A', bgGlow: 'rgba(156,3,58,0.18)' },
   { id: 'nodejs',   label: 'JavaScript Compiler',    accentColor: '#F0DB4F', bgGlow: 'rgba(240,219,79,0.15)' },
@@ -2667,12 +2667,12 @@ const LANG_CARDS = [
 
 // ── Tutorials Catalog (11 Compiler Languages) ──────────────────
 const TUTORIAL_GUIDES = [
-  { path: '/blog-python.html',     id: 'python3',  title: 'Python Tutorial',     color: '#3776AB', badge: 'Popular' },
+  { path: '/blog-python.html',     id: 'python3',  title: 'Python Tutorial',     color: '#3776AB' },
   { path: '/blog-java.html',       id: 'java',     title: 'Java Tutorial',       color: '#f0a500' },
-  { path: '/blog-html.html',       id: 'html',     title: 'HTML/CSS/JS Tutorial',color: '#E44D26', badge: 'Live Preview' },
+  { path: '/blog-html.html',       id: 'html',     title: 'HTML/CSS/JS Tutorial',color: '#E44D26' },
   { path: '/blog-c.html',          id: 'c',        title: 'C Tutorial',          color: '#659AD3' },
   { path: '/blog-cpp.html',        id: 'cpp17',    title: 'C++ Tutorial',        color: '#9C033A' },
-  { path: '/blog-javascript.html', id: 'nodejs',   title: 'JavaScript Tutorial', color: '#F0DB4F', badge: 'Hot' },
+  { path: '/blog-javascript.html', id: 'nodejs',   title: 'JavaScript Tutorial', color: '#F0DB4F' },
   { path: '/blog-csharp.html',     id: 'csharp',   title: 'C# Tutorial',         color: '#9B4F96' },
   { path: '/blog-go.html',         id: 'go',       title: 'Go Tutorial',         color: '#00ACD7' },
   { path: '/blog-rust.html',       id: 'rust',     title: 'Rust Tutorial',       color: '#CE412B' },
