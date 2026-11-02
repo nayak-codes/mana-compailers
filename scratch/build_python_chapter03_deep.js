@@ -1,0 +1,688 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildPythonSidebar } = require('./python_curriculum_data.js');
+
+const currentLesson = LESSONS[2]; // Chapter 03 (0-indexed 2)
+const sidebarHtml = buildPythonSidebar(3);
+
+const chapter03Content = `<!DOCTYPE html>
+<html class="light-theme" lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${currentLesson.title} — Python 3 Tutorial | Our Compiler</title>
+  <meta name="description" content="Python 3 వేరియబుల్స్, డేటా టైప్స్ & టైప్ కాస్టింగ్ సమగ్ర తెలుగు గైడ్: డైనమిక్ టైపింగ్, id() మెమరీ రిఫరెన్సెస్, int, float, bool, str, NoneType, Immutability, Type Conversion, Type Hints, మరియు E-Commerce Billing Engine ప్రాజెక్ట్." />
+  <meta name="keywords" content="python variables in telugu, python data types telugu, type casting python telugu, dynamic typing python, mutability immutability python, type hints python, learn python in telugu, our compiler" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-python/${currentLesson.file}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-python/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <!-- Schema.org TechArticle Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${currentLesson.title} (Complete Guide to Python Variables, Data Types and Type Casting in Telugu)",
+    "description": "Python 3 వేరియబుల్స్, డేటా టైప్స్ మరియు మెమరీ మేనేజ్‌మెంట్ పూర్తి గైడ్: Dynamic Typing, id(), int/float/bool/str/None, Immutability, Type Hints, మరియు E-Commerce Billing Engine.",
+    "articleSection": "Phase 01: పైథాన్ ఫండమెంటల్స్ & బేసిక్స్",
+    "inLanguage": "te",
+    "author": {
+      "@type": "Organization",
+      "name": "Our Compiler Technical Editorial Team",
+      "url": "https://www.ourcompiler.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Our Compiler",
+      "url": "https://www.ourcompiler.com"
+    },
+    "datePublished": "2026-01-17",
+    "dateModified": "2026-11-02"
+  }
+  </script>
+
+  <!-- Interactive Scripts: Accordion, Syntax Highlighter & Compiler Integration -->
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    // Client-side Python Syntax Highlighter
+    function highlightPythonCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push('<span class="' + cls + '">' + text + '</span>');
+        return '___PY_TOK_' + id + '___';
+      };
+
+      let code = rawCode.replace(/(#.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/("""[\\s\\S]*?"""|'''[\\s\\S]*?'''|f?"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|f?'[^'\\\\]*(?:\\\\.[^'\\\\]*)*'|r"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|r'[^'\\\\]*(?:\\\\.[^'\\\\]*)*')/g, m => pushToken('st', m));
+
+      const kwList = [
+        'import','from','as','def','return','class','if','elif','else','while','for','in',
+        'break','continue','pass','try','except','finally','with','lambda','global','nonlocal',
+        'and','or','not','is','yield','async','await','raise','assert','True','False','None'
+      ];
+      const kwRegex = new RegExp('\\\\b(' + kwList.join('|') + ')\\\\b', 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const fnList = [
+        'print','len','range','type','isinstance','id','input','int','float','str','list',
+        'dict','set','tuple','sum','min','max','round','map','zip','enumerate','sorted',
+        'abs','open','help','dir','filter','bool'
+      ];
+      const fnRegex = new RegExp('\\\\b(' + fnList.join('|') + ')\\\\b', 'g');
+      code = code.replace(fnRegex, m => pushToken('fn', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?)\\b/g, m => pushToken('num', m));
+
+      tokens.forEach((tok, idx) => {
+        code = code.split('___PY_TOK_' + idx + '___').join(tok);
+      });
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('pre code.language-python').forEach(block => {
+        block.innerHTML = highlightPythonCode(block.innerText);
+      });
+    });
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    function runCodeInCompiler(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre code');
+      if (!pre) return;
+      const code = pre.innerText;
+      try {
+        localStorage.setItem('code_python', code);
+        localStorage.setItem('code_python3', code);
+      } catch (e) {
+        console.warn('LocalStorage error:', e);
+      }
+      window.open('/online-python-compiler.html', '_blank');
+    }
+  </script>
+</head>
+
+<body class="lang-python light-theme">
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+${sidebarHtml}
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="content">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a>
+      <span class="sep">›</span>
+      <a href="/blog-python.html">Python Masterclass</a>
+      <span class="sep">›</span>
+      <span>Chapter 3: ${currentLesson.title}</span>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <h1 class="page-title">${currentLesson.title}</h1>
+
+    <!-- PAGE META BADGES -->
+    <div class="page-meta">
+      <span class="badge badge-tech">🐍 Modern Python (Python 3.12+)</span>
+      <span class="badge badge-chapter">🎯 Chapter 3 of 25</span>
+      <span class="badge badge-phase">🚀 Phase 01: పైథాన్ ఫండమెంటల్స్ &amp; బేసిక్స్</span>
+      <span class="badge badge-edition">📅 2026 Edition</span>
+    </div>
+
+    <!-- COVERED TOPICS PILL BAR -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:12px 18px; margin-bottom:24px; font-size:13px; line-height:1.7;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this chapter:</span>
+      <span style="color:var(--text2); margin-left:6px;">
+        వేరియబుల్స్ ఆర్కిటెక్చర్ (Name Binding) · డైనమిక్ &amp; స్ట్రాంగ్ టైపింగ్ · id() &amp; మెమరీ రిఫరెన్స్ · Numeric Types (int, float, complex) · Booleans &amp; Truthiness · str &amp; NoneType · Mutability vs Immutability · Type Casting · Type Hints · E-Commerce Billing Engine ప్రాజెక్ట్!
+      </span>
+    </div>
+
+    <!-- INTRO BOX (Warm Soft Ivory HTML5 Style) -->
+    <div class="intro-box">
+      ఏ కంప్యూటర్ ప్రోగ్రామ్ అయినా చివరికి చేసేది డేటాను నిర్వహించడమే. C, C++ లేదా Java వంటి భాషల్లో ఒక వేరియబుల్‌ను సృష్టించాలంటే ముందుగానే <code>int x = 10;</code> అని మెమరీ బాక్స్ సైజును రిజర్వ్ చేయాలి. కానీ <strong>పైథాన్ మెమరీ ఆర్కిటెక్చర్ పూర్తిగా భిన్నమైనది మరియు అద్భుతమైనది!</strong>
+      పైథాన్‌లో వేరియబుల్స్ అనేవి మెమరీ బాక్స్‌లు కావు; అవి హీప్ మెమరీలో సృష్టించబడిన ఆబ్జెక్టులకు తగిలించే <strong>లేబుల్స్ (Name Tags / Object References)</strong> మాత్రమే!
+      ఈ మూడవ అధ్యాయంలో — పైథాన్ డైనమిక్ టైపింగ్ ఎలా పనిచేస్తుంది, <code>id()</code> ద్వారా మెమరీ అడ్రస్‌లను తనిఖీ చేయడం, స్మాల్ ఇంటిజర్ క్యాషింగ్, నంబర్స్, బూలియన్లు, స్ట్రింగ్స్, మ్యూటబిలిటీ vs ఇమ్మ్యుటబిలిటీ, మరియు ఒక పూర్తి స్థాయి <strong>E-Commerce Dynamic Billing &amp; SKU Engine</strong> ప్రాజెక్ట్ ద్వారా డేటా టైప్స్‌పై సంపూర్ణ పట్టు సాధిద్దాం!
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2 class="section-title"><span class="num">1</span> పైథాన్‌లో వేరియబుల్స్ అంటే ఏమిటి? (Variables as Memory Labels)</h2>
+    <p>
+      సాంప్రదాయ ప్రోగ్రామింగ్ భాషల్లో ఒక వేరియబుల్ అంటే మెమరీలో నిర్దిష్ట సైజు కలిగిన ఒక డబ్బా (Storage Box). 
+      కానీ <strong>పైథాన్‌లో ప్రతిదీ ఒక ఆబ్జెక్ట్ (Everything is an Object)!</strong>
+    </p>
+    <p>
+      మీరు <code>age = 25</code> అని రాసినప్పుడు తెరవెనుక మూడు పనులు జరుగుతాయి:
+    </p>
+    <ol>
+      <li>పైథాన్ హీప్ మెమరీలో <code>25</code> అనే విలువతో ఒక <code>int</code> ఆబ్జెక్ట్‌ను సృష్టిస్తుంది.</li>
+      <li>ఆ ఆబ్జెక్ట్‌కు ఒక ప్రత్యేకమైన మెమరీ చిరునామా (Memory Address) కేటాయిస్తుంది.</li>
+      <li><code>age</code> అనే పేరును ఆ మెమరీ ఆబ్జెక్ట్‌కు ఒక లేబుల్ లేదా పాయింటర్‌లా బంధిస్తుంది (Name Binding).</li>
+    </ol>
+
+    <!-- ARCHITECTURE DIAGRAM: MEMORY NAME BINDING -->
+    <div style="background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:20px; margin:20px 0; color:#e2e8f0; font-family:'JetBrains Mono', monospace; font-size:13px; overflow-x:auto;">
+<span style="color:#38bdf8; font-weight:700;">[పైథాన్ నేమ్ బైండింగ్ vs సాంప్రదాయ మెమరీ బాక్స్]</span>
+
+1. C/C++ శైలి (వేరియబుల్ అంటే ఫిక్స్‌డ్ మెమరీ బాక్స్):
+   [ వేరియబుల్ x (4 Bytes) ] ===&gt; లోపల 100 అనే విలువ నిల్వ ఉంటుంది.
+
+2. Python శైలి (వేరియబుల్స్ అంటే హీప్ ఆబ్జెక్టులకు టాగ్స్):
+   ┌───────────────┐
+   │ వేరియబుల్: a  │─────┐
+   └───────────────┘     │
+                         ▼
+   ┌───────────────┐   ┌─────────────────────────────────────────┐
+   │ వేరియబుల్: b  │──&gt;│   Heap Object: 100 (Type: int)          │
+   └───────────────┘   │   Address: id() = 140723849201          │
+                       │   Ref Count: 2 (రెండు వేరియబుల్స్ లింక్)│
+                       └─────────────────────────────────────────┘
+   • 'b = a' అని రాసినప్పుడు కొత్త ఆబ్జెక్ట్ తయారుకాదు!
+   • 'b' కూడా అదే పాత 100 ఆబ్జెక్ట్‌ను పాయింట్ చేస్తుంది (Memory Efficiency!).
+    </div>
+
+    <!-- SECTION 2 -->
+    <h2 class="section-title"><span class="num">2</span> డైనమిక్ టైపింగ్ &amp; స్ట్రాంగ్ టైపింగ్ ఫిలాసఫీ (Dynamic &amp; Strongly Typed)</h2>
+    <p>
+      పైథాన్ గురించి ఇంటర్వ్యూలలో తరచుగా అడిగే ప్రశ్న: <em>"పైథాన్ Dynamically Typed ఆ లేక Statically Typed ఆ? మరియు Strongly Typed ఆ లేక Weakly Typed ఆ?"</em>
+    </p>
+    <ul>
+      <li><strong>పైథాన్ Dynamically Typed:</strong> వేరియబుల్ డిక్లేర్ చేసేటప్పుడు టైప్ చెప్పనవసరం లేదు. రన్‌టైమ్‌లో అది పాయింట్ చేసే ఆబ్జెక్ట్ ఆధారంగా టైప్ నిర్ణయించబడుతుంది. ఒకే వేరియబుల్‌కు మొదట నంబర్, తర్వాత స్ట్రింగ్ అసైన్ చేయవచ్చు:
+        <br/><code>data = 100</code> (ఇప్పుడు int), ఆపై <code>data = "స్వాగతం"</code> (ఇప్పుడు str).
+      </li>
+      <li><strong>పైథాన్ Strongly Typed:</strong> జావాస్క్రిప్ట్ లాగా ఆటోమేటిక్‌గా డేటా టైపులను మార్చి పిచ్చి లెక్కలు చేయదు! ఉదాహరణకు జావాస్క్రిప్ట్‌లో <code>"5" + 5</code> అంటే <code>"55"</code> అవుతుంది. కానీ పైథాన్‌లో <code>"5" + 5</code> అని రాస్తే తక్షణమే <strong><code>TypeError: can only concatenate str (not "int") to str</code></strong> అని స్పష్టమైన ఎర్రర్ ఇస్తుంది!</li>
+    </ul>
+
+    <!-- SECTION 3 -->
+    <h2 class="section-title"><span class="num">3</span> ఆబ్జెక్ట్ ఐడెంటిటీ, మెమరీ అడ్రస్: <code>id()</code>, <code>type()</code> &amp; <code>is</code> ఆపరేటర్</h2>
+    <p>
+      పైథాన్‌లో ఏదైనా ఆబ్జెక్ట్ అంతర్గత స్వభావాన్ని శోధించడానికి రెండు అత్యంత కీలకమైన బిల్ట్-ఇన్ ఫంక్షన్లు ఉన్నాయి:
+    </p>
+    <ul>
+      <li><code>type(obj)</code>: ఆబ్జెక్ట్ యొక్క క్లాస్ లేదా డేటా టైప్‌ను రిటర్న్ చేస్తుంది (ఉదా: <code>&lt;class 'int'&gt;</code>).</li>
+      <li><code>id(obj)</code>: ఆ ఆబ్జెక్ట్ RAM లో నిల్వ చేయబడిన ప్రత్యేకమైన మెమరీ చిరునామాను (Integer Memory Address) రిటర్న్ చేస్తుంది.</li>
+      <li><code>is</code> ఆపరేటర్: రెండు వేరియబుల్స్ మెమరీలో <strong>ఒకే ఆబ్జెక్ట్‌ను పాయింట్ చేస్తున్నాయా లేదా</strong> (<code>id(a) == id(b)</code>) అని చెక్ చేస్తుంది. విలువలను పోల్చడానికి <code>==</code> వాడతాం, మెమరీ ఐడెంటిటీని పోల్చడానికి <code>is</code> వాడతాం!</li>
+    </ul>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">01_object_identity_and_type.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># ఆబ్జెక్ట్ ఐడెంటిటీ & id() మెమరీ శోధన
+
+num1 = 250
+num2 = 250
+
+print("num1 విలువ:", num1, "| టైప్:", type(num1), "| ID:", id(num1))
+print("num2 విలువ:", num2, "| టైప్:", type(num2), "| ID:", id(num2))
+
+# == (విలువ సమానత్వమా?) vs is (ఒకే మెమరీ ఆబ్జెక్టా?)
+print("విలువలు సమానమా (num1 == num2)?", num1 == num2)
+print("ఒకే మెమరీ ఆబ్జెక్టా (num1 is num2)?", num1 is num2)
+
+# స్మాల్ ఇంటిజర్ క్యాషింగ్ (-5 నుండి 256 వరకు పైథాన్ మెమరీలో ముందుగానే ఉంచుతుంది!)
+a = 100
+b = 100
+print("\\nస్మాల్ ఇంటిజర్ క్యాషింగ్ (a is b):", a is b) # True! ఒకే మెమరీ అడ్రస్
+</code></pre>
+    </div>
+
+    <!-- SECTION 4 -->
+    <h2 class="section-title"><span class="num">4</span> ప్రిమిటివ్ డేటా టైప్స్ 1: సంఖ్యలు (Numeric Types — int, float, complex)</h2>
+    <p>
+      పైథాన్‌లో గణిత లెక్కల కోసం మూడు ప్రధాన న్యూమరిక్ డేటా టైప్స్ ఉన్నాయి:
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>డేటా టైప్</th>
+            <th>వివరణ</th>
+            <th>ఉదాహరణ</th>
+            <th>ప్రత్యేకత (Unique Feature)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>int</code> (పూర్ణాంకాలు)</td>
+            <td>ధనాత్మక లేదా రణాత్మక సంపూర్ణ సంఖ్యలు.</td>
+            <td><code>42</code>, <code>-105</code>, <code>1_000_000</code></td>
+            <td><strong>అపరిమిత పరిమాణం (Arbitrary Precision)!</strong> 32-bit లేదా 64-bit ఓవర్‌ఫ్లో ఉండదు; ఎంత పెద్ద సంఖ్యనైనా మెమరీ ఉన్నంతవరకు నిల్వ చేస్తుంది.</td>
+          </tr>
+          <tr>
+            <td><code>float</code> (దశాంశాలు)</td>
+            <td>పాయింట్ ఉన్న దశాంశ సంఖ్యలు (Double precision).</td>
+            <td><code>3.14159</code>, <code>-0.005</code>, <code>1.5e-4</code></td>
+            <td>సైంటిఫిక్ నోటేషన్ సపోర్ట్ చేస్తుంది (IEEE 754 64-bit standard). 53 బిట్స్ సిగ్నిఫికెంట్ ప్రిసిషన్ లభిస్తుంది.</td>
+          </tr>
+          <tr>
+            <td><code>complex</code> (మిశ్రమ సంఖ్యలు)</td>
+            <td>వాస్తవ మరియు ఊహాత్మక భాగాలు (Real &amp; Imaginary).</td>
+            <td><code>3 + 4j</code>, <code>z = 2 - 5j</code></td>
+            <td>ఇంజనీరింగ్ &amp; క్వాంటం ఫిజిక్స్ కోసం ఇన్-బిల్ట్ <code>j</code> సపోర్ట్. <code>z.real</code>, <code>z.imag</code> లభిస్తాయి.</td>
+          </tr>
+          <tr>
+            <td><code>Decimal</code> (ఖచ్చితమైన దశాంశాలు)</td>
+            <td>బ్యాంకింగ్ &amp; ఫైనాన్స్ కరెన్సీ లెక్కల కోసం.</td>
+            <td><code>Decimal('19.99')</code></td>
+            <td><code>decimal</code> మాడ్యూల్ నుండి లభిస్తుంది. ఫ్లోటింగ్ పాయింట్ రౌండింగ్ ఎర్రర్స్ లేకుండా పూర్తి ఖచ్చితత్వాన్ని ఇస్తుంది.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #38bdf8; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#38bdf8; margin-bottom:8px;">🔬 డీప్ డైవ్: Python 3 లో <code>int</code> మెమరీ ఎలా నిర్వహించబడుతుంది?</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:0;">
+        సాధారణ C లాంగ్వేజ్‌లో ఇంటీజర్ అంటే 4 బైట్స్ (32-బిట్: -2,147,483,648 నుండి 2,147,483,647 వరకు మాత్రమే). కానీ Python 3 లో ప్రతి <code>int</code> ఒక C-లెవల్ <code>PyLongObject</code> స్ట్రక్చర్! చిన్న సంఖ్య అయితే 28 బైట్స్ మెమరీ తీసుకుంటుంది; సంఖ్య పెరుగుతున్న కొద్దీ డైనమిక్‌గా 30-బిట్ డిజిట్స్ (digits array) రూపంలో మెమరీని పెంచుకుంటూ పోతుంది. అందుకే పైథాన్‌లో ఇంటీజర్ ఓవర్‌ఫ్లో అనేది అసాధ్యం!
+      </p>
+    </div>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">02_numeric_arbitrary_precision.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># పైథాన్ 3 ఆర్బిట్రరీ ప్రెసిషన్ ఇంటీజర్స్ & కాంప్లెక్స్ నంబర్స్ డెమో
+
+# 1. భారీ సంఖ్యలు (C/C++ లో ఇవి ఓవర్‌ఫ్లో అయి క్రాష్ అవుతాయి!)
+astronomical_number = 2 ** 100
+print("2 పవర్ 100 విలువ:")
+print(astronomical_number)
+
+# 2. అండర్‌స్కోర్స్ ద్వారా రీడబిలిటీ (PEP 515)
+annual_revenue = 10_000_000_000 # 1000 కోట్లు
+print("\\nవార్షిక ఆదాయం:", annual_revenue, "రూపాయలు")
+
+# 3. కాంప్లెక్స్ నంబర్స్
+z = 5 + 12j
+print("\\nకాంప్లెక్స్ సంఖ్య:", z)
+print("రియల్ పార్ట్ (వాస్తవ భాగం):", z.real)
+print("ఇమాజినరీ పార్ట్ (ఊహాత్మక భాగం):", z.imag)
+</code></pre>
+    </div>
+
+    <!-- SECTION 5 -->
+    <h2 class="section-title"><span class="num">5</span> ప్రిమిటివ్ డేటా టైప్స్ 2: బూలియన్లు &amp; Truthiness (bool)</h2>
+    <p>
+      పైథాన్‌లో నిజం లేదా అబద్ధాన్ని సూచించడానికి <strong><code>bool</code></strong> క్లాస్ ఉంది, ఇందులో కేవలం రెండే విలువలు ఉంటాయి: <code>True</code> మరియు <code>False</code> (గమనిక: మొదటి అక్షరం పెద్ద అక్షరం క్యాపిటల్ T, క్యాపిటల్ F ఉండాలి).
+    </p>
+    <p>
+      పైథాన్‌లో <code>bool</code> అనేది నిజానికి <code>int</code> క్లాస్ యొక్క సబ్-క్లాస్! అందుకే <code>True == 1</code> మరియు <code>False == 0</code> అవుతుంది.
+    </p>
+
+    <div style="background:var(--bg2); border:1px solid var(--border); border-left:4px solid #10b981; border-radius:8px; padding:16px; margin:18px 0;">
+      <div style="font-weight:700; color:#10b981; margin-bottom:8px;">💡 Truthy vs Falsy విలువల నియమాలు:</div>
+      <p style="font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:8px;">
+        ఏదైనా వేరియబుల్‌ను <code>if</code> కండిషన్‌లో పెట్టినప్పుడు పైథాన్ దాన్ని ఆటోమేటిక్‌గా బూలియన్‌గా మారుస్తుంది.
+      </p>
+      <ul style="font-size:13px; color:var(--text2); line-height:1.8; margin-left:20px;">
+        <li><strong>Falsy విలువలు (ఎల్లప్పుడూ False):</strong> <code>False</code>, <code>None</code>, సంఖ్య సున్నా (<code>0</code>, <code>0.0</code>), ఖాళీ కలెక్షన్స్ (<code>""</code>, <code>[]</code>, <code>()</code>, <code>{}</code>, <code>set()</code>).</li>
+        <li><strong>Truthy విలువలు (ఎల్లప్పుడూ True):</strong> సున్నా కాని ఏ సంఖ్య అయినా (ఉదా: <code>-5</code>, <code>42</code>), ఖాళీ లేని స్ట్రింగ్స్ (ఉదా: <code>" "</code>, <code>"hello"</code>), అంశాలు ఉన్న ఏ లిస్ట్ లేదా డిక్షనరీ అయినా.</li>
+      </ul>
+    </div>
+
+    <!-- SECTION 6 -->
+    <h2 class="section-title"><span class="num">6</span> ప్రిమిటివ్ డేటా టైప్స్ 3: స్ట్రింగ్స్ &amp; NoneType (str &amp; None)</h2>
+    <ul>
+      <li><strong>స్ట్రింగ్స్ (<code>str</code>):</strong> అక్షరాలు, పదాలు లేదా టెక్స్ట్‌ను సూచించే ఇమ్మ్యుటబుల్ సీక్వెన్స్. సింగిల్ కోట్స్ (<code>'...'</code>), డబుల్ కోట్స్ (<code>"..."</code>), లేదా మల్టీ-లైన్ ట్రిపుల్ కోట్స్ (<code>"""..."""</code>) లో రాస్తారు. తెలుగు మరియు ప్రపంచ భాషలన్నింటినీ UTF-8 ద్వారా నేరుగా సపోర్ట్ చేస్తుంది.</li>
+      <li><strong>NoneType (<code>None</code>):</strong> ఇతర భాషల్లో <code>null</code> లేదా <code>nil</code> లాగా, పైథాన్‌లో "విలువ ఏమీ లేదు" (Absence of value) అని చెప్పడానికి ఒకే ఒక సింగిల్టన్ ఆబ్జెక్ట్ <code>None</code> ఉంటుంది. ఒక ఫంక్షన్ ఏమీ రిటర్న్ చేయకపోతే అది బై-డిఫాల్ట్ <code>None</code> ను రిటర్న్ చేస్తుంది.</li>
+    </ul>
+
+    <!-- SECTION 7 -->
+    <h2 class="section-title"><span class="num">7</span> మ్యూటబుల్ vs ఇమ్మ్యుటబుల్ కాన్సెప్ట్ (Mutability vs Immutability)</h2>
+    <p>
+      పైథాన్ ఆర్కిటెక్చర్‌లో ఇది అత్యంత కీలకమైన అంశం. ఒక ఆబ్జెక్ట్ మెమరీలో సృష్టించబడిన తర్వాత దానిలోని విలువలను అక్కడికక్కడే మార్చవచ్చా లేదా అనే దానిని బట్టి డేటా టైపులను రెండుగా విభజిస్తారు:
+    </p>
+
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>కేటగిరీ</th>
+            <th>డేటా టైప్స్</th>
+            <th>అర్థం &amp; ప్రవర్తన</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ఇమ్మ్యుటబుల్ (Immutable - మార్చలేనివి)</strong></td>
+            <td><code>int</code>, <code>float</code>, <code>bool</code>, <code>str</code>, <code>tuple</code>, <code>frozenset</code></td>
+            <td>ఒకసారి మెమరీలో తయారైన తర్వాత దాని విలువను మార్చలేము. మీరు విలువను మారిస్తే, పాత ఆబ్జెక్ట్ మారదు; కొత్త మెమరీలో కొత్త ఆబ్జెక్ట్ సృష్టించబడుతుంది!</td>
+          </tr>
+          <tr>
+            <td><strong>మ్యూటబుల్ (Mutable - మార్చదగినవి)</strong></td>
+            <td><code>list</code>, <code>dict</code>, <code>set</code>, <code>bytearray</code></td>
+            <td>మెమరీ అడ్రస్ (ID) మారకుండానే ఆబ్జెక్ట్ లోపలి విలువలను ఇన్-ప్లేస్ గా జోడించవచ్చు, సవరించవచ్చు లేదా తొలగించవచ్చు.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 8 -->
+    <h2 class="section-title"><span class="num">8</span> వేరియబుల్ నేమింగ్ రూల్స్ &amp; PEP 8 స్టాండర్డ్స్ (Naming Conventions)</h2>
+    <p>
+      పైథాన్‌లో వేరియబుల్స్ పేర్లు పెట్టేటప్పుడు తప్పనిసరిగా పాటించాల్సిన అధికారిక నియమాలు:
+    </p>
+    <ul>
+      <li><strong>అనుమతించబడిన అక్షరాలు:</strong> ఇంగ్లీష్ అక్షరాలు (<code>a-z</code>, <code>A-Z</code>), అంకెలు (<code>0-9</code>), మరియు అండర్‌స్కోర్ (<code>_</code>).</li>
+      <li><strong>అంకెతో ప్రారంభం కాకూడదు:</strong> <code>1st_user</code> అనేది తప్పు ❌; <code>user_1</code> అనేది సరైనది ✅.</li>
+      <li><strong>కేస్-సెన్సిటివ్ (Case-sensitive):</strong> <code>score</code>, <code>Score</code>, <code>SCORE</code> అనేవి మూడు వేర్వేరు వేరియబుల్స్!</li>
+      <li><strong>రిజర్వ్డ్ కీవర్డ్స్ వాడకూడదు:</strong> పైథాన్‌లో 35 రిజర్వ్డ్ కీవర్డ్స్ (<code>if</code>, <code>for</code>, <code>while</code>, <code>def</code>, <code>class</code>...) ఉన్నాయి. వీటిని వేరియబుల్ పేర్లుగా పెట్టకూడదు.</li>
+      <li><strong>PEP 8 శైలి:</strong> వేరియబుల్స్ మరియు ఫంక్షన్ల కోసం ఎల్లప్పుడూ <strong>snake_case</strong> వాడాలి (ఉదా: <code>customer_name</code>, <code>total_amount</code>). స్థిర విలువల (Constants) కోసం <strong>UPPER_CASE</strong> వాడాలి (ఉదా: <code>PI = 3.14</code>, <code>MAX_USERS = 100</code>).</li>
+    </ul>
+
+    <!-- SECTION 9 -->
+    <h2 class="section-title"><span class="num">9</span> మల్టిపుల్ అసైన్‌మెంట్ &amp; వేరియబుల్ స్వాప్పింగ్ (Multiple Assignment &amp; Swapping)</h2>
+    <p>
+      పైథాన్ ఇచ్చే అద్భుతమైన ఫీచర్లలో మల్టిపుల్ అసైన్‌మెంట్ ఒకటి. ఒకే లైన్‌లో బహుళ వేరియబుల్స్‌కు విలువలని కేటాయించవచ్చు:
+    </p>
+    <!-- CODE BLOCK 3 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">03_multiple_assignment_and_swap.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># 1. ఒకే లైన్‌లో వేర్వేరు విలువలను కేటాయించడం (Tuple Unpacking)
+item_id, item_title, unit_price = 101, "లాప్‌టాప్ బ్యాగ్", 1499.50
+print(f"ID: {item_id} | ఐటెమ్: {item_title} | ధర: ₹ {unit_price}")
+
+# 2. ఒకే విలువను చాలా వేరియబుల్స్‌కు ఇవ్వడం (Chained Assignment)
+count_a = count_b = count_c = 0
+print("కౌంటర్లు:", count_a, count_b, count_c)
+
+# 3. వేరియబుల్స్ మార్పిడి (Swapping values)
+# C/C++ లో temp వేరియబుల్ వాడాలి. పైథాన్‌లో కేవలం ఒక్క లైన్!
+x = "రైలు"
+y = "విమానం"
+print(f"స్వాప్ ముందు: x = {x}, y = {y}")
+
+x, y = y, x  # పైథాన్ మ్యాజిక్ స్వాప్!
+print(f"స్వాప్ తర్వాత: x = {x}, y = {y}")
+</code></pre>
+    </div>
+
+    <!-- SECTION 10 -->
+    <h2 class="section-title"><span class="num">10</span> టైప్ కాస్టింగ్: ఇంప్లిసిట్ vs ఎక్స్‌ప్లిసిట్ (Type Conversion)</h2>
+    <p>
+      ఒక డేటా టైప్‌లో ఉన్న విలువను మరొక డేటా టైప్‌లోకి మార్చడాన్ని <strong>టైప్ కాస్టింగ్ (Type Conversion)</strong> అంటారు:
+    </p>
+    <ul>
+      <li><strong>1. ఇంప్లిసిట్ కాస్టింగ్ (Automatic Type Coercion):</strong> డేటా లాస్ లేకుండా పైథాన్ స్వయంగా మార్చే విధానం. ఉదాహరణకు <code>int + float</code> చేసినప్పుడు ఫలితం ఆటోమేటిక్‌గా <code>float</code> అవుతుంది:
+        <br/><code>res = 10 + 5.5</code> =&gt; <code>15.5</code> (float).
+      </li>
+      <li><strong>2. ఎక్స్‌ప్లిసిట్ కాస్టింగ్ (Manual Type Casting):</strong> మనమే ఫంక్షన్లను పిలిచి మార్చడం:
+        <ul>
+          <li><code>int(x)</code>: పూర్ణాంకంగా మార్చడం (దశాంశాలు కట్ అవుతాయి: <code>int(9.99) -&gt; 9</code>).</li>
+          <li><code>float(x)</code>: దశాంశ సంఖ్యగా మార్చడం (<code>float("45.5") -&gt; 45.5</code>).</li>
+          <li><code>str(x)</code>: స్ట్రింగ్‌గా మార్చడం (<code>str(100) -&gt; "100"</code>).</li>
+          <li><code>bool(x)</code>: బూలియన్‌గా మార్చడం (<code>bool(0) -&gt; False</code>, <code>bool("hi") -&gt; True</code>).</li>
+        </ul>
+      </li>
+    </ul>
+
+    <!-- SECTION 11 -->
+    <h2 class="section-title"><span class="num">11</span> మోడరన్ పైథాన్ 3.10+ టైప్ హింటింగ్ (Type Hints &amp; Annotations)</h2>
+    <p>
+      పైథాన్ డైనమిక్ భాష అయినప్పటికీ, పెద్ద ఎంటర్‌ప్రైజ్ ప్రాజెక్ట్‌లలో కోడ్ చదివేటప్పుడు గందరగోళం రాకుండా ఆధునిక పైథాన్ <strong>Type Hints (PEP 484 &amp; PEP 604)</strong> ఫీచర్‌ను ప్రవేశపెట్టింది:
+    </p>
+    <div style="background:#0f172a; padding:14px 20px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#38bdf8; margin:14px 0; line-height:1.7;">
+      # బేసిక్ టైప్ అనోటేషన్స్<br/>
+      product_name: str = "గేమింగ్ మౌస్"<br/>
+      product_price: float = 2499.00<br/>
+      stock_quantity: int = 50<br/>
+      is_available: bool = True<br/><br/>
+      # Python 3.10+ పైప్ సింటాక్స్ (Union types):<br/>
+      user_id: int | str = "UID_90812"  # int లేదా str రెండూ అనుమతించబడతాయి<br/>
+      discount_coupon: str | None = None  # ఐచ్ఛిక విలువ (Optional string)
+    </div>
+    <p>
+      <strong>గమనిక:</strong> టైప్ హింట్స్ రన్‌టైమ్‌లో పైథాన్ ఎగ్జిక్యూషన్ వేగాన్ని నెమ్మదించవు; పైథాన్ ఇంటర్‌ప్రిటర్ వీటిని కేవలం మెటాడేటాగా భావించి వేరియబుల్స్‌లాగే నడుపుతుంది. కానీ VS Code / PyCharm వంటి IDEలు మరియు mypy వంటి స్టాటిక్ టైప్ చెకర్లు కోడ్ రన్ అవ్వకముందే బగ్స్‌ను పసిగట్టడానికి ఇవి ఎంతగానో ఉపయోగపడతాయి.
+    </p>
+
+    <!-- SECTION 12 -->
+    <h2 class="section-title"><span class="num">12</span> కామన్ బిగినర్స్ మిస్టేక్స్ &amp; ప్రొడక్షన్ బెస్ట్ ప్రాక్టీసెస్</h2>
+    <ul>
+      <li><strong>Mistake 1: బిల్ట్-ఇన్ ఫంక్షన్ల పేర్లను వేరియబుల్స్‌గా వాడటం:</strong> మీరు పొరపాటున <code>str = "హలో"</code> లేదా <code>type = "admin"</code> అని రాస్తే, పైథాన్ యొక్క బిల్ట్-ఇన్ <code>str()</code> లేదా <code>type()</code> ఫంక్షన్ ఓవర్‌రైట్ అయిపోతుంది! ఆ తర్వాత <code>str(123)</code> అని పిలిస్తే <code>TypeError: 'str' object is not callable</code> అని క్రాష్ అవుతుంది!</li>
+      <li><strong>Mistake 2: <code>0.1 + 0.2 != 0.3</code> ఫ్లోటింగ్ పాయింట్ సమస్య:</strong> కంప్యూటర్లు బైనరీలో ఫ్లోటింగ్ పాయింట్ లెక్కలు చేయడం వల్ల <code>0.1 + 0.2</code> చేసినప్పుడు <code>0.30000000000000004</code> వస్తుంది. ఖచ్చితమైన బ్యాంకింగ్ లెక్కల కోసం పైథాన్ యొక్క <code>decimal</code> మాడ్యూల్ వాడాలి.</li>
+      <li><strong>Mistake 3: <code>ValueError</code> నివారించకపోవడం:</strong> యూజర్ నుండి వచ్చే డేటా <code>"abc"</code> అయినప్పుడు నేరుగా <code>int("abc")</code> చేస్తే క్రాష్ అవుతుంది. ఎల్లప్పుడూ <code>try...except</code> బ్లాక్ లేదా <code>str.isdigit()</code> ద్వారా ఇన్‌పుట్ వాలిడేషన్ చేయాలి.</li>
+      <li><strong>Best Practice: మెమరీ క్లీనప్ &amp; రిఫరెన్స్ కౌంటింగ్:</strong> పైథాన్‌లో ఏదైనా వేరియబుల్‌కు కేటాయించిన ఆబ్జెక్ట్ రిఫరెన్స్ కౌంట్ సున్నా అయితే (Garbage Collection ద్వారా) ఆ మెమరీ ఆటోమేటిక్‌గా రీక్లెయిమ్ అవుతుంది. పెద్ద డేటా ఆబ్జెక్టులను వెంటనే క్లియర్ చేయడానికి <code>del var_name</code> ఉపయోగించవచ్చు.</li>
+    </ul>
+
+    <!-- SECTION 13 -->
+    <h2 class="section-title"><span class="num">13</span> రియల్-వరల్డ్ ప్రాజెక్ట్: "Enterprise E-Commerce Product SKU &amp; Dynamic Billing Engine"</h2>
+    <p>
+      ఈ మూడవ అధ్యాయంలో నేర్చుకున్న అన్ని అంశాలను (డేటా టైప్స్, డైనమిక్ టైపింగ్, id() మెమరీ ట్రాకింగ్, టైప్ కాస్టింగ్, Truthiness, మల్టిపుల్ అసైన్‌మెంట్) కలగలిపి — ఒక పూర్తి స్థాయి <strong>E-Commerce SKU &amp; Dynamic Billing Engine</strong> ను నిర్మిద్దాం!
+    </p>
+
+    <!-- CODE BLOCK 4: CAPSTONE MINI PROJECT -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="file-name">04_ecommerce_sku_billing_engine.py</span>
+        <div class="btn-group">
+          <button class="btn btn-copy" onclick="copyCode(this)">Copy</button>
+          <button class="btn btn-run" onclick="runCodeInCompiler(this)">Run ▶</button>
+        </div>
+      </div>
+      <pre><code class="language-python"># =====================================================================
+# చాప్టర్ 03 ప్రాజెక్ట్: Enterprise E-Commerce Product SKU & Dynamic Billing
+# కాన్సెప్ట్స్: All Primitive Types, Dynamic Typing, id() Memory Check,
+#             Explicit Type Casting, Swapping, Formatted Receipt Output
+# =====================================================================
+
+def generate_invoice(sku_code: str, title: str, raw_price: str, raw_qty: str, is_prime_member: bool):
+    """
+    ఉత్పత్తి డేటాను వాలిడేట్ చేసి, టైప్ కాస్టింగ్ ద్వారా బిల్లును గణిస్తుంది.
+    """
+    print("=" * 65)
+    print("        🛒 QUICK-MART E-COMMERCE BILLING ENGINE (2026)")
+    print("=" * 65)
+
+    # 1. ఎక్స్‌ప్లిసిట్ టైప్ కాస్టింగ్ (యూజర్ స్ట్రింగ్స్ నుండి న్యూమరిక్ డేటా టైప్స్)
+    unit_price: float = float(raw_price)
+    quantity: int = int(raw_qty)
+
+    # 2. మల్టిపుల్ అసైన్‌మెంట్ & గణనలు
+    subtotal: float = unit_price * quantity
+    gst_tax_rate: float = 0.18 # 18% GST టాక్స్
+    tax_amount: float = subtotal * gst_tax_rate
+
+    # 3. బూలియన్ Truthiness ద్వారా ప్రైమ్ డిస్కౌంట్
+    discount: float = 0.0
+    if is_prime_member:
+        discount = subtotal * 0.10 # 10% VIP ప్రైమ్ డిస్కౌంట్
+
+    final_total: float = subtotal + tax_amount - discount
+
+    # 4. ఆబ్జెక్ట్ మెమరీ అడ్రస్ ఆడిట్ (id() మరియు type() తనిఖీ)
+    print(f"  • SKU కోడ్     : {sku_code} [Type: {type(sku_code).__name__}]")
+    print(f"  • ఐటెమ్ పేరు     : {title} [Memory ID: {id(title)}]")
+    print(f"  • యూనిట్ ధర     : ₹ {unit_price:.2f} [Type: {type(unit_price).__name__}]")
+    print(f"  • పరిమాణం (Qty) : {quantity} [Type: {type(quantity).__name__}]")
+    print(f"  • ప్రైమ్ మెంబర్ : {'అవును (VIP)' if is_prime_member else 'కాదు'}")
+    print("-" * 65)
+    print(f"  సబ్‌టోటల్ (Subtotal)          : ₹ {subtotal:>10.2f}")
+    print(f"  GST పన్ను (18%)              : ₹ {tax_amount:>10.2f}")
+    print(f"  ప్రైమ్ లాయల్టీ తగ్గింపు (10%) : -₹ {discount:>9.2f}")
+    print("=" * 65)
+    print(f"  💰 చెల్లించాల్సిన తుది మొత్తం : ₹ {final_total:>10.2f}")
+    print("=" * 65)
+
+if __name__ == "__main__":
+    # యూజర్ వెబ్ ఫారమ్ నుండి స్ట్రింగ్స్ రూపంలో వచ్చిన డేటా సిమ్యులేషన్
+    input_sku = "SKU-ELE-9081"
+    input_title = "సోనీ వైర్‌లెస్ హెడ్‌ఫోన్స్ (Noise Cancelling)"
+    input_price_str = "12499.50"  # స్ట్రింగ్ డేటా
+    input_qty_str = "2"           # స్ట్రింగ్ డేటా
+    is_vip = True                 # బూలియన్ డేటా
+
+    generate_invoice(
+        sku_code=input_sku,
+        title=input_title,
+        raw_price=input_price_str,
+        raw_qty=input_qty_str,
+        is_prime_member=is_vip
+    )
+
+    print("\\n✅ బిల్లింగ్ ఇంజిన్ విజయవంతంగా ఎగ్జిక్యూట్ అయ్యింది!\\n")
+</code></pre>
+    </div>
+
+    <!-- 5 COLLAPSIBLE QUIZZES -->
+    <h2 class="section-title"><span class="num">★</span> ఈ అధ్యాయంపై ప్రాక్టీస్ క్విజ్ (Knowledge Check)</h2>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">1. పైథాన్‌లో వేరియబుల్స్ అనేవి మెమరీ బాక్స్‌లు కావు అని ఎందుకు అంటారు?</summary>
+      <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+        <strong>సమాధానం:</strong> C++/Java లో వేరియబుల్ అనేది మెమరీలో డేటాను నిల్వ చేసే నిర్దిష్ట బాక్స్. కానీ పైథాన్‌లో <strong>ప్రతిదీ ఒక ఆబ్జెక్ట్!</strong> డేటా ఎల్లప్పుడూ హీప్ మెమరీలో ఆబ్జెక్ట్‌గా ఉంటుంది; వేరియబుల్స్ కేవలం ఆ ఆబ్జెక్టుల మెమరీ అడ్రస్‌లను పాయింట్ చేసే <strong>లేబుల్స్ లేదా రిఫరెన్సెస్ (Name Bindings)</strong> మాత్రమే.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">2. '==' ఆపరేటర్‌కు మరియు 'is' ఆపరేటర్‌కు మధ్య ప్రాథమిక తేడా ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+        <strong>సమాధానం:</strong> <code>==</code> ఆపరేటర్ రెండు వేరియబుల్స్‌లోని <strong>విలువలను (Values)</strong> పోల్చి సమానమైతే True ఇస్తుంది. కానీ <code>is</code> ఆపరేటర్ రెండు వేరియబుల్స్ మెమరీలో <strong>ఒకే ఆబ్జెక్ట్‌ను (Same Memory Address via id())</strong> పాయింట్ చేస్తున్నాయా లేదా అని పోల్చుతుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">3. C++ తో పోలిస్తే Python 3 లో 'int' డేటా టైప్‌కు ఉన్న అసాధారణ సూపర్-పవర్ ఏమిటి?</summary>
+      <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+        <strong>సమాధానం:</strong> <strong>ఆర్బిట్రరీ ప్రెసిషన్ (Arbitrary Precision)!</strong> C++ లేదా Java లో 64-bit లాంగ్ ఇంటీజర్ గరిష్ట పరిమితి దాటితే ఓవర్‌ఫ్లో ఎర్రర్ వస్తుంది. కానీ Python 3 లో ఇంటీజర్ పరిమాణానికి ఎటువంటి పరిమితి లేదు; కంప్యూటర్ RAM లో స్థలం ఉన్నంతవరకు <code>2 ** 1000</code> లాంటి వందల అంకెల సంఖ్యలను కూడా ఎటువంటి ఓవర్‌ఫ్లో లేకుండా ఖచ్చితంగా గణిస్తుంది.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">4. పైథాన్‌లో Falsy విలువలు ఏవి? కనీసం 4 ఉదాహరణలు ఇవ్వండి.</summary>
+      <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+        <strong>సమాధానం:</strong> బూలియన్ సందర్భంలో <code>False</code> గా పరిగణించబడే విలువలను Falsy అంటారు. ఉదాహరణలు: 1) <code>None</code>, 2) <code>False</code>, 3) సంఖ్య సున్నా (<code>0</code>, <code>0.0</code>), 4) ఖాళీ స్ట్రింగ్ (<code>""</code>), 5) ఖాళీ లిస్ట్ (<code>[]</code>) లేదా ఖాళీ డిక్షనరీ (<code>{}</code>). ఇవి తప్ప మిగిలినవన్నీ Truthy విలువలే.
+      </div>
+    </details>
+
+    <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:12px; cursor:pointer;">
+      <summary style="font-weight:700; color:#10b981; font-size:14.5px;">5. పైథాన్‌లో స్ట్రింగ్స్ (str) మరియు ఇంటీజర్స్ (int) ఇమ్మ్యుటబుల్ అని ఎందుకు అంటారు?</summary>
+      <div style="font-size:13.5px; color:var(--text); margin-top:10px; line-height:1.7;">
+        <strong>సమాధానం:</strong> ఇమ్మ్యుటబుల్ అంటే మెమరీలో ఒకసారి సృష్టించబడిన తర్వాత ఆ ఆబ్జెక్ట్ లోపలి డేటాను మార్చలేము. ఉదాహరణకు <code>x = 10</code> తర్వాత <code>x = x + 5</code> అని రాస్తే, పాత 10 ఆబ్జెక్ట్ 15 గా మారదు; మెమరీలో సరికొత్త <code>15</code> ఆబ్జెక్ట్ తయారై <code>x</code> అనే లేబుల్ దాని వైపు తిరుగుతుంది. పాత 10 ఆబ్జెక్ట్ మెమరీ అడ్రస్ అలాగే ఉంటుంది.
+      </div>
+    </details>
+
+    <!-- PREV / NEXT NAVIGATION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:16px;">
+      <a href="/blog-python/02-python-syntax-indentation-and-comments.html" style="text-decoration:none; color:var(--text); font-weight:600; display:inline-flex; align-items:center; gap:8px; background:var(--bg2); padding:10px 18px; border-radius:8px; border:1px solid var(--border);">
+        ← మునుపటి అధ్యాయం: 2. సింటాక్స్ &amp; ఇండెంటేషన్
+      </a>
+      <a href="/blog-python/04-python-input-output-formatting.html" style="text-decoration:none; color:#ffffff; font-weight:700; display:inline-flex; align-items:center; gap:8px; background:#10b981; padding:10px 22px; border-radius:8px; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+        తర్వాతి అధ్యాయం: 4. ఇన్‌పుట్ &amp; అవుట్‌పుట్ ఫార్మాటింగ్ →
+      </a>
+    </div>
+
+    <!-- INTERACTIVE COMPILER CTA CARD -->
+    <div style="margin-top:40px; background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(56,189,248,0.1) 100%); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:24px; text-align:center;">
+      <h3 style="margin-top:0; color:var(--text); font-size:20px;">ఈ బిల్లింగ్ ఇంజిన్ ప్రాజెక్ట్‌ను లైవ్‌గా మన కంపైలర్‌లో రన్ చేయండి!</h3>
+      <p style="color:var(--text2); max-width:650px; margin:8px auto 20px; font-size:14px; line-height:1.6;">
+        ఎటువంటి లోకల్ సెటప్ లేకుండా, బ్రౌజర్‌లోనే నేరుగా Modern Python 3 కంపైలర్‌లో ఈ కోడ్‌ను ఎగ్జిక్యూట్ చేసి రన్‌టైమ్ అవుట్‌పుట్‌ను తనిఖీ చేయండి.
+      </p>
+      <button onclick="openInteractiveCompiler()" style="background:#10b981; color:#ffffff; border:none; padding:12px 28px; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; transition:transform 0.15s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+        ▶ Launch Python Interactive Compiler
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER / NAV SCRIPTS -->
+<script src="/site-nav.js"></script>
+
+<script>
+  function openInteractiveCompiler() {
+    const projectCode = \`# =====================================================================
+# చాప్టర్ 03 మినీ ప్రాజెక్ట్: E-Commerce Dynamic Billing Engine
+# =====================================================================
+
+item_name = "బోట్ వైర్‌లెస్ ఇయర్‌బడ్స్"
+raw_price = "1999.00"
+raw_qty = "3"
+is_prime = True
+
+# ఎక్స్‌ప్లిసిట్ టైప్ కాస్టింగ్
+price = float(raw_price)
+qty = int(raw_qty)
+subtotal = price * qty
+gst = subtotal * 0.18
+discount = (subtotal * 0.10) if is_prime else 0.0
+total = subtotal + gst - discount
+
+print("=" * 55)
+print("     🛒 E-COMMERCE BILLING RECEIPT (LIVE DEMO)")
+print("=" * 55)
+print(f"ఉత్పత్తి పేరు : {item_name}")
+print(f"ధర x పరిమాణం : ₹ {price:.2f} x {qty}")
+print(f"సబ్‌టోటల్     : ₹ {subtotal:.2f}")
+print(f"GST పన్ను (18%) : ₹ {gst:.2f}")
+print(f"VIP డిస్కౌంట్  : -₹ {discount:.2f}")
+print("-" * 55)
+print(f"మొత్తం బిల్లు  : ₹ {total:.2f}")
+print("=" * 55)
+print("\\n🎉 చాప్టర్ 03 ప్రాజెక్ట్ విజయవంతంగా రన్ అయ్యింది! 🚀")
+\`;
+
+    try {
+      localStorage.setItem('code_python', projectCode);
+      localStorage.setItem('code_python3', projectCode);
+    } catch (e) {
+      console.warn('LocalStorage error:', e);
+    }
+    window.open('/online-python-compiler.html', '_blank');
+  }
+</script>
+
+</body>
+</html>
+`;
+
+const outputPath = path.join(__dirname, '..', 'public', 'blog-python', currentLesson.file);
+fs.writeFileSync(outputPath, chapter03Content, 'utf8');
+console.log('✅ Successfully generated deep high-value Python Chapter 03 in exact HTML style!');
+console.log('Target file:', currentLesson.file);
+console.log('Target file size:', chapter03Content.length, 'characters');
