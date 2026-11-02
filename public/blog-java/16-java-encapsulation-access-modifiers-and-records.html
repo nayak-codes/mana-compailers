@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Encapsulation, Access Modifiers &amp; Records తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా ఎన్‌క్యాప్సులేషన్ (Encapsulation), 4 Access Modifiers, డేటా హైడింగ్, డిఫెన్సివ్ కాపీయింగ్ మరియు ఆధునిక Java 14+ Records సమగ్ర విశ్లేషణ. హెల్త్‌కేర్ మెడికల్ రికార్డ్ ప్రాజెక్ట్ తెలుగులో నేర్చుకోండి." />
+  <meta name="keywords" content="java encapsulation telugu, access modifiers java telugu, private protected public telugu, java records telugu, compact constructor java records telugu, defensive copying java telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/16-java-encapsulation-access-modifiers-and-records.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-java light-theme">
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+    <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Java Masterclass</div>
+
+    <div class="accordion">
+      <!-- Part 01: Basics & JVM -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 01</span>
+            <span class="phase-title">Basics & JVM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/01-java-introduction-features-and-jvm-architecture.html">1. Intro & JVM Architecture</a>
+        <a href="/blog-java/02-java-installation-ide-and-first-program.html">2. Setup & First Program</a>
+        <a href="/blog-java/03-java-syntax-class-structure-and-main-method.html">3. Syntax & Main Method</a>
+        <a href="/blog-java/04-java-variables-primitive-data-types-and-memory.html">4. Variables & Data Types</a>
+        <a href="/blog-java/05-java-operators-expressions-and-type-casting.html">5. Operators & Type Casting</a>
+      </div>
+
+      <!-- Part 02: Control Flow & Strings -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 02</span>
+            <span class="phase-title">Control Flow & Strings</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/06-java-conditional-statements-if-else.html">6. if, else-if & Ternary</a>
+        <a href="/blog-java/07-java-switch-statements-and-switch-expressions.html">7. switch Statements & Expressions</a>
+        <a href="/blog-java/08-java-loops-while-for-and-enhanced-foreach.html">8. Loops: while, for, foreach</a>
+        <a href="/blog-java/09-java-strings-memory-pool-and-immutability.html">9. Strings & Memory Pool</a>
+        <a href="/blog-java/10-java-stringbuilder-stringbuffer-and-methods.html">10. StringBuilder & StringBuffer</a>
+      </div>
+
+      <!-- Part 03: Arrays, Methods & OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 03</span>
+            <span class="phase-title">Arrays, Methods & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/11-java-arrays-multidimensional-and-algorithms.html">11. Arrays & Algorithms</a>
+        <a href="/blog-java/12-java-methods-call-stack-and-pass-by-value.html">12. Methods & Call Stack</a>
+        <a href="/blog-java/13-java-method-overloading-and-varargs.html">13. Method Overloading & Varargs</a>
+        <a href="/blog-java/14-java-oop-classes-objects-and-constructors.html">14. Classes, Objects & Heap</a>
+        <a href="/blog-java/15-java-constructors-this-keyword-and-chaining.html">15. Constructors & this Keyword</a>
+      </div>
+
+      <!-- Part 04: Core OOP & Exceptions -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 04</span>
+            <span class="phase-title">Core OOP & Exceptions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-java/16-java-encapsulation-access-modifiers-and-records.html" class="active">16. Encapsulation & Records</a>
+        <a href="/blog-java/17-java-inheritance-super-keyword-and-object-class.html">17. Inheritance & super Keyword</a>
+        <a href="/blog-java/18-java-polymorphism-method-overriding-dynamic-binding.html">18. Polymorphism & Overriding</a>
+        <a href="/blog-java/19-java-abstract-classes-and-interfaces.html">19. Abstract Classes & Interfaces</a>
+        <a href="/blog-java/20-java-exception-handling-and-custom-exceptions.html">20. Exceptions & Custom Errors</a>
+      </div>
+
+      <!-- Part 05: Collections & Capstone -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 05</span>
+            <span class="phase-title">Collections & Capstone</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/21-java-collections-list-arraylist-linkedlist.html">21. List: ArrayList & LinkedList</a>
+        <a href="/blog-java/22-java-collections-set-and-map-deep-dive.html">22. Set & Map Deep Dive</a>
+        <a href="/blog-java/23-java-generics-and-type-safety.html">23. Generics & Type Safety</a>
+        <a href="/blog-java/24-java-lambdas-and-stream-api.html">24. Lambdas & Stream API</a>
+        <a href="/blog-java/25-java-capstone-project.html">25. Capstone: Banking Engine</a>
+      </div>
+
+    </div>
+
+    <div class="sidebar-heading">INTERACTIVE IDE</div>
+    <a href="/online-java-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Java Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">OTHER COURSES</div>
+    <a href="/blog-python.html">Python Course (25 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (25 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 16: Encapsulation &amp; Records</span>
+    </div>
+
+    <h1 class="page-title">16. జావా ఎన్‌క్యాప్సులేషన్, Access Modifiers &amp; రికార్డ్స్ (Encapsulation &amp; Records)</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java (Java 21+ LTS)</span>
+      <span class="badge">🟢 Lesson 16 of 25</span>
+      <span class="badge">📂 Part 04: Core OOP &amp; Exceptions (Page 1 of 5)</span>
+      <span class="badge">⏱️ 26 min read</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:28px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="font-weight:700; color:#10b981;">📌 Covered in this lesson:</span>
+      <span>డేటా హైడింగ్ సూత్రం · Access Modifiers (private, default, protected, public) · Getters & Setters Validation · Modern Java records (ఇమ్మ్యుటబుల్ డేటా క్యారియర్స్)</span>
+    </div>
+
+    <!-- WARM IVORY INTRO BOX (JavaScript Style) -->
+    <div class="intro-box">
+      <p style="margin:0 0 16px 0; font-size:15px; line-height:1.8; color:#1e293b;">
+        ఆబ్జెక్ట్-ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP) యొక్క మొట్టమొదటి మరియు అత్యంత ముఖ్యమైన రక్షణ కవచం <strong>ఎన్‌క్యాప్సులేషన్ (Encapsulation)</strong>. ఒక సాఫ్ట్‌వేర్ సిస్టమ్‌లో డేటా అనేది అత్యంత విలువైన ఆస్తి; దానిని ఎవరైనా ఇష్టానుసారంగా మార్చకుండా కాపాడటమే (Data Hiding) ఎన్‌క్యాప్సులేషన్ యొక్క అంతిమ లక్ష్యం. జావాలో డేటాను ఒక బౌండరీ లోపల బంధించి, కఠినమైన నిబంధనలతో కూడిన సురక్షిత ద్వారాలు (Public Getters/Setters) ద్వారా మాత్రమే బాహ్య ప్రపంచానికి అనుమతిస్తాం. జావాలోని 4 యాక్సెస్ మోడిఫైయర్లు (<code>private</code>, <code>default</code>, <code>protected</code>, <code>public</code>) ప్యాకేజీల పరిధిలో ఎలా పనిచేస్తాయి? రిఫరెన్స్ లీక్‌లను అరికట్టే <strong>డిఫెన్సివ్ కాపీయింగ్ (Defensive Copying)</strong> ప్రాముఖ్యత ఏమిటి? మరియు ఆధునిక జావా 14+ లో సాంప్రదాయ బాయిలర్‌ప్లేట్ కోడ్‌ను సమూలంగా తుడిచిపెట్టేసిన సరికొత్త <strong>Java Records (<code>record</code>)</strong> ఎలా పనిచేస్తాయి? అనే సంపూర్ణ ఆర్కిటెక్చరల్ వివరాలను ఈ పాఠంలో లోతుగా నేర్చుకుందాం.
+      </p>
+
+      <h4 style="margin:0 0 10px 0; color:#047857; font-size:16px; font-weight:800;">
+        మెడిసిన్ క్యాప్సూల్ &amp; బ్యాంక్ సేఫ్టీ లాకర్ల అనాలజీ (The Medicine Capsule &amp; Bank Safety Locker Analogy):
+      </h4>
+      <ol style="margin:0; padding-left:22px; color:#334155; line-height:1.8; font-size:14.5px;">
+        <li style="margin-bottom:8px;">
+          <strong>1. Encapsulation (మెడిసిన్ క్యాప్సూల్ - Medical Capsule Analogy):</strong> అనారోగ్యంతో ఉన్నప్పుడు మనం వేసుకునే క్యాప్సూల్ లోపల అనేక రకాల కెమికల్ పౌడర్లు (Fields / Data) సురక్షితంగా మూసి ఉంటాయి. బాహ్య వాతావరణంలోని తేమ లేదా చేతి దుమ్ము నేరుగా ఆ కెమికల్స్‌ను తాకలేదు. బయట ఉండే జిలాటిన్ పొర (Public Methods) కడుపులోకి వెళ్లాక కరిగి, రక్తంలోకి ఔషధాన్ని నియంత్రిత రీతిలో విడుదల చేస్తుంది. ఇదే ఎన్‌క్యాప్సులేషన్ — డేటాను దాచి, సురక్షితమైన పబ్లిక్ మెథడ్స్ ద్వారా మాత్రమే యాక్సెస్ కల్పించడం!
+        </li>
+        <li style="margin-bottom:8px;">
+          <strong>2. Access Modifiers (బ్యాంక్ 4-టైర్ సెక్యూరిటీ జోన్లు - 4-Tier Security Zones):</strong>
+          <br />• <code>private</code> (అండర్‌గ్రౌండ్ స్ట్రాంగ్ రూమ్): కేవలం ఆ నిర్దిష్ట బ్రాంచ్ స్ట్రాంగ్ రూమ్ ఆఫీసర్‌కు మాత్రమే ప్రవేశం (కేవలం అదే క్లాస్ లోపల).
+          <br />• <code>default</code> (సిబ్బంది వర్క్‌స్టేషన్): ఆ బ్యాంక్ బ్రాంచ్‌లోని సిబ్బంది అందరికీ ప్రవేశం (కేవలం అదే Package లోపల).
+          <br />• <code>protected</code> (ఫ్యామిలీ లాకర్ రూమ్): బ్యాంక్ భాగస్వాములు మరియు వారి అధీకృత వారసులకు (Subclasses in any package) మాత్రమే అనుమతి.
+          <br />• <code>public</code> (ఏటీఎం కౌంటర్ లేదా హెల్ప్ డెస్క్): రోడ్డుపై వెళ్లే ఎవరైనా సరే ఉపయోగించుకోవచ్చు (మొత్తం వరల్డ్/అన్ని ప్యాకేజీలు).
+        </li>
+        <li>
+          <strong>3. Java Records (ముద్రించిన ప్రభుత్వ ఆధార్ కార్డు - Immutable Record Card):</strong> ఒకసారి అధికారికంగా ఆధార్ కార్డు ప్రింట్ అయిన తర్వాత, ఎవరూ పెన్నుతో దానిపై పేరును లేదా పుట్టిన తేదీని మార్చలేరు (Immutable). కేవలం చదవడానికి (Read-Only) మాత్రమే వీలవుతుంది. ఆధునిక జావా 14+ రికార్డ్స్ అనేవి వందల లైన్ల Getters, equals(), hashCode(), toString() బాయిలర్‌ప్లేట్ కోడ్ లేకుండా కేవలం ఒక్క లైన్‌లోనే ఇమ్మ్యుటబుల్ డేటా క్యారియర్లను నిర్మించే అద్భుతమైన వరం!
+        </li>
+      </ol>
+      <p style="margin:14px 0 0 0; font-size:14px; color:#475569; line-height:1.7;">
+        ఈ పాఠం పూర్తయ్యేసరికి మీరు భద్రమైన బిజినెస్ మోడల్స్ నిర్మించడం, డిఫెన్సివ్ ప్రోగ్రామింగ్ ద్వారా డేటా కరప్షన్‌ను అరికట్టడం, మరియు ఆధునిక రికార్డ్స్‌తో ఎంటర్‌ప్రైజ్ హెల్త్‌కేర్ మెడికల్ రికార్డ్ ఇంజిన్‌ను తయారు చేయడంలో సంపూర్ణ నిపుణులవుతారు!
+      </p>
+    </div>
+
+    <!-- 3-COLUMN TABLE OF CONTENTS (TOC CARD) -->
+    <div class="toc-card">
+      <div style="font-weight:800; color:var(--text); margin-bottom:14px; font-size:16px; display:flex; align-items:center; gap:8px;">
+        <span>📑 ఈ పాఠంలో మీరు నేర్చుకునే అంశాలు (Table of Contents)</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం A: ఎన్‌క్యాప్సులేషన్ &amp; యాక్సెస్ లెవల్స్
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-1" style="color:var(--text2); text-decoration:none;">1. ఎన్‌క్యాప్సులేషన్ అంటే ఏమిటి? డేటా హైడింగ్</a></li>
+            <li><a href="#sec-2" style="color:var(--text2); text-decoration:none;">2. 4 Access Modifiers లోతైన విశ్లేషణ</a></li>
+            <li><a href="#sec-3" style="color:var(--text2); text-decoration:none;">3. Package Architecture &amp; విజిబిలిటీ మ్యాట్రిక్స్</a></li>
+            <li><a href="#sec-4" style="color:var(--text2); text-decoration:none;">4. Getters, Setters &amp; బిజినెస్ వాలిడేషన్</a></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం B: డిఫెన్సివ్ కాపీయింగ్ &amp; Records
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-5" style="color:var(--text2); text-decoration:none;">5. డిఫెన్సివ్ కాపీయింగ్ (Defensive Copying)</a></li>
+            <li><a href="#sec-6" style="color:var(--text2); text-decoration:none;">6. Java 14+ Records (record కీవర్డ్) విప్లవం</a></li>
+            <li><a href="#sec-7" style="color:var(--text2); text-decoration:none;">7. Compact &amp; Canonical Constructors in Records</a></li>
+            <li><a href="#sec-8" style="color:var(--text2); text-decoration:none;">8. Traditional Class vs Record సమగ్ర పోలిక</a></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం C: డెమోలు, ప్రాజెక్ట్ &amp; పరీక్ష
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-9" style="color:var(--text2); text-decoration:none;">9. డెమో 1: Encapsulation Violation vs Protection</a></li>
+            <li><a href="#sec-10" style="color:var(--text2); text-decoration:none;">10. డెమో 2: Java Records కాంపాక్ట్ కన్‌స్ట్రక్టర్ డెమో</a></li>
+            <li><a href="#sec-11" style="color:var(--text2); text-decoration:none;">11. Capstone ప్రాజెక్ట్: పేషెంట్ మెడికల్ రికార్డ్ ఇంజిన్</a></li>
+            <li><a href="#sec-12" style="color:var(--text2); text-decoration:none;">12. ప్రొడక్షన్ పిట్‌ఫాల్స్, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 క్విజ్‌లు</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div id="sec-1" class="section-card">
+      <h2>1. ఎన్‌క్యాప్సులేషన్ అంటే ఏమిటి? డేటా హైడింగ్ ఆవశ్యకత (Encapsulation &amp; Data Hiding)</h2>
+      <p>
+        ఒక క్లాస్ లోని వేరియబుల్స్ (Data Fields) మరియు ఆ వేరియబుల్స్‌పై పనిచేసే మెథడ్స్ (Methods) రెండింటినీ ఒకే యూనిట్‌గా బంధించి, డేటాను బయటి క్లాసులు నేరుగా యాక్సెస్ చేయకుండా నిరోధించే ప్రక్రియనే <strong>ఎన్‌క్యాప్సులేషన్ (Encapsulation)</strong> అంటారు.
+      </p>
+      <p>
+        జావాలో ఎన్‌క్యాప్సులేషన్‌ను సాధించడానికి రెండు సూత్రాలను తప్పనిసరిగా పాటిస్తాం:
+        <br />
+        1. క్లాస్ లోని ఫీల్డ్స్ అన్నింటినీ <strong><code>private</code></strong> గా ప్రకటించడం (Data Hiding).
+        <br />
+        2. ఆ ఫీల్డ్స్ యొక్క విలువలను చదవడానికి మరియు మార్చడానికి పబ్లిక్ <strong>Getters &amp; Setters</strong> మెథడ్లను అందించడం.
+      </p>
+
+      <div style="background:#fefce8; border:1px solid #fde047; border-left:5px solid #ca8a04; border-radius:6px; padding:14px 18px; margin:16px 0; font-size:13.5px; color:#854d0e; line-height:1.7;">
+        💡 <strong>ఎందుకు ముఖ్యం?</strong> ఫీల్డ్స్ పబ్లిక్‌గా ఉంటే, ఏ బయటి డెవలపర్ అయినా <code>account.balance = -999999;</code> అని రాయగలడు. కానీ సెట్టర్ మెథడ్ ద్వారా నియంత్రించినప్పుడు (<code>account.setBalance(amount)</code>), మనం లోపల వ్యాపార నిబంధనలను (Business Rules) తనిఖీ చేసి తప్పుడు విలువలను తిరస్కరించవచ్చు!
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div id="sec-2" class="section-card">
+      <h2>2. 4 Access Modifiers లోతైన విశ్లేషణ (The 4 Access Modifiers)</h2>
+      <p>
+        జావాలో ఒక క్లాస్, వేరియబుల్, మెథడ్ లేదా కన్‌స్ట్రక్టర్ ఎవరెవరికి అందుబాటులో ఉండాలో నిర్దేశించే నాలుగు యాక్సెస్ లెవల్స్ ఉన్నాయి:
+      </p>
+
+      <ul>
+        <li>
+          <strong>1. <code>private</code> (అత్యంత కఠినమైనది):</strong> కేవలం ఆ నిర్దిష్ట క్లాస్ బౌండరీ (Curly braces <code>{ }</code>) లోపల మాత్రమే కనిపిస్తుంది. బయటి ఏ క్లాస్, ఏ ప్యాకేజీ కూడా దీన్ని నేరుగా తాకలేదు.
+        </li>
+        <li>
+          <strong>2. Package-Private / Default (ఎటువంటి మోడిఫైయర్ లేకపోతే):</strong> ఒక వేరియబుల్ లేదా మెథడ్ ముందు ఏ మోడిఫైయర్ రాయకపోతే, అది 'డీఫాల్ట్' అవుతుంది. ఇది కేవలం <strong>అదే ప్యాకేజీ (Same Package)</strong> లోని ఇతర క్లాసులకు మాత్రమే అందుబాటులో ఉంటుంది.
+        </li>
+        <li>
+          <strong>3. <code>protected</code> (వారసత్వానికి రక్షణ):</strong> అదే ప్యాకేజీ లోని అన్ని క్లాసులకు మరియు ఇతర ప్యాకేజీలలో ఉన్నప్పటికీ ఈ క్లాస్‌ను ఎక్స్‌టెండ్ చేసుకున్న <strong>చైల్డ్ సబ్‌క్లాసులకు (Subclasses in any package)</strong> మాత్రమే అందుబాటులో ఉంటుంది.
+        </li>
+        <li>
+          <strong>4. <code>public</code> (సార్వత్రిక ప్రవేశం):</strong> మొత్తం ప్రాజెక్ట్‌లోని ఏ ప్యాకేజీ, ఏ క్లాస్ నుండి అయినా నేరుగా యాక్సెస్ చేయవచ్చు.
+        </li>
+      </ul>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div id="sec-3" class="section-card">
+      <h2>3. Package Architecture &amp; విజిబిలిటీ మ్యాట్రిక్స్ (The Definitive Visibility Table)</h2>
+      <p>
+        జావా ఇంటర్వ్యూలలో అత్యంత ప్రాచుర్యం పొందిన ప్రశ్నలలో ఒకటైన యాక్సెస్ లెవల్స్ టేబుల్‌ను క్రింద స్పష్టంగా పరిశీలిద్దాం:
+      </p>
+
+      <div style="overflow-x:auto; margin:20px 0;">
+        <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">లొకేషన్ / స్కోప్</th>
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">private</th>
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">default (no keyword)</th>
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">protected</th>
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">public</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">అదే క్లాస్ (Same Class)</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">✅ అవును</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">✅ అవును</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">✅ అవును</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">✅ అవును</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">అదే ప్యాకేజీ (Same Package)</td>
+              <td style="padding:10px 14px; color:#ef4444; font-weight:700;">❌ కాదు</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">✅ అవును</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">✅ అవును</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">✅ అవును</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">భిన్న ప్యాకేజీ సబ్‌క్లాస్ (Different Package Subclass)</td>
+              <td style="padding:10px 14px; color:#ef4444; font-weight:700;">❌ కాదు</td>
+              <td style="padding:10px 14px; color:#ef4444; font-weight:700;">❌ కాదు</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">✅ అవును</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">✅ అవును</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">భిన్న ప్యాకేజీ నాన్-సబ్‌క్లాస్ (World Outside)</td>
+              <td style="padding:10px 14px; color:#ef4444; font-weight:700;">❌ కాదు</td>
+              <td style="padding:10px 14px; color:#ef4444; font-weight:700;">❌ కాదు</td>
+              <td style="padding:10px 14px; color:#ef4444; font-weight:700;">❌ కాదు</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">✅ అవును</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div id="sec-4" class="section-card">
+      <h2>4. Getters, Setters &amp; బిజినెస్ రూల్స్ వాలిడేషన్ (Validation Gates)</h2>
+      <p>
+        చాలామంది బిగినర్లు IDE ఇచ్చిన షార్ట్‌కట్ వాడి అన్ని ఫీల్డ్స్‌కూ గుడ్డిగా Getters మరియు Setters జనరేట్ చేస్తారు. కానీ వాస్తవ ఎంటర్‌ప్రైజ్ కోడ్‌లో సెట్టర్ అనేది ఒక <strong>సెక్యూరిటీ చెక్‌పోస్ట్</strong> లాంటిది:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:16px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.8;">
+        <span style="color:#0284c7;">public void</span> setAge(<span style="color:#0284c7;">int</span> age) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">if</span> (age &lt; 0 || age &gt; 125) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">throw new</span> IllegalArgumentException(<span style="color:#059669;">"చెల్లని వయస్సు: "</span> + age);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">this</span>.age = age;<br />
+        }
+      </div>
+
+      <p>
+        ఒక ఫీల్డ్ మారకూడదనుకుంటే (Read-Only Field), దానికి కేవలం Getter మాత్రమే ఇచ్చి, <strong>Setter ను అసలు రాయకపోవడం</strong> ద్వారా పూర్తి ఇమ్మ్యుటబిలిటీని సాధించవచ్చు!
+      </p>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div id="sec-5" class="section-card">
+      <h2>5. డిఫెన్సివ్ కాపీయింగ్ (Defensive Copying) ఎందుకు తప్పనిసరి? (The Reference Leak Trap)</h2>
+      <p>
+        ఒక క్లాస్‌లోని అన్ని ఫీల్డ్‌లను <code>private final</code> గా పెట్టినా కూడా ఎన్‌క్యాప్సులేషన్ విఫలమయ్యే తీవ్రమైన సెక్యూరిటీ ప్రమాదం ఉంది. అది <strong>మ్యూటబుల్ ఆబ్జెక్ట్ రిఫరెన్స్ లీక్</strong> అయినప్పుడు జరుగుతుంది!
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid #ef4444; border-radius:8px; padding:16px; margin:16px 0;">
+        <div style="font-weight:700; color:#ef4444; margin-bottom:8px; font-size:13.5px;">⚠️ రిఫరెన్స్ లీక్ ప్రమాదం (Unsafe Getter):</div>
+        <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--text); line-height:1.6;"><code>public class PatientHistory {
+    private final Date admissionDate; // Date అనేది మ్యూటబుల్ ఆబ్జెక్ట్!
+    public Date getAdmissionDate() {
+        return this.admissionDate; // ❌ ప్రమాదం! అసలు రిఫరెన్స్ బయటకు వెళ్ళిపోయింది!
+    }
+}
+// బయట కాలర్ నేరుగా మార్చేయవచ్చు:
+history.getAdmissionDate().setYear(1990); // ❌ క్లాస్ స్టేట్ కరప్ట్ అయింది!</code></pre>
+      </div>
+
+      <p>
+        <strong>డిఫెన్సివ్ కాపీయింగ్ పరిష్కారం:</strong> Getter లో అసలు ఆబ్జెక్ట్‌ను ఇవ్వకుండా, దాని యొక్క సరికొత్త క్లోన్ లేదా కాపీని మాత్రమే బయటకు పంపాలి (<code>return new Date(this.admissionDate.getTime());</code>). లేదా ఆధునిక జావాలో పాత <code>Date</code> కు బదులుగా ఇమ్మ్యుటబుల్ అయిన <code>java.time.LocalDate</code> ను వాడాలి!
+      </p>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div id="sec-6" class="section-card">
+      <h2>6. Java 14+ Records (record కీవర్డ్) విప్లవం (Modern Immutable Carriers)</h2>
+      <p>
+        సాంప్రదాయ జావాలో కేవలం డేటాను మోసే సాధారణ క్లాస్ (DTO - Data Transfer Object) రాయాలంటే కనీసం 50 నుండి 80 లైన్ల బోరింగ్ కోడ్ రాయాల్సి వచ్చేది: private final ఫీల్డ్స్, కన్‌స్ట్రక్టర్, ప్రతి ఫీల్డ్‌కు Getter, <code>equals()</code>, <code>hashCode()</code>, మరియు <code>toString()</code>.
+      </p>
+      <p>
+        <strong>Java 14 (JEP 359/395)</strong> నుండి వచ్చిన <strong>Records</strong> ఈ సమస్యను కేవలం <strong>ఒకే ఒక్క లైన్‌తో</strong> పరిష్కరించాయి!
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:16px 20px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.8;">
+        <span style="color:#64748b;">// కేవలం ఒక్క లైన్ జావా రికార్డ్:</span><br />
+        <span style="color:#0284c7;">public record</span> UserProfile(Long id, String username, String email) {}
+      </div>
+
+      <p>
+        పై ఒక్క లైన్ కోసం జావా కంపైలర్ తెరవెనుక స్వయంగా ఇవన్నీ చేస్తుంది:
+        <br />• అన్ని కాంపోనెంట్లను <code>private final</code> ఫీల్డ్స్‌గా చేస్తుంది (100% Immutable).
+        <br />• అన్ని ఫీల్డ్స్‌తో కూడిన <strong>కానానికల్ కన్‌స్ట్రక్టర్ (Canonical Constructor)</strong> ను ఇస్తుంది.
+        <br />• ప్రతి ఫీల్డ్‌కు రీడర్ మెథడ్స్ ఇస్తుంది (గమనించండి: <code>getUsername()</code> కాదు, డైరెక్ట్‌గా <code>username()</code> అని పిలుస్తాం!).
+        <br />• అన్ని ఫీల్డ్‌ల ఆధారంగా <code>equals()</code>, <code>hashCode()</code>, మరియు అందమైన <code>toString()</code> లను స్వయంగా రూపొందిస్తుంది!
+      </p>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div id="sec-7" class="section-card">
+      <h2>7. Compact &amp; Canonical Constructors in Records (Data Validation in Records)</h2>
+      <p>
+        రికార్డ్స్ లో డేటా ఇమ్మ్యుటబుల్ అయినప్పటికీ, ఇన్‌పుట్ విలువలను వాలిడేట్ చేయడానికి జావా <strong>కాంపాక్ట్ కన్‌స్ట్రక్టర్ (Compact Constructor)</strong> అనే అద్భుతమైన ఫీచర్‌ను అందించింది. ఇందులో పారామీటర్ల బ్రాకెట్లు <code>()</code> ఉండవు, మరియు <code>this.x = x</code> అని రాయాల్సిన పనే లేదు!
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:16px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.8;">
+        <span style="color:#0284c7;">public record</span> BankTransfer(String sender, String receiver, <span style="color:#0284c7;">double</span> amount) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// కాంపాక్ట్ కన్‌స్ట్రక్టర్:</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">public</span> BankTransfer {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">if</span> (amount &lt;= 0) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">throw new</span> IllegalArgumentException(<span style="color:#059669;">"బదిలీ మొత్తం 0 కంటే ఎక్కువ ఉండాలి!"</span>);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// చెల్లుబాటు ముగిసిన వెంటనే కంపైలర్ స్వయంగా ఫీల్డ్స్‌ను అసైన్ చేసుకుంటుంది!</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+        }
+      </div>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div id="sec-8" class="section-card">
+      <h2>8. Traditional Class vs Record సమగ్ర పోలిక (When to Use What)</h2>
+      <p>
+        ప్రొడక్షన్ అప్లికేషన్లలో క్లాస్ ఎప్పుడు వాడాలి, రికార్డ్ ఎప్పుడు వాడాలి అనే స్పష్టత క్రింది పోలిక ద్వారా లభిస్తుంది:
+      </p>
+
+      <div style="overflow-x:auto; margin:20px 0;">
+        <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">ఫీచర్ / లక్షణం</th>
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">సాధారణ క్లాస్ (Traditional Class)</th>
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">Java Record (record)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">మ్యూటబిలిటీ (Mutability)</td>
+              <td style="padding:10px 14px; color:var(--text2);">మ్యూటబుల్ లేదా ఇమ్మ్యుటబుల్ గా చేసుకోవచ్చు</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">ఎల్లప్పుడూ 100% ఇమ్మ్యుటబుల్ (Final Fields)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">వారసత్వం (Inheritance)</td>
+              <td style="padding:10px 14px; color:var(--text2);">వేరే క్లాస్‌ను ఎక్స్‌టెండ్ చేయవచ్చు</td>
+              <td style="padding:10px 14px; color:#ef4444;">వేరే క్లాస్‌ను ఎక్స్‌టెండ్ చేయలేదు (Implicitly Final)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">ఇంటర్‌ఫేస్ ఇంప్లిమెంటేషన్</td>
+              <td style="padding:10px 14px; color:var(--text2);">ఇంటర్‌ఫేస్‌లను ఇంప్లిమెంట్ చేయవచ్చు</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">ఇంటర్‌ఫేస్‌లను ఇంప్లిమెంట్ చేయవచ్చు</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">ప్రధాన ఉపయోగం</td>
+              <td style="padding:10px 14px; color:var(--text2);">సంక్లిష్ట వ్యాపార లాజిక్, స్టేట్ మార్పులు ఉండే మోడల్స్</td>
+              <td style="padding:10px 14px; color:var(--text2);">DTOs, API Payloads, DB Query Results, Cache Keys</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 9: CODE DEMO 1 -->
+    <div id="sec-9" class="section-card">
+      <h2>9. డెమో 1: Encapsulation Violation vs Strict Protection (Security Benchmark)</h2>
+      <p>
+        పబ్లిక్ ఫీల్డ్స్ వాడినప్పుడు సిస్టమ్ డేటా ఎలా కరప్ట్ అవుతుందో, మరియు స్ట్రిక్ట్ ఎన్‌క్యాప్సులేషన్ సిస్టమ్‌ను ఎలా కాపాడుతుందో చూపే డెమో:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">EncapsulationValidationDemo.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">public class EncapsulationValidationDemo {
+
+    // 1. INSECURE CLASS: Public fields violate encapsulation
+    public static class InsecureAccount {
+        public String holder;
+        public double balance; // Anyone can corrupt this directly!
+    }
+
+    // 2. SECURE CLASS: Strictly encapsulated with validation gates
+    public static class SecureAccount {
+        private String holder;
+        private double balance;
+
+        public SecureAccount(String holder, double initialDeposit) {
+            this.setHolder(holder);
+            this.setBalance(initialDeposit);
+        }
+
+        public String getHolder() {
+            return holder;
+        }
+
+        public void setHolder(String holder) {
+            if (holder == null || holder.trim().isEmpty()) {
+                throw new IllegalArgumentException("Account holder name cannot be empty!");
+            }
+            this.holder = holder.trim();
+        }
+
+        public double getBalance() {
+            return balance;
+        }
+
+        public void setBalance(double balance) {
+            if (balance &lt; 0.0) {
+                System.out.printf("🚨 BLOCKED: Attempt to set negative balance (₹%.2f) rejected!%n", balance);
+                return;
+            }
+            this.balance = balance;
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("🛡️ ENCAPSULATION VIOLATION VS STRICT VALIDATION");
+        System.out.println("=================================================
+");
+
+        // Vulnerability Demonstration
+        InsecureAccount leaky = new InsecureAccount();
+        leaky.holder = "Hacker Target";
+        leaky.balance = -50000.0; // ❌ Invalid negative money entered directly!
+        System.out.println("1. INSECURE ACCOUNT (No Protection):");
+        System.out.println("   Holder: " + leaky.holder + " | Balance: ₹" + leaky.balance + " (CORRUPTED STATE!)");
+
+        // Secure Encapsulated Demonstration
+        System.out.println("
+2. SECURE ENCAPSULATED ACCOUNT (Validation Gates):");
+        SecureAccount safe = new SecureAccount("Balaji Nemani", 5000.0);
+        System.out.println("   Initial Balance: ₹" + safe.getBalance());
+
+        // Attempting to set illegal negative balance via setter
+        System.out.println("   Attempting safe.setBalance(-25000.0)...");
+        safe.setBalance(-25000.0);
+        System.out.println("   Final Balance:   ₹" + safe.getBalance() + " (STILL SAFE &amp; UNTOUCHED!)");
+
+        System.out.println("
+=================================================");
+        System.out.println("✅ Encapsulation successfully prevented data corruption!");
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+🛡️ ENCAPSULATION VIOLATION VS STRICT VALIDATION
+=================================================
+
+1. INSECURE ACCOUNT (No Protection):
+   Holder: Hacker Target | Balance: ₹-50000.0 (CORRUPTED STATE!)
+
+2. SECURE ENCAPSULATED ACCOUNT (Validation Gates):
+   Initial Balance: ₹5000.0
+   Attempting safe.setBalance(-25000.0)...
+🚨 BLOCKED: Attempt to set negative balance (₹-25000.00) rejected!
+   Final Balance:   ₹5000.0 (STILL SAFE &amp; UNTOUCHED!)
+
+=================================================
+✅ Encapsulation successfully prevented data corruption!
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 10: CODE DEMO 2 -->
+    <div id="sec-10" class="section-card">
+      <h2>10. డెమో 2: Java Records కాంపాక్ట్ కన్‌స్ట్రక్టర్ డెమో (Modern Records Demo)</h2>
+      <p>
+        ఆధునిక జావా రికార్డ్స్ యొక్క స్వయంచాలక ఫీచర్లు, కాంపాక్ట్ కన్‌స్ట్రక్టర్ ద్వారా డేటా వ్యాలిడేషన్ మరియు ఆటో-జెనరేటెడ్ మెథడ్స్ ఎలా పనిచేస్తాయో పరిశీలిద్దాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">ModernJavaRecordsDeepDiveDemo.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">public class ModernJavaRecordsDeepDiveDemo {
+
+    // Modern Immutable Record with Compact Constructor
+    public record DigitalProduct(String sku, String title, double price, int stockQuantity) {
+
+        // Compact Constructor: No parameter list, auto-assigned after validation
+        public DigitalProduct {
+            if (sku == null || !sku.startsWith("DIG-")) {
+                throw new IllegalArgumentException("SKU must start with 'DIG-': " + sku);
+            }
+            if (price &lt; 0.0) {
+                throw new IllegalArgumentException("Price cannot be negative: " + price);
+            }
+            title = title.trim(); // Clean input before implicit assignment
+        }
+
+        // Custom business method inside record
+        public boolean isAvailable() {
+            return stockQuantity &gt; 0;
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("⚡ MODERN JAVA 14+ RECORD DEEP DIVE DEMO");
+        System.out.println("=================================================
+");
+
+        DigitalProduct ebook = new DigitalProduct("DIG-JAVA21", "Modern Java Masterclass", 499.00, 25);
+
+        // 1. Automatic toString()
+        System.out.println("1. Built-in toString():");
+        System.out.println("   " + ebook);
+
+        // 2. Direct component accessor methods (not getTitle(), just title())
+        System.out.println("
+2. Component Accessors:");
+        System.out.println("   SKU:       " + ebook.sku());
+        System.out.println("   Title:     " + ebook.title());
+        System.out.println("   Price:     ₹" + ebook.price());
+        System.out.println("   In Stock:  " + ebook.isAvailable());
+
+        // 3. Built-in Value Equality (equals &amp; hashCode)
+        DigitalProduct identicalEbook = new DigitalProduct("DIG-JAVA21", "Modern Java Masterclass", 499.00, 25);
+        System.out.println("
+3. Equality Check (Value-based, not reference):");
+        System.out.println("   ebook.equals(identicalEbook) ? " + ebook.equals(identicalEbook));
+        System.out.println("   HashCode match: " + (ebook.hashCode() == identicalEbook.hashCode()));
+
+        System.out.println("
+=================================================");
+        System.out.println("✅ Record handled all boilerplate with zero manual code!");
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+⚡ MODERN JAVA 14+ RECORD DEEP DIVE DEMO
+=================================================
+
+1. Built-in toString():
+   DigitalProduct[sku=DIG-JAVA21, title=Modern Java Masterclass, price=499.0, stockQuantity=25]
+
+2. Component Accessors:
+   SKU:       DIG-JAVA21
+   Title:     Modern Java Masterclass
+   Price:     ₹499.0
+   In Stock:  true
+
+3. Equality Check (Value-based, not reference):
+   ebook.equals(identicalEbook) ? true
+   HashCode match: true
+
+=================================================
+✅ Record handled all boilerplate with zero manual code!
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 11: CAPSTONE PROJECT -->
+    <div id="sec-11" class="section-card">
+      <h2>11. Capstone ప్రాజెక్ట్: పేషెంట్ హెల్త్‌కేర్ మెడికల్ రికార్డ్ ఇంజిన్</h2>
+      <p>
+        ఈ అధ్యాయంలో నేర్చుకున్న అన్ని కాన్సెప్టులను (కఠినమైన ఎన్‌క్యాప్సులేషన్, ప్రైవేట్ ఫీల్డ్స్, డిఫెన్సివ్ కాపీయింగ్, వాలిడేషన్ గేట్స్ మరియు Java 14+ Records) సమగ్రంగా మిళితం చేస్తూ ఒక హాస్పిటల్ <strong>Healthcare Electronic Medical Record (EMR) &amp; Prescription Audit Engine</strong> ను నిర్మిద్దాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">HealthcarePatientRecordEngine.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class HealthcarePatientRecordEngine {
+
+    // Modern Immutable Prescription Record
+    public record MedicationPrescription(String drugName, String dosage, int durationDays) {
+        public MedicationPrescription {
+            if (drugName == null || drugName.isBlank()) throw new IllegalArgumentException("Drug name required");
+            if (durationDays &lt;= 0) throw new IllegalArgumentException("Duration must be at least 1 day");
+        }
+    }
+
+    // Strictly Encapsulated Patient Medical File
+    public static class PatientMedicalFile {
+        private final String patientId;
+        private String patientName;
+        private int age;
+        private double weightKg;
+        // Mutable list protected via Defensive Copying
+        private final List&lt;MedicationPrescription&gt; prescriptions;
+
+        public PatientMedicalFile(String id, String name, int age, double weightKg) {
+            if (id == null || !id.startsWith("PAT-")) {
+                throw new IllegalArgumentException("Invalid Patient ID format (must start with PAT-): " + id);
+            }
+            this.patientId = id;
+            this.setPatientName(name);
+            this.setAge(age);
+            this.setWeightKg(weightKg);
+            this.prescriptions = new ArrayList&lt;&gt;();
+        }
+
+        public String getPatientId() {
+            return patientId;
+        }
+
+        public String getPatientName() {
+            return patientName;
+        }
+
+        public void setPatientName(String patientName) {
+            if (patientName == null || patientName.trim().isEmpty()) {
+                throw new IllegalArgumentException("Name cannot be blank");
+            }
+            this.patientName = patientName.trim();
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            if (age &lt; 0 || age &gt; 120) throw new IllegalArgumentException("Invalid age boundary");
+            this.age = age;
+        }
+
+        public double getWeightKg() {
+            return weightKg;
+        }
+
+        public void setWeightKg(double weightKg) {
+            if (weightKg &lt;= 0.0) throw new IllegalArgumentException("Weight must be positive");
+            this.weightKg = weightKg;
+        }
+
+        public void addPrescription(MedicationPrescription rx) {
+            if (rx != null) {
+                this.prescriptions.add(rx);
+            }
+        }
+
+        // Defensive Copying: Returning an unmodifiable view to prevent external list tampering
+        public List&lt;MedicationPrescription&gt; getPrescriptions() {
+            return Collections.unmodifiableList(this.prescriptions);
+        }
+
+        public void printMedicalAudit() {
+            System.out.println("-------------------------------------------------");
+            System.out.println("🏥 APOLLO HEALTHCARE ELECTRONIC PATIENT DOSSIER");
+            System.out.printf("Patient ID:   %s%n", patientId);
+            System.out.printf("Full Name:    %s | Age: %d yrs | Weight: %.1f kg%n", patientName, age, weightKg);
+            System.out.println("Active Prescriptions (" + prescriptions.size() + "):");
+            for (MedicationPrescription rx : prescriptions) {
+                System.out.printf("  💊 %-16s | Dosage: %-10s | Course: %d days%n",
+                        rx.drugName(), rx.dosage(), rx.durationDays());
+            }
+            System.out.println("-------------------------------------------------");
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("🩺 ENTERPRISE HEALTHCARE EMR &amp; AUDIT ENGINE");
+        System.out.println("=================================================
+");
+
+        PatientMedicalFile patient = new PatientMedicalFile("PAT-849201", "Balaji Nemani", 28, 74.5);
+
+        // Adding immutable prescriptions
+        patient.addPrescription(new MedicationPrescription("Amoxicillin", "500 mg", 5));
+        patient.addPrescription(new MedicationPrescription("Paracetamol", "650 mg", 3));
+        patient.addPrescription(new MedicationPrescription("Vitamin D3", "60,000 IU", 8));
+
+        patient.printMedicalAudit();
+
+        // Testing Defensive Copying Security
+        System.out.println("Testing external tampering with patient.getPrescriptions()...");
+        try {
+            List&lt;MedicationPrescription&gt; externalList = patient.getPrescriptions();
+            externalList.add(new MedicationPrescription("Illegal_Narcotic", "100 mg", 10)); // Should throw error!
+        } catch (UnsupportedOperationException e) {
+            System.out.println("🛡️ SECURITY ALERT BLOCKED: External code cannot modify patient prescription list!");
+            System.out.println("   (Defensive Copying prevented unauthorized medical record tampering)");
+        }
+
+        System.out.println("
+=================================================");
+        System.out.println("✅ Healthcare dossier remains 100% verified and secure!");
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+🩺 ENTERPRISE HEALTHCARE EMR &amp; AUDIT ENGINE
+=================================================
+
+-------------------------------------------------
+🏥 APOLLO HEALTHCARE ELECTRONIC PATIENT DOSSIER
+Patient ID:   PAT-849201
+Full Name:    Balaji Nemani | Age: 28 yrs | Weight: 74.5 kg
+Active Prescriptions (3):
+  💊 Amoxicillin      | Dosage: 500 mg     | Course: 5 days
+  💊 Paracetamol      | Dosage: 650 mg     | Course: 3 days
+  💊 Vitamin D3       | Dosage: 60,000 IU  | Course: 8 days
+-------------------------------------------------
+Testing external tampering with patient.getPrescriptions()...
+🛡️ SECURITY ALERT BLOCKED: External code cannot modify patient prescription list!
+   (Defensive Copying prevented unauthorized medical record tampering)
+
+=================================================
+✅ Healthcare dossier remains 100% verified and secure!
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 12 -->
+    <div id="sec-12" class="section-card">
+      <h2>12. ప్రొడక్షన్ పిట్‌ఫాల్స్, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 క్విజ్‌లు (Best Practices &amp; Quizzes)</h2>
+
+      <h4 style="color:#ef4444; margin:16px 0 10px 0;">🚫 ప్రొడక్షన్‌లో నివారించాల్సిన 4 ఘోరమైన తప్పులు (Production Pitfalls):</h4>
+      <ol style="line-height:1.8; color:var(--text2); font-size:14px; padding-left:20px;">
+        <li style="margin-bottom:10px;">
+          <strong>ఫీల్డ్స్‌ను <code>public</code> గా ప్రకటించడం:</strong> ఇది ఎన్‌క్యాప్సులేషన్‌ను పూర్తిగా నాశనం చేస్తుంది. భవిష్యత్తులో వేలిడేషన్ లాజిక్ చేర్చాల్సి వస్తే మొత్తం ప్రాజెక్ట్ రీఫ్యాక్టర్ చేయాల్సి వస్తుంది.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>మ్యూటబుల్ ఆబ్జెక్టుల నేరుగా రిటర్న్ చేయడం (Reference Leak):</strong> Date లేదా List వంటి మ్యూటబుల్ ఆబ్జెక్టులను Getter లో నేరుగా ఇస్తే బయట ఉన్నవారు మీ ఆబ్జెక్ట్ స్టేట్‌ను మార్చేయగలరు. ఎల్లప్పుడూ <code>Collections.unmodifiableList()</code> లేదా డిఫెన్సివ్ క్లోన్‌ను వాడండి.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>సాధారణ DTOs కోసం అనవసరంగా 80 లైన్ల క్లాసులు రాయడం:</strong> కేవలం డేటాను మోసే ఆబ్జెక్టుల కోసం ఆధునిక జావా 14+ <code>record</code> ను వాడండి.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>Protected ని పబ్లిక్ తో సమానంగా భావించడం:</strong> <code>protected</code> కేవలం అదే ప్యాకేజీ మరియు వారసత్వ సబ్‌క్లాసులకు మాత్రమే. ప్రపంచం మొత్తానికి కాదు.
+        </li>
+      </ol>
+
+      <h4 style="color:#10b981; margin:26px 0 10px 0;">✨ ప్రొడక్షన్ గోల్డెన్ రూల్స్ (Golden Rules):</h4>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; font-size:13.5px; line-height:1.8; color:var(--text);">
+        1. <strong>కనీస విజిబిలిటీ ప్రిన్సిపల్:</strong> ఫీల్డ్స్‌కు ఎల్లప్పుడూ సాధ్యమైనంత కఠినమైన యాక్సెస్ ఇవ్వండి (Start with <code>private</code>).<br />
+        2. <strong>ఇమ్మ్యుటబిలిటీ ప్రాధాన్యత:</strong> మార్చాల్సిన అవసరం లేని ఫీల్డ్స్‌ను <code>final</code> చేయండి మరియు Setters ఇవ్వకండి.<br />
+        3. <strong>Records for Data:</strong> REST API రిక్వెస్ట్/రెస్పాన్స్ పేలోడ్లకు ఎల్లప్పుడూ Java Records వాడండి.<br />
+        4. <strong>డిఫెన్సివ్ కాపీలు:</strong> కన్‌స్ట్రక్టర్ ఇన్‌పుట్‌లో మరియు Getter అవుట్‌పుట్‌లో మ్యూటబుల్ ఆబ్జెక్టుల కాపీలను మాత్రమే ఉపయోగించండి.
+      </div>
+
+      <!-- QUIZ SECTION -->
+      <h3 style="color:#10b981; margin:32px 0 16px 0;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 1: ఎన్‌క్యాప్సులేషన్ (Encapsulation) సాధించడానికి ప్రాథమిక నియమం ఏమిటి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> క్లాస్ ఫీల్డ్‌లను <strong><code>private</code></strong> గా ప్రకటించి (Data Hiding), వాటిని యాక్సెస్ చేయడానికి పబ్లిక్ Getters మరియు Setters ను అందించడం.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 2: ఒక వేరియబుల్ ముందు ఏ యాక్సెస్ మోడిఫైయర్ పేర్కొనకపోతే దానికి వర్తించే స్కోప్ ఏమిటి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <strong>Package-Private (Default)</strong>. ఇది కేవలం అదే ప్యాకేజీలోని క్లాసులకు మాత్రమే కనిపిస్తుంది.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 3: డిఫెన్సివ్ కాపీయింగ్ (Defensive Copying) ఎందుకు చేయాలి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> మ్యూటబుల్ ఆబ్జెక్ట్ రిఫరెన్స్‌లు (ఉదా: List, Date) బయటకు వెళ్ళినప్పుడు, బాహ్య కోడ్ మన క్లాస్ యొక్క అంతర్గత స్థితిని అనధికారికంగా మార్చకుండా కాపాడటానికి.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 4: Java Record లోని ఫీల్డ్స్ సహజంగా ఎలాంటి లక్షణాన్ని కలిగి ఉంటాయి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> అవి సహజంగానే <strong><code>private final</code> (100% Immutable)</strong> గా ఉంటాయి.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 5: Record లో 'title' అనే ఫీల్డ్ ఉంటే, దాని రీడర్ మెథడ్ పేరు ఏమిటి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <strong><code>title()</code></strong> (సాంప్రదాయ గెట్టర్ లాగా 'getTitle()' కాదు).
+        </p>
+      </details>
+    </div>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/15-java-constructors-this-keyword-and-chaining.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 15. Constructors &amp; this
+      </a>
+      <a href="/blog-java/17-java-inheritance-super-keyword-and-object-class.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 17. Inheritance &amp; super Keyword →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>

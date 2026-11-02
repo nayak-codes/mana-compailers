@@ -1,0 +1,705 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildJavaSidebar } = require('./java_curriculum_data.js');
+
+const currentLesson = LESSONS.find(l => l.num === 20);
+
+const chapter20Content = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Exception Handling &amp; Custom Exceptions తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా ఎక్సెప్షన్ హ్యాండ్లింగ్ (Exception Handling), Checked vs Unchecked, try-catch-finally, try-with-resources, throw/throws మరియు కస్టమ్ బిజినెస్ ఎక్సెప్షన్ల సమగ్ర విశ్లేషణ." />
+  <meta name="keywords" content="java exception handling telugu, checked vs unchecked exceptions telugu, try with resources java telugu, custom exceptions java telugu, throw vs throws telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/20-java-exception-handling-and-custom-exceptions.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-java light-theme">
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+  ${buildJavaSidebar(20)}
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 20: Exceptions &amp; Custom Errors</span>
+    </div>
+
+    <h1 class="page-title">20. జావా ఎక్సెప్షన్ హ్యాండ్లింగ్ &amp; Custom Exceptions (Robust Error Handling Mastery)</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java (Java 21+ LTS)</span>
+      <span class="badge">🟢 Lesson 20 of 25</span>
+      <span class="badge">📂 Part 04: Core OOP &amp; Exceptions (Page 5 of 5)</span>
+      <span class="badge">⏱️ 26 min read</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:28px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="font-weight:700; color:#10b981;">📌 Covered in this lesson:</span>
+      <span>${currentLesson.subtopics}</span>
+    </div>
+
+    <!-- WARM IVORY INTRO BOX (JavaScript Style) -->
+    <div class="intro-box">
+      <p style="margin:0 0 16px 0; font-size:15px; line-height:1.8; color:#1e293b;">
+        నిజ ప్రపంచంలో నడిచే ఎంటర్‌ప్రైజ్ సాఫ్ట్‌వేర్ అప్లికేషన్లు ఎల్లప్పుడూ ఆదర్శవంతమైన పరిస్థితులలో పనిచేయవు. నెట్‌వర్క్ డిస్‌కనెక్ట్ కావచ్చు, డేటాబేస్ సర్వర్ డౌన్ కావచ్చు, లేదా యూజర్ తప్పుడు పాస్‌వర్డ్ ఇవ్వవచ్చు. ఇటువంటి అనూహ్య వైఫల్యాలు (Runtime Abnormalities) సంభవించినప్పుడు అప్లికేషన్ అకస్మాత్తుగా కుప్పకూలిపోకుండా, పరిస్థితిని సునాయాసంగా ఎదుర్కొని సాధారణ ప్రవాహాన్ని కొనసాగించేందుకు జావా అందించిన అత్యంత శక్తివంతమైన రక్షణ వ్యవస్థ <strong>ఎక్సెప్షన్ హ్యాండ్లింగ్ (Exception Handling)</strong>. జావాలో <code>Throwable</code> హైరార్కీ ఎలా ఉంటుంది? నివారించలేని <code>Error</code> మరియు పరిష్కరించగల <code>Exception</code> మధ్య తేడా ఏమిటి? కంపైలర్ ఖచ్చితంగా తనిఖీ చేసే <strong>Checked Exceptions</strong> మరియు లాజిక్ బగ్స్ వల్ల వచ్చే <strong>Unchecked Exceptions</strong> మధ్య వ్యత్యాసం ఏమిటి? ఆధునిక జావా 7+ లో వచ్చిన <strong><code>try-with-resources</code></strong> మెమరీ లీక్‌లను ఎలా సమూలంగా అరికడుతుంది? మరియు పరిశ్రమ ప్రమాణాలకు అనుగుణంగా <strong>కస్టమ్ బిజినెస్ ఎక్సెప్షన్లను (Custom Business Exceptions)</strong> ఎలా రూపొందించాలి? అనే సంపూర్ణ ప్రాక్టికల్ విశ్లేషణను ఈ పాఠంలో నేర్చుకుందాం.
+      </p>
+
+      <h4 style="margin:0 0 10px 0; color:#047857; font-size:16px; font-weight:800;">
+        ఫైర్ అలారమ్ &amp; సర్క్యూట్ బ్రేకర్ ఫ్యూజ్ అనాలజీ (The Fire Alarm &amp; Circuit Breaker Analogy):
+      </h4>
+      <ol style="margin:0; padding-left:22px; color:#334155; line-height:1.8; font-size:14.5px;">
+        <li style="margin-bottom:8px;">
+          <strong>1. Error vs Exception (తీవ్రమైన భూకంపం vs కిచెన్‌లో చిన్న మంట):</strong>
+          <br />• Error (<code>java.lang.Error</code>): భవనం పునాదులతో సహా కూలిపోయే భారీ భూకంపం వంటిది (ఉదా: <code>OutOfMemoryError</code>, <code>StackOverflowError</code>). దీనిని కోడ్ ద్వారా ఎవరూ ఆపలేరు; JVM పూర్తిగా నిలిచిపోతుంది.
+          <br />• Exception (<code>java.lang.Exception</code>): కిచెన్‌లో గ్యాస్ స్టవ్ వద్ద చిన్న మంట రావడం. వెంటనే ఫైర్ ఎస్టింగిషర్ (try-catch) ఉపయోగించి మంటను ఆర్పేసి, మిగిలిన ఇంటి పనులను సజావుగా కొనసాగించవచ్చు.
+        </li>
+        <li style="margin-bottom:8px;">
+          <strong>2. Checked vs Unchecked Exceptions (ఎయిర్‌పోర్ట్ సెక్యూరిటీ గేట్ vs నడిచేటప్పుడు ముల్లు గుచ్చుకోవడం):</strong>
+          <br />• Checked Exception: అంతర్జాతీయ విమానం ఎక్కేముందు పాస్‌పోర్ట్, వీసా కచ్చితంగా ఉన్నాయో లేదో సెక్యూరిటీ ఆఫీసర్ ముందే తనిఖీ చేస్తాడు. కంపైల్ సమయంలోనే జావా కంపైలర్ 'దీనికి try-catch రాశావా?' అని గట్టిగా అడుగుతుంది (ఉదా: <code>FileNotFoundException</code>, <code>SQLException</code>).
+          <br />• Unchecked Exception (<code>RuntimeException</code>): రోడ్డుపై నడుస్తూ కాలు జారి కింద పడటం లేదా కాలికి రాయి తగలడం (ఉదా: <code>NullPointerException</code>, <code>ArithmeticException</code>). ఇది ముందే ఊహించలేము; ప్రోగ్రామర్ సరైన జాగ్రత్తలు తీసుకోకపోవడం వల్ల వచ్చే లాజిక్ లోపాలు.
+        </li>
+        <li>
+          <strong>3. try-with-resources (స్మార్ట్ సెన్సార్ డోర్లు - AutoCloseable Doors):</strong> ఒక రహస్య గదిలోకి వెళ్లి పని ముగిసిన తర్వాత తలుపులు మూయడం, ఏసీ ఆఫ్ చేయడం మనుషులు మర్చిపోవచ్చు (పాతకాలపు <code>finally</code> లో క్లోజ్ చేయడం మర్చిపోతే మెమరీ లీక్). కానీ ఆధునిక జావా 7+ <code>try (resource)</code> అనేది స్మార్ట్ సెన్సార్ డోర్ లాంటిది; పని పూర్తయినా లేదా మధ్యలో ఎక్సెప్షన్ వచ్చినా సరే, రిసోర్స్‌ను ఆటోమేటిక్‌గా క్షణంలో క్లోజ్ చేసి మెమరీ లీక్‌ను నివారిస్తుంది!
+        </li>
+      </ol>
+      <p style="margin:14px 0 0 0; font-size:14px; color:#475569; line-height:1.7;">
+        ఈ పాఠం ముగిసేసరికి మీరు Part 04 (Core OOP &amp; Exceptions) ను 100% విజయవంతంగా ముగించి, ఎంటర్‌ప్రైజ్ స్థాయి రెసిలియంట్ పేమెంట్ గేట్‌వే ట్రాన్సాక్షన్ ఇంజిన్‌ను తయారు చేయగల పరిపూర్ణ స్థాయికి చేరుకుంటారు!
+      </p>
+    </div>
+
+    <!-- 3-COLUMN TABLE OF CONTENTS (TOC CARD) -->
+    <div class="toc-card">
+      <div style="font-weight:800; color:var(--text); margin-bottom:14px; font-size:16px; display:flex; align-items:center; gap:8px;">
+        <span>📑 ఈ పాఠంలో మీరు నేర్చుకునే అంశాలు (Table of Contents)</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం A: ఎక్సెప్షన్ మూలాలు &amp; హైరార్కీ
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-1" style="color:var(--text2); text-decoration:none;">1. ఎక్సెప్షన్ హ్యాండ్లింగ్ అంటే ఏమిటి?</a></li>
+            <li><a href="#sec-2" style="color:var(--text2); text-decoration:none;">2. Throwable హైరార్కీ: Error vs Exception</a></li>
+            <li><a href="#sec-3" style="color:var(--text2); text-decoration:none;">3. Checked vs Unchecked RuntimeExceptions</a></li>
+            <li><a href="#sec-4" style="color:var(--text2); text-decoration:none;">4. Call Stack Unwinding &amp; StackTrace</a></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం B: Blocks &amp; Custom Errors
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-5" style="color:var(--text2); text-decoration:none;">5. try-catch-finally &amp; Multi-catch</a></li>
+            <li><a href="#sec-6" style="color:var(--text2); text-decoration:none;">6. Java 7+ try-with-resources &amp; AutoCloseable</a></li>
+            <li><a href="#sec-7" style="color:var(--text2); text-decoration:none;">7. throw vs throws కీవర్డ్స్ &amp; ప్రాపగేషన్</a></li>
+            <li><a href="#sec-8" style="color:var(--text2); text-decoration:none;">8. Custom Business Exceptions సృష్టి</a></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం C: డెమోలు, ప్రాజెక్ట్ &amp; పరీక్ష
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-9" style="color:var(--text2); text-decoration:none;">9. డెమో 1: Checked vs Unchecked &amp; Multi-catch</a></li>
+            <li><a href="#sec-10" style="color:var(--text2); text-decoration:none;">10. డెమో 2: try-with-resources &amp; AutoCloseable</a></li>
+            <li><a href="#sec-11" style="color:var(--text2); text-decoration:none;">11. Capstone ప్రాజెక్ట్: రెసిలియంట్ పేమెంట్ గేట్‌వే</a></li>
+            <li><a href="#sec-12" style="color:var(--text2); text-decoration:none;">12. ప్రొడక్షన్ పిట్‌ఫాల్స్, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 క్విజ్‌లు</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div id="sec-1" class="section-card">
+      <h2>1. ఎక్సెప్షన్ హ్యాండ్లింగ్ అంటే ఏమిటి? (Robust Error Resilience)</h2>
+      <p>
+        ఒక ప్రోగ్రామ్ నడుస్తున్నప్పుడు దాని సాధారణ ఆదేశాల ప్రవాహాన్ని (Normal Flow of Instructions) అడ్డుకునే అవాంఛనీయ సంఘటనను <strong>ఎక్సెప్షన్ (Exception)</strong> అంటారు.
+      </p>
+      <p>
+        ఎక్సెప్షన్ హ్యాండ్లింగ్ లేకపోతే, లోపం సంభవించిన వెంటనే ప్రోగ్రామ్ అకస్మాత్తుగా ఆగిపోయి (Crash), స్క్రీన్ పై ఎర్రటి ఎర్రర్ లాగ్‌లను విసిరి యూజర్‌ను అయోమయానికి గురిచేస్తుంది. ఎక్సెప్షన్ హ్యాండ్లింగ్ ద్వారా మనం ఆ లోపాన్ని సున్నితంగా క్యాచ్ చేసి, ప్రత్యామ్నాయ మార్గాన్ని (Fallback path) అమలు చేసి, యూజర్‌కు అర్థమయ్యే సందేశాన్ని అందిస్తాం.
+      </p>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div id="sec-2" class="section-card">
+      <h2>2. Throwable హైరార్కీ: Error vs Exception (The Java Exception Tree)</h2>
+      <p>
+        జావాలో ఎక్సెప్షన్ వ్యవస్థ మొత్తం ఒక క్రమబద్ధమైన క్లాస్ హైరార్కీని కలిగి ఉంటుంది:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:18px 22px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.9;">
+        <strong>java.lang.Object</strong><br />
+        &nbsp;&nbsp;└── <strong>java.lang.Throwable</strong> (రూట్ క్లాస్)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <strong>java.lang.Error</strong> (JVM వైఫల్యాలు - కోడ్ ద్వారా రికవరీ సాధ్యం కాదు)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── OutOfMemoryError<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;└── StackOverflowError<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <strong>java.lang.Exception</strong> (అప్లికేషన్ లోపాలు - try-catch తో రికవరీ చేయవచ్చు)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <strong>Checked Exceptions</strong> (IOException, SQLException etc.)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <strong>RuntimeException (Unchecked)</strong> (NullPointer, Arithmetic etc.)
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div id="sec-3" class="section-card">
+      <h2>3. Checked vs Unchecked RuntimeExceptions (The Crucial Difference)</h2>
+      <p>
+        జావాలోని ఎక్సెప్షన్లలో అత్యంత ముఖ్యమైన వర్గీకరణ:
+      </p>
+
+      <div style="overflow-x:auto; margin:20px 0;">
+        <table style="width:100%; border-collapse:collapse; font-size:13.5px; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg2); border-bottom:2px solid var(--border);">
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">లక్షణం</th>
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">Checked Exceptions</th>
+              <th style="padding:12px 14px; color:var(--text); font-weight:700;">Unchecked Exceptions (Runtime)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">పేరెంట్ క్లాస్</td>
+              <td style="padding:10px 14px; color:var(--text2);">నేరుగా <code>java.lang.Exception</code> సబ్‌క్లాసెస్</td>
+              <td style="padding:10px 14px; color:var(--text2);"><code>java.lang.RuntimeException</code> సబ్‌క్లాసెస్</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">కంపైలర్ తనిఖీ</td>
+              <td style="padding:10px 14px; color:#10b981; font-weight:700;">కంపైల్ సమయంలోనే తప్పనిసరిగా తనిఖీ చేస్తుంది</td>
+              <td style="padding:10px 14px; color:#ef4444;">కంపైలర్ తనిఖీ చేయదు (రన్‌టైమ్‌లో వస్తాయి)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">హ్యాండ్లింగ్ నిబంధన</td>
+              <td style="padding:10px 14px; color:var(--text2);">తప్పనిసరిగా <code>try-catch</code> లేదా <code>throws</code> రాయాలి</td>
+              <td style="padding:10px 14px; color:var(--text2);">హ్యాండ్లింగ్ ఐచ్ఛికం (కోడ్ లోపాలను సరిదిద్దాలి)</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 14px; font-weight:600; color:var(--text);">ఉదాహరణలు</td>
+              <td style="padding:10px 14px; color:var(--text2);"><code>IOException, SQLException, ClassNotFoundException</code></td>
+              <td style="padding:10px 14px; color:var(--text2);"><code>NullPointerException, ArithmeticException, IndexOutOfBounds</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div id="sec-4" class="section-card">
+      <h2>4. Call Stack Unwinding &amp; StackTrace (How Exceptions Travel Upwards)</h2>
+      <p>
+        ఒక మెథడ్ లోపల ఎక్సెప్షన్ సంభవించినప్పుడు, దానికి <code>try-catch</code> లేకపోతే ఏమి జరుగుతుంది?
+      </p>
+      <p>
+        JVM ఆ మెథడ్ ఎగ్జిక్యూషన్‌ను అక్కడికక్కడే ఆపివేసి, కాల్ స్టాక్ లోని మునుపటి మెథడ్ (Caller Method) వద్దకు ఎక్సెప్షన్ ఆబ్జెక్ట్‌ను విసిరివేస్తుంది. అక్కడ కూడా హ్యాండ్లర్ లేకపోతే, దాని మునుపటి మెథడ్‌కు వెళ్తుంది — ఇలా <code>main()</code> మెథడ్ దాటి చివరకు JVM డీఫాల్ట్ ఎక్సెప్షన్ హ్యాండ్లర్ వద్దకు చేరి ప్రోగ్రామ్‌ను క్రాష్ చేస్తుంది. దీనినే <strong>కాల్ స్టాక్ అన్‌వైండింగ్ (Call Stack Unwinding / Exception Propagation)</strong> అంటారు.
+      </p>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div id="sec-5" class="section-card">
+      <h2>5. try-catch-finally &amp; Multi-catch (Structured Exception Handling)</h2>
+      <p>
+        జావాలో ఎక్సెప్షన్లను హ్యాండిల్ చేయడానికి ప్రాథమిక నిర్మాణం:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:16px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.8;">
+        <span style="color:#0284c7;">try</span> {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// ప్రమాదం ఉన్న కోడ్ (Risky operations)</span><br />
+        } <span style="color:#0284c7;">catch</span> (IOException | SQLException e) { <span style="color:#64748b;">// Java 7 Multi-Catch</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// లోపాన్ని లాగ్ చేయడం &amp; ప్రత్యామ్నాయం</span><br />
+        } <span style="color:#0284c7;">finally</span> {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// ఎక్సెప్షన్ వచ్చినా రాకపోయినా ఖచ్చితంగా ఎగ్జిక్యూట్ అయ్యే క్లీనప్ బ్లాక్!</span><br />
+        }
+      </div>
+
+      <div style="background:#fefce8; border:1px solid #fde047; border-left:5px solid #ca8a04; border-radius:6px; padding:12px 16px; margin:14px 0; font-size:13.5px; color:#854d0e; line-height:1.6;">
+        ⚠️ <strong>finally బ్లాక్ ఎప్పుడు రన్ కాదు?</strong> ప్రోగ్రామ్ మధ్యలో <code>System.exit(0);</code> పిలిచినప్పుడు లేదా పవర్ కట్ / OS క్రాష్ అయినప్పుడు మాత్రమే finally బ్లాక్ రన్ అవ్వదు; మిగిలిన అన్ని సందర్భాలలో (చివరకు try లో <code>return;</code> ఉన్నా సరే) finally ఖచ్చితంగా ఎగ్జిక్యూట్ అవుతుంది!
+      </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div id="sec-6" class="section-card">
+      <h2>6. Java 7+ try-with-resources &amp; AutoCloseable (Zero Leak Resource Management)</h2>
+      <p>
+        డేటాబేస్ కనెక్షన్‌లు, ఫైల్ హ్యాండిల్స్, లేదా నెట్‌వర్క్ సాకెట్లను వాడిన తర్వాత వాటిని <code>close()</code> చేయడం డెవలపర్లు తరచూ మర్చిపోతారు.
+      </p>
+      <p>
+        దీనికి పరిష్కారంగా <strong>Java 7</strong> లో వచ్చిన <strong>try-with-resources</strong> స్టేట్‌మెంట్ ఒక అద్భుతం. <code>java.lang.AutoCloseable</code> ఇంటర్‌ఫేస్‌ను ఇంప్లిమెంట్ చేసే ఏదైనా రిసోర్స్‌ను <code>try(...)</code> బ్రాకెట్లలో డిక్లేర్ చేస్తే చాలు — బ్లాక్ ముగియగానే JVM స్వయంగా దాని <code>close()</code> మెథడ్‌ను పిలుస్తుంది!
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid #10b981; border-radius:8px; padding:16px 20px; margin:16px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.8;">
+        <span style="color:#0284c7;">try</span> (FileReader fr = <span style="color:#0284c7;">new</span> FileReader(<span style="color:#059669;">"app.log"</span>);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BufferedReader br = <span style="color:#0284c7;">new</span> BufferedReader(fr)) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;System.out.println(br.readLine());<br />
+        } <span style="color:#64748b;">// ఇక్కడ finally బ్లాక్ లేకుండానే br మరియు fr ఆటోమేటిక్‌గా క్లోజ్ అయిపోతాయి!</span>
+      </div>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div id="sec-7" class="section-card">
+      <h2>7. throw vs throws కీవర్డ్స్ &amp; ప్రాపగేషన్ (Triggering vs Declaring)</h2>
+      <p>
+        ఈ రెండు కీవర్డ్స్ మధ్య స్పష్టమైన తేడా ఉంది:
+      </p>
+
+      <ul>
+        <li>
+          <strong><code>throw</code> (క్రియ - Action):</strong> కోడ్ లోపల స్వయంగా ఒక ఎక్సెప్షన్ ఆబ్జెక్ట్‌ను సృష్టించి విసరడానికి వాడతాం: <code>throw new IllegalArgumentException("చెల్లని విలువ");</code>.
+        </li>
+        <li>
+          <strong><code>throws</code> (ప్రకటన - Declaration):</strong> మెథడ్ సిగ్నేచర్ వద్ద వాడతాం. ఈ మెథడ్ రన్ అయ్యేటప్పుడు ఫలానా చెక్‌డ్ ఎక్సెప్షన్లు వచ్చే అవకాశం ఉందని కాలర్లకు హెచ్చరిస్తుంది: <code>public void readFile() throws IOException { ... }</code>.
+        </li>
+      </ul>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div id="sec-8" class="section-card">
+      <h2>8. Custom Business Exceptions సృష్టి (Domain-Specific Exceptions)</h2>
+      <p>
+        నిజ జీవిత ప్రాజెక్ట్‌లలో సాధారణ <code>Exception</code> లేదా <code>RuntimeException</code> విసరడం మంచి పద్ధతి కాదు. వ్యాపార డొమైన్‌కు సరిపోయే అర్థవంతమైన కస్టమ్ ఎక్సెప్షన్లను సృష్టించాలి:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:16px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.8;">
+        <span style="color:#64748b;">// కస్టమ్ బిజినెస్ అన్‌చెక్‌డ్ ఎక్సెప్షన్</span><br />
+        <span style="color:#0284c7;">public class</span> InsufficientBalanceException <span style="color:#0284c7;">extends</span> RuntimeException {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">private final double</span> shortfallAmount;<br /><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">public</span> InsufficientBalanceException(String message, <span style="color:#0284c7;">double</span> shortfall) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">super</span>(message);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">this</span>.shortfallAmount = shortfall;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">public double</span> getShortfallAmount() { <span style="color:#0284c7;">return</span> shortfallAmount; }<br />
+        }
+      </div>
+    </div>
+
+    <!-- SECTION 9: CODE DEMO 1 -->
+    <div id="sec-9" class="section-card">
+      <h2>9. డెమో 1: Checked vs Unchecked &amp; Multi-catch డెమో (Exception Flow Demo)</h2>
+      <p>
+        చెక్‌డ్ ఎక్సెప్షన్లు మరియు అన్‌చెక్‌డ్ ఎక్సెప్షన్లను ఒకే పైప్‌లైన్‌లో మల్టీ-క్యాచ్ బ్లాక్ ద్వారా ఎలా సమర్థవంతంగా హ్యాండిల్ చేయాలో పరిశీలిద్దాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">CheckedVsUncheckedExceptionDemo.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">public class CheckedVsUncheckedExceptionDemo {
+
+    // Simulating a calculation that might fail with Unchecked ArithmeticException
+    public static int divide(int a, int b) {
+        return a / b;
+    }
+
+    // Simulating a method that throws Checked Exception
+    public static void validateAgeForLicense(int age) throws Exception {
+        if (age &lt; 18) {
+            throw new Exception("Age " + age + " is below legal driving limit of 18!");
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("⚡ CHECKED VS UNCHECKED EXCEPTION MULTI-CATCH DEMO");
+        System.out.println("=================================================\n");
+
+        // Test Case 1: Unchecked Arithmetic Exception
+        try {
+            System.out.println("1. Attempting division 100 / 0...");
+            int result = divide(100, 0);
+            System.out.println("   Result: " + result);
+        } catch (ArithmeticException e) {
+            System.out.println("   🛡️ CAUGHT UNCHECKED: Division by zero caught! " + e.getMessage());
+        }
+
+        // Test Case 2: Checked Exception with Validation
+        System.out.println("\n2. Attempting Checked Age Validation (16 yrs)...");
+        try {
+            validateAgeForLicense(16);
+        } catch (Exception e) {
+            System.out.println("   🛡️ CAUGHT CHECKED: " + e.getMessage());
+        } finally {
+            System.out.println("   🔒 Finally Block: Security audit check log written.");
+        }
+
+        System.out.println("\n=================================================");
+        System.out.println("✅ Application survived all exceptions without crashing!");
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+⚡ CHECKED VS UNCHECKED EXCEPTION MULTI-CATCH DEMO
+=================================================
+
+1. Attempting division 100 / 0...
+   🛡️ CAUGHT UNCHECKED: Division by zero caught! / by zero
+
+2. Attempting Checked Age Validation (16 yrs)...
+   🛡️ CAUGHT CHECKED: Age 16 is below legal driving limit of 18!
+   🔒 Finally Block: Security audit check log written.
+
+=================================================
+✅ Application survived all exceptions without crashing!
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 10: CODE DEMO 2 -->
+    <div id="sec-10" class="section-card">
+      <h2>10. డెమో 2: try-with-resources &amp; AutoCloseable (Resource Closure Life Cycle)</h2>
+      <p>
+        <code>AutoCloseable</code> ఇంటర్‌ఫేస్‌ను ఇంప్లిమెంట్ చేసే కస్టమ్ క్లౌడ్ డేటాబేస్ సాకెట్ రిసోర్స్ ఎక్సెప్షన్ వచ్చినప్పుడు కూడా ఎలా ఆటోమేటిక్‌గా క్లోజ్ అవుతుందో పరిశీలిద్దాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">TryWithResourcesAutoCloseableDemo.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">public class TryWithResourcesAutoCloseableDemo {
+
+    // Custom Cloud DB Socket implementing AutoCloseable
+    public static class CloudDatabaseSocket implements AutoCloseable {
+        private final String connectionUrl;
+
+        public CloudDatabaseSocket(String url) {
+            this.connectionUrl = url;
+            System.out.println("  🔌 [Socket Opened] Connected to " + connectionUrl);
+        }
+
+        public void executeQuery(String sql) {
+            System.out.println("  📊 [Executing Query] " + sql);
+            if (sql.contains("FAIL")) {
+                throw new IllegalStateException("Database query hardware timeout occurred!");
+            }
+        }
+
+        @Override
+        public void close() {
+            System.out.println("  🛑 [Socket Closed] Safely released connection to " + connectionUrl);
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("🔄 TRY-WITH-RESOURCES AUTOCLOSEABLE LIFECYCLE");
+        System.out.println("=================================================\n");
+
+        System.out.println("1. NORMAL EXECUTION (Auto-close after success):");
+        try (CloudDatabaseSocket db = new CloudDatabaseSocket("jdbc:aurora://primary-cluster:5432")) {
+            db.executeQuery("SELECT * FROM customer_accounts LIMIT 10;");
+        } catch (Exception e) {
+            System.out.println("   Error: " + e.getMessage());
+        }
+
+        System.out.println("\n2. EXCEPTION EXECUTION (Auto-close STILL GUARANTEED):");
+        try (CloudDatabaseSocket db = new CloudDatabaseSocket("jdbc:aurora://failover-cluster:5432")) {
+            db.executeQuery("SELECT * FROM FAIL_TRIGGER_TABLE;");
+        } catch (Exception e) {
+            System.out.println("   🛡️ CAUGHT EXCEPTION: " + e.getMessage());
+        }
+
+        System.out.println("\n=================================================");
+        System.out.println("✅ Zero Memory / Socket leaks achieved via AutoCloseable!");
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+🔄 TRY-WITH-RESOURCES AUTOCLOSEABLE LIFECYCLE
+=================================================
+
+1. NORMAL EXECUTION (Auto-close after success):
+  🔌 [Socket Opened] Connected to jdbc:aurora://primary-cluster:5432
+  📊 [Executing Query] SELECT * FROM customer_accounts LIMIT 10;
+  🛑 [Socket Closed] Safely released connection to jdbc:aurora://primary-cluster:5432
+
+2. EXCEPTION EXECUTION (Auto-close STILL GUARANTEED):
+  🔌 [Socket Opened] Connected to jdbc:aurora://failover-cluster:5432
+  📊 [Executing Query] SELECT * FROM FAIL_TRIGGER_TABLE;
+  🛑 [Socket Closed] Safely released connection to jdbc:aurora://failover-cluster:5432
+   🛡️ CAUGHT EXCEPTION: Database query hardware timeout occurred!
+
+=================================================
+✅ Zero Memory / Socket leaks achieved via AutoCloseable!
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 11: CAPSTONE PROJECT -->
+    <div id="sec-11" class="section-card">
+      <h2>11. Capstone ప్రాజెక్ట్: ఎంటర్‌ప్రైజ్ రెసిలియంట్ పేమెంట్ గేట్‌వే ట్రాన్సాక్షన్ ఇంజిన్</h2>
+      <p>
+        ఈ అధ్యాయంలో మరియు Part 04 అంతటా నేర్చుకున్న అన్ని కాన్సెప్టులను (కస్టమ్ ఎక్సెప్షన్స్, Checked vs Unchecked, try-with-resources, రోల్‌బ్యాక్ ఆర్కిటెక్చర్ మరియు ఆడిట్ లాగింగ్) సమగ్రంగా మిళితం చేస్తూ ఒక ప్రొడక్షన్-గ్రేడ్ <strong>Resilient Payment Gateway Transaction &amp; Rollback Engine</strong> ను నిర్మిద్దాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">ResilientPaymentGatewayTransactionEngine.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">public class ResilientPaymentGatewayTransactionEngine {
+
+    // Domain Custom Exception 1: Insufficient Balance
+    public static class InsufficientFundsException extends Exception {
+        private final double shortfall;
+        public InsufficientFundsException(double available, double required) {
+            super(String.format("Insufficient balance: Available ₹%,.2f, Required ₹%,.2f", available, required));
+            this.shortfall = required - available;
+        }
+        public double getShortfall() { return shortfall; }
+    }
+
+    // Domain Custom Exception 2: Fraud Alert (Unchecked Runtime)
+    public static class FraudDetectedException extends RuntimeException {
+        public FraudDetectedException(String message) {
+            super(message);
+        }
+    }
+
+    // Account Service with Transaction Simulation
+    public static class BankPaymentProcessor {
+        private double accountBalance = 50000.0;
+
+        public void executeTransfer(String targetVpa, double amount) throws InsufficientFundsException {
+            System.out.printf("💸 Initiating Transfer of ₹%,.2f to [%s]...%n", amount, targetVpa);
+
+            // Fraud Check
+            if (targetVpa.contains("blacklisted_hacker")) {
+                throw new FraudDetectedException("🚨 Transaction blocked by AI Anti-Fraud Radar for recipient: " + targetVpa);
+            }
+
+            // Balance Check
+            if (amount &gt; accountBalance) {
+                throw new InsufficientFundsException(accountBalance, amount);
+            }
+
+            // Deduct
+            accountBalance -= amount;
+            System.out.printf("✅ Transfer Successful! Remaining Account Balance: ₹%,.2f%n", accountBalance);
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("💳 RESILIENT FINTECH TRANSACTION &amp; ROLLBACK ENGINE");
+        System.out.println("=================================================\n");
+
+        BankPaymentProcessor processor = new BankPaymentProcessor();
+
+        // Transaction 1: Successful Transfer
+        try {
+            processor.executeTransfer("balaji@okhdfc", 15000.0);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        // Transaction 2: Insufficient Funds (Checked Exception Handled)
+        System.out.println("\n-------------------------------------------------");
+        try {
+            processor.executeTransfer("vendor@icici", 45000.0); // Only 35000 left
+        } catch (InsufficientFundsException e) {
+            System.out.println("❌ PAYMENT REJECTED: " + e.getMessage());
+            System.out.printf("   💡 Suggested Action: Please add ₹%,.2f to complete payment.%n", e.getShortfall());
+        }
+
+        // Transaction 3: Fraud Radar Block (Unchecked Exception Handled)
+        System.out.println("\n-------------------------------------------------");
+        try {
+            processor.executeTransfer("blacklisted_hacker@fraud", 500.0);
+        } catch (FraudDetectedException e) {
+            System.out.println("🛑 SECURITY LOCKDOWN: " + e.getMessage());
+            System.out.println("   🔒 Compliance Alert: Event dispatched to Cyber Cell Incident Desk.");
+        } catch (InsufficientFundsException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        System.out.println("\n=================================================");
+        System.out.println("🎉 PART 04 (CORE OOP &amp; EXCEPTIONS) COMPLETED 100%!");
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+💳 RESILIENT FINTECH TRANSACTION &amp; ROLLBACK ENGINE
+=================================================
+
+💸 Initiating Transfer of ₹15,000.00 to [balaji@okhdfc]...
+✅ Transfer Successful! Remaining Account Balance: ₹35,000.00
+
+-------------------------------------------------
+💸 Initiating Transfer of ₹45,000.00 to [vendor@icici]...
+❌ PAYMENT REJECTED: Insufficient balance: Available ₹35,000.00, Required ₹45,000.00
+   💡 Suggested Action: Please add ₹10,000.00 to complete payment.
+
+-------------------------------------------------
+💸 Initiating Transfer of ₹500.00 to [blacklisted_hacker@fraud]...
+🛑 SECURITY LOCKDOWN: 🚨 Transaction blocked by AI Anti-Fraud Radar for recipient: blacklisted_hacker@fraud
+   🔒 Compliance Alert: Event dispatched to Cyber Cell Incident Desk.
+
+=================================================
+🎉 PART 04 (CORE OOP &amp; EXCEPTIONS) COMPLETED 100%!
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 12 -->
+    <div id="sec-12" class="section-card">
+      <h2>12. ప్రొడక్షన్ పిట్‌ఫాల్స్, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 క్విజ్‌లు (Best Practices &amp; Quizzes)</h2>
+
+      <h4 style="color:#ef4444; margin:16px 0 10px 0;">🚫 ప్రొడక్షన్‌లో నివారించాల్సిన 4 ఘోరమైన తప్పులు (Production Pitfalls):</h4>
+      <ol style="line-height:1.8; color:var(--text2); font-size:14px; padding-left:20px;">
+        <li style="margin-bottom:10px;">
+          <strong>ఖాళీ క్యాచ్ బ్లాకులు రాయడం (Catch &amp; Swallow Antipattern):</strong> <code>catch (Exception e) {}</code> అని ఏమీ చేయకుండా వదిలేస్తే సమస్య ఎక్కడ వచ్చిందో ఎప్పటికీ తెలియక డీబగ్గింగ్ నరకంగా మారుతుంది. ఎల్లప్పుడూ లాగ్ చేయాలి.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>ఫ్లో కంట్రోల్ కోసం ఎక్సెప్షన్స్ వాడటం:</strong> లూప్ బౌండరీలను ఆపడానికి ఎక్సెప్షన్లు వాడకూడదు; స్టాక్ ట్రేస్ క్రియేషన్ అనేది CPU కి చాలా ఖరీదైన ఆపరేషన్.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>సరిగ్గా క్లోజ్ చేయకపోవడం:</strong> పాతకాలపు మాన్యువల్ క్లోజ్ లకు బదులుగా ఎల్లప్పుడూ <code>try-with-resources</code> వాడాలి.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>సాధారణ Throwable ని క్యాచ్ చేయడం:</strong> <code>catch (Throwable t)</code> అని రాస్తే <code>OutOfMemoryError</code> లాంటి ప్రాణాంతకమైన JVM ఎర్రర్లు కూడా క్యాచ్ అయి సిస్టమ్ కరప్ట్ అవుతుంది. కేవలం <code>Exception</code> ను మాత్రమే క్యాచ్ చేయాలి.
+        </li>
+      </ol>
+
+      <h4 style="color:#10b981; margin:26px 0 10px 0;">✨ ప్రొడక్షన్ గోల్డెన్ రూల్స్ (Golden Rules):</h4>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; font-size:13.5px; line-height:1.8; color:var(--text);">
+        1. <strong>Fail Early, Fail Fast:</strong> పారామీటర్లు చెల్లకపోతే ప్రారంభంలోనే ఎక్సెప్షన్ విసిరి బయటకు రండి.<br />
+        2. <strong>కస్టమ్ డొమైన్ ఎర్రర్స్:</strong> వ్యాపార నియమాల వైఫల్యాలకు అర్థవంతమైన కస్టమ్ ఎక్సెప్షన్స్ రూపొందించండి.<br />
+        3. <strong>AutoCloseable వాడకం:</strong> అన్ని క్లౌడ్ సాకెట్లు, డేటాబేస్ పూల్స్ కు <code>try-with-resources</code> వాడండి.<br />
+        4. <strong>కాజ్ ప్రిజర్వేషన్ (Chained Exceptions):</strong> ఒరిజినల్ ఎర్రర్‌ను కస్టమ్ ఎక్సెప్షన్‌గా ర్యాప్ చేసేటప్పుడు <code>super(message, cause)</code> ద్వారా మూల కారణాన్ని దాచకుండా ఉంచండి.
+      </div>
+
+      <!-- QUIZ SECTION -->
+      <h3 style="color:#10b981; margin:32px 0 16px 0;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 1: Error మరియు Exception మధ్య ప్రధాన వ్యత్యాసం ఏమిటి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <strong>Error</strong> (ఉదా: OutOfMemoryError) అనేది రికవరీ చేయలేని JVM స్థాయి వైఫల్యం; <strong>Exception</strong> ను కోడ్ లో <code>try-catch</code> ద్వారా క్యాచ్ చేసి సాధారణ రన్‌ను కొనసాగించవచ్చు.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 2: Checked Exceptions ని కంపైలర్ ఎప్పుడు తనిఖీ చేస్తుంది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> కంపైలేషన్ సమయంలోనే (Compile-time). వాటికి <code>try-catch</code> లేదా <code>throws</code> లేకపోతే కోడ్ అసలు కంపైల్ కాదు.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 3: try-with-resources స్టేట్‌మెంట్ వాడాలంటే ఆ రిసోర్స్ ఏ ఇంటర్‌ఫేస్‌ను ఇంప్లిమెంట్ చేయాలి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <strong><code>java.lang.AutoCloseable</code></strong> (లేదా java.io.Closeable) ఇంటర్‌ఫేస్‌ను ఇంప్లిమెంట్ చేయాలి.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 4: 'finally' బ్లాక్ ఎగ్జిక్యూషన్ ఎప్పుడు విఫలమవుతుంది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> కోడ్ లో <strong><code>System.exit(0);</code></strong> పిలిచినప్పుడు లేదా పవర్ కట్ / OS ప్రాసెస్ క్రాష్ అయినప్పుడు మాత్రమే finally రన్ అవ్వదు.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 5: throw మరియు throws మధ్య తేడా ఏమిటి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>throw</code> అనేది వాస్తవంగా ఎక్సెప్షన్‌ను విసరడానికి వాడే యాక్షన్; <code>throws</code> అనేది మెథడ్ సిగ్నేచర్ వద్ద ఎక్సెప్షన్ రావచ్చని కాలర్లను హెచ్చరించే డిక్లరేషన్.
+        </p>
+      </details>
+    </div>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/19-java-abstract-classes-and-interfaces.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 19. Abstract Classes &amp; Interfaces
+      </a>
+      <a href="/blog-java/21-java-collections-list-arraylist-linkedlist.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 21. List: ArrayList &amp; LinkedList →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>`;
+
+const outPath = path.join(__dirname, '..', 'public', 'blog-java', '20-java-exception-handling-and-custom-exceptions.html');
+fs.writeFileSync(outPath, chapter20Content, 'utf8');
+
+console.log('✅ Successfully generated Java Chapter 20 in exact JavaScript HTML style!');
+console.log('Target file:', outPath);
+console.log('Target file size:', chapter20Content.length, 'characters');

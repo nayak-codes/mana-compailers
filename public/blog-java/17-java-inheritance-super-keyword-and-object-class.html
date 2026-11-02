@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Inheritance, 'super' Keyword &amp; Object Class తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా వారసత్వం (Inheritance), extends కీవర్డ్, డైమండ్ సమస్య, 'super' కీవర్డ్, మరియు విశ్వజనీన java.lang.Object క్లాస్ సమగ్ర విశ్లేషణ. ఫిన్‌టెక్ పేమెంట్ గేట్‌వే ప్రాజెక్ట్ తెలుగులో నేర్చుకోండి." />
+  <meta name="keywords" content="java inheritance telugu, super keyword java telugu, diamond problem java telugu, java lang object class telugu, equals and hashcode contract telugu, single multilevel inheritance telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/17-java-inheritance-super-keyword-and-object-class.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-java light-theme">
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+    <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Java Masterclass</div>
+
+    <div class="accordion">
+      <!-- Part 01: Basics & JVM -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">☕</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 01</span>
+            <span class="phase-title">Basics & JVM</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/01-java-introduction-features-and-jvm-architecture.html">1. Intro & JVM Architecture</a>
+        <a href="/blog-java/02-java-installation-ide-and-first-program.html">2. Setup & First Program</a>
+        <a href="/blog-java/03-java-syntax-class-structure-and-main-method.html">3. Syntax & Main Method</a>
+        <a href="/blog-java/04-java-variables-primitive-data-types-and-memory.html">4. Variables & Data Types</a>
+        <a href="/blog-java/05-java-operators-expressions-and-type-casting.html">5. Operators & Type Casting</a>
+      </div>
+
+      <!-- Part 02: Control Flow & Strings -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🔀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 02</span>
+            <span class="phase-title">Control Flow & Strings</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/06-java-conditional-statements-if-else.html">6. if, else-if & Ternary</a>
+        <a href="/blog-java/07-java-switch-statements-and-switch-expressions.html">7. switch Statements & Expressions</a>
+        <a href="/blog-java/08-java-loops-while-for-and-enhanced-foreach.html">8. Loops: while, for, foreach</a>
+        <a href="/blog-java/09-java-strings-memory-pool-and-immutability.html">9. Strings & Memory Pool</a>
+        <a href="/blog-java/10-java-stringbuilder-stringbuffer-and-methods.html">10. StringBuilder & StringBuffer</a>
+      </div>
+
+      <!-- Part 03: Arrays, Methods & OOP -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">📦</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 03</span>
+            <span class="phase-title">Arrays, Methods & OOP</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/11-java-arrays-multidimensional-and-algorithms.html">11. Arrays & Algorithms</a>
+        <a href="/blog-java/12-java-methods-call-stack-and-pass-by-value.html">12. Methods & Call Stack</a>
+        <a href="/blog-java/13-java-method-overloading-and-varargs.html">13. Method Overloading & Varargs</a>
+        <a href="/blog-java/14-java-oop-classes-objects-and-constructors.html">14. Classes, Objects & Heap</a>
+        <a href="/blog-java/15-java-constructors-this-keyword-and-chaining.html">15. Constructors & this Keyword</a>
+      </div>
+
+      <!-- Part 04: Core OOP & Exceptions -->
+      <button class="accordion-header active" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🧩</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 04</span>
+            <span class="phase-title">Core OOP & Exceptions</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content open">
+        <a href="/blog-java/16-java-encapsulation-access-modifiers-and-records.html">16. Encapsulation & Records</a>
+        <a href="/blog-java/17-java-inheritance-super-keyword-and-object-class.html" class="active">17. Inheritance & super Keyword</a>
+        <a href="/blog-java/18-java-polymorphism-method-overriding-dynamic-binding.html">18. Polymorphism & Overriding</a>
+        <a href="/blog-java/19-java-abstract-classes-and-interfaces.html">19. Abstract Classes & Interfaces</a>
+        <a href="/blog-java/20-java-exception-handling-and-custom-exceptions.html">20. Exceptions & Custom Errors</a>
+      </div>
+
+      <!-- Part 05: Collections & Capstone -->
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-main">
+          <span class="phase-icon-box">🚀</span>
+          <div class="phase-info">
+            <span class="phase-tag">Part 05</span>
+            <span class="phase-title">Collections & Capstone</span>
+          </div>
+        </div>
+        <div class="accordion-header-meta">
+          <span class="phase-count-badge">5 Ch</span>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="accordion-content">
+        <a href="/blog-java/21-java-collections-list-arraylist-linkedlist.html">21. List: ArrayList & LinkedList</a>
+        <a href="/blog-java/22-java-collections-set-and-map-deep-dive.html">22. Set & Map Deep Dive</a>
+        <a href="/blog-java/23-java-generics-and-type-safety.html">23. Generics & Type Safety</a>
+        <a href="/blog-java/24-java-lambdas-and-stream-api.html">24. Lambdas & Stream API</a>
+        <a href="/blog-java/25-java-capstone-project.html">25. Capstone: Banking Engine</a>
+      </div>
+
+    </div>
+
+    <div class="sidebar-heading">INTERACTIVE IDE</div>
+    <a href="/online-java-compiler.html" style="color:#10b981; font-weight:700;">▶ Try Java Online</a>
+    <a href="/blog.html">📚 All Tutorials</a>
+
+    <div class="sidebar-heading">OTHER COURSES</div>
+    <a href="/blog-python.html">Python Course (25 Lessons)</a>
+    <a href="/blog-javascript.html">JavaScript Course (25 Lessons)</a>
+    <a href="/online-html-editor.html">HTML/CSS/JS Editor</a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 17: Inheritance &amp; super Keyword</span>
+    </div>
+
+    <h1 class="page-title">17. జావా వారసత్వం (Inheritance), 'super' &amp; Object Cosmic Superclass (Inheritance Mastery)</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java (Java 21+ LTS)</span>
+      <span class="badge">🟢 Lesson 17 of 25</span>
+      <span class="badge">📂 Part 04: Core OOP &amp; Exceptions (Page 2 of 5)</span>
+      <span class="badge">⏱️ 26 min read</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:28px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="font-weight:700; color:#10b981;">📌 Covered in this lesson:</span>
+      <span>IS-A రిలేషన్షిప్ & extends కీవర్డ్ · Single & Multilevel Inheritance · super() కన్‌స్ట్రక్టర్ కాల్స్ · java.lang.Object (Cosmic Superclass: toString, equals, hashCode)</span>
+    </div>
+
+    <!-- WARM IVORY INTRO BOX (JavaScript Style) -->
+    <div class="intro-box">
+      <p style="margin:0 0 16px 0; font-size:15px; line-height:1.8; color:#1e293b;">
+        ఆబ్జెక్ట్-ఓరియెంటెడ్ ప్రోగ్రామింగ్ (OOP) లో కోడ్ పునర్వినియోగానికి (Code Reusability) మరియు వాస్తవ ప్రపంచ సంబంధాల రూపకల్పనకు మూలస్తంభం <strong>వారసత్వం (Inheritance)</strong>. ఇప్పటికే ఉన్న ఒక క్లాస్ లోని ఫీచర్లు మరియు ప్రవర్తనలను మరొక కొత్త క్లాస్ <code>extends</code> కీవర్డ్ ద్వారా స్వీకరించే పద్ధతినే వారసత్వం అంటారు. దీనిని టెక్నికల్ భాషలో <strong>"IS-A రిలేషన్షిప్"</strong> గా పిలుస్తారు (ఉదా: Car IS-A Vehicle). అయితే C++ లో ఉన్న బహుళ వారసత్వం (Multiple Inheritance) వల్ల ఉత్పన్నమయ్యే వినాశకరమైన 'డైమండ్ సమస్య' (Diamond Problem) ను జావా ఎలా పరిష్కరించింది? పేరెంట్ క్లాస్ కన్‌స్ట్రక్టర్లను మరియు ఓవర్‌రైడ్ చేయబడిన మెథడ్లను పిలవడానికి <strong><code>super</code> కీవర్డ్</strong> ఎలా ఉపయోగపడుతుంది? మరియు జావాలోని సమస్త క్లాసులకు ఆదిమ మూలపురుషుడైన <strong><code>java.lang.Object</code> (Cosmic Superclass)</strong> యొక్క అంతర్గత ఆర్కిటెక్చర్ ఏమిటి? అనే కీలకమైన అంశాలను ఈ పాఠంలో ప్రాక్టికల్ విశ్లేషణలతో నేర్చుకుందాం.
+      </p>
+
+      <h4 style="margin:0 0 10px 0; color:#047857; font-size:16px; font-weight:800;">
+        వంశపారంపర్య DNA &amp; స్మార్ట్‌ఫోన్ సిరీస్ అనాలజీ (The Family DNA Ancestry &amp; Smartphone Generation Analogy):
+      </h4>
+      <ol style="margin:0; padding-left:22px; color:#334155; line-height:1.8; font-size:14.5px;">
+        <li style="margin-bottom:8px;">
+          <strong>1. Inheritance (వంశపారంపర్య జన్యువులు - Family Genetic Inheritance):</strong> తల్లిదండ్రుల నుండి పిల్లలకు కంటి రంగు, ఎత్తు, నడక వంటి శారీరక లక్షణాలు సహజంగానే సంక్రమిస్తాయి. పిల్లవాడు ఆ లక్షణాలను వారసత్వంగా తీసుకుంటూనే, అదనంగా తన సొంత నైపుణ్యాలను (New Skills) పెంపొందించుకుంటాడు. జావాలో ఒక సబ్‌క్లాస్ (Child) తన సూపర్ క్లాస్ (Parent) లోని ఫీల్డ్స్ మరియు మెథడ్లను నేరుగా పొంది, కొత్త ఫీచర్లను జోడించుకుంటుంది.
+        </li>
+        <li style="margin-bottom:8px;">
+          <strong>2. The Diamond Problem &amp; Forbidden Multiple Inheritance (ఇద్దరు తల్లుల ఒకే ఆదేశ గందరగోళం):</strong> ఒక బిడ్డకు ఇద్దరు తల్లులు ఉండి, ఇద్దరూ ఒకే సమయంలో పరస్పర విరుద్ధమైన ఆదేశాలు జారీ చేస్తే బిడ్డ అయోమయంలో పడతాడు. C++ లో ఒక క్లాస్ ఒకేసారి రెండు వేర్వేరు పేరెంట్ క్లాసుల నుండి ఒకే పేరున్న మెథడ్‌ను ఇన్హెరిట్ చేసుకుంటే ఏది రన్ అవ్వాలో తెలియక అంబిగ్యుటీ వచ్చేది. జావా ఈ సంక్షోభాన్ని శాశ్వతంగా నివారించడానికి క్లాసుల స్థాయిలో 'మల్టిపుల్ ఇన్హెరిటెన్స్' ను కఠినంగా నిషేధించింది!
+        </li>
+        <li>
+          <strong>3. 'super' &amp; java.lang.Object (కుటుంబ పెద్ద &amp; విశ్వ మూలపురుషుడు - Family Elder &amp; Cosmic Ancestor):</strong>
+          <br />• <code>super</code>: ఇంట్లో పిల్లవాడు తన తండ్రిని లేదా తల్లిని సంబోధించడానికి పిలిచే గౌరవప్రదమైన పిలుపు (పేరెంట్ కన్‌స్ట్రక్టర్ <code>super(...)</code> లేదా పేరెంట్ మెథడ్ <code>super.process()</code>).
+          <br />• <code>java.lang.Object</code>: భూమిపై ఉన్న ప్రతి మానవుడికీ ఒకే ఒక్క ఉమ్మడి ఆదిమ పూర్వీకుడు ఉన్నట్లుగా, జావాలోని ప్రతి ఒక్క క్లాస్ (మీరు స్వయంగా రాసినా లేదా జావా అంతర్నిర్మితమైనా) చివరికి <code>java.lang.Object</code> అనే విశ్వజనీన పేరెంట్ క్లాస్ నుండే ఉద్భవిస్తుంది!
+        </li>
+      </ol>
+      <p style="margin:14px 0 0 0; font-size:14px; color:#475569; line-height:1.7;">
+        ఈ పాఠం ముగిసేసరికి మీరు క్లాస్ హైరార్కీలను శాస్త్రీయంగా నిర్మించడం, పేరెంట్-చైల్డ్ కన్‌స్ట్రక్టర్ ఎగ్జిక్యూషన్ ఫ్లోను అర్థం చేసుకోవడం, మరియు ప్రొడక్షన్-గ్రేడ్ ఫిన్‌టెక్ పేమెంట్ గేట్‌వే ప్రాసెసింగ్ సిస్టమ్‌ను నిర్మించడంలో పరిపూర్ణ ప్రావీణ్యం సాధిస్తారు!
+      </p>
+    </div>
+
+    <!-- 3-COLUMN TABLE OF CONTENTS (TOC CARD) -->
+    <div class="toc-card">
+      <div style="font-weight:800; color:var(--text); margin-bottom:14px; font-size:16px; display:flex; align-items:center; gap:8px;">
+        <span>📑 ఈ పాఠంలో మీరు నేర్చుకునే అంశాలు (Table of Contents)</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం A: వారసత్వ మూలాలు &amp; ఆర్కిటెక్చర్
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-1" style="color:var(--text2); text-decoration:none;">1. వారసత్వం అంటే ఏమిటి? IS-A రిలేషన్షిప్</a></li>
+            <li><a href="#sec-2" style="color:var(--text2); text-decoration:none;">2. సింగిల్, మల్టీలెవల్ &amp; హైరార్కికల్ రకాలు</a></li>
+            <li><a href="#sec-3" style="color:var(--text2); text-decoration:none;">3. Multiple Inheritance నిషేధం: Diamond Problem</a></li>
+            <li><a href="#sec-4" style="color:var(--text2); text-decoration:none;">4. Memory Layout: చైల్డ్ ఆబ్జెక్ట్ లోపల పేరెంట్ స్టేట్</a></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం B: 'super' &amp; Object క్లాస్
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-5" style="color:var(--text2); text-decoration:none;">5. 'super' కీవర్డ్ 3 ప్రధాన విధులు</a></li>
+            <li><a href="#sec-6" style="color:var(--text2); text-decoration:none;">6. Constructor Execution Order (Top-Down Flow)</a></li>
+            <li><a href="#sec-7" style="color:var(--text2); text-decoration:none;">7. java.lang.Object — విశ్వజనీన సూపర్ క్లాస్</a></li>
+            <li><a href="#sec-8" style="color:var(--text2); text-decoration:none;">8. Object క్లాస్ 11 మెథడ్స్ &amp; equals/hashCode కాంట్రాక్ట్</a></li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-weight:700; color:#10b981; margin-bottom:8px; font-size:13.5px; border-bottom:1px solid var(--border); padding-bottom:4px;">
+            విభాగం C: డెమోలు, ప్రాజెక్ట్ &amp; పరీక్ష
+          </div>
+          <ul style="list-style:none; padding:0; margin:0; font-size:13px; line-height:2.1;">
+            <li><a href="#sec-9" style="color:var(--text2); text-decoration:none;">9. డెమో 1: Constructor Execution Hierarchy ట్రేస్</a></li>
+            <li><a href="#sec-10" style="color:var(--text2); text-decoration:none;">10. డెమో 2: java.lang.Object మెథడ్స్ కాంట్రాక్ట్</a></li>
+            <li><a href="#sec-11" style="color:var(--text2); text-decoration:none;">11. Capstone ప్రాజెక్ట్: ఎంటర్‌ప్రైజ్ ఫిన్‌టెక్ గేట్‌వే</a></li>
+            <li><a href="#sec-12" style="color:var(--text2); text-decoration:none;">12. ప్రొడక్షన్ పిట్‌ఫాల్స్, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 క్విజ్‌లు</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div id="sec-1" class="section-card">
+      <h2>1. వారసత్వం అంటే ఏమిటి? IS-A రిలేషన్షిప్ (Inheritance &amp; IS-A Relationship)</h2>
+      <p>
+        జావాలో <strong>వారసత్వం (Inheritance)</strong> అనేది ఇప్పటికే ఉన్న ఒక క్లాస్ (Super Class / Parent Class) యొక్క ఫీల్డ్స్ మరియు మెథడ్లను మరొక కొత్త క్లాస్ (Sub Class / Child Class) వారసత్వంగా పొందే పద్ధతి. దీనికోసం మనం <strong><code>extends</code></strong> కీవర్డ్‌ను ఉపయోగిస్తాం.
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:18px 22px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.9;">
+        <span style="color:#64748b;">// సూపర్ క్లాస్ (Parent)</span><br />
+        <span style="color:#0284c7;">public class</span> Vehicle {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;String brand;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">void</span> startEngine() { System.out.println(<span style="color:#059669;">"ఇంజిన్ ప్రారంభమైంది..."</span>); }<br />
+        }<br /><br />
+        <span style="color:#64748b;">// సబ్‌క్లాస్ (Child) - extends కీవర్డ్ ద్వారా Vehicle ఫీచర్లు పొందుతుంది</span><br />
+        <span style="color:#0284c7;">public class</span> ElectricCar <span style="color:#0284c7;">extends</span> Vehicle {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">int</span> batteryCapacityKWh;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0284c7;">void</span> chargeBattery() { System.out.println(<span style="color:#059669;">"ఛార్జింగ్ అవుతోంది..."</span>); }<br />
+        }
+      </div>
+
+      <p>
+        <strong>IS-A రిలేషన్షిప్ నియమం:</strong> ఒక క్లాస్‌ను మరొక క్లాస్‌కు వారసుడిగా చేసేముందు కచ్చితంగా "ఇది అది అవుతుందా?" (IS-A Test) అని ప్రశ్నించుకోవాలి:
+        <br />• <code>ElectricCar IS-A Vehicle</code> ✅ (సరైన వారసత్వం)
+        <br />• <code>SavingAccount IS-A BankAccount</code> ✅ (సరైన వారసత్వం)
+        <br />• <code>Car IS-A Engine</code> ❌ (తప్పు! Car కు Engine ఉంటుంది - దీనిని HAS-A / Composition అంటారు).
+      </p>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div id="sec-2" class="section-card">
+      <h2>2. సింగిల్, మల్టీలెవల్ &amp; హైరార్కికల్ రకాలు (Types of Inheritance in Java)</h2>
+      <p>
+        క్లాసుల స్థాయిలో జావా 3 రకాల వారసత్వ నిర్మాణాలను సంపూర్ణంగా సమర్థిస్తుంది:
+      </p>
+
+      <ul>
+        <li>
+          <strong>1. సింగిల్ ఇన్హెరిటెన్స్ (Single Inheritance):</strong> ఒకే చైల్డ్ క్లాస్ ఒకే పేరెంట్ క్లాస్‌ను ఎక్స్‌టెండ్ చేసుకుంటుంది (ఉదా: <code>B extends A</code>).
+        </li>
+        <li>
+          <strong>2. మల్టీలెవల్ ఇన్హెరిటెన్స్ (Multilevel Inheritance):</strong> గొలుసుకట్టు వారసత్వం. తాత ➔ తండ్రి ➔ కొడుకు క్రమంలో లక్షణాలు సంక్రమిస్తాయి (ఉదా: <code>Device ➔ Phone ➔ SmartPhone</code>).
+        </li>
+        <li>
+          <strong>3. హైరార్కికల్ ఇన్హెరిటెన్స్ (Hierarchical Inheritance):</strong> ఒకే పేరెంట్ క్లాస్‌ను బహుళ చైల్డ్ క్లాసులు ఎక్స్‌టెండ్ చేసుకుంటాయి (ఉదా: <code>Account ➔ SavingsAccount</code> మరియు <code>Account ➔ CurrentAccount</code>).
+        </li>
+      </ul>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div id="sec-3" class="section-card">
+      <h2>3. Multiple Inheritance నిషేధం: Diamond Problem (Why Java Forbids Multiple Extends)</h2>
+      <p>
+        జావాలో ఒక క్లాస్ ఒకే సమయంలో రెండు లేదా అంతకంటే ఎక్కువ క్లాసులను ఎక్స్‌టెండ్ చేయలేదు (<code>class C extends A, B</code> రాయడం అసాధ్యం). దీనికి కారణం ప్రసిద్ధ <strong>డైమండ్ సమస్య (The Deadly Diamond of Death)</strong>:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid #ef4444; border-radius:8px; padding:16px; margin:16px 0;">
+        <div style="font-weight:700; color:#ef4444; margin-bottom:8px; font-size:14px;">❌ డైమండ్ సమస్య విశ్లేషణ:</div>
+        <p style="margin:0 0 10px 0; font-size:13px; color:var(--text); line-height:1.6;">
+          క్లాస్ A లో <code>execute()</code> అనే మెథడ్ ఉందనుకుందాం. క్లాస్ B మరియు క్లాస్ C రెండూ A ని ఎక్స్‌టెండ్ చేసి <code>execute()</code> ని తమదైన శైలిలో ఓవర్‌రైడ్ చేశాయి. ఇప్పుడు క్లాస్ D అనేది B మరియు C రెండింటినీ ఒకేసారి ఎక్స్‌టెండ్ చేస్తే, D ఆబ్జెక్ట్ <code>d.execute()</code> అని పిలిచినప్పుడు JVM కి B లోని మెథడ్ రన్ చేయాలో లేదా C లోని మెథడ్ రన్ చేయాలో అర్థం కాదు!
+        </p>
+        <div style="background:#fefce8; border:1px solid #fde047; border-left:4px solid #ca8a04; border-radius:4px; padding:10px 14px; font-size:13px; color:#854d0e;">
+          💡 జావా సృష్టికర్త జేమ్స్ గోస్లింగ్ భాషను సింపుల్‌గా, స్పష్టంగా మరియు బగ్-ఫ్రీగా ఉంచడానికి క్లాసుల స్థాయిలో ఈ డైమండ్ సమస్యను పూర్తిగా నిషేధించారు (ఇంటర్‌ఫేస్‌ల ద్వారా మాత్రమే సేఫ్‌గా మల్టిపుల్ ఇన్హెరిటెన్స్ సాధ్యమవుతుంది).
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div id="sec-4" class="section-card">
+      <h2>4. Memory Layout: చైల్డ్ ఆబ్జెక్ట్ లోపల పేరెంట్ స్టేట్ (Heap Architecture)</h2>
+      <p>
+        చాలామంది బిగినర్లు అనుకుంటారు: <em>"సబ్‌క్లాస్ ఆబ్జెక్ట్ క్రియేట్ చేసినప్పుడు రెండు విడివిడి ఆబ్జెక్టులు హీప్‌లో పుడతాయి"</em> అని. <strong>ఇది ముమ్మాటికీ అవాస్తవం!</strong>
+      </p>
+      <p>
+        హీప్ మెమరీలో సృష్టించబడేది <strong>ఒకే ఒక్క ఆబ్జెక్ట్</strong>. ఆ ఒక్క సబ్‌క్లాస్ ఆబ్జెక్ట్ యొక్క మెమరీ బ్లాక్ లోపలే సూపర్ క్లాస్ యొక్క అన్ని ప్రైవేట్ మరియు పబ్లిక్ ఫీల్డ్‌లు కూడా కేటాయించబడతాయి! ప్రైవేట్ ఫీల్డ్‌లను చైల్డ్ క్లాస్ నేరుగా పేరుతో పిలవలేకపోయినప్పటికీ, అవి చైల్డ్ ఆబ్జెక్ట్ మెమరీలోనే నివసిస్తూ పేరెంట్ పబ్లిక్ మెథడ్స్ ద్వారా పనిచేస్తాయి.
+      </p>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div id="sec-5" class="section-card">
+      <h2>5. 'super' కీవర్డ్ 3 ప్రధాన విధులు (The 3 Faces of super)</h2>
+      <p>
+        సబ్‌క్లాస్ లోపల నుండి తన పేరెంట్ సూపర్ క్లాస్‌ను సంబోధించడానికి జావా అందించిన కీలకమైన రిఫరెన్స్ వేరియబుల్ <strong><code>super</code></strong>. ఇది 3 ప్రధాన పనులను చేస్తుంది:
+      </p>
+
+      <ul>
+        <li>
+          <strong>1. పేరెంట్ కన్‌స్ట్రక్టర్‌ను పిలవడం:</strong> సబ్‌క్లాస్ కన్‌స్ట్రక్టర్ మొదటి లైన్‌లో <code>super(args...)</code> రాయడం ద్వారా పేరెంట్ ఫీల్డ్స్‌ను ఇనిషియలైజ్ చేస్తాం.
+        </li>
+        <li>
+          <strong>2. పేరెంట్ క్లాస్ వేరియబుల్‌ను సూచించడం:</strong> చైల్డ్ క్లాస్‌లో మరియు పేరెంట్ క్లాస్‌లో ఒకే పేరున్న వేరియబుల్ ఉన్నప్పుడు, పేరెంట్ వేరియబుల్‌ను స్పష్టంగా సూచించడానికి <code>super.variableName</code> వాడతాం.
+        </li>
+        <li>
+          <strong>3. పేరెంట్ క్లాస్ మెథడ్‌ను ఇన్వోక్ చేయడం:</strong> చైల్డ్ క్లాస్‌లో మెథడ్‌ను ఓవర్‌రైడ్ చేసినప్పటికీ, ఒరిజినల్ పేరెంట్ మెథడ్ పనితనాన్ని కూడా అమలు చేయాలనుకుంటే <code>super.methodName()</code> వాడతాం.
+        </li>
+      </ul>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div id="sec-6" class="section-card">
+      <h2>6. Constructor Execution Order: Top-Down Flow (The Constructor Hierarchy)</h2>
+      <p>
+        ఒక చైల్డ్ ఆబ్జెక్ట్ సృష్టించబడినప్పుడు కన్‌స్ట్రక్టర్లు ఎలా ఎగ్జిక్యూట్ అవుతాయి?
+      </p>
+
+      <div style="background:#fefce8; border:1px solid #fde047; border-left:5px solid #ca8a04; border-radius:6px; padding:16px 20px; margin:16px 0; font-size:13.5px; color:#854d0e; line-height:1.8;">
+        <strong>గోల్డెన్ ఎగ్జిక్యూషన్ రూల్ (Top-Down Flow):</strong><br />
+        కన్‌స్ట్రక్టర్లు ఎల్లప్పుడూ <strong>అత్యున్నత పేరెంట్ (Grandparent / Object class) నుండి అత్యంత క్రింది చైల్డ్ క్లాస్ వరకు</strong> క్రమంగా అమలవుతాయి. చైల్డ్ క్లాస్ కన్‌స్ట్రక్టర్ బాడీ ఎగ్జిక్యూట్ అవ్వడానికి ముందే పేరెంట్ కన్‌స్ట్రక్టర్ తన పనిని సంపూర్ణంగా ముగించాలి!
+      </div>
+
+      <p>
+        మీరు సబ్‌క్లాస్ కన్‌స్ట్రక్టర్‌లో <code>super()</code> అని స్పష్టంగా రాయకపోయినా, జావా కంపైలర్ స్వయంగా మొదటి లైన్‌లో <strong><code>super();</code></strong> ను అదృశ్యంగా చేర్చుతుంది!
+      </p>
+    </div>
+
+    <!-- SECTION 7 -->
+    <div id="sec-7" class="section-card">
+      <h2>7. java.lang.Object — విశ్వజనీన సూపర్ క్లాస్ (The Cosmic Superclass)</h2>
+      <p>
+        జావా ప్లాట్‌ఫారమ్‌లో <code>java.lang.Object</code> అనేది క్లాస్ హైరార్కీ యొక్క పరమ శిఖరం (Root of the Class Hierarchy). మీరు ఒక క్లాస్ రాసి ఏ క్లాస్‌నూ <code>extends</code> చేయకపోతే, జావా కంపైలర్ ఆటోమేటిక్‌గా <code>extends Object</code> అని జతచేస్తుంది.
+      </p>
+      <p>
+        ఈ విశ్వజనీన పేరెంట్ ఉండటం వల్లనే జావాలో ఏదైనా ఆబ్జెక్ట్‌ను <code>Object obj = anyInstance;</code> రూపంలో జెనరిక్‌గా నిల్వ చేసుకునే అద్భుతమైన సదుపాయం లభించింది.
+      </p>
+    </div>
+
+    <!-- SECTION 8 -->
+    <div id="sec-8" class="section-card">
+      <h2>8. Object క్లాస్ 11 మెథడ్స్ &amp; equals/hashCode కాంట్రాక్ట్ (The Core Contract)</h2>
+      <p>
+        <code>java.lang.Object</code> క్లాస్‌లో ప్రతి జావా ఆబ్జెక్ట్‌కూ సంక్రమించే 11 ప్రాథమిక మెథడ్స్ ఉన్నాయి:
+      </p>
+
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin:18px 0; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.8;">
+        1. toString()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// ఆబ్జెక్ట్ యొక్క టెక్స్ట్ రిప్రజెంటేషన్</span><br />
+        2. equals(Object obj)&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// ఆబ్జెక్టుల సమానత్వ తనిఖీ</span><br />
+        3. hashCode()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// హ్యాష్ టేబుల్స్ (HashMap/HashSet) కోసం 32-bit హాష్ నంబర్</span><br />
+        4. getClass()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// రన్‌టైమ్ క్లాస్ మెటాడేటా</span><br />
+        5. clone()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// ఆబ్జెక్ట్ క్లోనింగ్</span><br />
+        6-10. wait(), notify(), notifyAll()&nbsp;&nbsp;<span style="color:#64748b;">// త్రెడ్ సింక్రనైజేషన్ లాకింగ్</span><br />
+        11. finalize()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#64748b;">// డిప్రికేట్ చేయబడిన పాత క్లీనప్</span>
+      </div>
+
+      <div style="background:#fefce8; border:1px solid #fde047; border-left:5px solid #ca8a04; border-radius:6px; padding:14px 18px; margin:16px 0; font-size:13.5px; color:#854d0e; line-height:1.7;">
+        ⚖️ <strong>The equals &amp; hashCode Contract:</strong><br />
+        రెండు ఆబ్జెక్టులు <code>equals()</code> ప్రకారం సమానమైతే (<code>a.equals(b) == true</code>), వాటి యొక్క <strong><code>hashCode()</code> లు తప్పనిసరిగా సమానంగా ఉండాలి!</strong> ఒకటి ఓవర్‌రైడ్ చేసి మరొకటి మర్చిపోతే <code>HashMap</code> మరియు <code>HashSet</code> లలో డేటా అదృశ్యమైపోయి తీవ్రమైన బగ్స్ వస్తాయి.
+      </div>
+    </div>
+
+    <!-- SECTION 9: CODE DEMO 1 -->
+    <div id="sec-9" class="section-card">
+      <h2>9. డెమో 1: Constructor Execution Hierarchy ట్రేస్ (Top-Down Execution Proof)</h2>
+      <p>
+        తాత ➔ తండ్రి ➔ కొడుకు క్రమంలో కన్‌స్ట్రక్టర్లు ఎలా అమలు చేయబడతాయో స్టెప్-బై-స్టెప్ టెలిమెట్రీతో పరిశీలిద్దాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">InheritanceConstructorExecutionDemo.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">public class InheritanceConstructorExecutionDemo {
+
+    // Level 1: Grandparent
+    public static class HardwareDevice {
+        String serialNumber;
+
+        public HardwareDevice(String serial) {
+            System.out.println("  1️⃣ [Executing HardwareDevice Constructor] Serial: " + serial);
+            this.serialNumber = serial;
+        }
+    }
+
+    // Level 2: Parent (extends HardwareDevice)
+    public static class ComputingDevice extends HardwareDevice {
+        int ramGigabytes;
+
+        public ComputingDevice(String serial, int ram) {
+            super(serial); // Explicit call to Grandparent constructor
+            System.out.println("  2️⃣ [Executing ComputingDevice Constructor] RAM: " + ram + " GB");
+            this.ramGigabytes = ram;
+        }
+    }
+
+    // Level 3: Child (extends ComputingDevice)
+    public static class CloudServerNode extends ComputingDevice {
+        String regionZone;
+
+        public CloudServerNode(String serial, int ram, String zone) {
+            super(serial, ram); // Explicit call to Parent constructor
+            System.out.println("  3️⃣ [Executing CloudServerNode Constructor] Zone: " + zone);
+            this.regionZone = zone;
+        }
+
+        public void printSpecs() {
+            System.out.printf("🖥️ Node Specs: Serial=%s | RAM=%d GB | Zone=%s%n",
+                    serialNumber, ramGigabytes, regionZone);
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("🏗️ INHERITANCE CONSTRUCTOR TOP-DOWN EXECUTION");
+        System.out.println("=================================================
+");
+
+        System.out.println("Instantiating: new CloudServerNode('SRV-HYD-01', 64, 'ap-south-1a'):");
+        CloudServerNode server = new CloudServerNode("SRV-HYD-01", 64, "ap-south-1a");
+
+        System.out.println("
+Final Initialized Object Specs:");
+        server.printSpecs();
+
+        System.out.println("
+=================================================");
+        System.out.println("✅ Top-Down Constructor Execution Flow Verified!");
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+🏗️ INHERITANCE CONSTRUCTOR TOP-DOWN EXECUTION
+=================================================
+
+Instantiating: new CloudServerNode('SRV-HYD-01', 64, 'ap-south-1a'):
+  1️⃣ [Executing HardwareDevice Constructor] Serial: SRV-HYD-01
+  2️⃣ [Executing ComputingDevice Constructor] RAM: 64 GB
+  3️⃣ [Executing CloudServerNode Constructor] Zone: ap-south-1a
+
+Final Initialized Object Specs:
+🖥️ Node Specs: Serial=SRV-HYD-01 | RAM=64 GB | Zone=ap-south-1a
+
+=================================================
+✅ Top-Down Constructor Execution Flow Verified!
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 10: CODE DEMO 2 -->
+    <div id="sec-10" class="section-card">
+      <h2>10. డెమో 2: java.lang.Object మెథడ్స్ కాంట్రాక్ట్ (toString, equals &amp; hashCode)</h2>
+      <p>
+        <code>java.lang.Object</code> లోని డిఫాల్ట్ మెథడ్స్ vs ఓవర్‌రైడ్ చేయబడిన బిజినెస్ లాజిక్ మధ్య వ్యత్యాసాన్ని ధృవీకరించే ప్రాక్టికల్ డెమో:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">ObjectClassContractDemo.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">import java.util.Objects;
+
+public class ObjectClassContractDemo {
+
+    // Overriding Object's core contracts properly
+    public static class BankCustomer {
+        private final String customerId;
+        private final String panCard;
+        private final String fullName;
+
+        public BankCustomer(String id, String pan, String name) {
+            this.customerId = id;
+            this.panCard = pan;
+            this.fullName = name;
+        }
+
+        @Override
+        public String toString() {
+            return "BankCustomer[ID=" + customerId + ", PAN=" + panCard + ", Name=" + fullName + "]";
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true; // Reference check
+            if (obj == null || getClass() != obj.getClass()) return false; // Type check
+
+            BankCustomer other = (BankCustomer) obj;
+            // Equality based on unique business key: customerId &amp; panCard
+            return Objects.equals(this.customerId, other.customerId) &amp;&amp;
+                   Objects.equals(this.panCard, other.panCard);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(customerId, panCard);
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("📜 JAVA.LANG.OBJECT CORE CONTRACTS AUDIT");
+        System.out.println("=================================================
+");
+
+        BankCustomer c1 = new BankCustomer("CUST-101", "ABCDE1234F", "Balaji Nemani");
+        BankCustomer c2 = new BankCustomer("CUST-101", "ABCDE1234F", "Balaji Nemani");
+        BankCustomer c3 = new BankCustomer("CUST-102", "XYZPQ9876K", "Karthik Verma");
+
+        // 1. toString() verification
+        System.out.println("1. Clean toString() Output:");
+        System.out.println("   c1: " + c1);
+
+        // 2. equals() verification
+        System.out.println("
+2. equals() Logic:");
+        System.out.println("   c1 == c2 (Reference Check):         " + (c1 == c2) + " (Distinct Heap Objects)");
+        System.out.println("   c1.equals(c2) (Content Equivalence): " + c1.equals(c2) + " (Same Customer ID &amp; PAN)");
+        System.out.println("   c1.equals(c3):                       " + c1.equals(c3));
+
+        // 3. hashCode() contract verification
+        System.out.println("
+3. hashCode() Contract:");
+        System.out.println("   c1.hashCode(): " + c1.hashCode());
+        System.out.println("   c2.hashCode(): " + c2.hashCode());
+        System.out.println("   Contract Satisfied (c1.equals(c2) =&gt; same hash): " + (c1.hashCode() == c2.hashCode()));
+
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+📜 JAVA.LANG.OBJECT CORE CONTRACTS AUDIT
+=================================================
+
+1. Clean toString() Output:
+   c1: BankCustomer[ID=CUST-101, PAN=ABCDE1234F, Name=Balaji Nemani]
+
+2. equals() Logic:
+   c1 == c2 (Reference Check):         false (Distinct Heap Objects)
+   c1.equals(c2) (Content Equivalence): true (Same Customer ID &amp; PAN)
+   c1.equals(c3):                       false
+
+3. hashCode() Contract:
+   c1.hashCode(): 2049182390
+   c2.hashCode(): 2049182390
+   Contract Satisfied (c1.equals(c2) =&gt; same hash): true
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 11: CAPSTONE PROJECT -->
+    <div id="sec-11" class="section-card">
+      <h2>11. Capstone ప్రాజెక్ట్: ఎంటర్‌ప్రైజ్ ఫిన్‌టెక్ పేమెంట్ గేట్‌వే</h2>
+      <p>
+        ఈ అధ్యాయంలో నేర్చుకున్న అన్ని కాన్సెప్టులను (వారసత్వ ఆర్కిటెక్చర్, IS-A రిలేషన్షిప్, <code>super()</code> కన్‌స్ట్రక్టర్లు, మెథడ్ రీ-యూస్ మరియు <code>java.lang.Object</code> కాంట్రాక్ట్) సమగ్రంగా మిళితం చేస్తూ ఒక ఎంటర్‌ప్రైజ్ స్థాయి <strong>Fintech Multi-Rail Payment Gateway Engine</strong> ను నిర్మిద్దాం:
+      </p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">FintechPaymentGatewayEngine.java</span>
+          <div class="btn-group">
+            <button class="btn-copy" onclick="copyCodeSnippet(this)">📋 Copy Code</button>
+            <button class="btn-run" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code class="language-java">import java.util.Objects;
+import java.util.UUID;
+
+public class FintechPaymentGatewayEngine {
+
+    // Base Transaction Class (Superclass)
+    public static class PaymentTransaction {
+        private final String transactionId;
+        private final double amount;
+        private final String currency;
+        private String status;
+
+        public PaymentTransaction(double amount, String currency) {
+            this.transactionId = "TXN-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+            this.amount = amount;
+            this.currency = currency;
+            this.status = "INITIATED";
+        }
+
+        public void processPayment() {
+            this.status = "SUCCESSFUL";
+            System.out.printf("  💳 Base Payment [%s] Settled: %s %,.2f%n", transactionId, currency, amount);
+        }
+
+        public String getTransactionId() { return transactionId; }
+        public double getAmount() { return amount; }
+        public String getStatus() { return status; }
+
+        @Override
+        public String toString() {
+            return String.format("[%s | %s %.2f | %s]", transactionId, currency, amount, status);
+        }
+    }
+
+    // Subclass 1: Credit Card Payment Rail
+    public static class CreditCardTransaction extends PaymentTransaction {
+        private final String maskedCardNumber;
+        private final String cardNetwork;
+
+        public CreditCardTransaction(double amount, String currency, String cardNum, String network) {
+            super(amount, currency); // Pass core fields to parent
+            this.maskedCardNumber = "XXXX-XXXX-XXXX-" + cardNum.substring(cardNum.length() - 4);
+            this.cardNetwork = network;
+        }
+
+        @Override
+        public void processPayment() {
+            System.out.println("🔒 Authorizing 3D Secure OTP with Card Network: " + cardNetwork);
+            super.processPayment(); // Leverage parent settlement
+            System.out.println("   └─► Card debited: " + maskedCardNumber);
+        }
+    }
+
+    // Subclass 2: UPI Instant Payment Rail
+    public static class UpiTransaction extends PaymentTransaction {
+        private final String vpaAddress;
+        private final String upiRefNumber;
+
+        public UpiTransaction(double amount, String currency, String vpa) {
+            super(amount, currency);
+            this.vpaAddress = vpa;
+            this.upiRefNumber = "UPI" + System.currentTimeMillis();
+        }
+
+        @Override
+        public void processPayment() {
+            System.out.println("⚡ NPCI Instant Switch Routing to VPA: " + vpaAddress);
+            super.processPayment();
+            System.out.println("   └─► Bank RRN Ref: " + upiRefNumber);
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=================================================");
+        System.out.println("💰 ENTERPRISE FINTECH PAYMENT GATEWAY PIPELINE");
+        System.out.println("=================================================
+");
+
+        // Rail 1: Credit Card
+        System.out.println("1. Processing Card Rail Transaction:");
+        PaymentTransaction cardTxn = new CreditCardTransaction(45000.0, "INR", "4111222233339842", "VISA");
+        cardTxn.processPayment();
+        System.out.println("   Transaction Dossier: " + cardTxn + "
+");
+
+        // Rail 2: UPI Instant
+        System.out.println("2. Processing UPI Rail Transaction:");
+        PaymentTransaction upiTxn = new UpiTransaction(2500.0, "INR", "balaji@okaxis");
+        upiTxn.processPayment();
+        System.out.println("   Transaction Dossier: " + upiTxn);
+
+        System.out.println("
+=================================================");
+        System.out.println("✅ All multi-rail transactions settled securely via Inheritance!");
+        System.out.println("=================================================");
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-output-card">
+        <div class="output-header">Terminal Output:</div>
+        <pre class="output-body">=================================================
+💰 ENTERPRISE FINTECH PAYMENT GATEWAY PIPELINE
+=================================================
+
+1. Processing Card Rail Transaction:
+🔒 Authorizing 3D Secure OTP with Card Network: VISA
+  💳 Base Payment [TXN-8F12A09B] Settled: INR 45,000.00
+   └─► Card debited: XXXX-XXXX-XXXX-9842
+   Transaction Dossier: [TXN-8F12A09B | INR 45000.00 | SUCCESSFUL]
+
+2. Processing UPI Rail Transaction:
+⚡ NPCI Instant Switch Routing to VPA: balaji@okaxis
+  💳 Base Payment [TXN-C401ED2A] Settled: INR 2,500.00
+   └─► Bank RRN Ref: UPI1730548192001
+   Transaction Dossier: [TXN-C401ED2A | INR 2500.00 | SUCCESSFUL]
+
+=================================================
+✅ All multi-rail transactions settled securely via Inheritance!
+=================================================</pre>
+      </div>
+    </div>
+
+    <!-- SECTION 12 -->
+    <div id="sec-12" class="section-card">
+      <h2>12. ప్రొడక్షన్ పిట్‌ఫాల్స్, బెస్ట్ ప్రాక్టీసెస్ &amp; 5 క్విజ్‌లు (Best Practices &amp; Quizzes)</h2>
+
+      <h4 style="color:#ef4444; margin:16px 0 10px 0;">🚫 ప్రొడక్షన్‌లో నివారించాల్సిన 4 ఘోరమైన తప్పులు (Production Pitfalls):</h4>
+      <ol style="line-height:1.8; color:var(--text2); font-size:14px; padding-left:20px;">
+        <li style="margin-bottom:10px;">
+          <strong>HAS-A రిలేషన్‌కు పొరపాటున ఇన్హెరిటెన్స్ వాడటం:</strong> కారుకు ఇంజిన్ ఉంటుందే తప్ప కారు ఇంజిన్ కాదు. <code>Car extends Engine</code> అని రాస్తే బలహీనమైన టైట్-కప్లింగ్ ఆర్కిటెక్చర్ ఏర్పడుతుంది. కంపోజిషన్ (Composition) వాడాలి.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>పేరెంట్ కన్‌స్ట్రక్టర్ లేకుండా సబ్‌క్లాస్ రాయడం:</strong> పేరెంట్ క్లాస్‌లో కేవలం పారామీటరైజ్డ్ కన్‌స్ట్రక్టర్ మాత్రమే ఉన్నప్పుడు, చైల్డ్ క్లాస్‌లో స్పష్టంగా <code>super(args)</code> రాయకపోతే కంపైలేషన్ ఎర్రర్ వస్తుంది.
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>equals() ని ఓవర్‌రైడ్ చేసి hashCode() ని మర్చిపోవడం:</strong> ఇది జావాలోని అత్యంత భయంకరమైన కలెక్షన్ బగ్స్ లో ఒకటి. HashSet లో ఒకే వాల్యూ ఉన్న ఆబ్జెక్టులు రెండుసార్లు ఇన్సర్ట్ అవుతాయి!
+        </li>
+        <li style="margin-bottom:10px;">
+          <strong>అనవసరమైన లోతైన వారసత్వ గొలుసులు (Deep Inheritance Trees):</strong> 4 లేదా 5 కంటే ఎక్కువ స్థాయిల వారసత్వం రాస్తే కోడ్‌ను మెయింటెయిన్ చేయడం అసాధ్యంగా మారుతుంది ("Favor composition over inheritance").
+        </li>
+      </ol>
+
+      <h4 style="color:#10b981; margin:26px 0 10px 0;">✨ ప్రొడక్షన్ గోల్డెన్ రూల్స్ (Golden Rules):</h4>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; font-size:13.5px; line-height:1.8; color:var(--text);">
+        1. <strong>IS-A ఖరారు:</strong> కేవలం నిజమైన IS-A రిలేషన్షిప్ ఉన్నప్పుడు మాత్రమే <code>extends</code> వాడండి.<br />
+        2. <strong>కన్‌స్ట్రక్టర్ గౌరవం:</strong> చైల్డ్ కన్‌స్ట్రక్టర్ మొదటి లైన్‌లోనే <code>super(...)</code> ఉపయోగించి పేరెంట్‌ను ఇనిషియలైజ్ చేయండి.<br />
+        3. <strong>equals &amp; hashCode:</strong> ఈ రెండింటినీ ఎల్లప్పుడూ ఒకే ఫీల్డ్‌ల ఆధారంగా జంటగా ఓవర్‌రైడ్ చేయండి.<br />
+        4. <strong>ఫైనల్ రక్షణ:</strong> ఒక క్లాస్‌ను ఎవరూ ఎక్స్‌టెండ్ చేయకూడదనుకుంటే దాన్ని <code>final class</code> గా ప్రకటించండి.
+      </div>
+
+      <!-- QUIZ SECTION -->
+      <h3 style="color:#10b981; margin:32px 0 16px 0;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 1: జావాలో క్లాసుల స్థాయిలో Multiple Inheritance ఎందుకు అనుమతించబడదు?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> డైమండ్ సమస్య (Diamond Problem) వల్ల వచ్చే కంపైలర్ అంబిగ్యుటీని నివారించడానికి.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 2: చైల్డ్ క్లాస్ ఆబ్జెక్ట్ సృష్టించినప్పుడు కన్‌స్ట్రక్టర్లు ఏ క్రమంలో ఎగ్జిక్యూట్ అవుతాయి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <strong>Top-Down ఆర్డర్</strong> లో: అత్యున్నత పేరెంట్ క్లాస్ కన్‌స్ట్రక్టర్ మొదటగా ఎగ్జిక్యూట్ అయి, చివరగా చైల్డ్ క్లాస్ కన్‌స్ట్రక్టర్ పూర్తవుతుంది.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 3: 'super()' కాల్ సబ్‌క్లాస్ కన్‌స్ట్రక్టర్ లో ఎక్కడ ఉండాలి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> తప్పనిసరిగా <strong>మొట్టమొదటి స్టేట్‌మెంట్ (First Line)</strong> గా మాత్రమే ఉండాలి.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 4: జావాలోని సమస్త క్లాసులకు అల్టిమేట్ పేరెంట్ క్లాస్ (Cosmic Superclass) ఏది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <strong><code>java.lang.Object</code></strong> క్లాస్.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 5: రెండు ఆబ్జెక్టులు 'a.equals(b) == true' అయితే వాటి hashCode ల పరిస్థితి ఏమిటి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> జావా కాంట్రాక్ట్ ప్రకారం వాటి యొక్క <strong>hashCode లు తప్పనిసరిగా సమానం (Must be Equal)</strong> కావాలి.
+        </p>
+      </details>
+    </div>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/16-java-encapsulation-access-modifiers-and-records.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 16. Encapsulation &amp; Records
+      </a>
+      <a href="/blog-java/18-java-polymorphism-method-overriding-dynamic-binding.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 18. Polymorphism &amp; Overriding →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>
