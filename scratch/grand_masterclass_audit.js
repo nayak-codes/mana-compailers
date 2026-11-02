@@ -18,3 +18,4 @@ console.log('\n-----------------------------------------------------------------
 console.log(`🌟 GRAND TOTAL: ${total.toLocaleString()} characters across 25 Chapters!`);
 console.log(`📊 AVERAGE: ${Math.round(total / 25).toLocaleString()} characters per chapter`);
 console.log('========================================================================\n');
+

@@ -703,3 +703,4 @@ fs.writeFileSync(outPath, chapter20Content, 'utf8');
 console.log('✅ Successfully generated Java Chapter 20 in exact JavaScript HTML style!');
 console.log('Target file:', outPath);
 console.log('Target file size:', chapter20Content.length, 'characters');
+

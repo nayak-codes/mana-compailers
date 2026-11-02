@@ -24,36 +24,96 @@ const chapter25Content = `<!DOCTYPE html>
   <script>
     function toggleAccordion(btn) {
       const content = btn.nextElementSibling;
-      const icon = btn.querySelector('.accordion-icon');
-      content.classList.toggle('open');
-      if (icon) {
-        icon.textContent = content.classList.contains('open') ? '▾' : '▸';
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
       }
     }
 
-    function copyCode(btn) {
-      const pre = btn.closest('.code-block').querySelector('pre');
-      navigator.clipboard.writeText(pre.innerText).then(() => {
-        const orig = btn.innerText;
-        btn.innerText = 'Copied!';
-        setTimeout(() => btn.innerText = orig, 2000);
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
       });
     }
 
-    function runCode(btn) {
-      const pre = btn.closest('.code-block').querySelector('pre');
-      localStorage.setItem('mana_java_run_code', pre.innerText);
-      window.open('/java.html', '_blank');
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
     }
+
+    function highlightJavaCode(rawCode) {
+      const tokens = [];
+      const pushToken = (cls, text) => {
+        const id = tokens.length;
+        tokens.push(\`<span class="\${cls}">\${text}</span>\`);
+        return \`___JAVA_TOK_\${id}___\`;
+      };
+
+      let code = rawCode.replace(/(\\/\*[\s\S]*?\\*\/|\\/\\/.*$)/gm, m => pushToken('cm', m));
+      code = code.replace(/("(?:[^"\\\\]|\\\\.)*"|'(?:[^'\\\\]|\\\\.)*')/g, m => pushToken('st', m));
+      code = code.replace(/(@[a-zA-Z_][a-zA-Z0-9_]*)/g, m => pushToken('ann', m));
+
+      const kwList = ['public','private','protected','class','interface','record','enum','static','final','void','return','if','else','switch','case','default','break','continue','for','while','do','try','catch','finally','throw','throws','new','this','super','extends','implements','import','package','synchronized','instanceof','abstract','transient','volatile','var','sealed','permits','yield','non-sealed'];
+      const kwRegex = new RegExp(\`\\\\b(\${kwList.join('|')})\\\\b\`, 'g');
+      code = code.replace(kwRegex, m => pushToken('kw', m));
+
+      const typeList = ['String','int','double','float','long','boolean','char','byte','short','List','ArrayList','LinkedList','Set','HashSet','TreeSet','Map','HashMap','TreeMap','LinkedHashMap','Integer','Double','Boolean','Long','Object','System','Math','Arrays','Collections','Instant','UUID','Scanner','Iterator','ListIterator','Predicate','Function','Consumer','Supplier','Stream','Collectors','Exception','RuntimeException','Optional','DoubleSummaryStatistics','Thread','Runnable','Comparator','Objects','ConcurrentHashMap','CopyOnWriteArrayList','BigDecimal'];
+      const typeRegex = new RegExp(\`\\\\b(\${typeList.join('|')})\\\\b\`, 'g');
+      code = code.replace(typeRegex, m => pushToken('tp', m));
+
+      code = code.replace(/\\b(\\d+(?:\\.\\d+)?(?:[fFdDlL])?)\\b/g, m => pushToken('nu', m));
+
+      code = code.replace(/\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()/g, (m, fnName) => pushToken('fn', fnName));
+
+      tokens.forEach((t, i) => {
+        code = code.replace(\`___JAVA_TOK_\${i}___\`, t);
+      });
+
+      return code;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.code-block code').forEach(codeEl => {
+        if (!codeEl.innerHTML.includes('<span class=')) {
+          codeEl.innerHTML = highlightJavaCode(codeEl.textContent);
+        }
+      });
+    });
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
   </script>
 </head>
-<body class="bg-gray-900 text-gray-100 font-sans min-h-screen">
+<body class="lang-java light-theme">
 
-<div style="display:flex; min-height:100vh; position:relative;">
+<div class="layout">
   ${buildJavaSidebar(25)}
 
-  <!-- MAIN CONTENT AREA -->
-  <main style="flex:1; max-width:980px; margin:0 auto; padding:32px 28px 80px 28px; overflow-x:hidden;">
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 25: Real-World Banking Capstone</span>
+    </div>
     
     <!-- HEADER BADGES & META -->
     <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:16px;">
@@ -219,17 +279,15 @@ const chapter25Content = `<!DOCTYPE html>
         క్రింది జావా ప్రోగ్రామ్‌లో డొమైన్ రికార్డులు, ఖాతా స్థితిగతులు, మరియు కస్టమ్ ఎక్సెప్షన్ల క్లాస్ హైరార్కీని స్వయంగా చూడండి.
       </p>
 
-      <div class="code-block" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; margin:24px 0; overflow:hidden; box-shadow:0 4px 14px rgba(0,0,0,0.04);">
-        <div style="background:#f8fafc; border-bottom:1px solid #e2e8f0; padding:10px 16px; display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:700; color:#334155;">
-            📄 CoreBankingDomainAndExceptions.java
-          </span>
-          <div style="display:flex; gap:8px;">
-            <button onclick="copyCode(this)" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:5px 12px; font-size:12px; font-weight:600; cursor:pointer; color:#475569;">Copy Code</button>
-            <button onclick="runCode(this)" style="background:#047857; border:none; border-radius:6px; padding:5px 14px; font-size:12px; font-weight:700; cursor:pointer; color:#ffffff;">Run in Java Compiler</button>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">☕ Java — CoreBankingDomainAndExceptions.java</span>
+          <div class="code-actions" style="display:flex; gap:8px;">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#ffffff; border-radius:6px; padding:4px 10px; font-size:11px; font-weight:600; cursor:pointer;">📋 Copy Code</button>
+            <button class="run-btn" onclick="runInJavaCompiler(this)" style="background:#047857; border:none; color:#ffffff; border-radius:6px; padding:4px 12px; font-size:11px; font-weight:700; cursor:pointer;">▶ Run in Java Compiler</button>
           </div>
         </div>
-        <pre style="margin:0; padding:18px; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.6; overflow-x:auto; background:#ffffff; color:#0f172a;">import java.time.Instant;
+        <pre><code class="language-java">import java.time.Instant;
 import java.util.*;
 
 public class CoreBankingDomainAndExceptions {
@@ -298,14 +356,12 @@ public class CoreBankingDomainAndExceptions {
             System.err.println("  Details   : " + e.getMessage());
         }
     }
-}</pre>
+}</code></pre>
       </div>
 
-      <div class="code-output-card" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; margin:20px 0; overflow:hidden;">
-        <div style="background:#f1f5f9; padding:8px 16px; border-bottom:1px solid #e2e8f0; font-size:12.5px; font-weight:700; color:#475569; display:flex; align-items:center; gap:6px;">
-          💻 కన్సోల్ అవుట్‌పుట్ (Program Terminal Output)
-        </div>
-        <pre style="margin:0; padding:16px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#0f172a; line-height:1.6; background:#ffffff; overflow-x:auto;">=== 1. DOMAIN &amp; EXCEPTION ARCHITECTURE TEST ===
+      <div class="code-output-card">
+        <div class="output-header">💻 కన్సోల్ అవుట్‌పుట్ (Program Terminal Output):</div>
+        <pre class="output-content">=== 1. DOMAIN &amp; EXCEPTION ARCHITECTURE TEST ===
 నమోదు చేయబడిన ఖాతా: BankAccount[accountNumber=ACC-9001, holderName=Balaji Coding Academy, balance=150000.0, status=ACTIVE, createdDate=2026-11-02T12:00:00Z]
 
 ❌ [CAUGHT EXPECTED BANKING ERROR]
@@ -359,17 +415,15 @@ public class CoreBankingDomainAndExceptions {
         క్రింది జావా ప్రోగ్రామ్‌లో స్ట్రీమ్స్ ద్వారా బ్యాంకింగ్ లావాదేవీలలో మోసాలను గుర్తించడం మరియు ఆడిట్ లాగ్ సమ్మరైజేషన్ ఎలా జరుగుతుందో స్వయంగా చూడండి.
       </p>
 
-      <div class="code-block" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; margin:24px 0; overflow:hidden; box-shadow:0 4px 14px rgba(0,0,0,0.04);">
-        <div style="background:#f8fafc; border-bottom:1px solid #e2e8f0; padding:10px 16px; display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:700; color:#334155;">
-            📄 FraudDetectionAndTransactionPipeline.java
-          </span>
-          <div style="display:flex; gap:8px;">
-            <button onclick="copyCode(this)" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:5px 12px; font-size:12px; font-weight:600; cursor:pointer; color:#475569;">Copy Code</button>
-            <button onclick="runCode(this)" style="background:#047857; border:none; border-radius:6px; padding:5px 14px; font-size:12px; font-weight:700; cursor:pointer; color:#ffffff;">Run in Java Compiler</button>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">☕ Java — FraudDetectionAndTransactionPipeline.java</span>
+          <div class="code-actions" style="display:flex; gap:8px;">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#ffffff; border-radius:6px; padding:4px 10px; font-size:11px; font-weight:600; cursor:pointer;">📋 Copy Code</button>
+            <button class="run-btn" onclick="runInJavaCompiler(this)" style="background:#047857; border:none; color:#ffffff; border-radius:6px; padding:4px 12px; font-size:11px; font-weight:700; cursor:pointer;">▶ Run in Java Compiler</button>
           </div>
         </div>
-        <pre style="margin:0; padding:18px; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.6; overflow-x:auto; background:#ffffff; color:#0f172a;">import java.time.Instant;
+        <pre><code class="language-java">import java.time.Instant;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -427,14 +481,12 @@ public class FraudDetectionAndTransactionPipeline {
 
         System.out.printf("\n✅ సురక్షితమైన ఆమోదిత లావాదేవీల మొత్తం: ₹%,.2f%n", approvedTurnover);
     }
-}</pre>
+}</code></pre>
       </div>
 
-      <div class="code-output-card" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; margin:20px 0; overflow:hidden;">
-        <div style="background:#f1f5f9; padding:8px 16px; border-bottom:1px solid #e2e8f0; font-size:12.5px; font-weight:700; color:#475569; display:flex; align-items:center; gap:6px;">
-          💻 కన్సోల్ అవుట్‌పుట్ (Program Terminal Output)
-        </div>
-        <pre style="margin:0; padding:16px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#0f172a; line-height:1.6; background:#ffffff; overflow-x:auto;">=== REAL-TIME BANKING FRAUD DETECTION PIPELINE ===
+      <div class="code-output-card">
+        <div class="output-header">💻 కన్సోల్ అవుట్‌పుట్ (Program Terminal Output):</div>
+        <pre class="output-content">=== REAL-TIME BANKING FRAUD DETECTION PIPELINE ===
 మొత్తం ఇన్కమింగ్ లావాదేవీలు: 5
 
 🚨 --- FLAGGED SUSPICIOUS TRANSACTIONS (3) ---
@@ -469,17 +521,15 @@ public class FraudDetectionAndTransactionPipeline {
         ఈ సమగ్ర జావా అప్లికేషన్ 100% ఎగ్జిక్యూటబుల్ మరియు పరిశ్రమ ప్రమాణాలకు అనుగుణంగా రూపొందించబడింది. రన్ చేసి లైవ్ కన్సోల్ అవుట్‌పుట్‌ను పరిశీలించండి:
       </p>
 
-      <div class="code-block" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; margin:24px 0; overflow:hidden; box-shadow:0 4px 14px rgba(0,0,0,0.04);">
-        <div style="background:#f8fafc; border-bottom:1px solid #e2e8f0; padding:10px 16px; display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:700; color:#334155;">
-            📄 NextGenEnterpriseBankingEngine.java
-          </span>
-          <div style="display:flex; gap:8px;">
-            <button onclick="copyCode(this)" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:5px 12px; font-size:12px; font-weight:600; cursor:pointer; color:#475569;">Copy Code</button>
-            <button onclick="runCode(this)" style="background:#047857; border:none; border-radius:6px; padding:5px 14px; font-size:12px; font-weight:700; cursor:pointer; color:#ffffff;">Run in Java Compiler</button>
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="lang-tag">☕ Java — NextGenEnterpriseBankingEngine.java</span>
+          <div class="code-actions" style="display:flex; gap:8px;">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#ffffff; border-radius:6px; padding:4px 10px; font-size:11px; font-weight:600; cursor:pointer;">📋 Copy Code</button>
+            <button class="run-btn" onclick="runInJavaCompiler(this)" style="background:#047857; border:none; color:#ffffff; border-radius:6px; padding:4px 12px; font-size:11px; font-weight:700; cursor:pointer;">▶ Run in Java Compiler</button>
           </div>
         </div>
-        <pre style="margin:0; padding:18px; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.6; overflow-x:auto; background:#ffffff; color:#0f172a;">import java.time.Instant;
+        <pre><code class="language-java">import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -625,14 +675,12 @@ public class NextGenEnterpriseBankingEngine {
         // లైవ్ ఎనలిటిక్స్ రిపోర్ట్ జనరేట్ చేయడం
         bank.generateAnalyticsReport();
     }
-}</pre>
+}</code></pre>
       </div>
 
-      <div class="code-output-card" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; margin:20px 0; overflow:hidden;">
-        <div style="background:#f1f5f9; padding:8px 16px; border-bottom:1px solid #e2e8f0; font-size:12.5px; font-weight:700; color:#475569; display:flex; align-items:center; gap:6px;">
-          💻 కన్సోల్ అవుట్‌పుట్ (Program Terminal Output)
-        </div>
-        <pre style="margin:0; padding:16px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#0f172a; line-height:1.6; background:#ffffff; overflow-x:auto;">🚀 INITIALIZING NEXTGEN BANKING ENGINE (Java 21 LTS Capstone)...
+      <div class="code-output-card">
+        <div class="output-header">💻 కన్సోల్ అవుట్‌పుట్ (Program Terminal Output):</div>
+        <pre class="output-content">🚀 INITIALIZING NEXTGEN BANKING ENGINE (Java 21 LTS Capstone)...
 🏦 [ACCOUNT OPENED] ACC-101 | Name: Balaji Technologies | Bal: ₹500,000.00
 🏦 [ACCOUNT OPENED] ACC-102 | Name: Anand Telecom   | Bal: ₹120,000.00
 🏦 [ACCOUNT OPENED] ACC-103 | Name: Kavitha Enterprises | Bal: ₹350,000.00
