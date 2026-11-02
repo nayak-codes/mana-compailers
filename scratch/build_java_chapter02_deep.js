@@ -1,0 +1,685 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildJavaSidebar } = require('./java_curriculum_data.js');
+
+const currentLesson = LESSONS.find(l => l.num === 2);
+
+const chapter02Content = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Installation, IDE Setup &amp; First Program తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా 21 ఎన్విరాన్‌మెంట్ సెటప్, OpenJDK 21 LTS ఇన్‌స్టాలేషన్, JAVA_HOME &amp; PATH కాన్ఫిగరేషన్, VS Code &amp; IntelliJ IDEA సెటప్, మరియు మీ మొదటి Hello World ప్రోగ్రామ్ రన్ చేయడం తెలుగులో సమగ్రంగా నేర్చుకోండి." />
+  <meta name="keywords" content="java installation telugu, openjdk 21 setup telugu, java_home path configuration windows telugu, intellij idea java telugu, vs code java setup telugu, java first program hello world telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/02-java-installation-ide-and-first-program.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-java light-theme">
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+  ${buildJavaSidebar(2)}
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 02: Setup &amp; First Program</span>
+    </div>
+
+    <h1 class="page-title">02. ఎన్విరాన్‌మెంట్ సెటప్, JDK 21+ &amp; మొదటి ప్రోగ్రామ్ (Environment Setup, JDK 21+ &amp; First Program)</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java (Java 21+ LTS)</span>
+      <span class="badge">🟢 Lesson 02 of 25</span>
+      <span class="badge">📂 Part 01: Basics &amp; JVM (Page 2 of 5)</span>
+      <span class="badge">⏱️ 22 min read</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>Architect's Toolkit Analogy · OpenJDK 21 LTS Installation · JAVA_HOME &amp; System PATH Configuration · VS Code vs IntelliJ IDEA Setup · First Hello World Program · javac &amp; java CLI Anatomy · Classpath Mechanics · 5 Production Pitfalls</span>
+    </div>
+
+    <!-- Intro Box with Architect's Toolkit Analogy -->
+    <div class="intro-box">
+      <p style="font-size: 16px; line-height: 1.8; margin-bottom: 12px;">
+        ఏదైనా ప్రోగ్రామింగ్ భాషలో గొప్ప సాఫ్ట్‌వేర్ ఇంజనీర్‌గా ఎదగడానికి మొదటి మరియు అత్యంత దృఢమైన పునాది — మీ స్థానిక కంప్యూటర్‌లో డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్‌ను సరైన పరిశ్రమ ప్రమాణాలతో నిర్మించుకోవడం. జావా ప్రపంచంలో కేవలం ఒక కంపైలర్ ఉంటే సరిపోదు; సిస్టమ్ పాత్ కాన్ఫిగరేషన్, ఆధునిక ఇంటెలిజెంట్ IDE, మరియు బిల్డ్ టూల్స్ అనుసంధానం అత్యంత కీలకం.
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin-bottom: 12px;">
+        <strong>ఆర్కిటెక్ట్ వర్క్‌షాప్ &amp; టూల్‌కిట్ అనాలజీ (The Architect's Workshop &amp; Toolkit Analogy):</strong>
+        <br>
+        1. <strong>JDK 21 (The Heavy Machinery Workshop):</strong> ఒక అంతర్జాతీయ స్థాయి భవన నిర్మాణ శిల్పికి అవసరమైన క్రేన్లు, మెటల్ కట్టర్లు, లేజర్ స్కేలర్లు మరియు రోలింగ్ మెషీన్లు ఎలాగో — ఒక ప్రొఫెషనల్ జావా డెవలపర్‌కు కంపైలర్ (<code>javac</code>), రన్‌టైమ్ వర్చువల్ మెషీన్ (<code>java</code>), డాక్యుమెంటర్ (<code>javadoc</code>), మరియు ప్యాకేజింగ్ ఆర్కైవర్ (<code>jar</code>) ఉండే పూర్తి వర్క్‌షాప్ JDK (Java Development Kit).
+        <br>
+        2. <strong>JAVA_HOME &amp; PATH (The Global GPS Navigation Address):</strong> మీ వర్క్‌షాప్ నగరం నడిబొడ్డున ఉన్నా, దానికి సరైన రోడ్డు లేదా జీపీఎస్ అడ్రస్ లేకపోతే ఎవరు చేరుకోలేరు. అలాగే విండోస్ లేదా లైనక్స్ ఆపరేటింగ్ సిస్టమ్‌కు జావా టూల్స్ ఎక్కడ ఉన్నాయో చూపే సిస్టమ్ GPS అడ్రస్సే <code>JAVA_HOME</code> మరియు <code>PATH</code> ఎన్విరాన్‌మెంట్ వేరియబుల్స్.
+        <br>
+        3. <strong>IDE - IntelliJ IDEA / VS Code (The Modern Digital Drafting Studio):</strong> కాగితంపై పెన్సిల్‌తో డ్రాయింగ్ వేసే బదులు, తప్పులు జరిగితే వెంటనే హెచ్చరించే ఆటో-కరెక్షన్, బ్లూప్రింట్ 3D ప్రివ్యూ, మరియు ఎర్రర్ వార్నింగ్స్ ఇచ్చే అత్యాధునిక డిజిటల్ ఆర్కిటెక్చర్ కంప్యూటర్ స్టూడియో లాంటిదే ఆధునిక IDE.
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin: 0;">
+        ఈ రెండవ పాఠంలో మనం పరిశ్రమ ప్రమాణమైన <strong>OpenJDK 21 (LTS)</strong> ను సున్నా నుండి ఇన్‌స్టాల్ చేయడం, విండోస్ ఎన్విరాన్‌మెంట్ వేరియబుల్స్ సెట్ చేయడం, టెర్మినల్ ద్వారా మన మొదటి జావా ప్రోగ్రామ్‌ను కంపైల్ చేసి రన్ చేయడం, మరియు డెవలపర్లు ఎదుర్కొనే ప్రధాన లోపాలను లోతుగా నేర్చుకుందాం!
+      </p>
+    </div>
+
+    <!-- TABLE OF CONTENTS (ఈ page లో ఏముంది) -->
+    <div class="toc-card">
+      <div class="toc-title">📋 ఈ Page లో ఏముంది? (Contents)</div>
+      <div class="toc-grid">
+        <div class="toc-col">
+          <h4><a href="#sec-1" style="color:#10b981; text-decoration:none;">విభాగం A: JDK 21 ఇన్‌స్టాలేషన్ &amp; పాత్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-1">1. సరైన JDK ఎంపిక: Oracle JDK vs OpenJDK</a></li>
+            <li><a href="#sec-2">2. OpenJDK 21 LTS ఇన్‌స్టాలేషన్ స్టెప్-బై-స్టెప్</a></li>
+            <li><a href="#sec-3">3. JAVA_HOME &amp; System PATH కాన్ఫిగరేషన్</a></li>
+            <li><a href="#sec-4">4. టెర్మినల్ వెరిఫికేషన్ కమాండ్స్ &amp; డయాగ్నోస్టిక్స్</a></li>
+          </ul>
+        </div>
+        <div class="toc-col">
+          <h4><a href="#sec-5" style="color:#38bdf8; text-decoration:none;">విభాగం B: IDE సెటప్ &amp; ఫస్ట్ ప్రోగ్రామ్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-5">5. IDE ఎంపిక: IntelliJ IDEA vs VS Code</a></li>
+            <li><a href="#sec-6">6. మొదటి "Hello World" ప్రోగ్రామ్ అనాటమీ</a></li>
+            <li><a href="#sec-7">7. కంపైలేషన్ &amp; ఎగ్జిక్యూషన్ అంతర్గత ప్రాసెస్</a></li>
+            <li><a href="#sec-8">8. కోడ్ డెమో 1: సిస్టమ్ ఎన్విరాన్‌మెంట్ ఇన్స్పెక్టర్</a></li>
+          </ul>
+        </div>
+        <div class="toc-col">
+          <h4><a href="#sec-9" style="color:#f59e0b; text-decoration:none;">విభాగం C: CLI ఫ్లాగ్స్ &amp; ట్రబుల్‌షూటింగ్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-9">9. కోడ్ డెమో 2: మల్టీ-లైన్ కన్సోల్ అవుట్‌పుట్ ఇంజిన్</a></li>
+            <li><a href="#sec-10">10. కోడ్ డెమో 3: డెవలపర్ వర్క్‌స్పేస్ వెరిఫైయర్ (Capstone)</a></li>
+            <li><a href="#sec-11">11. డెవలపర్లు ఎదుర్కొనే 5 కామన్ ఎర్రర్లు &amp; పరిష్కారాలు</a></li>
+            <li><a href="#sec-12">12. బెస్ట్ ప్రాక్టీసెస్ &amp; 5 ఇంటరాక్టివ్ క్విజ్‌లు</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1 -->
+    <h2 class="section-title" id="sec-1"><span class="num">1</span> సరైన JDK ఎంపిక: Oracle JDK vs OpenJDK సమగ్ర పోలిక</h2>
+    <div class="section-body">
+      <p>
+        జావా ప్రపంచంలోకి అడుగుపెట్టే ప్రతి కొత్త డెవలపర్‌కు వచ్చే మొదటి మరియు అత్యంత ప్రధానమైన సందేహం — "మార్కెట్లో ఇన్ని రకాల JDKలు ఉన్నాయి కదా, నేను దేనిని డౌన్‌లోడ్ చేసుకోవాలి?". గతంలో కేవలం Sun Microsystems మాత్రమే జావాను విడుదల చేసేది. అయితే 2006లో జావాను ఓపెన్ సోర్స్ చేసిన తర్వాత, ప్రపంచవ్యాప్తంగా అనేక టెక్ దిగ్గజాలు తమ స్వంత పంపిణీలను (Distributions) రూపొందిస్తున్నాయి. ప్రస్తుతం అందుబాటులో ఉన్న ప్రధాన JDK ఎంపికలను కింది పట్టికలో పరిశీలిద్దాం:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>ఫీచర్</th>
+            <th>Oracle JDK</th>
+            <th>Eclipse Temurin (Adoptium OpenJDK)</th>
+            <th>Amazon Corretto / MS OpenJDK</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>లైసెన్సింగ్ మోడల్ (License)</strong></td>
+            <td>OTN License (కమర్షియల్ ప్రొడక్షన్ కోసం కంపెనీలు భారీగా లైసెన్స్ ఫీజు చెల్లించాలి).</td>
+            <td><strong>GPL v2 with Classpath Exception</strong> (100% ఉచితం, పూర్తి ఓపెన్ సోర్స్).</td>
+            <td>GPL v2 (పూర్తి ఉచితం, క్లౌడ్ ఆప్టిమైజ్డ్).</td>
+          </tr>
+          <tr>
+            <td><strong>ఉపయోగ పరిధి (Usage Scope)</strong></td>
+            <td>పర్సనల్ లెర్నింగ్ మరియు లోకల్ టెస్టింగ్‌కు మాత్రమే ఉచితం.</td>
+            <td><strong>ఎంటర్‌ప్రైజ్ ప్రొడక్షన్, స్టార్టప్‌లు &amp; బిజినెస్ ప్రాజెక్టులకు పూర్తి ఉచితం.</strong></td>
+            <td>AWS, Azure క్లౌడ్ మరియు మైక్రోసర్వీసులకు అనుకూలం.</td>
+          </tr>
+          <tr>
+            <td><strong>LTS మద్దతు (Support)</strong></td>
+            <td>Oracle స్వంత పెయిడ్ సపోర్ట్ ప్లాన్.</td>
+            <td>Adoptium వర్కింగ్ గ్రూప్ (Google, Microsoft, Red Hat, IBM) సంయుక్త సపోర్ట్.</td>
+            <td>Amazon &amp; Microsoft స్వంత క్లౌడ్ సపోర్ట్.</td>
+          </tr>
+          <tr>
+            <td><strong>పరిశ్రమ సిఫార్సు</strong></td>
+            <td>కేవలం లెగసీ లైసెన్స్ ఉన్న కార్పొరేట్ కంపెనీలు.</td>
+            <td><strong>డెవలపర్లు, విద్యార్థులు &amp; ప్రొఫెషనల్ ఇంజనీర్లకు నంబర్ 1 సిఫార్సు!</strong></td>
+            <td>క్లౌడ్ ఆధారిత అప్లికేషన్లకు సిఫార్సు.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="concept-card">
+        <h4>💡 Industry Standard Recommendation (పరిశ్రమ ప్రమాణం):</h4>
+        <p>
+          మాస్టర్‌క్లాస్ విద్యార్థులందరికీ మేము <strong>Eclipse Temurin (Adoptium) OpenJDK 21 (LTS)</strong> ను బలంగా సిఫార్సు చేస్తున్నాము. ఇది అధికారిక Java SE TCK (Technology Compatibility Kit) ను 100% విజయవంతంగా పాస్ అయిన అత్యంత స్థిరమైన, పరిశ్రమలో విస్తృతంగా ఉపయోగించబడుతున్న డిస్ట్రిబ్యూషన్. దీనిని ప్రొడక్షన్‌లో వాడినా కంపెనీలకు ఎలాంటి లీగల్ లేదా లైసెన్సింగ్ సమస్యలు తలెత్తవు.
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <h2 class="section-title" id="sec-2"><span class="num">2</span> OpenJDK 21 LTS ఇన్‌స్టాలేషన్ స్టెప్-బై-స్టెప్</h2>
+    <div class="section-body">
+      <p>
+        మీ కంప్యూటర్‌లో OpenJDK 21 ని సురక్షితంగా మరియు పక్కాగా ఇన్‌స్టాల్ చేయడానికి కింది 4 దశలను అనుసరించండి:
+      </p>
+      <ol style="line-height: 2.1; margin-left: 20px; color: var(--text);">
+        <li>
+          <strong>అధికారిక వెబ్‌సైట్ సందర్శన:</strong> మీ బ్రౌజర్‌లో <code>https://adoptium.net</code> వెబ్‌సైట్‌కు వెళ్లండి.
+        </li>
+        <li>
+          <strong>వెర్షన్ ఎంపిక:</strong> హోమ్‌పేజీలో కనిపించే <strong>Temurin 21 (LTS)</strong> బటన్‌పై క్లిక్ చేయండి. మీ ఆపరేటింగ్ సిస్టమ్ విండోస్ అయితే <code>Windows x64</code> ఆర్కిటెక్చర్‌ను ఎంచుకుని <code>.msi</code> (Windows Installer) ఫైల్‌ను డౌన్‌లోడ్ చేసుకోండి.
+        </li>
+        <li>
+          <strong>ఇన్‌స్టాలర్ విజార్డ్ ప్రారంభం:</strong> డౌన్‌లోడ్ అయిన <code>.msi</code> ఫైల్‌పై డబుల్ క్లిక్ చేయండి. "Welcome to Eclipse Temurin Setup Wizard" స్క్రీన్ కనిపిస్తుంది. <strong>Next</strong> క్లిక్ చేయండి.
+        </li>
+        <li>
+          <strong>కస్టమ్ సెటప్ ఫీచర్స్ (కీలకమైన దశ!):</strong> ఫీచర్ల జాబితాలో కింది రెండు ఆప్షన్లను తప్పనిసరిగా ఎనేబుల్ చేయండి:
+          <br>
+          &nbsp;&nbsp;• <em>"Add to PATH"</em> — దీనిని <strong>"Entire feature will be installed on local hard drive"</strong> గా మార్చండి.
+          <br>
+          &nbsp;&nbsp;• <em>"Set JAVA_HOME variable"</em> — దీని పక్కన ఉన్న డ్రాప్‌డౌన్ క్లిక్ చేసి <strong>"Entire feature will be installed on local hard drive"</strong> ను సెలెక్ట్ చేసుకోండి.
+        </li>
+        <li>
+          <strong>ఇన్‌స్టాలేషన్ పూర్తి:</strong> <strong>Install</strong> క్లిక్ చేయండి. యూజర్ అకౌంట్ కంట్రోల్ (UAC) పాప్-అప్ వచ్చినప్పుడు <strong>Yes</strong> క్లిక్ చేస్తే కొన్ని సెకన్లలో ఇన్‌స్టాలేషన్ విజయవంతంగా పూర్తవుతుంది.
+        </li>
+      </ol>
+    </div>
+
+    <!-- Section 3 -->
+    <h2 class="section-title" id="sec-3"><span class="num">3</span> JAVA_HOME &amp; System PATH కాన్ఫిగరేషన్ (మ్యాన్యువల్ వెరిఫికేషన్)</h2>
+    <div class="section-body">
+      <p>
+        కొన్నిసార్లు ఇన్‌స్టాలర్ ద్వారా ఆటోమేటిక్‌గా వేరియబుల్స్ సెట్ కాకపోవచ్చు, లేదా మీరు <code>.zip</code> ఆర్కైవ్ ద్వారా పోర్టబుల్ JDK ని డౌన్‌లోడ్ చేసుకుని ఉండవచ్చు. అటువంటి పరిస్థితుల్లో విండోస్ ఎన్విరాన్‌మెంట్ వేరియబుల్స్‌ను మ్యాన్యువల్‌గా ఎలా కాన్ఫిగర్ చేయాలో ప్రతి సాఫ్ట్‌వేర్ ఇంజనీర్ తప్పనిసరిగా తెలుసుకోవాలి:
+      </p>
+
+      <div class="concept-card">
+        <h4>⚙️ Step-by-Step Manual Environment Configuration:</h4>
+        <p>
+          1. విండోస్ సెర్చ్ బార్‌లో <code>Win + S</code> ప్రెస్ చేసి <strong>"environment variables"</strong> అని టైప్ చేసి <em>"Edit the system environment variables"</em> ను ఓపెన్ చేయండి.<br>
+          2. క్రింద కనిపించే <strong>"Environment Variables..."</strong> బటన్‌ను క్లిక్ చేయండి.<br>
+          3. <em>"System variables"</em> (క్రింది బాక్స్) లో <strong>New...</strong> బటన్ నొక్కండి:<br>
+          &nbsp;&nbsp;• <strong>Variable name:</strong> <code>JAVA_HOME</code><br>
+          &nbsp;&nbsp;• <strong>Variable value:</strong> <code>C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.2-hotspot\\</code> (గమనిక: చివర <code>bin</code> ఫోల్డర్ ఉండకూడదు, కేవలం JDK రూట్ ఫోల్డర్ మాత్రమే ఇవ్వాలి).<br>
+          4. ఇప్పుడు <em>System variables</em> జాబితాలో <strong>Path</strong> అనే వేరియబుల్ ఉంటుంది. దానిని సెలెక్ట్ చేసి <strong>Edit...</strong> క్లిక్ చేయండి.<br>
+          5. విండో కుడివైపున ఉన్న <strong>New</strong> బటన్ నొక్కి <code>%JAVA_HOME%\\bin</code> అని టైప్ చేయండి.<br>
+          6. పైకి తరలించడానికి <strong>Move Up</strong> బటన్ నొక్కి దానిని మొదటి స్థానాల్లో ఉంచండి, తర్వాత అన్ని డైలాగ్ బాక్సులలో <strong>OK</strong> నొక్కండి.
+        </p>
+      </div>
+
+      <p>
+        <strong>JAVA_HOME ఎందుకు అంత ముఖ్యం?</strong> పరిశ్రమలో మీరు భవిష్యత్తులో ఉపయోగించే స్ప్రింగ్ బూట్ (Spring Boot), మేవెన్ (Apache Maven), గ్రేడిల్ (Gradle), డాకర్ (Docker), మరియు టామ్‌క్యాట్ (Apache Tomcat) సర్వర్లు మీ సిస్టమ్‌లోని జావా రన్‌టైమ్‌ను కనుగొనడానికి <code>JAVA_HOME</code> ఎన్విరాన్‌మెంట్ వేరియబుల్‌నే ప్రామాణికంగా ఉపయోగిస్తాయి.
+      </p>
+    </div>
+
+    <!-- Section 4 -->
+    <h2 class="section-title" id="sec-4"><span class="num">4</span> టెర్మినల్ వెరిఫికేషన్ కమాండ్స్ &amp; డయాగ్నోస్టిక్స్</h2>
+    <div class="section-body">
+      <p>
+        ఇన్‌స్టాలేషన్ మరియు పాత్ సెట్టింగ్స్ విజయవంతంగా పూర్తయ్యాయో లేదో ధృవీకరించుకోవడానికి ఒక సరికొత్త Command Prompt (cmd) లేదా PowerShell విండోను ఓపెన్ చేయండి (పాత టెర్మినల్ విండోలో కొత్త పాత్ అప్‌డేట్ అవ్వదు). కింది 3 డయాగ్నోస్టిక్ కమాండ్స్ రన్ చేయండి:
+      </p>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.7;">
+        <span style="color:#6a9955;"># 1. జావా రన్‌టైమ్ (JVM) వెర్షన్ చెక్ చేయడం</span><br>
+        <span style="color:#569cd6;">java</span> -version<br>
+        <span style="color:#808080;">openjdk version "21.0.2" 2024-01-16 LTS</span><br>
+        <span style="color:#808080;">OpenJDK Runtime Environment Temurin-21.0.2+13 (build 21.0.2+13-LTS)</span><br>
+        <span style="color:#808080;">OpenJDK 64-Bit Server VM Temurin-21.0.2+13 (build 21.0.2+13-LTS, mixed mode, sharing)</span><br><br>
+
+        <span style="color:#6a9955;"># 2. జావా కంపైలర్ (javac) వెర్షన్ చెక్ చేయడం</span><br>
+        <span style="color:#569cd6;">javac</span> -version<br>
+        <span style="color:#808080;">javac 21.0.2</span><br><br>
+
+        <span style="color:#6a9955;"># 3. JAVA_HOME వేరియబుల్ వాల్యూ సరిచూడడం</span><br>
+        <span style="color:#569cd6;">echo</span> %JAVA_HOME%<br>
+        <span style="color:#808080;">C:\Program Files\Eclipse Adoptium\jdk-21.0.2-hotspot\</span>
+      </div>
+
+      <p>
+        మీ టెర్మినల్‌లో పై సమాధానాలు కనిపిస్తే మీ కంప్యూటర్ అధికారికంగా ఆధునిక జావా 21 ఎంటర్‌ప్రైజ్ అప్లికేషన్లను డెవలప్ చేయడానికి 100% పక్కాగా సిద్ధమైనట్లే!
+      </p>
+    </div>
+
+    <!-- Section 5 -->
+    <h2 class="section-title" id="sec-5"><span class="num">5</span> IDE ఎంపిక: IntelliJ IDEA vs Visual Studio Code</h2>
+    <div class="section-body">
+      <p>
+        ఆధునిక సాఫ్ట్‌వేర్ ఇంజనీరింగ్‌లో వేగవంతమైన కోడింగ్, ఆటోమేటిక్ రీఫ్యాక్టరింగ్, మరియు విజువల్ డీబగ్గింగ్ కోసం ఒక సమర్థవంతమైన IDE (Integrated Development Environment) ని ఎంచుకోవడం అత్యంత ముఖ్యం:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>ఫీచర్</th>
+            <th>IntelliJ IDEA (Community Edition)</th>
+            <th>Visual Studio Code (VS Code)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ఉద్దేశం (Focus)</strong></td>
+            <td><strong>100% జావా మరియు JVM ఆధారిత లాంగ్వేజెస్ కోసం ప్రత్యేకంగా నిర్మించబడింది.</strong></td>
+            <td>జనరల్ పర్పస్ మల్టీ-లాంగ్వేజ్ టెక్స్ట్ ఎడిటర్.</td>
+          </tr>
+          <tr>
+            <td><strong>కోడ్ ఇంటెలిజెన్స్</strong></td>
+            <td>ప్రపంచంలో అత్యుత్తమ సింటాక్స్ అనాలిసిస్, స్మార్ట్ ఆటో-ఇంపోర్ట్స్, మరియు ఇన్-డెప్త్ స్టాటిక్ అనాలిసిస్.</td>
+            <td>"Extension Pack for Java" ప్లగిన్ ద్వారా మంచి ఫీచర్లు లభిస్తాయి.</td>
+          </tr>
+          <tr>
+            <td><strong>మెమరీ వినియోగం</strong></td>
+            <td>కాస్త ఎక్కువ RAM అవసరం (కనీసం 8GB సిఫార్సు చేయబడింది).</td>
+            <td>లైట్‌వెయిట్, తక్కువ RAM లో కూడా వేగంగా నడుస్తుంది.</td>
+          </tr>
+          <tr>
+            <td><strong>ఎంటర్‌ప్రైజ్ స్వీకరణ</strong></td>
+            <td><strong>ప్రపంచంలోని 80% కంటే ఎక్కువ ఫార్చ్యూన్ 500 కంపెనీల డెవలపర్లు వాడతారు.</strong></td>
+            <td>ఫ్రంట్‌ఎండ్ (React, Vue) మరియు బ్యాకెండ్ రెండింటినీ కలిపి వాడేవారికి ఫేవరెట్.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="concept-card">
+        <h4>🚀 Recommended Setup for Beginners:</h4>
+        <p>
+          మీరు ప్రారంభ దశలో ఉన్నట్లయితే మరియు మీ సిస్టమ్‌లో 8GB లేదా అంతకంటే ఎక్కువ RAM ఉంటే, నేరుగా <strong>IntelliJ IDEA Community Edition</strong> ను డౌన్‌లోడ్ చేసుకోండి (ఇది ఉచితం). ఒకవేళ మీ సిస్టమ్ కాన్ఫిగరేషన్ 4GB RAM లేదా లైట్‌వెయిట్ ల్యాప్‌టాప్ అయితే <strong>VS Code</strong> లో "Extension Pack for Java" ని ఇన్‌స్టాల్ చేసుకుని కొనసాగవచ్చు.
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 6 -->
+    <h2 class="section-title" id="sec-6"><span class="num">6</span> మొదటి "Hello World" ప్రోగ్రామ్ అనాటమీ</h2>
+    <div class="section-body">
+      <p>
+        మీ డెస్క్‌టాప్ లేదా ఏదైనా వర్కింగ్ ఫోల్డర్‌లో <code>HelloWorld.java</code> అనే పేరుతో ఒక కొత్త ఫైల్‌ను సృష్టించండి. జావాలో ఒక ప్రధాన నియమం గుర్తుంచుకోండి: <strong>ఫైల్ పేరు మరియు కోడ్‌లోని public class పేరు ఖచ్చితంగా ఒక్కటే కావాలి!</strong>
+      </p>
+      <p>
+        కింది కోడ్‌ను <code>HelloWorld.java</code> లో రాయండి:
+      </p>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.7;">
+        <span style="color:#569cd6;">public class</span> <span style="color:#4ec9b0;">HelloWorld</span> {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#569cd6;">public static void</span> <span style="color:#dcdcaa;">main</span>(<span style="color:#4ec9b0;">String</span>[] <span style="color:#9cdcfe;">args</span>) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4ec9b0;">System</span>.<span style="color:#9cdcfe;">out</span>.<span style="color:#dcdcaa;">println</span>(<span style="color:#ce9178;">"నమస్కారం, జావా ప్రపంచం! (Hello World from Java 21!)"</span>);<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        }
+      </div>
+
+      <p>
+        <strong>ఈ కోడ్‌లోని ప్రతి పదం యొక్క ఉద్దేశం ఏమిటి?</strong>
+      </p>
+      <ul style="line-height: 2; margin-left: 20px; color: var(--text);">
+        <li><code>public class HelloWorld</code>: జావాలో ప్రతి కోడ్ లైన్ ఏదో ఒక క్లాస్ లోపలే ఉండాలి. <code>public</code> అంటే ఈ క్లాస్‌ను ఎవరైనా యాక్సెస్ చేయవచ్చు.</li>
+        <li><code>public static void main(String[] args)</code>: ఇది జావా ప్రోగ్రామ్ యొక్క ఎగ్జిక్యూషన్ స్టార్టింగ్ పాయింట్ (ఎంట్రీ గేట్). JVM ఈ నిర్దిష్ట సిగ్నేచర్ కోసమే ఫైల్‌లో వెతుకుతుంది.</li>
+        <li><code>System.out.println()</code>: స్క్రీన్ లేదా టెర్మినల్ కన్సోల్‌పై సమాచారాన్ని ప్రింట్ చేసి కొత్త లైన్‌కు కర్సర్‌ను తరలించే జావా బిల్ట్-ఇన్ మెథడ్.</li>
+      </ul>
+    </div>
+
+    <!-- Section 7 -->
+    <h2 class="section-title" id="sec-7"><span class="num">7</span> కంపైలేషన్ &amp; ఎగ్జిక్యూషన్ అంతర్గత ప్రాసెస్</h2>
+    <div class="section-body">
+      <p>
+        మనం టెర్మినల్‌లో <code>javac HelloWorld.java</code> అని రన్ చేసినప్పుడు మరియు <code>java HelloWorld</code> అని ఎగ్జిక్యూట్ చేసినప్పుడు కంప్యూటర్ లోపల జరిగే అంతర్గత ప్రక్రియను పరిశీలిద్దాం:
+      </p>
+
+      <div class="concept-card">
+        <h4>🔬 The Two-Step Journey (javac to java):</h4>
+        <p>
+          1. <strong>javac HelloWorld.java (Compilation Phase):</strong><br>
+          జావా కంపైలర్ మీ సోర్స్ కోడ్‌లోని సింటాక్స్ మరియు వ్యాకరణ నియమాలను క్షుణ్ణంగా తనిఖీ చేస్తుంది. ఎలాంటి తప్పులు లేకపోతే, కంప్యూటర్ హార్డ్‌వేర్ ఆర్కిటెక్చర్‌తో నిమిత్తం లేని <code>HelloWorld.class</code> అనే <strong>Bytecode</strong> ఫైల్‌ను ఉత్పత్తి చేస్తుంది.<br><br>
+          2. <strong>java HelloWorld (Runtime Execution Phase):</strong><br>
+          జావా రన్‌టైమ్ (JVM) స్టార్ట్ అవుతుంది. ClassLoader ద్వారా <code>HelloWorld.class</code> లోడ్ అవుతుంది. బైట్‌కోడ్ వెరిఫైయర్ ద్వారా భద్రత ధృవీకరించబడుతుంది. అనంతరం ఎగ్జిక్యూషన్ ఇంజిన్ (JIT Compiler) ఆ బైట్‌కోడ్‌ను మీ ప్రాసెసర్ అర్థం చేసుకునే నేటివ్ మెషీన్ కోడ్ (0s &amp; 1s) లోకి మార్చి రన్ చేస్తుంది!
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 8 -->
+    <h2 class="section-title" id="sec-8"><span class="num">8</span> కోడ్ డెమో 1: సిస్టమ్ ఎన్విరాన్‌మెంట్ ఇన్స్పెక్టర్</h2>
+    <div class="section-body">
+      <p>
+        మీ సిస్టమ్‌లోని జావా రన్‌టైమ్ వెర్షన్, ఆపరేటింగ్ సిస్టమ్ ఆర్కిటెక్చర్, మరియు యూజర్ డైరెక్టరీ వివరాలను వెలికితీసే సమగ్ర డయాగ్నోస్టిక్ ప్రోగ్రామ్:
+      </p>
+
+      <!-- CODE BLOCK 1 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">EnvironmentInspector.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class EnvironmentInspector {
+    public static void main(String[] args) {
+        System.out.println("==================================================");
+        System.out.println("       JAVA RUNTIME & ENVIRONMENT INSPECTOR       ");
+        System.out.println("==================================================");
+
+        // Fetching system environment and JVM properties
+        String javaVersion = System.getProperty("java.version");
+        String javaVendor  = System.getProperty("java.vendor");
+        String javaHome    = System.getProperty("java.home");
+        String osName      = System.getProperty("os.name");
+        String osArch      = System.getProperty("os.arch");
+        String userDir     = System.getProperty("user.dir");
+        String fileEncoding = System.getProperty("file.encoding");
+
+        System.out.println("Java Version     : " + javaVersion);
+        System.out.println("Java Vendor      : " + javaVendor);
+        System.out.println("Java Home Dir    : " + javaHome);
+        System.out.println("Operating System : " + osName + " (" + osArch + ")");
+        System.out.println("Working Directory: " + userDir);
+        System.out.println("File Encoding    : " + fileEncoding);
+        System.out.println("--------------------------------------------------");
+        System.out.println("Environment Status: [VERIFIED] All Systems Ready!");
+        System.out.println("==================================================");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 1 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (EnvironmentInspector)</div>
+        <pre class="output-content">==================================================
+       JAVA RUNTIME & ENVIRONMENT INSPECTOR       
+==================================================
+Java Version     : 21.0.2
+Java Vendor      : Eclipse Adoptium
+Java Home Dir    : C:\Program Files\Eclipse Adoptium\jdk-21.0.2-hotspot
+Operating System : Windows 11 (amd64)
+Working Directory: C:\Users\Dev\JavaMasterclass
+File Encoding    : UTF-8
+--------------------------------------------------
+Environment Status: [VERIFIED] All Systems Ready!
+==================================================</pre>
+      </div>
+    </div>
+
+    <!-- Section 9 -->
+    <h2 class="section-title" id="sec-9"><span class="num">9</span> కోడ్ డెమో 2: మల్టీ-లైన్ కన్సోల్ అవుట్‌పుట్ &amp; ఫార్మాటింగ్ ఇంజిన్</h2>
+    <div class="section-body">
+      <p>
+        జావాలో ఆధునిక <strong>Text Blocks (""")</strong>, <code>printf()</code> ఫార్మాటింగ్ స్పెక్స్, మరియు ప్రొఫెషనల్ కన్సోల్ బ్యానర్లను రూపొందించే విధానం:
+      </p>
+
+      <!-- CODE BLOCK 2 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">ConsoleBannerApp.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class ConsoleBannerApp {
+    public static void main(String[] args) {
+        String courseTitle = "Modern Java 21+ Masterclass";
+        String platform    = "Our Compiler (తెలుగు)";
+        int lessonNumber   = 2;
+        int totalLessons   = 25;
+        double progressPct = (double) lessonNumber / totalLessons * 100.0;
+
+        // Structured formatted output
+        System.out.println("--------------------------------------------------");
+        System.out.printf("  [COURSE]   %s%n", courseTitle);
+        System.out.printf("  [PLATFORM] %s%n", platform);
+        System.out.printf("  [PROGRESS] Lesson %02d of %02d (%.1f%% Completed)%n", 
+                          lessonNumber, totalLessons, progressPct);
+        System.out.println("--------------------------------------------------");
+
+        // Modern Java 15+ Text Block (Multi-line String)
+        String welcomeNote = """
+            జావా ఎంటర్‌ప్రైజ్ ప్రపంచంలోకి మీకు స్వాగతం!
+            మీరు విజయవంతంగా JDK 21 ని సెటప్ చేసి,
+            జావా కంపైలర్ (javac) మరియు రన్‌టైమ్ (java) CLI టూల్స్‌ను
+            నడిపించే మొదటి ప్రాథమిక నైపుణ్యాన్ని సాధించారు.
+            """;
+
+        System.out.println(welcomeNote);
+        System.out.println("Status: Ready to build robust, distributed software!");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 2 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (ConsoleBannerApp)</div>
+        <pre class="output-content">--------------------------------------------------
+  [COURSE]   Modern Java 21+ Masterclass
+  [PLATFORM] Our Compiler (తెలుగు)
+  [PROGRESS] Lesson 02 of 25 (8.0% Completed)
+--------------------------------------------------
+            జావా ఎంటర్‌ప్రైజ్ ప్రపంచంలోకి మీకు స్వాగతం!
+            మీరు విజయవంతంగా JDK 21 ని సెటప్ చేసి,
+            జావా కంపైలర్ (javac) మరియు రన్‌టైమ్ (java) CLI టూల్స్‌ను
+            నడిపించే మొదటి ప్రాథమిక నైపుణ్యాన్ని సాధించారు.
+
+Status: Ready to build robust, distributed software!</pre>
+      </div>
+    </div>
+
+    <!-- Section 10 -->
+    <h2 class="section-title" id="sec-10"><span class="num">10</span> కోడ్ డెమో 3: డెవలపర్ వర్క్‌స్పేస్ వెరిఫైయర్ (Capstone Mini Project)</h2>
+    <div class="section-body">
+      <p>
+        ఒక పూర్తిస్థాయి డెవలపర్ టూల్‌కిట్: సిస్టమ్‌లో లభ్యమయ్యే CPU కోర్లు, JVM కి కేటాయించిన గరిష్ట మరియు ఉచిత మెమరీ, మరియు గార్బేజ్ కలెక్టర్ కెపాసిటీని విశ్లేషించే <strong>Java Workspace Telemetry &amp; Health Engine</strong>:
+      </p>
+
+      <!-- CODE BLOCK 3 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">WorkspaceTelemetryEngine.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class WorkspaceTelemetryEngine {
+    public static void main(String[] args) {
+        Runtime runtime = Runtime.getRuntime();
+
+        int availableCores = runtime.availableProcessors();
+        long maxMemoryMB   = runtime.maxMemory() / (1024 * 1024);
+        long totalMemoryMB = runtime.totalMemory() / (1024 * 1024);
+        long freeMemoryMB  = runtime.freeMemory() / (1024 * 1024);
+        long usedMemoryMB  = totalMemoryMB - freeMemoryMB;
+
+        System.out.println("==================================================");
+        System.out.println("      WORKSPACE TELEMETRY & HARDWARE PROFILER     ");
+        System.out.println("==================================================");
+        System.out.println("CPU Available Cores : " + availableCores);
+        System.out.println("JVM Max Memory Alloc: " + maxMemoryMB + " MB");
+        System.out.println("JVM Total Heap Size : " + totalMemoryMB + " MB");
+        System.out.println("JVM Active Memory   : " + usedMemoryMB + " MB");
+        System.out.println("JVM Free Headroom   : " + freeMemoryMB + " MB");
+        System.out.println("System Architecture : " + System.getProperty("os.arch"));
+        System.out.println("--------------------------------------------------");
+
+        if (maxMemoryMB &gt;= 1024) {
+            System.out.println("Hardware Telemetry: [EXCELLENT] Ready for High-Throughput Java Apps!");
+        } else {
+            System.out.println("Hardware Telemetry: [MODERATE] Suitable for Standard Console Apps.");
+        }
+        System.out.println("==================================================");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 3 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (WorkspaceTelemetryEngine)</div>
+        <pre class="output-content">==================================================
+      WORKSPACE TELEMETRY & HARDWARE PROFILER     
+==================================================
+CPU Available Cores : 8
+JVM Max Memory Alloc: 4096 MB
+JVM Total Heap Size : 256 MB
+JVM Active Memory   : 8 MB
+JVM Free Headroom   : 248 MB
+System Architecture : amd64
+--------------------------------------------------
+Hardware Telemetry: [EXCELLENT] Ready for High-Throughput Java Apps!
+==================================================</pre>
+      </div>
+    </div>
+
+    <!-- Section 11 -->
+    <h2 class="section-title" id="sec-11"><span class="num">11</span> డెవలపర్లు ఎదుర్కొనే 5 కామన్ ఎర్రర్లు &amp; పరిష్కారాలు</h2>
+    <div class="section-body">
+      <p>
+        కొత్తగా జావా నేర్చుకునే సమయంలో 90% మంది డెవలపర్లు ఎదుర్కొనే ప్రధాన సమస్యలు, వాటి మూల కారణాలు మరియు పరిష్కారాలు:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>ఎర్రర్ మెసేజ్</th>
+            <th>మూల కారణం (Root Cause)</th>
+            <th>ఖచ్చితమైన పరిష్కారం (Exact Solution)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>'javac' is not recognized as an internal or external command</code></td>
+            <td>విండోస్ <code>PATH</code> వేరియబుల్‌లో JDK యొక్క <code>bin</code> డైరెక్టరీ యాడ్ కాలేదు.</td>
+            <td>System Environment Variables లో <code>%JAVA_HOME%\\bin</code> ని యాడ్ చేసి, ఇప్పటికే తెరిచి ఉన్న కమాండ్ ప్రాంప్ట్‌ను క్లోజ్ చేసి కొత్తది తెరవండి.</td>
+          </tr>
+          <tr>
+            <td><code>Class names are only accepted if annotation processing is explicitly requested</code></td>
+            <td>కంపైల్ చేసేటప్పుడు ఫైల్ పేరు చివర <code>.java</code> ఎక్స్‌టెన్షన్ ఇవ్వడం మర్చిపోయారు.</td>
+            <td><code>javac HelloWorld</code> కాకుండా ఖచ్చితంగా <code>javac HelloWorld.java</code> అని ఎక్స్‌టెన్షన్‌తో రన్ చేయండి.</td>
+          </tr>
+          <tr>
+            <td><code>Could not find or load main class HelloWorld</code></td>
+            <td>రన్ చేసే సమయంలో పొరపాటున <code>java HelloWorld.class</code> అని <code>.class</code> ఎక్స్‌టెన్షన్ ఇవ్వడం.</td>
+            <td>ఎగ్జిక్యూట్ చేసేటప్పుడు <code>.class</code> తీసేసి కేవలం <code>java HelloWorld</code> అని మాత్రమే క్లాస్ పేరు ఇవ్వాలి.</td>
+          </tr>
+          <tr>
+            <td><code>class HelloWorld is public, should be declared in a file named HelloWorld.java</code></td>
+            <td>ఫైల్ పేరు మరియు కోడ్‌లోని <code>public class</code> పేరు స్పెల్లింగ్ లేదా కేస్‌లో సరిపోలలేదు.</td>
+            <td>జావా కేస్-సెన్సిటివ్ కాబట్టి రెండు పేర్లలోని అక్షరాలు (క్యాపిటల్/స్మాల్) అక్షరాలా సరిపోలేలా మార్చండి.</td>
+          </tr>
+          <tr>
+            <td><code>Main method not found in class</code></td>
+            <td><code>main</code> మెథడ్ సిగ్నేచర్‌లో <code>static</code> లేదా <code>String[] args</code> తప్పుగా రాయడం.</td>
+            <td><code>public static void main(String[] args)</code> అనే అధికారిక సింటాక్స్‌ను ఖచ్చితంగా పాటించండి.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 12 -->
+    <h2 class="section-title" id="sec-12"><span class="num">12</span> బెస్ట్ ప్రాక్టీసెస్ &amp; 5 ఇంటరాక్టివ్ క్విజ్‌లు</h2>
+    <div class="section-body">
+      <p>
+        మీ డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్‌ను ఎల్లప్పుడూ క్లీన్‌గా మరియు ప్రొడక్షన్-రెడీగా ఉంచడానికి ఈ సూత్రాలు పాటించండి:
+      </p>
+      <ul style="line-height: 2; margin-left: 20px; color: var(--text);">
+        <li>ఎల్లప్పుడూ <strong>LTS (Long-Term Support)</strong> వెర్షన్లను మాత్రమే ఎంచుకోండి (ప్రస్తుతం Java 17 లేదా Java 21 LTS).</li>
+        <li>ప్రాజెక్టులను సిస్టమ్ OS (C:) డ్రైవ్‌లో కాకుండా ప్రత్యేకమైన డెవలప్‌మెంట్ డ్రైవ్ (ఉదా: <code>D:\\workspace\\java</code>) లో నిర్వహించండి.</li>
+        <li>VS Code లేదా IntelliJ లో జావా ఫైల్స్ సేవ్ చేసేటప్పుడు ఎన్‌కోడింగ్ ఎల్లప్పుడూ <strong>UTF-8</strong> లో ఉండేలా చూసుకోండి.</li>
+        <li><code>javac</code> కమాండ్‌తో కంపైల్ చేసేటప్పుడు <code>-d bin</code> ఫ్లాగ్ వాడి బైట్‌కోడ్ ఫైల్స్‌ను ప్రత్యేక ఫోల్డర్‌లో ఆర్గనైజ్ చేయండి.</li>
+      </ul>
+
+      <!-- QUIZ SECTION -->
+      <h3 style="color:#10b981; margin:32px 0 16px 0;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 1: జావా కంపైల్ చేయడానికి మరియు రన్ చేయడానికి కమాండ్ లైన్‌లో ఏ కమాండ్స్ వాడాలి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> కంపైల్ చేయడానికి <code>javac FileName.java</code>, రన్ చేయడానికి <code>java ClassName</code> వాడాలి.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 2: 'java HelloWorld.class' అని రన్ చేస్తే ఏమి జరుగుతుంది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> ఎర్రర్ వస్తుంది! JVM <code>HelloWorld.class</code> అనే పేరుతో ఒక క్లాస్ లోపల ప్యాకేజ్ కోసం వెతుకుతుంది. సరైన కమాండ్ కేవలం <code>java HelloWorld</code> మాత్రమే.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 3: JAVA_HOME పాత్ ఎందుకు సెట్ చేయాలి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> Maven, Gradle, Tomcat, మరియు IDE ల వంటి టూల్స్ మీ సిస్టమ్‌లోని JDK లొకేషన్‌ను స్వయంచాలకంగా గుర్తించడానికి <code>JAVA_HOME</code> ఎన్విరాన్‌మెంట్ వేరియబుల్ పై ఆధారపడతాయి.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 4: ఒక .java ఫైల్ లో public class పేరు "MyBankApp" అయితే ఫైల్ పేరు ఏమై ఉండాలి?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> ఖచ్చితంగా <code>MyBankApp.java</code> మాత్రమే అయి ఉండాలి (Case-Sensitive).
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 5: Eclipse Temurin OpenJDK ఎందుకు ఇండస్ట్రీలో ప్రాచుర్యం పొందింది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> ఇది పూర్తిగా ఉచితం, ఓపెన్ సోర్స్, TCK కంప్లయంట్, మరియు ఎలాంటి కమర్షియల్ లైసెన్స్ ఫీజు లేకుండా ప్రొడక్షన్‌లో వాడుకోవచ్చు.
+        </p>
+      </details>
+    </div>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/01-java-introduction-features-and-jvm-architecture.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 01. Java Introduction &amp; JVM
+      </a>
+      <a href="/blog-java/03-java-syntax-class-structure-and-main-method.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 03. Syntax &amp; Main Method →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>`;
+
+const outPath = path.join(__dirname, '..', 'public', 'blog-java', '02-java-installation-ide-and-first-program.html');
+fs.writeFileSync(outPath, chapter02Content, 'utf8');
+
+console.log('✅ Successfully generated Java Chapter 02 in exact JavaScript HTML style!');
+console.log('Target file:', outPath);
+console.log('Target file size:', chapter02Content.length, 'characters');

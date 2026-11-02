@@ -1,0 +1,748 @@
+const fs = require('fs');
+const path = require('path');
+const { LESSONS, buildJavaSidebar } = require('./java_curriculum_data.js');
+
+const currentLesson = LESSONS.find(l => l.num === 3);
+
+const chapter03Content = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Syntax, Class Structure &amp; main() Anatomy తెలుగులో — Java Tutorial | Our Compiler</title>
+  <meta name="description" content="జావా సింటాక్స్ నియమాలు, క్లాస్ స్ట్రక్చర్, సోర్స్ ఫైల్ నియమాలు, public static void main(String[] args) లోతైన విశ్లేషణ, System.out.println() అనాటమీ మరియు Javadoc కామెంట్స్ తెలుగులో సమగ్రంగా నేర్చుకోండి." />
+  <meta name="keywords" content="java syntax telugu, java class structure telugu, java main method anatomy telugu, public static void main string args telugu, java system.out.println telugu, java source file rules telugu, java comments javadoc telugu" />
+  <meta name="google-adsense-account" content="ca-pub-7028247458903242" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="canonical" href="https://www.ourcompiler.com/blog-java/03-java-syntax-class-structure-and-main-method.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/blog-style.css" />
+  <link rel="stylesheet" href="/blog-java/style.css" />
+  <link rel="stylesheet" href="/site-nav.css" />
+
+  <script>
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      if (isOpen) {
+        content.classList.remove('open');
+        btn.classList.remove('active');
+      } else {
+        content.classList.add('open');
+        btn.classList.add('active');
+      }
+    }
+
+    function copyCodeSnippet(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = '✓ Copied!';
+        setTimeout(() => { btn.innerText = originalText; }, 1800);
+      });
+    }
+
+    function runInJavaCompiler(btn) {
+      const block = btn.closest('.code-block');
+      const code = block.querySelector('pre code').innerText;
+      localStorage.setItem('code_java', code);
+      window.location.href = '/online-java-compiler.html';
+    }
+
+    (function() {
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('light-theme');
+        });
+      }
+    })();
+  </script>
+</head>
+<body class="lang-java light-theme">
+
+<div id="site-nav-placeholder"></div>
+
+<div class="layout">
+  ${buildJavaSidebar(3)}
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span class="sep">›</span>
+      <a href="/blog.html">Tutorials</a><span class="sep">›</span>
+      <a href="/blog-java.html">Java</a><span class="sep">›</span>
+      <span class="current">Lesson 03: Syntax &amp; Main Method</span>
+    </div>
+
+    <h1 class="page-title">03. జావా సింటాక్స్, క్లాస్ స్ట్రక్చర్ &amp; main() అనాటమీ (Java Syntax, Class Structure &amp; main() Anatomy)</h1>
+
+    <div class="page-meta">
+      <span class="badge">☕ Java (Java 21+ LTS)</span>
+      <span class="badge">🟢 Lesson 03 of 25</span>
+      <span class="badge">📂 Part 01: Basics &amp; JVM (Page 3 of 5)</span>
+      <span class="badge">⏱️ 24 min read</span>
+    </div>
+
+    <!-- Subtopics Pill Bar -->
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:24px; font-size:13px; color:var(--text2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="color:#10b981; font-weight:700;">📌 Covered in this lesson:</span>
+      <span>House Architecture Analogy · Java Case-Sensitivity &amp; Statements · Source File Rules (One public class per file) · public static void main(String[] args) Deep Anatomy · String[] args CLI Array · System.out.println vs print vs printf · Comments &amp; Javadoc · Top 6 Common Syntax Pitfalls</span>
+    </div>
+
+    <!-- Intro Box with House Architecture Analogy -->
+    <div class="intro-box">
+      <p style="font-size: 16px; line-height: 1.8; margin-bottom: 12px;">
+        జావా ప్రోగ్రామింగ్ భాషలో ప్రతి ఒక్క అక్షరం, బ్రాకెట్, మరియు సెమీకోలన్ వెనుక ఒక బలమైన ఇంజనీరింగ్ ఆర్కిటెక్చర్ దాగి ఉంది. సి లేదా పైథాన్ లాగా ఇక్కడ గాల్లో కోడ్ రాయడం కుదరదు; ప్రతి కోడ్ స్టేట్‌మెంట్ కచ్చితంగా ఒక తరగతి (Class) పరిధిలోనే జన్మించాలి. ఎంటర్‌ప్రైజ్ అప్లికేషన్లు మిలియన్ల కొద్దీ యూజర్లకు ఎందుకు క్రాష్ కాకుండా సేవలందిస్తాయో అర్థం కావాలంటే జావా సింటాక్స్ పునాదులను క్షుణ్ణంగా తెలుసుకోవాలి.
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin-bottom: 12px;">
+        <strong>ఇంటి నిర్మాణం &amp; మెయిన్ ఎంట్రన్స్ డోర్ అనాలజీ (The House Architecture &amp; Grand Front Door Analogy):</strong>
+        <br>
+        1. <strong>Source File (.java) (ప్లాట్ లేదా బిల్డింగ్ సైట్ - The Plot Site):</strong> మీ కంప్యూటర్‌లో సేవ్ చేసిన <code>.java</code> ఫైల్ ఒక స్థలం లాంటిది. ఒక స్థలంలో ఎన్ని చిన్న చిన్న గదులైనా నిర్మించుకోవచ్చు కానీ వీధికి అభిముఖంగా ఉండే ప్రధాన సింహద్వారం గల బిల్డింగ్ (<code>public class</code>) ఒక్కటే ఉండాలి. ఆ భవనం పేరుతోనే స్థలం రిజిస్టర్ (ఫైల్ పేరు) కావాలి.
+        <br>
+        2. <strong>Class Blueprint (భవన నిర్మాణం &amp; గదులు - The Blueprint):</strong> క్లాస్ అనేది మొత్తం ఇంటి బ్లూప్రింట్. దీని లోపల డేటా నిల్వ చేసే బీరువాలు (వేరియబుల్స్ / ఫీల్డ్స్) మరియు పనులు చేసే మెషీన్లు (మెథడ్స్ / ఫంక్షన్స్) భద్రంగా ఉంటాయి.
+        <br>
+        3. <strong><code>public static void main(String[] args)</code> (ప్రధాన సింహద్వారం - The Main Entrance Gate):</strong> మొత్తం భవనంలోకి JVM అడుగుపెట్టే ఏకైక అధికారిక ఎంట్రీ పాయింట్!
+        <br>
+        &nbsp;&nbsp;• <strong>public:</strong> ఈ గేట్ వద్ద సెక్యూరిటీ అడ్డంకులు లేవు, బయటి ప్రపంచం (JVM) నేరుగా లోపలికి ప్రవేశించవచ్చు.
+        <br>
+        &nbsp;&nbsp;• <strong>static:</strong> ఇల్లు ఇంకా పూర్తిగా సిద్ధం కాకముందే (ఆబ్జెక్ట్ సృష్టించకముందే) ఈ గేట్ అందుబాటులో ఉంటుంది.
+        <br>
+        &nbsp;&nbsp;• <strong>void:</strong> కార్యక్రమం పూర్తయ్యాక లోపలికి వచ్చిన అతిథికి (JVM) ఎలాంటి రిటర్న్ గిఫ్ట్ ఇవ్వాల్సిన పనిలేదు.
+        <br>
+        &nbsp;&nbsp;• <strong>main:</strong> JVM ప్రోగ్రామ్‌ను ప్రారంభించడానికి వెతికే ప్రామాణికమైన కోడ్ పేరు.
+        <br>
+        &nbsp;&nbsp;• <strong>String[] args:</strong> ఇంటికి వచ్చే అతిథులు చేతుల్లో మోసుకొచ్చే లగేజ్ బ్యాగులు (కమాండ్ లైన్ ఆర్గ్యుమెంట్స్).
+      </p>
+      <p style="font-size: 15px; line-height: 1.8; margin: 0;">
+        ఈ మూడవ అధ్యాయంలో జావా సింటాక్స్ నియమాలు, సోర్స్ ఫైల్ నిబంధనలు, <code>main()</code> మెథడ్ యొక్క ప్రతి కీవర్డ్ అంతర్గత ప్రయోజనం, మరియు <code>System.out.println()</code> యొక్క పూర్తి ఆర్కిటెక్చర్‌ను లోతుగా నేర్చుకుందాం!
+      </p>
+    </div>
+
+    <!-- TABLE OF CONTENTS (ఈ page లో ఏముంది) -->
+    <div class="toc-card">
+      <div class="toc-title">📋 ఈ Page లో ఏముంది? (Contents)</div>
+      <div class="toc-grid">
+        <div class="toc-col">
+          <h4><a href="#sec-1" style="color:#10b981; text-decoration:none;">విభాగం A: సింటాక్స్ &amp; సోర్స్ ఫైల్ నియమాలు</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-1">1. జావా కేస్-సెన్సిటివిటీ &amp; బేసిక్ సింటాక్స్ నియమాలు</a></li>
+            <li><a href="#sec-2">2. సోర్స్ ఫైల్ నియమాలు: public class vs ఫైల్ పేరు</a></li>
+            <li><a href="#sec-3">3. ప్యాకేజ్ డిక్లరేషన్ &amp; ఇంపోర్ట్ స్టేట్‌మెంట్ల స్థానం</a></li>
+            <li><a href="#sec-4">4. జావా కోడింగ్ కన్వెన్షన్స్ (Naming Standards)</a></li>
+          </ul>
+        </div>
+        <div class="toc-col">
+          <h4><a href="#sec-5" style="color:#38bdf8; text-decoration:none;">విభాగం B: main() &amp; I/O డీకన్స్ట్రక్షన్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-5">5. public static void main(String[] args) డీకోడింగ్</a></li>
+            <li><a href="#sec-6">6. String[] args కమాండ్ లైన్ ఆర్గ్యుమెంట్స్ మెకానిక్స్</a></li>
+            <li><a href="#sec-7">7. System.out.println() అంతర్గత ఆర్కిటెక్చర్</a></li>
+            <li><a href="#sec-8">8. జావాలో కామెంట్స్: Single, Multi &amp; Javadoc</a></li>
+          </ul>
+        </div>
+        <div class="toc-col">
+          <h4><a href="#sec-9" style="color:#f59e0b; text-decoration:none;">విభాగం C: డెమోలు, ప్రాజెక్ట్ &amp; క్విజ్</a></h4>
+          <ul class="toc-list">
+            <li><a href="#sec-9">9. కోడ్ డెమో 1: CLI ఆర్గ్యుమెంట్స్ ప్రాసెసర్</a></li>
+            <li><a href="#sec-10">10. కోడ్ డెమో 2: మల్టిపుల్ క్లాసెస్ ఇన్ సింగిల్ ఫైల్</a></li>
+            <li><a href="#sec-11">11. కోడ్ డెమో 3: CLI Syntax Inspector (Capstone)</a></li>
+            <li><a href="#sec-12">12. టాప్ 6 కామన్ సింటాక్స్ మిస్టేక్స్ &amp; 5 క్విజ్‌లు</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1 -->
+    <h2 class="section-title" id="sec-1"><span class="num">1</span> జావా కేస్-సెన్సిటివిటీ &amp; బేసిక్ సింటాక్స్ నియమాలు</h2>
+    <div class="section-body">
+      <p>
+        జావా ఒక ఖచ్చితమైన నియమాలు గల భాష (Strictly Typed, Case-Sensitive Language). అంటే ఇక్కడ క్యాపిటల్ అక్షరానికి (Uppercase) మరియు స్మాల్ అక్షరానికి (Lowercase) ఆకాశమంత తేడా ఉంటుంది. ఉదాహరణకు <code>myVariable</code>, <code>MyVariable</code>, మరియు <code>MYVARIABLE</code> అనేవి జావా కంపైలర్ దృష్టిలో మూడు వేర్వేరు గుర్తింపులు (Identifiers).
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>సింటాక్స్ ఎలిమెంట్</th>
+            <th>జావా నిబంధన (Syntax Rule)</th>
+            <th>సరైన ఉదాహరణ</th>
+            <th>తప్పు ఉదాహరణ (కంపైలర్ ఎర్రర్)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>స్టేట్‌మెంట్ టెర్మినేషన్</strong></td>
+            <td>ప్రతి ఎగ్జిక్యూటబుల్ స్టేట్‌మెంట్ ఖచ్చితంగా సెమీకోలన్ (<code>;</code>) తో ముగియాలి.</td>
+            <td><code>int age = 25;</code></td>
+            <td><code>int age = 25</code> (ఎర్రర్: ';' expected)</td>
+          </tr>
+          <tr>
+            <td><strong>బ్లాక్ స్కోప్ (Curly Braces)</strong></td>
+            <td>క్లాస్, మెథడ్, మరియు లూప్‌ల కోడ్ కర్లీ బ్రాకెట్స్ <code>{ }</code> లో ఉండాలి.</td>
+            <td><code>public class App { }</code></td>
+            <td>బ్రాకెట్ సరిగ్గా క్లోజ్ చేయకపోతే 'reached end of file while parsing'</td>
+          </tr>
+          <tr>
+            <td><strong>కీవర్డ్స్ (Keywords)</strong></td>
+            <td>జావాలో 50కి పైగా రిజర్వ్‌డ్ కీవర్డ్స్ ఉన్నాయి, ఇవన్నీ కేవలం స్మాల్ లెటర్స్‌లోనే ఉండాలి.</td>
+            <td><code>public, class, static, void</code></td>
+            <td><code>Public, CLASS, Void</code> (గుర్తించబడవు)</td>
+          </tr>
+          <tr>
+            <td><strong>స్పేసింగ్ &amp; ఇండెంటేషన్</strong></td>
+            <td>వైట్‌స్పేస్ కంపైలర్‌కు ముఖ్యం కాదు, కానీ కోడ్ రీడబిలిటీ కోసం 4-స్పేసెస్ ఇండెంట్ తప్పనిసరి.</td>
+            <td>క్లీన్ స్ట్రక్చర్డ్ కోడ్</td>
+            <td>అడ్డదిడ్డంగా రాస్తే కోడ్ రివ్యూలో రిజెక్ట్ అవుతుంది.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 2 -->
+    <h2 class="section-title" id="sec-2"><span class="num">2</span> సోర్స్ ఫైల్ నియమాలు: public class vs ఫైల్ పేరు</h2>
+    <div class="section-body">
+      <p>
+        ఒక జావా సోర్స్ ఫైల్ (<code>.java</code>) లో కోడ్ రాసేటప్పుడు జావా కంపైలర్ అమలుచేసే 4 ప్రాథమిక నిబంధనలు:
+      </p>
+
+      <div class="concept-card">
+        <h4>📜 Golden Rules for Java Source Files:</h4>
+        <p>
+          1. <strong>గరిష్టంగా ఒకే ఒక public class:</strong> ఒక <code>.java</code> ఫైల్‌లో ఎన్ని డిఫాల్ట్ (నాన్-పబ్లిక్) క్లాసులైనా ఉండవచ్చు, కానీ <strong>గరిష్టంగా ఒకే ఒక్క <code>public class</code> మాత్రమే</strong> ఉండటానికి అనుమతి ఉంది.<br>
+          2. <strong>ఫైల్ పేరుతో ఖచ్చితమైన సమన్వయం:</strong> ఆ ఫైల్‌లోని <code>public class</code> పేరు ఏది ఉందో, ఆ ఫైల్ పేరు కూడా అక్షరాలా అదే అయి ఉండాలి (ఉదాహరణకు క్లాస్ పేరు <code>PaymentGateway</code> అయితే ఫైల్ పేరు ఖచ్చితంగా <code>PaymentGateway.java</code> అయి ఉండాలి).<br>
+          3. <strong>public class లేకపోతే?:</strong> ఒకవేళ ఫైల్‌లో ఎలాంటి <code>public class</code> లేకపోతే, ఫైల్‌కు అందులోని ఏ క్లాస్ పేరైనా లేదా సంబంధం లేని మరేదైనా పేరు పెట్టుకోవచ్చు.<br>
+          4. <strong>కంపైలేషన్ ఫలితం:</strong> ఒక <code>.java</code> ఫైల్ లో 3 క్లాసులు ఉంటే, <code>javac</code> కంపైల్ చేసినప్పుడు 3 వేర్వేరు <code>.class</code> బైట్‌కోడ్ ఫైల్స్ జనరేట్ అవుతాయి!
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <h2 class="section-title" id="sec-3"><span class="num">3</span> ప్యాకేజ్ డిక్లరేషన్ &amp; ఇంపోర్ట్ స్టేట్‌మెంట్ల స్థానం</h2>
+    <div class="section-body">
+      <p>
+        ఒక జావా సోర్స్ ఫైల్ లోపల కోడ్ లైన్ల క్రమం (Order of Declarations) ముందస్తుగా నిర్ణయించబడి ఉంటుంది. ఈ క్రమాన్ని ఉల్లంఘిస్తే కంపైలర్ ఎర్రర్ ఇస్తుంది:
+      </p>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.8;">
+        <span style="color:#6a9955;">// 1. మొదటి స్థానం: Package Declaration (ఐచ్ఛికం, కానీ ఉంటే ఫైల్‌లో మొదటి నాన్-కామెంట్ లైన్ ఇదే కావాలి)</span><br>
+        <span style="color:#569cd6;">package</span> com.ourcompiler.banking;<br><br>
+
+        <span style="color:#6a9955;">// 2. రెండవ స్థానం: Import Statements (బయటి క్లాసులను ప్రాజెక్టులోకి తీసుకురావడానికి)</span><br>
+        <span style="color:#569cd6;">import</span> java.util.Scanner;<br>
+        <span style="color:#569cd6;">import</span> java.time.LocalDateTime;<br><br>
+
+        <span style="color:#6a9955;">// 3. మూడవ స్థానం: Class / Interface Declaration</span><br>
+        <span style="color:#569cd6;">public class</span> <span style="color:#4ec9b0;">AccountManager</span> {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#6a9955;">// 4. నాల్గవ స్థానం: Variables, Methods &amp; Constructors</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#569cd6;">public static void</span> <span style="color:#dcdcaa;">main</span>(<span style="color:#4ec9b0;">String</span>[] <span style="color:#9cdcfe;">args</span>) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4ec9b0;">System</span>.<span style="color:#9cdcfe;">out</span>.<span style="color:#dcdcaa;">println</span>(<span style="color:#ce9178;">"Account Manager Active"</span>);<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        }
+      </div>
+    </div>
+
+    <!-- Section 4 -->
+    <h2 class="section-title" id="sec-4"><span class="num">4</span> జావా కోడింగ్ కన్వెన్షన్స్ (Naming Standards &amp; Clean Code)</h2>
+    <div class="section-body">
+      <p>
+        ప్రపంచవ్యాప్తంగా గూగుల్, ఒరాకిల్, మరియు మైక్రోసాఫ్ట్ సంస్థలలో పనిచేసే జావా ఇంజనీర్లు పాటించే అధికారిక నేమింగ్ కన్వెన్షన్స్:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>ఎలిమెంట్</th>
+            <th>కేసింగ్ రూల్ (Naming Convention)</th>
+            <th>ప్రొఫెషనల్ ఉదాహరణలు</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Classes &amp; Interfaces</strong></td>
+            <td><strong>PascalCase (UpperCamelCase)</strong>: ప్రతి పదం యొక్క మొదటి అక్షరం క్యాపిటల్ కావాలి. నౌన్ (నామవాచకం) అయి ఉండాలి.</td>
+            <td><code>BankCustomer</code>, <code>StringTokenizer</code>, <code>PaymentProcessor</code></td>
+          </tr>
+          <tr>
+            <td><strong>Methods</strong></td>
+            <td><strong>camelCase</strong>: మొదటి పదం స్మాల్, తర్వాతి పదాల మొదటి అక్షరం క్యాపిటల్. వెర్బ్ (క్రియ) అయి ఉండాలి.</td>
+            <td><code>calculateInterest()</code>, <code>getUserDetails()</code>, <code>printReport()</code></td>
+          </tr>
+          <tr>
+            <td><strong>Variables</strong></td>
+            <td><strong>camelCase</strong>: సంక్షిప్తమైన, అర్థవంతమైన పేర్లు ఉండాలి.</td>
+            <td><code>accountBalance</code>, <code>customerAge</code>, <code>isEligible</code></td>
+          </tr>
+          <tr>
+            <td><strong>Constants (స్థిరరాశులు)</strong></td>
+            <td><strong>ALL_CAPS_SNAKE_CASE</strong>: అన్ని అక్షరాలు క్యాపిటల్, పదాల మధ్య అండర్‌స్కోర్ <code>_</code> ఉండాలి.</td>
+            <td><code>MAX_RETRY_COUNT</code>, <code>DATABASE_URL</code>, <code>DEFAULT_TIMEOUT</code></td>
+          </tr>
+          <tr>
+            <td><strong>Packages</strong></td>
+            <td><strong>all_lowercase</strong>: కంపెనీ డొమైన్ రివర్స్ ఆర్డర్‌లో ఉండాలి.</td>
+            <td><code>com.ourcompiler.core</code>, <code>org.apache.commons</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 5 -->
+    <h2 class="section-title" id="sec-5"><span class="num">5</span> public static void main(String[] args) డీకోడింగ్</h2>
+    <div class="section-body">
+      <p>
+        జావా ఇంటర్వ్యూలలో అత్యధికంగా అడిగే ప్రశ్న — "<code>public static void main(String[] args)</code> లోని ప్రతి కీవర్డ్ అర్థం ఏమిటి?". ఈ 6 పదాల లోతైన ఇంజనీరింగ్ విశ్లేషణను చూద్దాం:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>కీవర్డ్</th>
+            <th>రకం</th>
+            <th>ఎందుకు తప్పనిసరి? (Technical Reason)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>public</code></td>
+            <td>Access Modifier</td>
+            <td>ఈ మెథడ్‌ను క్లాస్ బయట ఉన్న జావా రన్‌టైమ్ (JVM) నేరుగా యాక్సెస్ చేయడానికి అనుమతి ఇస్తుంది. ఇది <code>private</code> అయితే JVM కి యాక్సెస్ ఉండదు.</td>
+          </tr>
+          <tr>
+            <td><code>static</code></td>
+            <td>Class-level Modifier</td>
+            <td><strong>అత్యంత కీలకం:</strong> JVM ఈ క్లాస్‌కు సంబంధించి ఎలాంటి ఆబ్జెక్ట్ (<code>new ClassName()</code>) క్రియేట్ చేయకుండానే నేరుగా క్లాస్ పేరుతో (<code>ClassName.main()</code>) కాల్ చేయడానికి వీలు కల్పిస్తుంది.</td>
+          </tr>
+          <tr>
+            <td><code>void</code></td>
+            <td>Return Type</td>
+            <td>మెయిన్ మెథడ్ తన పని పూర్తి చేసుకున్న తర్వాత JVM కి ఎలాంటి వాల్యూను రిటర్న్ చేయదు (సి లాంగ్వేజ్‌లో <code>int main()</code> రిటర్న్ 0 ఉన్నట్లు జావాలో అవసరం లేదు).</td>
+          </tr>
+          <tr>
+            <td><code>main</code></td>
+            <td>Identifier / Method Name</td>
+            <td>ఇది జావా ఆర్కిటెక్చర్‌లో ముందే కాన్ఫిగర్ చేయబడిన ప్రామాణికమైన ఎంట్రీ పాయింట్ పేరు. ఈ పేరు మార్చితే JVM ప్రోగ్రామ్‌ను గుర్తించలేదు.</td>
+          </tr>
+          <tr>
+            <td><code>String[]</code></td>
+            <td>Data Type (Array of Strings)</td>
+            <td>కమాండ్ లైన్ నుండి యూజర్ పాస్ చేసే ఆర్గ్యుమెంట్లను (సంఖ్యలైనా, పదాలైనా) టెక్స్ట్ రూపంలో స్వీకరించే స్ట్రింగ్ అర్రే.</td>
+          </tr>
+          <tr>
+            <td><code>args</code></td>
+            <td>Parameter Name</td>
+            <td>ఇది వేరియబుల్ పేరు మాత్రమే. దీని స్థానంలో <code>String[] params</code> లేదా <code>String[] data</code> అని కూడా పెట్టుకోవచ్చు.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 6 -->
+    <h2 class="section-title" id="sec-6"><span class="num">6</span> String[] args కమాండ్ లైన్ ఆర్గ్యుమెంట్స్ మెకానిక్స్</h2>
+    <div class="section-body">
+      <p>
+        మనం టెర్మినల్ నుండి జావా అప్లికేషన్‌ను రన్ చేసే సమయంలో ప్రోగ్రామ్‌కు కావలసిన ఇన్‌పుట్ పారామీటర్లను సులభంగా పంపవచ్చు. JVM ఈ విలువలను ఖాళీల (Spaces) ఆధారంగా విడదీసి <code>args[0]</code>, <code>args[1]</code> లలో నిల్వ చేస్తుంది:
+      </p>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.8;">
+        <span style="color:#6a9955;"># కమాండ్ లైన్ ద్వారా 3 విలువలను పాస్ చేయడం:</span><br>
+        <span style="color:#569cd6;">java</span> App Hyderabad 500081 true<br><br>
+        <span style="color:#808080;">// జావా మెయిన్ మెథడ్ లోపల వీటి విలువలు:</span><br>
+        args[0] = <span style="color:#ce9178;">"Hyderabad"</span><br>
+        args[1] = <span style="color:#ce9178;">"500081"</span><br>
+        args[2] = <span style="color:#ce9178;">"true"</span><br>
+        args.length = <span style="color:#b5cea8;">3</span>
+      </div>
+
+      <div class="concept-card">
+        <h4>⚠️ Java 22+ Unnamed Classes &amp; Instance Main (Modern Java Update):</h4>
+        <p>
+          జావా 21 ప్రివ్యూ మరియు జావా 22 నుండి బిగినర్ల కోసం జావా ఒక కొత్త ఫీచర్‌ను పరిచయం చేసింది: చిన్న స్క్రిప్ట్‌ల కోసం <code>public class</code> రాయకుండానే కేవలం <code>void main() { System.out.println("Hello"); }</code> అని సింపుల్‌గా రాసే సౌలభ్యం అందుబాటులోకి వచ్చింది! అయినప్పటికీ, ఎంటర్‌ప్రైజ్ ప్రొడక్షన్ సిస్టమ్స్‌లో ఇప్పటికీ <code>public static void main(String[] args)</code> మాత్రమే పరిశ్రమ ప్రామాణికం.
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 7 -->
+    <h2 class="section-title" id="sec-7"><span class="num">7</span> System.out.println() అంతర్గత ఆర్కిటెక్చర్</h2>
+    <div class="section-body">
+      <p>
+        మనం తరచుగా వాడే <code>System.out.println()</code> లైన్ వెనుక ఉండే మూడు కీలక భాగాల అంతర్గత సంబంధం:
+      </p>
+
+      <div class="concept-card">
+        <h4>🔬 The Architecture of System.out.println():</h4>
+        <p>
+          1. <strong>System:</strong> ఇది <code>java.lang</code> ప్యాకేజీలో ఉండే ఒక ప్రామాణిక <code>final class</code>. దీనిని మనం కొత్తగా ఆబ్జెక్ట్ సృష్టించలేము.<br>
+          2. <strong>out:</strong> ఇది System క్లాస్ లోపల ఉండే ఒక <code>public static final PrintStream</code> ఆబ్జెక్ట్ రిఫరెన్స్. ఇది మీ కంప్యూటర్ స్టాండర్డ్ అవుట్‌పుట్ డివైస్ (కమాండ్ ప్రాంప్ట్ / కన్సోల్) కు కనెక్ట్ అయి ఉంటుంది.<br>
+          3. <strong>println():</strong> ఇది <code>PrintStream</code> క్లాస్ లోపల ఓవర్‌లోడ్ చేయబడిన మెథడ్. ఇది ఇచ్చిన డేటాను స్ట్రింగ్‌గా మార్చి ప్రింట్ చేసి కర్సర్‌ను నెక్స్ట్ లైన్‌కు తరలిస్తుంది.
+        </p>
+      </div>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>మెథడ్</th>
+            <th>పనితీరు (Behavior)</th>
+            <th>ఉపయోగం</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>System.out.print()</code></td>
+            <td>టెక్స్ట్‌ను ప్రింట్ చేస్తుంది, కానీ కర్సర్ అదే లైన్‌లో కొనసాగుతుంది.</td>
+            <td>ప్రోగ్రెస్ బార్‌లు లేదా యూజర్ ఇన్‌పుట్ ప్రాంప్ట్‌లు (ఉదా: <code>"Enter name: "</code>).</td>
+          </tr>
+          <tr>
+            <td><code>System.out.println()</code></td>
+            <td>టెక్స్ట్‌ను ప్రింట్ చేసిన వెంటనే కర్సర్‌ను కొత్త లైన్ (<code>\n</code>) కు తరలిస్తుంది.</td>
+            <td>సాధారణ లాగింగ్ మరియు లైన్-బై-లైన్ అవుట్‌పుట్.</td>
+          </tr>
+          <tr>
+            <td><code>System.out.printf()</code></td>
+            <td>C భాష తరహాలో ఫార్మాట్ స్పెసిఫైయర్స్ (<code>%d, %s, %.2f, %n</code>) తో ఫార్మాట్ చేస్తుంది.</td>
+            <td>కరెన్సీలు, దశాంశాలు, మరియు అలైన్డ్ టేబుల్స్ ప్రింట్ చేయడానికి.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 8 -->
+    <h2 class="section-title" id="sec-8"><span class="num">8</span> జావాలో కామెంట్స్: Single-line, Multi-line &amp; Javadoc</h2>
+    <div class="section-body">
+      <p>
+        కోడ్ రాయడం ఎంత ముఖ్యమో, భవిష్యత్తులో ఆ కోడ్‌ను చదివే ఇతర డెవలపర్ల కోసం వివరణాత్మకమైన కామెంట్స్ రాయడం కూడా అంతే ముఖ్యం. జావా 3 రకాల కామెంట్లను సమర్ధిస్తుంది:
+      </p>
+
+      <div style="background:#1e1e1e; color:#d4d4d4; padding:18px 22px; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:13.5px; margin:16px 0; border:1px solid #333; line-height:1.8;">
+        <span style="color:#6a9955;">// 1. Single-line Comment: ఒకే లైన్ వివరణ కోసం డబుల్ స్లాష్ వాడతాం.</span><br>
+        <span style="color:#569cd6;">int</span> maxUsers = 1000; <span style="color:#6a9955;">// గరిష్ట యూజర్ల పరిమితి</span><br><br>
+
+        <span style="color:#6a9955;">/*<br>
+        &nbsp;* 2. Multi-line Comment:<br>
+        &nbsp;* పెద్ద పెద్ద అల్గారిథమ్స్ లేదా క్లిష్టమైన లాజిక్ వివరించడానికి<br>
+        &nbsp;* బహుళ లైన్ల కామెంట్స్ ఉపయోగిస్తాం.<br>
+        &nbsp;*/</span><br><br>
+
+        <span style="color:#6a9955;">/**<br>
+        &nbsp;* 3. Javadoc Documentation Comment (అధికారిక API డాక్యుమెంటేషన్):<br>
+        &nbsp;* ఈ కామెంట్స్ నుండి 'javadoc' టూల్ ఆటోమేటిక్‌గా HTML డాక్యుమెంటేషన్‌ను జనరేట్ చేస్తుంది.<br>
+        &nbsp;* @param principal మొత్తం అసలు మొత్తం<br>
+        &nbsp;* @param rate వార్షిక వడ్డీ రేటు<br>
+        &nbsp;* @return లెక్కించిన చక్రవడ్డీ మొత్తం<br>
+        &nbsp;*/</span><br>
+        <span style="color:#569cd6;">public double</span> <span style="color:#dcdcaa;">calculateCompoundInterest</span>(<span style="color:#569cd6;">double</span> principal, <span style="color:#569cd6;">double</span> rate) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#569cd6;">return</span> principal * Math.pow(1 + rate / 100, 2);<br>
+        }
+      </div>
+    </div>
+
+    <!-- Section 9 -->
+    <h2 class="section-title" id="sec-9"><span class="num">9</span> కోడ్ డెమో 1: CLI ఆర్గ్యుమెంట్స్ ప్రాసెసర్ &amp; వాలిడేషన్ ఇంజిన్</h2>
+    <div class="section-body">
+      <p>
+        కమాండ్ లైన్ ఆర్గ్యుమెంట్లను స్వీకరించి, వాటి పొడవును సరిచూసి, సురక్షితంగా డేటాను పార్స్ చేసే లైవ్ ప్రోగ్రామ్:
+      </p>
+
+      <!-- CODE BLOCK 1 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">CommandLineParser.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class CommandLineParser {
+    public static void main(String[] args) {
+        System.out.println("==================================================");
+        System.out.println("      COMMAND LINE ARGUMENTS PROCESSOR ENGINE     ");
+        System.out.println("==================================================");
+
+        // Checking if user supplied arguments
+        if (args.length == 0) {
+            System.out.println("[INFO] No external CLI arguments detected.");
+            System.out.println("[INFO] Defaulting to demo developer credentials:");
+            String defaultUser = "Kiran Kumar";
+            String defaultRole = "FullStack Java Engineer";
+            System.out.printf("  User : %s%n  Role : %s%n", defaultUser, defaultRole);
+        } else {
+            System.out.println("[SUCCESS] Received " + args.length + " argument(s) from Terminal:");
+            for (int i = 0; i &lt; args.length; i++) {
+                System.out.printf("  Arg [%d]: %s%n", i, args[i]);
+            }
+        }
+
+        System.out.println("--------------------------------------------------");
+        System.out.println("Status: CLI Processing Completed Flawlessly!");
+        System.out.println("==================================================");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 1 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (CommandLineParser)</div>
+        <pre class="output-content">==================================================
+      COMMAND LINE ARGUMENTS PROCESSOR ENGINE     
+==================================================
+[INFO] No external CLI arguments detected.
+[INFO] Defaulting to demo developer credentials:
+  User : Kiran Kumar
+  Role : FullStack Java Engineer
+--------------------------------------------------
+Status: CLI Processing Completed Flawlessly!
+==================================================</pre>
+      </div>
+    </div>
+
+    <!-- Section 10 -->
+    <h2 class="section-title" id="sec-10"><span class="num">10</span> కోడ్ డెమో 2: మల్టిపుల్ క్లాసెస్ ఇన్ సింగిల్ ఫైల్ &amp; కంపైలేషన్ బిహేవియర్</h2>
+    <div class="section-body">
+      <p>
+        ఒకే <code>.java</code> ఫైల్‌లో బహుళ సహాయక తరగతులను (Helper Classes) రాసి, వాటి మధ్య సంబంధాన్ని ప్రదర్శించే ఎగ్జాంపుల్:
+      </p>
+
+      <!-- CODE BLOCK 2 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">MultiClassDemo.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>// Main public class - Must match the file name: MultiClassDemo.java
+public class MultiClassDemo {
+    public static void main(String[] args) {
+        System.out.println("--------------------------------------------------");
+        System.out.println("      MULTI-CLASS COMPILATION DEMO ENGINE         ");
+        System.out.println("--------------------------------------------------");
+
+        // Using helper classes defined in the same source file
+        ServerTelemetry telemetry = new ServerTelemetry("Cluster-AP-South-1", "ACTIVE");
+        telemetry.displayStatus();
+
+        AuditLogger.logEvent("MultiClassDemo executed successfully.");
+        System.out.println("--------------------------------------------------");
+    }
+}
+
+// Non-public helper class 1
+class ServerTelemetry {
+    private String serverId;
+    private String status;
+
+    public ServerTelemetry(String serverId, String status) {
+        this.serverId = serverId;
+        this.status = status;
+    }
+
+    public void displayStatus() {
+        System.out.println("  [SERVER ID] " + serverId);
+        System.out.println("  [STATUS]    " + status);
+    }
+}
+
+// Non-public helper class 2
+class AuditLogger {
+    public static void logEvent(String message) {
+        System.out.println("  [AUDIT LOG] " + message);
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 2 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (MultiClassDemo)</div>
+        <pre class="output-content">--------------------------------------------------
+      MULTI-CLASS COMPILATION DEMO ENGINE         
+--------------------------------------------------
+  [SERVER ID] Cluster-AP-South-1
+  [STATUS]    ACTIVE
+  [AUDIT LOG] MultiClassDemo executed successfully.
+--------------------------------------------------</pre>
+      </div>
+    </div>
+
+    <!-- Section 11 -->
+    <h2 class="section-title" id="sec-11"><span class="num">11</span> కోడ్ డెమో 3: CLI Syntax Inspector &amp; Greeting Engine (Capstone Mini Project)</h2>
+    <div class="section-body">
+      <p>
+        యూజర్ పేరు, ప్రోగ్రామింగ్ భాష మరియు అనుభవాన్ని విశ్లేషించి, ఆధునిక ఫార్మాట్ స్పెక్స్ మరియు సింటాక్స్ ధృవీకరణతో స్వాగత పత్రాన్ని రూపొందించే <strong>Java Syntax &amp; CLI Greeting Engine</strong>:
+      </p>
+
+      <!-- CODE BLOCK 3 -->
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="file-name">SyntaxInspectorCapstone.java</span>
+          <div class="code-actions">
+            <button class="copy-btn" onclick="copyCodeSnippet(this)">📋 Copy</button>
+            <button class="try-btn" onclick="runInJavaCompiler(this)">▶ Run in Java Compiler</button>
+          </div>
+        </div>
+        <pre><code>public class SyntaxInspectorCapstone {
+    public static void main(String[] args) {
+        String developerName = "నవీన్ చంద్ర";
+        String trackName      = "Enterprise Java 21+ Masterclass";
+        int chapterNum        = 3;
+        int totalChapters     = 25;
+        boolean isSyntaxValid = true;
+
+        System.out.println("==================================================");
+        System.out.println("      JAVA 21 SYNTAX INSPECTION &amp; REPORT         ");
+        System.out.println("==================================================");
+
+        // Printing formatted diagnostics
+        System.out.printf("  [DEVELOPER] %s%n", developerName);
+        System.out.printf("  [CURRICULUM] %s%n", trackName);
+        System.out.printf("  [MODULE]    Chapter %02d of %02d%n", chapterNum, totalChapters);
+        System.out.printf("  [STATUS]    Class Structure: %s%n", isSyntaxValid ? "VERIFIED (100% OK)" : "INVALID");
+        System.out.println("--------------------------------------------------");
+
+        // Multi-line Text Block documentation
+        String summary = """
+            [SYNTAX VERIFICATION REPORT]
+            • Public Class Name Matches File: YES
+            • Main Method Signature Valid  : YES
+            • Statement Semicolons Checked  : YES
+            • Code Block Scopes Balanced   : YES
+            """;
+
+        System.out.println(summary.trim());
+        System.out.println("==================================================");
+    }
+}</code></pre>
+      </div>
+
+      <!-- TERMINAL OUTPUT 3 -->
+      <div class="code-output-card">
+        <div class="output-header">💻 Console Output (SyntaxInspectorCapstone)</div>
+        <pre class="output-content">==================================================
+      JAVA 21 SYNTAX INSPECTION &amp; REPORT         
+==================================================
+  [DEVELOPER] నవీన్ చంద్ర
+  [CURRICULUM] Enterprise Java 21+ Masterclass
+  [MODULE]    Chapter 03 of 25
+  [STATUS]    Class Structure: VERIFIED (100% OK)
+--------------------------------------------------
+[SYNTAX VERIFICATION REPORT]
+• Public Class Name Matches File: YES
+• Main Method Signature Valid  : YES
+• Statement Semicolons Checked  : YES
+• Code Block Scopes Balanced   : YES
+==================================================</pre>
+      </div>
+    </div>
+
+    <!-- Section 12 -->
+    <h2 class="section-title" id="sec-12"><span class="num">12</span> టాప్ 6 కామన్ సింటాక్స్ మిస్టేక్స్ &amp; 5 క్విజ్‌లు</h2>
+    <div class="section-body">
+      <p>
+        బిగినర్లు తరచుగా చేసే 6 ప్రధాన సింటాక్స్ తప్పులు మరియు వాటిని కనుగొనే ఉపాయాలు:
+      </p>
+
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>ఎర్రర్ వర్ణన</th>
+            <th>తప్పు కోడ్</th>
+            <th>సరైన సరిదిద్దిన కోడ్</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>సెమీకోలన్ మిస్ అవ్వడం</strong></td>
+            <td><code>int x = 100</code></td>
+            <td><code>int x = 100;</code></td>
+          </tr>
+          <tr>
+            <td><strong>కర్లీ బ్రాకెట్ అసమతుల్యత</strong></td>
+            <td><code>public class App { public static void main(...) { }</code> (చివర } మిస్)</td>
+            <td>ప్రతి ఓపెన్ బ్రాకెట్ <code>{</code> కి కచ్చితంగా క్లోజ్ బ్రాకెట్ <code>}</code> ఉండాలి.</td>
+          </tr>
+          <tr>
+            <td><strong>మెయిన్ మెథడ్ స్పెల్లింగ్ తప్పు</strong></td>
+            <td><code>public static void Main(String[] args)</code> (క్యాపిటల్ M)</td>
+            <td><code>public static void main(String[] args)</code> (స్మాల్ m).</td>
+          </tr>
+          <tr>
+            <td><strong>స్ట్రింగ్ డబుల్ కోట్స్ బదులు సింగిల్ కోట్స్</strong></td>
+            <td><code>String s = 'Hello';</code></td>
+            <td>జావాలో అక్షరానికి (char) <code>'A'</code>, పదానికి (String) <code>"Hello"</code> వాడాలి.</td>
+          </tr>
+          <tr>
+            <td><strong>రిజర్వ్‌డ్ కీవర్డ్స్ వేరియబుల్స్‌గా వాడటం</strong></td>
+            <td><code>int class = 10;</code></td>
+            <td><code>int classId = 10;</code> (కీవర్డ్స్‌ను వేరియబుల్ పేర్లుగా వాడకూడదు).</td>
+          </tr>
+          <tr>
+            <td><strong>కేస్ సెన్సిటివిటీ గందరగోళం</strong></td>
+            <td><code>system.out.println("Hi");</code> (స్మాల్ s)</td>
+            <td><code>System.out.println("Hi");</code> (క్యాపిటల్ S).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- QUIZ SECTION -->
+      <h3 style="color:#10b981; margin:32px 0 16px 0;">🧠 మీ అవగాహనను పరీక్షించుకోండి (5 Interactive Quizzes):</h3>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 1: ఒక జావా సోర్స్ ఫైల్‌లో ఎన్ని public క్లాసులు ఉండవచ్చు?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> గరిష్టంగా కేవలం ఒకే ఒక <code>public class</code> మాత్రమే ఉండవచ్చు! ఆ పబ్లిక్ క్లాస్ పేరే ఫైల్ పేరుగా ఉండాలి. అయితే నాన్-పబ్లిక్ క్లాసులు ఎన్ని అయినా ఉండవచ్చు.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 2: main() మెథడ్ కి 'static' కీవర్డ్ ఎందుకు అత్యవసరం?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> JVM ప్రోగ్రామ్‌ను స్టార్ట్ చేసే సమయానికి మెమరీలో ఎలాంటి ఆబ్జెక్ట్ ఉండదు. <code>static</code> ఉన్నందున JVM ఆబ్జెక్ట్ క్రియేట్ చేయకుండానే నేరుగా క్లాస్ పేరుతో మెథడ్‌ను కాల్ చేయగలదు.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 3: 'String[] args' లోని 'args' పేరు మార్చవచ్చా?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> అవును! <code>args</code> అనేది కేవలం వేరియబుల్ ఐడెంటిఫైయర్ మాత్రమే. దాని స్థానంలో <code>String[] options</code> లేదా <code>String[] data</code> అని కూడా వాడుకోవచ్చు.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 4: Javadoc కామెంట్లను ఎలా ప్రారంభిస్తారు?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> Javadoc కామెంట్లను <code>/**</code> తో ప్రారంభించి <code>*/</code> తో ముగిస్తారు. ఇందులో <code>@param</code>, <code>@return</code>, <code>@author</code> వంటి ట్యాగ్‌లు వాడతారు.
+        </p>
+      </details>
+
+      <details style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; margin-bottom:12px; cursor:pointer;">
+        <summary style="font-weight:700; color:var(--text);">ప్రశ్న 5: System.out.println() లో 'out' దేనిని సూచిస్తుంది?</summary>
+        <p style="margin-top:10px; color:var(--text2); line-height:1.7;">
+          <strong>సమాధానం:</strong> <code>System</code> క్లాస్‌లోని ఒక <code>public static final PrintStream</code> ఆబ్జెక్ట్‌ను సూచిస్తుంది. ఇది కన్సోల్ స్టాండర్డ్ అవుట్‌పుట్ స్ట్రీమ్‌కు మ్యాప్ చేయబడి ఉంటుంది.
+        </p>
+      </details>
+    </div>
+
+    <!-- NEXT / PREV NAVIGATION BUTTONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin:48px 0 24px 0; flex-wrap:wrap;">
+      <a href="/blog-java/02-java-installation-ide-and-first-program.html" style="background:var(--bg2); border:1px solid var(--border); color:var(--text); padding:12px 22px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:8px;">
+        ← మునుపటి పాఠం: 02. Setup &amp; First Program
+      </a>
+      <a href="/blog-java/04-java-variables-primitive-data-types-and-memory.html" style="background:#facc15; border:1px solid #eab308; color:#121212; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:800; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(234, 179, 8, 0.25);">
+        తర్వాతి పాఠం: 04. Variables &amp; Data Types →
+      </a>
+    </div>
+  </main>
+</div>
+
+<script src="/site-nav.js"></script>
+</body>
+</html>`;
+
+const outPath = path.join(__dirname, '..', 'public', 'blog-java', '03-java-syntax-class-structure-and-main-method.html');
+fs.writeFileSync(outPath, chapter03Content, 'utf8');
+
+console.log('✅ Successfully generated Java Chapter 03 in exact JavaScript HTML style!');
+console.log('Target file:', outPath);
+console.log('Target file size:', chapter03Content.length, 'characters');
