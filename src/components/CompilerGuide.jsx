@@ -1,214 +1,264 @@
 import React from 'react'
+import { COMPILER_CURRICULUM } from '../compilerCurriculum'
 
-const GUIDES = {
+const LANGUAGE_DETAILS = {
+  python3: {
+    name: 'Python 3',
+    versionTag: 'Python 3.10+ · Dynamic & Expressive',
+    tagline: "The world's most versatile, beginner-friendly programming language for AI, Data Science, Automation & Web Backends.",
+    accentColor: '#3776AB',
+    whatIs: "Python is a high-level, interpreted programming language created by Guido van Rossum. Celebrated for its elegant readability and indentation-based block syntax, Python allows developers to express complex concepts in fewer lines of code compared to C++ or Java.",
+    whyLearn: [
+      { title: '🤖 Artificial Intelligence & Machine Learning', desc: 'Industry standard for AI, Deep Learning, and LLMs using TensorFlow, PyTorch, and Scikit-learn.' },
+      { title: '📊 Data Science & Analytics', desc: 'Dominates data manipulation and mathematical analysis with Pandas, NumPy, and Matplotlib.' },
+      { title: '🌐 Modern Web Backends', desc: 'Powers scalable web APIs and SaaS applications with FastAPI, Django, and Flask.' },
+      { title: '⚡ Rapid Prototyping & Scripting', desc: 'Instant developer productivity with zero compilation overhead and a vast ecosystem of over 400,000 PyPI packages.' }
+    ],
+    compilerNotes: [
+      'Executes inside an isolated Linux container with sub-second response times.',
+      'Full interactive terminal support for input() and user prompt detection.',
+      'Smart persistent auto-save preserves your Python scripts automatically.'
+    ],
+    codeExample: `# Welcome to Python 3 on Our Compiler!
+# Write, run, and experiment with your code instantly.
+
+def analyze_dataset(items):
+    total = sum(items)
+    avg = total / len(items) if items else 0
+    squares = [x**2 for x in items if x % 2 == 0]
+    return total, avg, squares
+
+data = [12, 45, 78, 23, 56, 89, 90]
+total, avg, even_squares = analyze_dataset(data)
+
+print("=== Python 3 Demonstration ===")
+print(f"Original Data: {data}")
+print(f"Total Sum:     {total}")
+print(f"Average:       {avg:.2f}")
+print(f"Even Squares:  {even_squares}")
+`
+  },
   java: {
-    title: 'Java 21 LTS Reference & Quickstart Guide',
-    version: 'OpenJDK 21 LTS · Sub-2s Compilation',
-    summary: 'Java is an object-oriented, class-based programming language built on the "Write Once, Run Anywhere" (WORA) philosophy. Code compiles to bytecode and executes on the Java Virtual Machine (JVM).',
-    badges: ['☕ Java 21 LTS', '⚡ JVM Bytecode', '🛡️ Strict Type Safety', '🔄 Virtual Threads'],
-    codeExample: `// Online Java Compiler - Standard Template
+    name: 'Java',
+    versionTag: 'OpenJDK 21 LTS · Enterprise Backend Standard',
+    tagline: 'The battle-tested, high-performance object-oriented language powering enterprise finance, microservices, and big data systems.',
+    accentColor: '#f0a500',
+    whatIs: "Java is a class-based, object-oriented language founded on the 'Write Once, Run Anywhere' (WORA) philosophy. Java code compiles into bytecode that executes on the Java Virtual Machine (JVM), delivering cross-platform portability, automatic garbage collection, and robust type safety.",
+    whyLearn: [
+      { title: '🏦 Enterprise & Financial Technology (FinTech)', desc: 'The backbone of global banking systems, stock exchanges, and secure high-volume transaction engines.' },
+      { title: '☁️ Cloud-Native Microservices', desc: 'Industry workhorse for scalable cloud architectures built with Spring Boot, Quarkus, and Micronaut.' },
+      { title: '🚀 Modern Performance (Java 21 LTS)', desc: 'Features cutting-edge Virtual Threads (Project Loom), Record Patterns, and modern pattern matching.' },
+      { title: '🛡️ Robust Type Safety & Multi-Threading', desc: 'Rigorous compile-time checks, sophisticated memory management, and built-in concurrency primitives.' }
+    ],
+    compilerNotes: [
+      'Compiled with modern OpenJDK 21 LTS inside an isolated Linux Docker sandbox.',
+      'Interactive terminal seamlessly handles java.util.Scanner user inputs.',
+      'Multi-program tab workspace enables practicing multiple classes simultaneously.'
+    ],
+    codeExample: `// Welcome to Java on Our Compiler!
+// Modern OpenJDK 21 LTS Runtime
+
 import java.util.Scanner;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello, Developer! Welcome to Our Compiler.");
+        System.out.println("=== Java 21 LTS Demonstration ===");
         
-        // Variables & Basic Arithmetic
-        int a = 15;
-        int b = 25;
-        int sum = a + b;
-        System.out.println("Sum of " + a + " + " + b + " = " + sum);
+        // Variables & Modern Collections
+        List<String> frameworks = List.of("Spring Boot", "Kafka", "Hibernate", "Quarkus");
+        System.out.println("Enterprise Tech Stack: " + frameworks);
         
         // Loop demonstration
-        System.out.print("Counting: ");
+        int sum = 0;
         for (int i = 1; i <= 5; i++) {
-            System.out.print(i + " ");
+            sum += i;
         }
-        System.out.println();
+        System.out.println("Sum of numbers 1 to 5 = " + sum);
+        System.out.println("Ready to compile and run your custom Java code above!");
     }
-}`,
-    keyConcepts: [
-      { term: 'Class & Main Method', desc: 'Every Java application starts in public class Main with the public static void main(String[] args) entry point.' },
-      { term: 'Interactive Stdin (Scanner)', desc: 'Use java.util.Scanner scanner = new Scanner(System.in); to capture interactive runtime inputs from the terminal.' },
-      { term: 'Primitive Types', desc: 'Java features 8 primitives: byte, short, int, long, float, double, boolean, and char.' },
-      { term: 'Object-Oriented (OOP)', desc: 'Core pillars: Encapsulation, Inheritance, Polymorphism, and Abstraction via classes and interfaces.' }
-    ],
-    tips: [
-      'Press Ctrl + Enter (or Cmd + Enter on Mac) to instantly compile and run code.',
-      'Always ensure the primary class is named Main when running single-file programs.',
-      'Use the multi-program tabs above to work on multiple Java exercises simultaneously.'
-    ],
-    tutorialLink: '/blog-java.html',
-    tutorialLabel: 'Explore Complete 25-Chapter Java Mastercourse →'
-  },
-  python3: {
-    title: 'Python 3 Reference & Quickstart Guide',
-    version: 'Python 3.10+ · Dynamic & Expressive',
-    summary: 'Python is a high-level, general-purpose interpreted language known for its clear syntax and indentation-based block scoping. Widely used in scripting, data science, web backends, and AI.',
-    badges: ['🐍 Python 3.10+', '⚡ Interactive Terminal', '📦 Batteries Included', '💡 Clean Syntax'],
-    codeExample: `# Online Python Compiler - Standard Template
-
-def calculate_stats(numbers):
-    total = sum(numbers)
-    average = total / len(numbers) if numbers else 0
-    return total, average
-
-# Sample Data
-data = [12, 45, 78, 23, 56, 89]
-total, avg = calculate_stats(data)
-
-print("--- Python 3 Quickstart ---")
-print(f"Data: {data}")
-print(f"Total: {total} | Average: {avg:.2f}")
-
-# List Comprehension
-squares = [x**2 for x in data if x % 2 == 0]
-print(f"Even Squares: {squares}")`,
-    keyConcepts: [
-      { term: 'Indentation Scoping', desc: 'Blocks (functions, loops, conditionals) are delimited by whitespace (4 spaces) instead of curly braces.' },
-      { term: 'Interactive Input', desc: 'Use user_val = input("Enter value: ") to receive terminal user input.' },
-      { term: 'Core Data Structures', desc: 'Built-in lists [1, 2], tuples (1, 2), dictionaries {"k": "v"}, and sets {1, 2}.' },
-      { term: 'Dynamic Typing', desc: 'Variables do not require explicit type declarations; types are bound dynamically at runtime.' }
-    ],
-    tips: [
-      'Use Ctrl + Enter to run code without touching the mouse.',
-      'Use f-strings like f"Value: {val}" for clean, readable string formatting.',
-      'Auto-save keeps your scripts preserved locally even if you refresh.'
-    ],
-    tutorialLink: '/blog-python.html',
-    tutorialLabel: 'Explore Complete 25-Chapter Python Mastercourse →'
+}
+`
   },
   c: {
-    title: 'C Programming (GCC 11) Reference Guide',
-    version: 'GCC 11.4 · ISO C11 Standard',
-    summary: 'C is a foundational procedural language that provides direct low-level memory manipulation, minimal runtime overhead, and efficient mapping to machine instructions.',
-    badges: ['🔵 GCC 11 Compiler', '⚡ Direct Memory Model', '🎯 Pointer Power', '🚀 Zero Runtime Overhead'],
-    codeExample: `// Online C Compiler - Standard Template
+    name: 'C Programming',
+    versionTag: 'GCC 11.4 · ISO C11 Standard',
+    tagline: 'The foundational mother language of modern computing, providing raw speed, direct memory control, and zero runtime overhead.',
+    accentColor: '#659AD3',
+    whatIs: "C is a foundational procedural programming language developed by Dennis Ritchie at Bell Labs. It maps cleanly to CPU architecture, giving programmers direct control over memory addresses, hardware registers, and system calls with unmatched computational efficiency.",
+    whyLearn: [
+      { title: '💻 Operating Systems & Kernel Development', desc: 'The Linux kernel, Windows NT components, and macOS Unix foundations are written primarily in C.' },
+      { title: '🕹️ Embedded Systems & IoT', desc: 'Essential for microcontrollers, automotive electronics, robotics, and resource-constrained hardware.' },
+      { title: '⚡ Game Engines & High-Performance Runtimes', desc: 'Forms the computational core of graphics engines, database engines, and runtime compilers.' },
+      { title: '🧠 Deep Computer Architecture Understanding', desc: 'Teaches developers how computer memory (RAM), pointers, the call stack, and heaps truly function.' }
+    ],
+    compilerNotes: [
+      'Compiled with GCC 11 using strict C11 standards with high optimization.',
+      'Supports interactive terminal input handling via scanf() and fgets().',
+      'Execution completes in under 2 seconds with automatic memory protection boundaries.'
+    ],
+    codeExample: `// Welcome to C Programming on Our Compiler!
 #include <stdio.h>
 
 int main(void) {
-    printf("--- Welcome to C Programming on Our Compiler ---\\n");
+    printf("=== C11 Memory & Pointer Demonstration ===\n");
     
     int numbers[] = {10, 20, 30, 40, 50};
-    int count = sizeof(numbers) / sizeof(numbers[0]);
+    int length = sizeof(numbers) / sizeof(numbers[0]);
     int sum = 0;
     
-    // Pointer Traversal
+    // Traversing array via pointers
     int *ptr = numbers;
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < length; i++) {
         sum += *(ptr + i);
     }
     
-    printf("Array element count: %d\\n", count);
-    printf("Sum computed via pointers: %d\\n", sum);
+    printf("Total Elements: %d\n", length);
+    printf("Sum calculated using pointer arithmetic: %d\n", sum);
     
     return 0;
-}`,
-    keyConcepts: [
-      { term: 'Entry Point & Headers', desc: 'Programs start in int main(void). Include <stdio.h> for printf/scanf and <stdlib.h> for malloc/free.' },
-      { term: 'Pointers & Addresses', desc: '&variable gets memory address; *pointer dereferences and accesses stored values.' },
-      { term: 'Memory Allocation', desc: 'Stack handles local function variables; Heap handles dynamic allocations via malloc(), calloc(), and free().' },
-      { term: 'Format Specifiers', desc: 'Use %d for integers, %f for floats, %lf for doubles, %s for strings, and %p for pointer addresses.' }
-    ],
-    tips: [
-      'Always return 0 from main() to indicate successful execution.',
-      'Remember to free() any dynamically allocated memory to avoid memory leaks.',
-      'Press Ctrl + Enter to execute in isolated Linux Docker sandbox in under 2 seconds.'
-    ],
-    tutorialLink: '/blog-c.html',
-    tutorialLabel: 'Explore Complete 20-Chapter C Mastercourse →'
+}
+`
   },
   cpp17: {
-    title: 'C++17 (G++ 11) Reference & Quickstart Guide',
-    version: 'G++ 11.4 · ISO C++17 Standard',
-    summary: 'C++ is a multi-paradigm systems language combining high-performance low-level hardware control with modern object-oriented and generic template abstractions.',
-    badges: ['⚡ C++17 Standard', '🧩 STL Containers', '🛡️ RAII Memory Safety', '📦 Modern Algorithms'],
-    codeExample: `// Online C++ Compiler - Standard Template
+    name: 'C++',
+    versionTag: 'G++ 11.4 · ISO C++17 Standard',
+    tagline: 'The ultimate high-performance systems language combining low-level hardware control with zero-cost object-oriented and generic abstractions.',
+    accentColor: '#9C033A',
+    whatIs: "C++ is an extension of C created by Bjarne Stroustrup, introducing object-oriented programming, templates, and the Standard Template Library (STL). It powers performance-critical software where microsecond latencies matter.",
+    whyLearn: [
+      { title: '🏆 Competitive Programming & Coding Interviews', desc: 'The preferred language for LeetCode, Codeforces, and Google Kickstart due to raw speed and the rich STL library.' },
+      { title: '🎮 AAA Video Game Development', desc: 'Powers Unreal Engine, Unity native core, PlayStation, and Xbox graphics pipelines.' },
+      { title: '📈 High-Frequency Trading (HFT)', desc: 'Dominates quantitative finance and Wall Street execution engines requiring sub-microsecond latency.' },
+      { title: '🏎️ Zero-Cost Abstractions', desc: 'Templates and RAII ensure that clean abstractions compile down to assembly matching hand-written C.' }
+    ],
+    compilerNotes: [
+      'Compiled with G++ 11 supporting modern C++17 language features.',
+      'Fast interactive I/O via standard std::cin and std::cout streams.',
+      'Full STL support (vectors, sets, maps, priority queues, and algorithms).'
+    ],
+    codeExample: `// Welcome to C++17 on Our Compiler!
 #include <iostream>
 #include <vector>
 #include <numeric>
 #include <algorithm>
 
 int main() {
-    std::cout << "--- C++17 STL Demonstration ---" << std::endl;
+    std::cout << "=== C++17 Standard Template Library ===" << std::endl;
     
-    std::vector<int> numbers = {7, 14, 21, 28, 35};
+    std::vector<int> nums = {14, 28, 42, 56, 70};
     
     // Modern Range-Based For Loop
-    std::cout << "Elements: ";
-    for (const auto& num : numbers) {
-        std::cout << num << " ";
+    std::cout << "Values: ";
+    for (const auto& n : nums) {
+        std::cout << n << " ";
     }
     std::cout << std::endl;
     
-    // STL Accumulate
-    int total = std::accumulate(numbers.begin(), numbers.end(), 0);
-    std::cout << "Sum: " << total << std::endl;
+    // STL Accumulate Algorithm
+    int total = std::accumulate(nums.begin(), nums.end(), 0);
+    std::cout << "Accumulated Total: " << total << std::endl;
     
     return 0;
-}`,
-    keyConcepts: [
-      { term: 'Streams (cin / cout)', desc: 'Standard I/O uses std::cin >> var and std::cout << var instead of C-style printf/scanf.' },
-      { term: 'Standard Template Library (STL)', desc: 'High-performance containers (std::vector, std::map, std::set) and algorithms (std::sort).' },
-      { term: 'RAII Paradigm', desc: 'Resource Acquisition Is Initialization: memory and resources are automatically released when objects exit scope.' },
-      { term: 'auto & Smart Pointers', desc: 'C++17 supports type inference with auto and safe ownership with std::unique_ptr and std::shared_ptr.' }
-    ],
-    tips: [
-      'Add std::ios_base::sync_with_stdio(false); std::cin.tie(NULL); for fast competitive programming I/O.',
-      'Use range-based loops (for (auto x : vec)) for cleaner code.',
-      'Use Ctrl + Enter to compile and execute instantly.'
-    ],
-    tutorialLink: '/blog-cpp.html',
-    tutorialLabel: 'Explore Complete 20-Chapter C++ Mastercourse →'
+}
+`
   },
   nodejs: {
-    title: 'JavaScript (Node.js 20 LTS) Reference Guide',
-    version: 'Node.js 20 LTS · V8 Engine',
-    summary: 'JavaScript is a high-level, dynamic, multi-paradigm language. In our backend runner, scripts execute on the latest Node.js V8 engine with full modern ECMAScript support.',
-    badges: ['🟨 Node.js 20 LTS', '⚡ V8 Engine', '🔄 Async / Await', '📦 Modern ES2024'],
-    codeExample: `// Online JavaScript / Node.js Runner
+    name: 'JavaScript',
+    versionTag: 'Node.js 20 LTS · V8 Runtime',
+    tagline: 'The universal language of the web, powering interactive browser interfaces, scalable backend servers, and fullstack applications.',
+    accentColor: '#F0DB4F',
+    whatIs: "JavaScript is a lightweight, interpreted, object-oriented language with first-class functions. Originally built for web browsers, Node.js expanded JavaScript to server-side backends, desktop apps, and cloud microservices.",
+    whyLearn: [
+      { title: '🌍 The Undisputed Language of the Web', desc: 'Every web browser runs JavaScript. Indispensable for web developers worldwide.' },
+      { title: '🚀 Fullstack JavaScript (MERN Stack)', desc: 'Build frontend (React/Next.js) and backend (Node.js/Express) using a single, unified language.' },
+      { title: '⚡ Event-Driven Asynchronous Architecture', desc: 'Non-blocking I/O and the V8 engine deliver high-throughput API handling.' },
+      { title: '📦 Massive NPM Ecosystem', desc: 'Over 2 million open-source libraries available for instant application development.' }
+    ],
+    compilerNotes: [
+      'Executes on the latest Node.js 20 LTS V8 engine in sub-second times.',
+      'Instant console output capture for console.log() and terminal logging.',
+      'Persistent local storage auto-save keeps scripts preserved across sessions.'
+    ],
+    codeExample: `// Welcome to JavaScript / Node.js on Our Compiler!
 const developers = [
-  { name: 'Alice', role: 'Fullstack', xp: 5 },
-  { name: 'Bob', role: 'Frontend', xp: 3 },
-  { name: 'Charlie', role: 'Backend', xp: 7 }
+  { name: 'Alice', role: 'Fullstack Engineer', xp: 6 },
+  { name: 'Bob', role: 'DevOps Specialist', xp: 4 },
+  { name: 'Charlie', role: 'AI Researcher', xp: 8 }
 ];
 
-console.log("--- JavaScript Modern Syntax ---");
+console.log("=== Modern JavaScript (ES2024) ===");
 
-// Array Methods & Destructuring
-const seniorDevs = developers
+// Functional Array Pipeline & Destructuring
+const leadEngineers = developers
   .filter(({ xp }) => xp >= 5)
-  .map(({ name, role, xp }) => \`\${name} (\${role}) - \${xp} yrs\`);
+  .map(({ name, role, xp }) => name + ' (' + role + ') - ' + xp + ' yrs');
 
-console.log("Senior Engineers:", seniorDevs);
+console.log("Senior Team Members:", leadEngineers);
 
-// Async / Promise demo
-const waitAndGreet = async (name) => {
-  return new Promise(resolve => {
-    setTimeout(() => resolve(\`Welcome aboard, \${name}!\`), 100);
-  });
-};
+// Asynchronous execution demonstration
+async function greet(devName) {
+  return 'Welcome aboard, ' + devName + '! Code compiled instantly.';
+}
 
-waitAndGreet('Developer').then(console.log);`,
-    keyConcepts: [
-      { term: 'Variable Declarations', desc: 'Use const for immutable bindings and let for mutable variables. Avoid legacy var.' },
-      { term: 'Arrow Functions', desc: 'Concise lambda syntax const fn = (a, b) => a + b with lexical this binding.' },
-      { term: 'Asynchronous JS', desc: 'Non-blocking I/O via Promises and async/await for asynchronous pipelines.' },
-      { term: 'Higher-Order Functions', desc: 'Functional methods like .map(), .filter(), .reduce(), and .forEach() on arrays.' }
+greet('Developer').then(console.log);
+`
+  },
+  csharp: {
+    name: 'C#',
+    versionTag: '.NET 8 SDK · Modern C# 12',
+    tagline: 'Microsoft’s flagship enterprise language, blending high productivity, strong type safety, and cloud-scale performance.',
+    accentColor: '#9B4F96',
+    whatIs: "C# is a modern, object-oriented, type-safe programming language built by Microsoft as part of the open-source, cross-platform .NET ecosystem. Widely celebrated for its clean syntax, Language Integrated Query (LINQ), and rich enterprise tooling.",
+    whyLearn: [
+      { title: '🏢 Enterprise Cloud Backends', desc: 'Powers scalable enterprise web APIs with ASP.NET Core and Microsoft Azure integrations.' },
+      { title: '🎮 Unity Video Game Development', desc: 'The primary language for Unity, the world’s leading cross-platform 2D/3D game engine.' },
+      { title: '🔍 Language Integrated Query (LINQ)', desc: 'Write expressive, strongly-typed queries directly over in-memory collections and SQL databases.' },
+      { title: '🚀 Cutting-Edge Modern Language', desc: 'Features records, pattern matching, async streams, and performance rivaling C++.' }
     ],
-    tips: [
-      'Outputs from console.log() appear immediately in the terminal below.',
-      'Use JSON.stringify(obj, null, 2) to pretty-print complex objects.',
-      'Press Ctrl + Enter to run scripts instantly.'
+    compilerNotes: [
+      'Compiled with modern .NET 8 SDK with Roslyn compiler optimizations.',
+      'Instant console execution in isolated Linux sandboxes.',
+      'Supports top-level statements and standard object-oriented class structures.'
     ],
-    tutorialLink: '/blog-javascript.html',
-    tutorialLabel: 'Explore Complete 25-Chapter JavaScript Mastercourse →'
+    codeExample: `// Welcome to C# on Our Compiler!
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+class Program {
+    static void Main() {
+        Console.WriteLine("=== C# (.NET 8) Demonstration ===");
+        
+        var numbers = new List<int> { 3, 6, 9, 12, 15, 18, 21 };
+        
+        // LINQ Query
+        var multiplesOfSix = numbers.Where(n => n % 6 == 0).ToList();
+        
+        Console.WriteLine($"Original List: {string.Join(", ", numbers)}");
+        Console.WriteLine($"Multiples of 6: {string.Join(", ", multiplesOfSix)}");
+        Console.WriteLine($"Total Sum:     {numbers.Sum()}");
+    }
+}
+`
   },
   html: {
-    title: 'HTML5 / CSS3 / JavaScript Live Editor Guide',
-    version: 'HTML5 · CSS3 Grid/Flexbox · Client-Side JS',
-    summary: 'Our Interactive Web Editor provides a real-time live preview window. Write semantic HTML, modern responsive CSS, and dynamic JavaScript with instant rendering.',
-    badges: ['🌐 Semantic HTML5', '🎨 CSS3 Flexbox/Grid', '⚡ Live Preview Pane', '📱 Responsive Testing'],
+    name: 'HTML5 / CSS3 / JavaScript',
+    versionTag: 'HTML5 · CSS3 Grid/Flexbox · Browser Engine',
+    tagline: 'The core building blocks of the World Wide Web, delivering responsive layouts, beautiful styling, and rich client-side interactivity.',
+    accentColor: '#E44D26',
+    whatIs: "HTML (HyperText Markup Language) structures content on the web, CSS (Cascading Style Sheets) styles the presentation and layouts, and JavaScript brings pages to life with client-side interactivity and API integrations.",
+    whyLearn: [
+      { title: '🌐 Universal Web Foundation', desc: 'Every website, mobile hybrid app, and web portal on Earth is built upon HTML and CSS.' },
+      { title: '🎨 Responsive Design Mastery', desc: 'Create adaptive layouts that look flawless across mobile phones, tablets, and desktop displays.' },
+      { title: '⚡ Real-Time Instant Rendering', desc: 'Zero compile delay: see your design updates render directly in the browser preview.' },
+      { title: '💼 Highly In-Demand Career Skill', desc: 'The mandatory foundation for every frontend, fullstack, and UI/UX engineering role.' }
+    ],
+    compilerNotes: [
+      'Multi-tab workspace seamlessly switches between index.html, style.css, and script.js.',
+      'Instant live preview pane renders your page with zero delay.',
+      'Integrated developer console captures client-side console.log() output directly.'
+    ],
     codeExample: `<!-- Live HTML/CSS/JS Editor Template -->
 <div class="card">
   <h2>🚀 Live HTML Sandbox</h2>
@@ -234,308 +284,122 @@ waitAndGreet('Developer').then(console.log);`,
     font-weight: 600;
     cursor: pointer;
   }
-</style>`,
-    keyConcepts: [
-      { term: 'Multi-Tab Editing', desc: 'Switch seamlessly between index.html, style.css, and script.js tabs.' },
-      { term: 'Live Preview', desc: 'Click "Run" or refresh preview to render inside the isolated client-side iframe.' },
-      { term: 'Console Log Interceptor', desc: 'Client-side console.log() output displays in the integrated preview console.' },
-      { term: 'Responsive Testing', desc: 'Resize the split pane horizontally to test tablet and mobile viewports.' }
-    ],
-    tips: [
-      'Use the Split Screen drag bar to adjust the editor and preview widths.',
-      'Download your full HTML/CSS/JS package with one click.',
-      'Local auto-save preserves all 3 tabs automatically.'
-    ],
-    tutorialLink: '/blog-html.html',
-    tutorialLabel: 'Explore Complete 20-Chapter HTML/CSS Web Development Course →'
-  },
-  csharp: {
-    title: 'C# (.NET 8 SDK) Reference & Quickstart Guide',
-    version: '.NET 8 SDK · Modern C# 12',
-    summary: 'C# is a modern, object-oriented, type-safe programming language developed by Microsoft for enterprise applications, cloud backends, and game development.',
-    badges: ['🔷 .NET 8 SDK', '⚡ C# 12 Features', '🎯 LINQ Queries', '🛡️ Strong Type Safety'],
-    codeExample: `// Online C# Compiler - Standard Template
-using System;
-using System.Linq;
-using System.Collections.Generic;
-
-class Program {
-    static void Main() {
-        Console.WriteLine("--- C# (.NET 8) Online Compiler ---");
-        
-        var numbers = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        
-        // LINQ query expression
-        var evenSquares = numbers
-            .Where(n => n % 2 == 0)
-            .Select(n => n * n)
-            .ToList();
-            
-        Console.WriteLine($"Even numbers squared: {string.Join(", ", evenSquares)}");
-        Console.WriteLine($"Total sum: {evenSquares.Sum()}");
-    }
-}`,
-    keyConcepts: [
-      { term: 'Namespaces & Classes', desc: 'Code lives inside namespaces and classes. Main() is the conventional entry point.' },
-      { term: 'Language Integrated Query (LINQ)', desc: 'Powerful SQL-like querying syntax directly embedded into C# collections.' },
-      { term: 'Modern C# Features', desc: 'Supports records, pattern matching, nullable reference types, and top-level statements.' },
-      { term: 'Exception Handling', desc: 'Robust error handling via try { ... } catch (Exception ex) { ... } finally { ... }.' }
-    ],
-    tips: [
-      'Use string interpolation $"Hello {name}" for clean string assembly.',
-      'Use var for local variable type inference when the type is obvious.',
-      'Run instantly using Ctrl + Enter in under 2 seconds.'
-    ],
-    tutorialLink: '/blog-csharp.html',
-    tutorialLabel: 'Explore Complete 20-Chapter C# Mastercourse →'
-  },
-  go: {
-    title: 'Go (Golang 1.22) Reference & Quickstart Guide',
-    version: 'Go 1.22 · Fast Native Compilation',
-    summary: 'Go is an open-source systems language created at Google, focused on simplicity, fast compilation, built-in concurrency with goroutines, and robust cloud performance.',
-    badges: ['🐹 Go 1.22', '⚡ Microsecond Startups', '🔄 Goroutines & Channels', '📦 Static Binaries'],
-    codeExample: `// Online Go Compiler - Standard Template
-package main
-
-import (
-	"fmt"
-	"strings"
-)
-
-func main() {
-	fmt.Println("--- Welcome to Go on Our Compiler ---")
-	
-	languages := []string{"Go", "Python", "Java", "C++", "Rust"}
-	fmt.Printf("Total tracks: %d\\n", len(languages))
-	
-	for i, lang := range languages {
-		fmt.Printf("Track %d: %s (uppercase: %s)\\n", i+1, lang, strings.ToUpper(lang))
-	}
-}`,
-    keyConcepts: [
-      { term: 'package main', desc: 'Executable Go programs must declare package main and contain a func main() entry point.' },
-      { term: 'Slices & Maps', desc: 'Dynamically-sized views into arrays []T and key-value hash maps map[K]V.' },
-      { term: 'Goroutines & Concurrency', desc: 'Lightweight green threads launched with go doWork() communicating via channels.' },
-      { term: 'Error Handling', desc: 'Explicit error returns (val, err := fn()) rather than unchecked exceptions.' }
-    ],
-    tips: [
-      'Use := for short variable declarations inside functions.',
-      'Unused variables and imports are flagged as compile-time errors in Go.',
-      'Press Ctrl + Enter to run code instantly.'
-    ],
-    tutorialLink: null,
-    tutorialLabel: null
-  },
-  rust: {
-    title: 'Rust (1.75+) Reference & Quickstart Guide',
-    version: 'Rustc 1.75+ · Zero-Cost Abstractions',
-    summary: 'Rust is a systems programming language focused on memory safety, concurrency, and high performance without a garbage collector via its revolutionary borrow checker.',
-    badges: ['🦀 Rust 1.75+', '🛡️ Fearless Concurrency', '⚡ Zero-Cost Abstractions', '🔒 Memory Safety'],
-    codeExample: `// Online Rust Compiler - Standard Template
-fn main() {
-    println!("--- Welcome to Rust on Our Compiler ---");
-    
-    let numbers = vec![10, 20, 30, 40, 50];
-    let sum: i32 = numbers.iter().sum();
-    
-    println!("Vector: {:?}", numbers);
-    println!("Sum calculated safely: {}", sum);
-    
-    // Pattern Matching
-    match numbers.get(2) {
-        Some(&val) => println!("Element at index 2 is: {}", val),
-        None => println!("Index out of bounds"),
-    }
-}`,
-    keyConcepts: [
-      { term: 'Ownership & Borrowing', desc: 'Each value has a single owner; references can be immutable (&T) or unique mutable (&mut T).' },
-      { term: 'Pattern Matching', desc: 'Powerful, exhaustive match expressions with Option<T> and Result<T, E>.' },
-      { term: 'Immutability by Default', desc: 'Variables are immutable unless explicitly declared with let mut x = 5;.' },
-      { term: 'Zero-Cost Abstractions', desc: 'Iterators, closures, and generics compile to assembly matching hand-written C.' }
-    ],
-    tips: [
-      'Use println!("{:?}", val); to debug-print structs and collections.',
-      'The compiler gives friendly, precise error messages to guide your code.',
-      'Run code using Ctrl + Enter in under 2 seconds.'
-    ],
-    tutorialLink: null,
-    tutorialLabel: null
-  },
-  php: {
-    title: 'PHP 8.2+ Reference & Quickstart Guide',
-    version: 'PHP 8.2+ CLI · Fast Scripting',
-    summary: 'PHP is a popular general-purpose scripting language especially suited for web backend development, API services, and fast server-side logic.',
-    badges: ['🐘 PHP 8.2+', '⚡ Fast CLI Engine', '🧩 Associative Arrays', '🛠️ Modern Type Hints'],
-    codeExample: `<?php
-// Online PHP Compiler - Standard Template
-
-$frameworks = [
-    'Laravel' => 'Fullstack MVC Framework',
-    'Symfony' => 'Modular Enterprise Components',
-    'WordPress' => 'Content Management Engine'
-];
-
-echo "--- PHP 8 Modern Runner ---\n";
-echo "Popular PHP Frameworks:\n";
-
-foreach ($frameworks as $name => $desc) {
-    echo "- $name: $desc\n";
-}
-
-$sum = array_sum([10, 20, 30, 40]);
-echo "\nArray sum calculation: $sum\n";
-?>`,
-    keyConcepts: [
-      { term: 'Script Delimiters', desc: 'PHP code is enclosed in <?php ... ?> tags.' },
-      { term: 'Variables & Scope', desc: 'All variables begin with a dollar sign $variable and are dynamically or statically typed.' },
-      { term: 'Associative Arrays', desc: 'PHP arrays function as ordered maps, hash tables, and lists simultaneously.' },
-      { term: 'Modern OOP in PHP 8', desc: 'Supports constructor property promotion, union types, and match expressions.' }
-    ],
-    tips: [
-      'echo and print output strings directly to the terminal stdout.',
-      'Use print_r($array) or var_dump($var) to inspect complex data structures.',
-      'Press Ctrl + Enter to run code instantly.'
-    ],
-    tutorialLink: null,
-    tutorialLabel: null
-  },
-  ruby: {
-    title: 'Ruby 3.2+ Reference & Quickstart Guide',
-    version: 'Ruby 3.2+ · Elegant & Expressive',
-    summary: 'Ruby is an expressive, purely object-oriented dynamic programming language focused on simplicity and developer productivity.',
-    badges: ['💎 Ruby 3.2+', '⚡ Pure OOP', '🧱 Blocks & Iterators', '✨ Expressive Syntax'],
-    codeExample: `# Online Ruby Compiler - Standard Template
-
-class Greeter
-  def initialize(name)
-    @name = name
-  end
-
-  def salute
-    puts "Hello #{@name}! Welcome to Ruby on Our Compiler."
-  end
-end
-
-greeter = Greeter.new("Developer")
-greeter.salute
-
-# Blocks & Enumerable demo
-numbers = [1, 2, 3, 4, 5]
-evens = numbers.select { |n| n.even? }
-puts "Even numbers: #{evens.inspect}"`,
-    keyConcepts: [
-      { term: 'Pure Object-Oriented', desc: 'Everything in Ruby is an object, including primitive numbers and nil.' },
-      { term: 'Blocks, Procs & Lambdas', desc: 'Closures passed to methods with do ... end or { |arg| ... } syntax.' },
-      { term: 'String Interpolation', desc: 'Embed expressions inside double quotes using "#{expression}".' },
-      { term: 'Symbols', desc: 'Immutable, reusable identifiers like :name used heavily as dictionary/hash keys.' }
-    ],
-    tips: [
-      'Parentheses around method arguments are usually optional in Ruby.',
-      'Use .inspect or p obj to view the detailed internal structure of objects.',
-      'Run code using Ctrl + Enter in under 2 seconds.'
-    ],
-    tutorialLink: null,
-    tutorialLabel: null
+</style>
+`
   }
-}
+};
 
 export default function CompilerGuide({ lang, currentTheme, setCode }) {
-  const guide = GUIDES[lang?.id] || GUIDES.java
+  const langKey = lang?.id || 'python3'
+  const details = LANGUAGE_DETAILS[langKey] || LANGUAGE_DETAILS.python3
+  const curriculum = COMPILER_CURRICULUM[langKey]
 
   const handleLoadTemplate = () => {
-    if (typeof setCode === 'function' && guide.codeExample) {
-      setCode(guide.codeExample)
+    if (typeof setCode === 'function' && details.codeExample) {
+      setCode(details.codeExample)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
   return (
-    <div className="compiler-guide-container">
-      {/* GUIDE HEADER */}
-      <div className="guide-header-card">
-        <div className="guide-header-top">
-          <div className="guide-title-wrap">
-            <span className="guide-badge-version">{guide.version}</span>
-            <h2 className="guide-main-title">{guide.title}</h2>
+    <div className="compiler-guide-wrapper">
+      {/* ── SECTION 1: ABOUT THE RESPECTIVE LANGUAGE ── */}
+      <section className="guide-hero-section">
+        <div className="guide-hero-top">
+          <div className="guide-hero-title-area">
+            <span className="guide-lang-pill" style={{ borderColor: details.accentColor, color: details.accentColor }}>
+              {details.versionTag}
+            </span>
+            <h1 className="guide-lang-heading">About {details.name} &amp; Compiler Guide</h1>
+            <p className="guide-lang-tagline">{details.tagline}</p>
           </div>
-          {guide.tutorialLink && (
-            <a href={guide.tutorialLink} className="guide-tutorial-cta">
-              {guide.tutorialLabel}
-            </a>
-          )}
-        </div>
-        <p className="guide-summary-text">{guide.summary}</p>
-        
-        {/* BADGES */}
-        <div className="guide-badges-row">
-          {guide.badges.map((b, i) => (
-            <span key={i} className="guide-pill">{b}</span>
-          ))}
-        </div>
-      </div>
-
-      {/* CODE EXAMPLE & QUICKSTART */}
-      <div className="guide-code-section">
-        <div className="guide-code-header">
-          <span className="guide-section-label">⚡ Interactive Quickstart Snippet</span>
-          <button onClick={handleLoadTemplate} className="guide-load-code-btn">
+          <button onClick={handleLoadTemplate} className="guide-hero-load-btn">
             Load Template Into Editor ↑
           </button>
         </div>
-        <pre className="guide-code-block">
-          <code>{guide.codeExample}</code>
-        </pre>
-      </div>
 
-      {/* 2-COLUMN GRID: KEY CONCEPTS & PRO TIPS */}
-      <div className="guide-grid-two-col">
-        {/* KEY CONCEPTS */}
-        <div className="guide-card">
-          <h3 className="guide-card-title">
-            <span>💡</span> Core Syntax &amp; Language Fundamentals
-          </h3>
-          <div className="guide-concept-list">
-            {guide.keyConcepts.map((item, idx) => (
-              <div key={idx} className="guide-concept-item">
-                <span className="guide-term-badge">{item.term}</span>
-                <p className="guide-term-desc">{item.desc}</p>
-              </div>
-            ))}
-          </div>
+        {/* WHAT IS THIS LANGUAGE */}
+        <div className="guide-about-card">
+          <h3 className="guide-sub-heading">📖 What is {details.name}?</h3>
+          <p className="guide-about-paragraph">{details.whatIs}</p>
         </div>
 
-        {/* PRO TIPS & SHORTCUTS */}
-        <div className="guide-card">
-          <h3 className="guide-card-title">
-            <span>🚀</span> Compiler Pro Tips &amp; Keyboard Shortcuts
-          </h3>
-          <ul className="guide-tips-list">
-            {guide.tips.map((tip, idx) => (
-              <li key={idx} className="guide-tip-item">
-                <span className="guide-tip-check">✓</span>
-                <span>{tip}</span>
+        {/* WHY LEARN THIS LANGUAGE (4 CARDS) */}
+        <h3 className="guide-sub-heading" style={{ marginTop: '24px' }}>
+          💡 Why Learn &amp; Use {details.name}?
+        </h3>
+        <div className="guide-why-grid">
+          {details.whyLearn.map((item, idx) => (
+            <div key={idx} className="guide-why-card">
+              <h4 className="guide-why-title">{item.title}</h4>
+              <p className="guide-why-desc">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* HOW IT RUNS IN OUR COMPILER */}
+        <div className="guide-platform-card">
+          <h3 className="guide-sub-heading">⚡ How Our Compiler Runs Your {details.name} Code</h3>
+          <ul className="guide-platform-list">
+            {details.compilerNotes.map((note, idx) => (
+              <li key={idx} className="guide-platform-item">
+                <span className="guide-green-check">✓</span>
+                <span>{note}</span>
               </li>
             ))}
           </ul>
+        </div>
+      </section>
 
-          {/* PERSISTENT AUTO-SAVE NOTICE */}
-          <div className="guide-feature-box">
-            <div className="guide-feature-title">💾 Persistent Auto-Save Enabled</div>
-            <p className="guide-feature-desc">
-              Your code is automatically saved in your browser's local cache. Refreshing the browser or switching languages will not erase your work.
-            </p>
+      {/* ── SECTION 2: COURSE CURRICULUM & COMPLETE CHAPTER LINKS ── */}
+      {curriculum && curriculum.phases && curriculum.phases.length > 0 && (
+        <section className="guide-curriculum-section">
+          <div className="guide-curriculum-header">
+            <div className="guide-curriculum-title-wrap">
+              <span className="guide-curriculum-badge">📚 COMPLETE COURSE CURRICULUM</span>
+              <h2 className="guide-curriculum-title">
+                {details.name} Mastercourse — All Structured Chapters
+              </h2>
+              <p className="guide-curriculum-desc">
+                Follow our comprehensive step-by-step tutorial track. Click on any chapter below to read in-depth lessons with syntax rules, architecture diagrams, and runnable code examples.
+              </p>
+            </div>
           </div>
 
-          {guide.tutorialLink && (
-            <div className="guide-learn-more-box">
-              <span>Looking for structured lessons with diagrams &amp; quizzes?</span>
-              <a href={guide.tutorialLink} className="guide-learn-more-link">
-                View Full Curriculum &amp; Chapters →
-              </a>
-            </div>
-          )}
-        </div>
-      </div>
+          {/* PHASES LIST */}
+          <div className="guide-phases-container">
+            {curriculum.phases.map((phase, pIdx) => (
+              <div key={pIdx} className="guide-phase-card">
+                <div className="guide-phase-header">
+                  <div className="guide-phase-title-left">
+                    <span className="guide-phase-idx">PHASE {pIdx + 1}</span>
+                    <h3 className="guide-phase-name">{phase.name}</h3>
+                  </div>
+                  <span className="guide-phase-range">{phase.range}</span>
+                </div>
+
+                {/* CHAPTERS GRID IN THIS PHASE */}
+                <div className="guide-chapter-grid">
+                  {phase.chapters.map((ch, cIdx) => (
+                    <a
+                      key={cIdx}
+                      href={ch.url}
+                      className="guide-chapter-link"
+                      title={`Read Chapter: ${ch.title}`}
+                    >
+                      <span className="guide-ch-num" style={{ background: details.accentColor }}>
+                        {ch.num}
+                      </span>
+                      <span className="guide-ch-title">{ch.title}</span>
+                      <span className="guide-ch-arrow">→</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   )
 }
