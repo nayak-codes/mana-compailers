@@ -2453,6 +2453,7 @@ export default function App() {
           </footer>
         </div>
       )}
+      <CookieConsent />
     </div>
   )
 }
@@ -2685,7 +2686,7 @@ const TUTORIAL_GUIDES = [
 
 
 function CookieConsent() {
-  const [show, setShow] = React.useState(() => {
+  const [show, setShow] = useState(() => {
     try {
       return !localStorage.getItem('ourcompiler_cookie_consent')
     } catch (e) {
