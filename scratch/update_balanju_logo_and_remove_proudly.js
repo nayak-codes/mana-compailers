@@ -76,3 +76,4 @@ if (fs.existsSync(blogHtmlPath)) {
   fs.writeFileSync(blogHtmlPath, blogHtml, 'utf8');
   console.log("Updated public/blog.html with Balanju logo!");
 }
+

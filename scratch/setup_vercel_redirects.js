@@ -55,3 +55,4 @@ newRedirects.push({
 vercel.redirects = newRedirects;
 fs.writeFileSync(vercelPath, JSON.stringify(vercel, null, 2), 'utf8');
 console.log('Updated vercel.json with Java redirects!');
+

@@ -125,3 +125,4 @@ const redirects = [
 vercel.redirects = redirects;
 fs.writeFileSync(vercelPath, JSON.stringify(vercel, null, 2), 'utf8');
 console.log('Updated vercel.json with safe, specific Java redirects!');
+

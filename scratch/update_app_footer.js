@@ -250,3 +250,4 @@ const newFooter = `      {/* ── PREMIUM FOOTER ── */}
 content = content.slice(0, oldFooterIdx) + newFooter;
 fs.writeFileSync(appPath, content, 'utf8');
 console.log("Successfully replaced footer in src/App.jsx!");
+

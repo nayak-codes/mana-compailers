@@ -59,3 +59,4 @@ if (fs.existsSync(blogHtmlPath)) {
   fs.writeFileSync(blogHtmlPath, blogHtml, 'utf8');
   console.log("Added 'Built by' to public/blog.html!");
 }
+

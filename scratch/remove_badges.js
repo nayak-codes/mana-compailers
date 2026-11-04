@@ -30,3 +30,4 @@ content = content.replace(
 
 fs.writeFileSync(appPath, content, 'utf8');
 console.log('Successfully removed badges from App.jsx!');
+

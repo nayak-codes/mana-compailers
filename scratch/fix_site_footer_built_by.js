@@ -38,3 +38,4 @@ if (!blogHtml.includes("<span class=\"banner-title\">Built by</span>")) {
 
 fs.writeFileSync(blogHtmlPath, blogHtml, 'utf8');
 console.log("Updated blog.html, includes Built by:", blogHtml.includes("Built by"));
+

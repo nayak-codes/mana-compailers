@@ -68,3 +68,4 @@ cssContent = cssContent.replace(
 
 fs.writeFileSync(cssPath, cssContent, 'utf8');
 console.log("Updated public/pages.css footer grid to single row!");
+

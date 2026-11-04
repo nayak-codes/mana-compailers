@@ -11,3 +11,4 @@ activeSet.add('index.html');
 const oldFiles = javaFiles.filter(f => !activeSet.has(f));
 console.log('Old/Unlinked files count:', oldFiles.length);
 console.log(oldFiles);
+

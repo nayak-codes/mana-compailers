@@ -24,3 +24,4 @@ console.log('Total unique /blog-java/ hrefs found:', allFoundHrefs.size);
 console.log('Broken / missing hrefs on disk count:', brokenLinks.size);
 console.log('List of broken links:');
 console.log([...brokenLinks]);
+
