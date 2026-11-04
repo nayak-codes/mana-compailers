@@ -112,3 +112,4 @@ if (!c.includes('<CookieConsent />')) {
 
 fs.writeFileSync('src/App.jsx', c, 'utf8');
 console.log('Fixed src/App.jsx!');
+
