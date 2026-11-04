@@ -3,6 +3,7 @@ const Editor = lazy(() => import('@monaco-editor/react'))
 import { LANGUAGES, TEMPLATES, DEFAULT_HTML_FILES } from './languages'
 import AppTopnav from './components/AppTopnav'
 import CompilerHeader from './components/CompilerHeader'
+import CompilerGuide from './components/CompilerGuide'
 import WebPreview from './components/WebPreview'
 import TerminalLoader from './components/TerminalLoader'
 import OnboardingTour from './components/OnboardingTour'
@@ -1062,7 +1063,15 @@ export default function App() {
 
   const currentCode = lang.id === 'html' ? (htmlFiles[activeHtmlTab] ?? '') : (activeFile?.code ?? '')
 
-  const [tutorialHtml, setTutorialHtml] = useState('')
+  
+  const handleLoadTemplateCode = (newCode) => {
+    if (lang.id === 'html') {
+      setHtmlFiles(prev => ({ ...prev, html: newCode }))
+    } else {
+      setPrograms(prev => prev.map(p => p.id === activeFileId ? { ...p, code: newCode } : p))
+    }
+  }
+
   const [siteTheme, setSiteTheme] = useState(() => localStorage.getItem('site_theme') || 'light')
   const [compilerTheme, setCompilerTheme] = useState('dark')
   const [showTour, setShowTour] = useState(false)
@@ -1116,34 +1125,7 @@ export default function App() {
     }
   }, [lang, view])
 
-  useEffect(() => {
-    let langFile = lang.id
-    if (lang.id === 'python3') langFile = 'python'
-    if (lang.id === 'nodejs') langFile = 'javascript'
-    if (lang.id === 'cpp17') langFile = 'cpp'
-    if (lang.id === 'html') langFile = 'html'
-    
-    setTutorialHtml('')
-    fetch(`/blog-${langFile}.html`)
-      .then(res => res.text())
-      .then(html => {
-        const parser = new DOMParser()
-        const doc = parser.parseFromString(html, 'text/html')
-        const main = doc.querySelector('main')
-        if (main) {
-          const backLink = main.querySelector('.back-link') || main.querySelector('a[href="/blog.html"]')
-          if (backLink) backLink.remove()
-          const footer = main.querySelector('.footer')
-          if (footer) footer.remove()
-          setTutorialHtml(main.innerHTML)
-        } else {
-          setTutorialHtml(doc.body.innerHTML)
-        }
-      })
-      .catch(() => {
-        setTutorialHtml('<p>Tutorial guide currently unavailable for this language. You can still compile and run your code above.</p>')
-      })
-  }, [lang])
+  
 
   const [inputs, setInputs] = useState([])
   const [output, setOutput] = useState(null)
@@ -2367,21 +2349,8 @@ export default function App() {
 
 
 
-          {/* TUTORIAL CONTENT PANEL */}
-          <div className="tutorial-section">
-            <div className="tutorial-header">
-              <h2>📚 {lang.label} Tutorial & Reference Guide</h2>
-              <p>Read the guide below to learn the syntax and features of {lang.label}, and practice by running code in the editor above.</p>
-            </div>
-            {tutorialHtml ? (
-              <div 
-                className="tutorial-body"
-                dangerouslySetInnerHTML={{ __html: tutorialHtml }} 
-              />
-            ) : (
-              <div className="tutorial-loading">Loading tutorial...</div>
-            )}
-          </div>
+          {/* COMPILER QUICK REFERENCE & TUTORIAL GUIDE */}
+          <CompilerGuide lang={lang} currentTheme={compilerTheme} setCode={handleLoadTemplateCode} />
 
           {/* CODE CLIPBOARD MODAL */}
           {showClipboard && (
