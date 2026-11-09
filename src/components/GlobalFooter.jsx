@@ -234,3 +234,4 @@ export default function GlobalFooter({ isMobile = false }) {
     </footer>
   )
 }
+
