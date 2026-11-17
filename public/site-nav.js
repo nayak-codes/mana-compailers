@@ -31,7 +31,6 @@
   var STATIC_LINKS = [
     { name: 'Home', href: '/' },
     { name: 'Roadmaps', href: '/roadmaps.html' },
-    { name: 'Tutorials', href: '/blog.html' },
     { name: 'Features', href: '/features.html' },
     { name: 'About', href: '/about.html' },
     { name: 'Contact', href: '/contact.html' }
