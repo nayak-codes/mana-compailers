@@ -2643,17 +2643,37 @@ const CAREER_ROADMAPS = [
     title: 'Full-Stack Web Developer',
     desc: 'From frontend React to backend Node/Python APIs, PostgreSQL databases, and cloud deployment.',
     icon: '🌐',
-    color: '#2ea043',
+    color: '#38bdf8',
     time: '6 – 9 Months',
     salary: '₹6.5 – ₹24 LPA',
     tags: ['React.js', 'Node.js', 'PostgreSQL', 'Docker']
+  },
+  {
+    path: '/roadmap-ai-ml.html',
+    title: 'AI & Machine Learning Engineer',
+    desc: 'Master PyTorch neural networks, Transformers, LLM fine-tuning, RAG, and MLOps model serving.',
+    icon: '🤖',
+    color: '#a855f7',
+    time: '6 – 12 Months',
+    salary: '₹8.0 – ₹32 LPA',
+    tags: ['Python', 'PyTorch', 'LangChain', 'FastAPI']
+  },
+  {
+    path: '/roadmap-devops.html',
+    title: 'DevOps & Cloud Engineer',
+    desc: 'Automate deployments, orchestrate Kubernetes clusters, write Terraform IaC, and CI/CD pipelines.',
+    icon: '☁️',
+    color: '#0284c7',
+    time: '5 – 9 Months',
+    salary: '₹7.0 – ₹26 LPA',
+    tags: ['Docker', 'Kubernetes', 'Terraform', 'AWS']
   },
   {
     path: '/roadmap-data-analyst.html',
     title: 'Data Analyst & Python Science',
     desc: 'Turn raw business data into actionable strategies with Python, SQL, Pandas, and Power BI.',
     icon: '📊',
-    color: '#0969da',
+    color: '#22c55e',
     time: '4 – 6 Months',
     salary: '₹5.5 – ₹20 LPA',
     tags: ['Python', 'SQL', 'Pandas', 'Power BI']
@@ -2663,20 +2683,60 @@ const CAREER_ROADMAPS = [
     title: 'Backend & Systems Engineer',
     desc: 'Architect high-throughput scalable backends with Java, C++, DSA, Redis, and Microservices.',
     icon: '⚙️',
-    color: '#8957e5',
+    color: '#9333ea',
     time: '6 – 12 Months',
     salary: '₹7.0 – ₹28 LPA',
-    tags: ['Java', 'C++', 'System Design', 'Redis']
+    tags: ['Java', 'C++', 'Spring Boot', 'Redis']
   },
   {
     path: '/roadmap-frontend.html',
     title: 'Modern Frontend Engineer',
     desc: 'Craft responsive, sub-second web UI with HTML5, Tailwind CSS, JavaScript ES6+, React, and Next.js.',
     icon: '🎨',
-    color: '#d97706',
+    color: '#f59e0b',
     time: '4 – 7 Months',
     salary: '₹6.0 – ₹22 LPA',
     tags: ['HTML5', 'Tailwind', 'JavaScript', 'React.js']
+  },
+  {
+    path: '/roadmap-mobile.html',
+    title: 'Mobile App Developer',
+    desc: 'Build cross-platform 120 FPS iOS & Android apps with Flutter, React Native, and device APIs.',
+    icon: '📱',
+    color: '#10b981',
+    time: '5 – 8 Months',
+    salary: '₹6.0 – ₹22 LPA',
+    tags: ['React Native', 'Flutter', 'Dart', 'SQLite']
+  },
+  {
+    path: '/roadmap-cybersecurity.html',
+    title: 'Cybersecurity Analyst & Hacker',
+    desc: 'Master networking, Linux security, penetration testing, OWASP Top 10, and SIEM SOC operations.',
+    icon: '🛡️',
+    color: '#ef4444',
+    time: '6 – 10 Months',
+    salary: '₹6.5 – ₹25 LPA',
+    tags: ['Python', 'Linux', 'Burp Suite', 'Wazuh']
+  },
+  {
+    path: '/roadmap-game-dev.html',
+    title: 'Game Developer (Unity & Unreal)',
+    desc: 'Bring 2D & 3D virtual worlds to life: game loops in C# & C++, physics, shaders, and multiplayer.',
+    icon: '🎮',
+    color: '#ec4899',
+    time: '6 – 12 Months',
+    salary: '₹5.5 – ₹20 LPA',
+    tags: ['C#', 'C++', 'Unity', 'Unreal Engine 5']
+  },
+  {
+    path: '/roadmap-data-engineer.html',
+    title: 'Data Engineer (Big Data)',
+    desc: 'Ingest petabyte-scale data pipelines with Python, Advanced SQL, Apache Spark, Airflow, and Kafka.',
+    icon: '⚡',
+    color: '#eab308',
+    time: '6 – 10 Months',
+    salary: '₹7.5 – ₹28 LPA',
+    tags: ['Python', 'SQL', 'Apache Spark', 'Kafka']
   }
 ]
 
