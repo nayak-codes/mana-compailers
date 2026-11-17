@@ -2639,7 +2639,7 @@ const TUTORIAL_GUIDES = [
 // ── Developer Career Roadmaps (2026 Edition) ─────────────────────────
 const CAREER_ROADMAPS = [
   {
-    path: '/roadmap-fullstack.html',
+    path: '/roadmap-fullstack',
     title: 'Full-Stack Web Developer',
     desc: 'From frontend React to backend Node/Python APIs, PostgreSQL databases, and cloud deployment.',
     icon: '🌐',
@@ -2649,7 +2649,7 @@ const CAREER_ROADMAPS = [
     tags: ['React.js', 'Node.js', 'PostgreSQL', 'Docker']
   },
   {
-    path: '/roadmap-ai-ml.html',
+    path: '/roadmap-ai-ml',
     title: 'AI & Machine Learning Engineer',
     desc: 'Master PyTorch neural networks, Transformers, LLM fine-tuning, RAG, and MLOps model serving.',
     icon: '🤖',
@@ -2659,7 +2659,7 @@ const CAREER_ROADMAPS = [
     tags: ['Python', 'PyTorch', 'LangChain', 'FastAPI']
   },
   {
-    path: '/roadmap-devops.html',
+    path: '/roadmap-devops',
     title: 'DevOps & Cloud Engineer',
     desc: 'Automate deployments, orchestrate Kubernetes clusters, write Terraform IaC, and CI/CD pipelines.',
     icon: '☁️',
@@ -2669,7 +2669,7 @@ const CAREER_ROADMAPS = [
     tags: ['Docker', 'Kubernetes', 'Terraform', 'AWS']
   },
   {
-    path: '/roadmap-data-analyst.html',
+    path: '/roadmap-data-analyst',
     title: 'Data Analyst & Python Science',
     desc: 'Turn raw business data into actionable strategies with Python, SQL, Pandas, and Power BI.',
     icon: '📊',
@@ -2679,7 +2679,7 @@ const CAREER_ROADMAPS = [
     tags: ['Python', 'SQL', 'Pandas', 'Power BI']
   },
   {
-    path: '/roadmap-backend.html',
+    path: '/roadmap-backend',
     title: 'Backend & Systems Engineer',
     desc: 'Architect high-throughput scalable backends with Java, C++, DSA, Redis, and Microservices.',
     icon: '⚙️',
@@ -2689,7 +2689,7 @@ const CAREER_ROADMAPS = [
     tags: ['Java', 'C++', 'Spring Boot', 'Redis']
   },
   {
-    path: '/roadmap-frontend.html',
+    path: '/roadmap-frontend',
     title: 'Modern Frontend Engineer',
     desc: 'Craft responsive, sub-second web UI with HTML5, Tailwind CSS, JavaScript ES6+, React, and Next.js.',
     icon: '🎨',
@@ -2699,7 +2699,7 @@ const CAREER_ROADMAPS = [
     tags: ['HTML5', 'Tailwind', 'JavaScript', 'React.js']
   },
   {
-    path: '/roadmap-mobile.html',
+    path: '/roadmap-mobile',
     title: 'Mobile App Developer',
     desc: 'Build cross-platform 120 FPS iOS & Android apps with Flutter, React Native, and device APIs.',
     icon: '📱',
@@ -2709,7 +2709,7 @@ const CAREER_ROADMAPS = [
     tags: ['React Native', 'Flutter', 'Dart', 'SQLite']
   },
   {
-    path: '/roadmap-cybersecurity.html',
+    path: '/roadmap-cybersecurity',
     title: 'Cybersecurity Analyst & Hacker',
     desc: 'Master networking, Linux security, penetration testing, OWASP Top 10, and SIEM SOC operations.',
     icon: '🛡️',
@@ -2719,7 +2719,7 @@ const CAREER_ROADMAPS = [
     tags: ['Python', 'Linux', 'Burp Suite', 'Wazuh']
   },
   {
-    path: '/roadmap-game-dev.html',
+    path: '/roadmap-game-dev',
     title: 'Game Developer (Unity & Unreal)',
     desc: 'Bring 2D & 3D virtual worlds to life: game loops in C# & C++, physics, shaders, and multiplayer.',
     icon: '🎮',
@@ -2729,7 +2729,7 @@ const CAREER_ROADMAPS = [
     tags: ['C#', 'C++', 'Unity', 'Unreal Engine 5']
   },
   {
-    path: '/roadmap-data-engineer.html',
+    path: '/roadmap-data-engineer',
     title: 'Data Engineer (Big Data)',
     desc: 'Ingest petabyte-scale data pipelines with Python, Advanced SQL, Apache Spark, Airflow, and Kafka.',
     icon: '⚡',
@@ -2874,7 +2874,7 @@ function HomePage({ selectLanguage, theme, setTheme, isMobile }) {
                 Step-by-step career blueprints from zero to high-earning software engineer. Complete with technologies to learn, portfolio projects, and interactive compilers.
               </p>
             </div>
-            <a href="/roadmaps.html" style={{ fontSize: 13.5, fontWeight: 700, color: '#58a6ff', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <a href="/roadmaps" style={{ fontSize: 13.5, fontWeight: 700, color: '#58a6ff', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
               Explore all roadmaps →
             </a>
           </div>

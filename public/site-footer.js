@@ -83,14 +83,14 @@
         '<div class="footer-col">' +
           '<p class="col-title prod-title">Learn &amp; Careers</p>' +
           '<ul class="col-list">' +
-            '<li><a href="/roadmaps.html" style="font-weight: 700; color: #58a6ff;">🚀 All 10 Roadmaps</a></li>' +
-            '<li><a href="/roadmap-fullstack.html">🌐 Full-Stack Dev</a></li>' +
-            '<li><a href="/roadmap-ai-ml.html">🤖 AI &amp; ML Engineer</a></li>' +
-            '<li><a href="/roadmap-devops.html">☁️ DevOps &amp; Cloud</a></li>' +
-            '<li><a href="/roadmap-data-analyst.html">📊 Data Analyst</a></li>' +
-            '<li><a href="/roadmap-cybersecurity.html">🛡️ Cybersecurity</a></li>' +
-            '<li><a href="/blog.html">📚 All Tutorials</a></li>' +
-            '<li><a href="/blog-python.html">Python Guide</a></li>' +
+            '<li><a href="/roadmaps" style="font-weight: 700; color: #58a6ff;">🚀 All 10 Roadmaps</a></li>' +
+            '<li><a href="/roadmap-fullstack">🌐 Full-Stack Dev</a></li>' +
+            '<li><a href="/roadmap-ai-ml">🤖 AI &amp; ML Engineer</a></li>' +
+            '<li><a href="/roadmap-devops">☁️ DevOps &amp; Cloud</a></li>' +
+            '<li><a href="/roadmap-data-analyst">📊 Data Analyst</a></li>' +
+            '<li><a href="/roadmap-cybersecurity">🛡️ Cybersecurity</a></li>' +
+            '<li><a href="/blog">📚 All Tutorials</a></li>' +
+            '<li><a href="/blog-python">Python Guide</a></li>' +
           '</ul>' +
         '</div>' +
         '<div class="footer-col">' +

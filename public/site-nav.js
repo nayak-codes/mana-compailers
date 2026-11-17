@@ -30,7 +30,7 @@
 
   var STATIC_LINKS = [
     { name: 'Home', href: '/' },
-    { name: 'Roadmaps', href: '/roadmaps.html' },
+    { name: 'Roadmaps', href: '/roadmaps' },
     { name: 'Features', href: '/features.html' },
     { name: 'About', href: '/about.html' },
     { name: 'Contact', href: '/contact.html' }
@@ -46,17 +46,40 @@
     }
 
     var staticMap = {
+      '/about': 'About',
       '/about.html': 'About',
+      '/features': 'Features',
       '/features.html': 'Features',
+      '/contact': 'Contact',
       '/contact.html': 'Contact',
+      '/privacy-policy': 'Privacy',
       '/privacy-policy.html': 'Privacy',
+      '/terms-of-service': 'Terms',
       '/terms-of-service.html': 'Terms',
+      '/blog': 'Tutorials',
       '/blog.html': 'Tutorials',
+      '/roadmaps': 'Roadmaps',
       '/roadmaps.html': 'Roadmaps',
+      '/roadmap-fullstack': 'Roadmaps',
       '/roadmap-fullstack.html': 'Roadmaps',
+      '/roadmap-ai-ml': 'Roadmaps',
+      '/roadmap-ai-ml.html': 'Roadmaps',
+      '/roadmap-devops': 'Roadmaps',
+      '/roadmap-devops.html': 'Roadmaps',
+      '/roadmap-data-analyst': 'Roadmaps',
       '/roadmap-data-analyst.html': 'Roadmaps',
+      '/roadmap-backend': 'Roadmaps',
       '/roadmap-backend.html': 'Roadmaps',
-      '/roadmap-frontend.html': 'Roadmaps'
+      '/roadmap-frontend': 'Roadmaps',
+      '/roadmap-frontend.html': 'Roadmaps',
+      '/roadmap-mobile': 'Roadmaps',
+      '/roadmap-mobile.html': 'Roadmaps',
+      '/roadmap-cybersecurity': 'Roadmaps',
+      '/roadmap-cybersecurity.html': 'Roadmaps',
+      '/roadmap-game-dev': 'Roadmaps',
+      '/roadmap-game-dev.html': 'Roadmaps',
+      '/roadmap-data-engineer': 'Roadmaps',
+      '/roadmap-data-engineer.html': 'Roadmaps'
     };
     if (staticMap[path]) {
       ctx.staticPage = staticMap[path];
