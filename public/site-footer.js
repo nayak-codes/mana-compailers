@@ -81,15 +81,16 @@
           '</ul>' +
         '</div>' +
         '<div class="footer-col">' +
-          '<p class="col-title prod-title">Learn</p>' +
+          '<p class="col-title prod-title">Learn &amp; Careers</p>' +
           '<ul class="col-list">' +
+            '<li><a href="/roadmaps.html" style="font-weight: 700; color: #58a6ff;">🚀 Career Roadmaps</a></li>' +
+            '<li><a href="/roadmap-fullstack.html">🌐 Full-Stack Dev</a></li>' +
+            '<li><a href="/roadmap-data-analyst.html">📊 Data Analyst</a></li>' +
+            '<li><a href="/roadmap-backend.html">⚙️ Backend Engineer</a></li>' +
+            '<li><a href="/roadmap-frontend.html">🎨 Frontend Engineer</a></li>' +
             '<li><a href="/blog.html">📚 All Tutorials</a></li>' +
             '<li><a href="/blog-python.html">Python Guide</a></li>' +
             '<li><a href="/blog-java.html">Java Guide</a></li>' +
-            '<li><a href="/blog-javascript.html">JavaScript Guide</a></li>' +
-            '<li><a href="/blog-cpp.html">C++ Guide</a></li>' +
-            '<li><a href="/blog-c.html">C Guide</a></li>' +
-            '<li><a href="/blog-html.html">HTML5 Guide</a></li>' +
           '</ul>' +
         '</div>' +
         '<div class="footer-col">' +

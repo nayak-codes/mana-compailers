@@ -30,10 +30,11 @@
 
   var STATIC_LINKS = [
     { name: 'Home', href: '/' },
+    { name: 'Roadmaps', href: '/roadmaps.html' },
+    { name: 'Tutorials', href: '/blog.html' },
     { name: 'Features', href: '/features.html' },
     { name: 'About', href: '/about.html' },
-    { name: 'Contact', href: '/contact.html' },
-    { name: 'Privacy', href: '/privacy-policy.html' }
+    { name: 'Contact', href: '/contact.html' }
   ];
 
   function detectContext() {
@@ -51,7 +52,12 @@
       '/contact.html': 'Contact',
       '/privacy-policy.html': 'Privacy',
       '/terms-of-service.html': 'Terms',
-      '/blog.html': 'Tutorials'
+      '/blog.html': 'Tutorials',
+      '/roadmaps.html': 'Roadmaps',
+      '/roadmap-fullstack.html': 'Roadmaps',
+      '/roadmap-data-analyst.html': 'Roadmaps',
+      '/roadmap-backend.html': 'Roadmaps',
+      '/roadmap-frontend.html': 'Roadmaps'
     };
     if (staticMap[path]) {
       ctx.staticPage = staticMap[path];

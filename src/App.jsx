@@ -2625,19 +2625,59 @@ const LANG_CARDS = [
   { id: 'ruby',     label: 'Ruby Compiler',          accentColor: '#E82D09', bgGlow: 'rgba(232,45,9,0.18)' },
 ]
 
-// ── Tutorials Catalog (11 Compiler Languages) ──────────────────
+// ── Curated Masterclasses (7 Flagship Tracks) ──────────────────
 const TUTORIAL_GUIDES = [
-  { path: '/blog-python.html',     id: 'python3',  title: 'Python Tutorial',     color: '#3776AB' },
-  { path: '/blog-java.html',       id: 'java',     title: 'Java Tutorial',       color: '#f0a500' },
-  { path: '/blog-html.html',       id: 'html',     title: 'HTML/CSS/JS Tutorial',color: '#E44D26' },
-  { path: '/blog-c.html',          id: 'c',        title: 'C Tutorial',          color: '#659AD3' },
-  { path: '/blog-cpp.html',        id: 'cpp17',    title: 'C++ Tutorial',        color: '#9C033A' },
-  { path: '/blog-javascript.html', id: 'nodejs',   title: 'JavaScript Tutorial', color: '#F0DB4F' },
-  { path: '/blog-csharp.html',     id: 'csharp',   title: 'C# Tutorial',         color: '#9B4F96' },
-  { path: '/blog-go.html',         id: 'go',       title: 'Go Tutorial',         color: '#00ACD7' },
-  { path: '/blog-rust.html',       id: 'rust',     title: 'Rust Tutorial',       color: '#CE412B' },
-  { path: '/blog-php.html',        id: 'php',      title: 'PHP Tutorial',        color: '#8892BF' },
-  { path: '/blog-ruby.html',       id: 'ruby',     title: 'Ruby Tutorial',       color: '#E82D09' },
+  { path: '/blog-python.html',     id: 'python3',  title: 'Python Masterclass (25 Chapters)',     color: '#3776AB' },
+  { path: '/blog-java.html',       id: 'java',     title: 'Java Masterclass (25 Chapters)',       color: '#f0a500' },
+  { path: '/blog-html.html',       id: 'html',     title: 'HTML5 & Web (20 Chapters)',            color: '#E44D26' },
+  { path: '/blog-c.html',          id: 'c',        title: 'C Programming (20 Chapters)',          color: '#659AD3' },
+  { path: '/blog-cpp.html',        id: 'cpp17',    title: 'C++ Systems (20 Chapters)',            color: '#9C033A' },
+  { path: '/blog-javascript.html', id: 'nodejs',   title: 'JavaScript ES6+ (25 Chapters)',        color: '#F0DB4F' },
+  { path: '/blog-csharp.html',     id: 'csharp',   title: 'C# .NET Enterprise (20 Chapters)',     color: '#9B4F96' },
+]
+
+// ── Developer Career Roadmaps (2026 Edition) ─────────────────────────
+const CAREER_ROADMAPS = [
+  {
+    path: '/roadmap-fullstack.html',
+    title: 'Full-Stack Web Developer',
+    desc: 'From frontend React to backend Node/Python APIs, PostgreSQL databases, and cloud deployment.',
+    icon: '🌐',
+    color: '#2ea043',
+    time: '6 – 9 Months',
+    salary: '₹6.5 – ₹24 LPA',
+    tags: ['React.js', 'Node.js', 'PostgreSQL', 'Docker']
+  },
+  {
+    path: '/roadmap-data-analyst.html',
+    title: 'Data Analyst & Python Science',
+    desc: 'Turn raw business data into actionable strategies with Python, SQL, Pandas, and Power BI.',
+    icon: '📊',
+    color: '#0969da',
+    time: '4 – 6 Months',
+    salary: '₹5.5 – ₹20 LPA',
+    tags: ['Python', 'SQL', 'Pandas', 'Power BI']
+  },
+  {
+    path: '/roadmap-backend.html',
+    title: 'Backend & Systems Engineer',
+    desc: 'Architect high-throughput scalable backends with Java, C++, DSA, Redis, and Microservices.',
+    icon: '⚙️',
+    color: '#8957e5',
+    time: '6 – 12 Months',
+    salary: '₹7.0 – ₹28 LPA',
+    tags: ['Java', 'C++', 'System Design', 'Redis']
+  },
+  {
+    path: '/roadmap-frontend.html',
+    title: 'Modern Frontend Engineer',
+    desc: 'Craft responsive, sub-second web UI with HTML5, Tailwind CSS, JavaScript ES6+, React, and Next.js.',
+    icon: '🎨',
+    color: '#d97706',
+    time: '4 – 7 Months',
+    salary: '₹6.0 – ₹22 LPA',
+    tags: ['HTML5', 'Tailwind', 'JavaScript', 'React.js']
+  }
 ]
 
 
@@ -2759,6 +2799,90 @@ function HomePage({ selectLanguage, theme, setTheme, isMobile }) {
                 </button>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* ── DEVELOPER CAREER ROADMAPS ── */}
+        <section style={{ marginBottom: 70 }}>
+          <div style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+            <div>
+              <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2.5, color: '#58a6ff', textTransform: 'uppercase', marginBottom: 8 }}>🧭 Career Acceleration</p>
+              <h2 style={{ fontSize: 'clamp(24px,4vw,36px)', fontWeight: 800, color: 'var(--text)', margin: '0 0 10px', letterSpacing: '-0.5px' }}>
+                Developer Career Roadmaps
+              </h2>
+              <p style={{ color: 'var(--text2)', fontSize: 15, margin: 0, maxWidth: 640 }}>
+                Step-by-step career blueprints from zero to high-earning software engineer. Complete with technologies to learn, portfolio projects, and interactive compilers.
+              </p>
+            </div>
+            <a href="/roadmaps.html" style={{ fontSize: 13.5, fontWeight: 700, color: '#58a6ff', textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
+              Explore all roadmaps →
+            </a>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 20
+          }}>
+            {CAREER_ROADMAPS.map(rm => (
+              <a
+                key={rm.path}
+                href={rm.path}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  background: 'var(--bg2)',
+                  border: '1px solid var(--border)',
+                  borderTop: `4px solid ${rm.color}`,
+                  borderRadius: 14,
+                  padding: '24px 22px',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.transform = 'translateY(-4px)'
+                  e.currentTarget.style.borderColor = rm.color
+                  e.currentTarget.style.boxShadow = '0 12px 28px rgba(0,0,0,0.18)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.borderColor = 'var(--border)'
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)'
+                }}
+              >
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                    <span style={{ fontSize: 32 }}>{rm.icon}</span>
+                    <span style={{ fontSize: 11.5, fontWeight: 700, color: rm.color, background: `${rm.color}15`, border: `1px solid ${rm.color}35`, padding: '3px 9px', borderRadius: 6 }}>
+                      {rm.time}
+                    </span>
+                  </div>
+                  <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)', marginBottom: 8, letterSpacing: '-0.3px' }}>
+                    {rm.title}
+                  </h3>
+                  <p style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.6, marginBottom: 16 }}>
+                    {rm.desc}
+                  </p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 18 }}>
+                    {rm.tags.map(t => (
+                      <span key={t} style={{ fontSize: 11.5, fontWeight: 500, color: 'var(--text2)', background: 'var(--bg3)', border: '1px solid var(--border)', padding: '2px 8px', borderRadius: 5 }}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border)', paddingTop: 14, fontSize: 12.5, color: 'var(--text3)' }}>
+                  <span style={{ fontWeight: 600, color: 'var(--text)' }}>💰 {rm.salary}</span>
+                  <span style={{ fontWeight: 700, color: rm.color, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    View Guide →
+                  </span>
+                </div>
+              </a>
+            ))}
           </div>
         </section>
 
