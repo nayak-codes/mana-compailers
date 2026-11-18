@@ -542,7 +542,7 @@ const formatTerminalOutput = (text, langId, isErrorStatus = false) => {
 const analyzeStudentError = (rawText, code = '', langId = '') => {
   if (!rawText) return null;
 
-  const isErrorPattern = /error|exception|failed|invalid syntax|traceback|undefined reference|cannot find symbol|fatal error/i.test(rawText);
+  const isErrorPattern = /error|exception|failed|invalid syntax|traceback|undefined reference|cannot find symbol|fatal error|segmentation fault|core dumped|sigsegv/i.test(rawText);
   if (!isErrorPattern) return null;
 
   // Extract line number if present
@@ -724,7 +724,25 @@ const analyzeStudentError = (rawText, code = '', langId = '') => {
     };
   }
 
-  // 12. General fallback
+  // 12. C / C++ Segmentation Fault (SIGSEGV)
+  if (/segmentation fault|core dumped|sigsegv/i.test(rawText)) {
+    const hasScanf = /scanf|gets|fgets|getchar|cin/i.test(code || '');
+    return {
+      title: 'Segmentation Fault (Memory Access Violation)',
+      line: lineNum,
+      cause: hasScanf
+        ? 'Your program accessed invalid memory. In online compilers, if scanf() or cin runs without input, uninitialized variables contain garbage values, causing loops to index arrays out of bounds.'
+        : 'Your program tried to access a restricted memory address (e.g., array index out of bounds, dereferencing a NULL pointer, or accessing unallocated memory).',
+      fix: hasScanf
+        ? 'Provide input in the terminal when prompted, or initialize variables (e.g., int n = 0;) and verify scanf returns 1 before using the value in loops.'
+        : 'Check your array sizes, loop boundaries, and ensure pointers point to valid allocated memory.',
+      fixExample: 'int n = 0;\nif (scanf("%d", &n) == 1) { /* safe to use n */ }',
+      snippet: problematicLine,
+      pointer: pointer
+    };
+  }
+
+  // 13. General fallback
   return {
     title: 'Diagnostic Assistant',
     line: lineNum,
