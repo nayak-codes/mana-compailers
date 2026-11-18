@@ -879,6 +879,19 @@ function preprocessJavaCode(code) {
   return code;
 }
 
+function preprocessCode(code, langId) {
+  if (langId === 'java') {
+    return preprocessJavaCode(code);
+  }
+  if ((langId === 'c' || langId === 'cpp17') && !code.includes('setbuf(stdout')) {
+    // Unbuffer stdout in C/C++ so prompts like printf("Enter: ") without \n flush immediately
+    if (/\bint\s+main\s*\([^)]*\)\s*\{/i.test(code)) {
+      return code.replace(/(\bint\s+main\s*\([^)]*\)\s*\{)/i, '$1\n    setbuf(stdout, NULL);');
+    }
+  }
+  return code;
+}
+
 // ── Own Render Backend URL (always direct) ────────────────────────────────
 const RENDER_BACKEND = 'https://mana-compailer-backend-docker.onrender.com'
 
@@ -1625,7 +1638,7 @@ export default function App() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               language: lang.id,
-              code: lang.id === 'java' ? preprocessJavaCode(codeToRun) : codeToRun,
+              code: preprocessCode(codeToRun, lang.id),
               stdin: inputToSend || ''
             }),
             signal: controller.signal
@@ -1637,7 +1650,7 @@ export default function App() {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 language: lang.id,
-                code: lang.id === 'java' ? preprocessJavaCode(codeToRun) : codeToRun,
+                code: preprocessCode(codeToRun, lang.id),
                 stdin: inputToSend || ''
               }),
               signal: controller.signal
@@ -1662,7 +1675,7 @@ export default function App() {
 
       let isEofError = false
       if (data.error && detectsInput(codeToRun, lang.id)) {
-        const eofPatterns = /(EOFError|NoSuchElementException|No line found|readline|stdin|EOF)/i
+        const eofPatterns = /(EOFError|NoSuchElementException|No line found|readline|stdin|EOF|Segmentation fault|File size limit)/i
         if (eofPatterns.test(data.error)) {
           isEofError = true
         }
