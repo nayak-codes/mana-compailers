@@ -17,11 +17,19 @@ const PAIZA_LANG_MAP = {
 }
 
 function preprocessJavaCode(code) {
-  // 1. Escape non-ASCII characters to \uXXXX unicode escapes
+  // 1. Remove package declarations (e.g. package com.college.lab;)
+  let cleanedCode = code.replace(/^\s*package\s+[^;]+;\s*/gm, '');
+
+  // 2. Auto-import java.util.* if common utility classes are used without import
+  if (/\b(Scanner|ArrayList|HashMap|HashSet|LinkedList|Arrays|Collections|PriorityQueue|Stack|Queue|TreeSet|TreeMap)\b/.test(cleanedCode) && !/import\s+java\.util/i.test(cleanedCode)) {
+    cleanedCode = 'import java.util.*;\n' + cleanedCode;
+  }
+
+  // 3. Escape non-ASCII characters to \uXXXX unicode escapes
   let escapedCode = '';
-  for (let i = 0; i < code.length; i++) {
-    const char = code[i];
-    const codePoint = code.charCodeAt(i);
+  for (let i = 0; i < cleanedCode.length; i++) {
+    const char = cleanedCode[i];
+    const codePoint = cleanedCode.charCodeAt(i);
     if (codePoint > 127) {
       const hex = codePoint.toString(16).padStart(4, '0');
       escapedCode += '\\u' + hex;
@@ -29,18 +37,18 @@ function preprocessJavaCode(code) {
       escapedCode += char;
     }
   }
-  code = escapedCode;
+  cleanedCode = escapedCode;
 
-  // 2. Rename class to Main if necessary
-  if (/\bclass\s+Main\b/.test(code)) {
-    return code;
+  // 4. Rename class to Main if necessary
+  if (/\bclass\s+Main\b/.test(cleanedCode)) {
+    return cleanedCode;
   }
-  const publicClassMatch = code.match(/\bpublic\s+class\s+([A-Za-z0-9_]+)\b/);
+  const publicClassMatch = cleanedCode.match(/\bpublic\s+class\s+([A-Za-z0-9_]+)\b/);
   let targetClassName = null;
   if (publicClassMatch) {
     targetClassName = publicClassMatch[1];
   } else {
-    const classMatch = code.match(/\bclass\s+([A-Za-z0-9_]+)\b/);
+    const classMatch = cleanedCode.match(/\bclass\s+([A-Za-z0-9_]+)\b/);
     if (classMatch) {
       targetClassName = classMatch[1];
     }
@@ -48,9 +56,9 @@ function preprocessJavaCode(code) {
   if (targetClassName && targetClassName !== 'Main') {
     const escapedName = targetClassName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
     const replacementRegex = new RegExp('\\b' + escapedName + '\\b', 'g');
-    return code.replace(replacementRegex, 'Main');
+    return cleanedCode.replace(replacementRegex, 'Main');
   }
-  return code;
+  return cleanedCode;
 }
 
 async function runFastRunner(language, code, stdin = '') {

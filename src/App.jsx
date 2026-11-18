@@ -496,8 +496,36 @@ const formatTerminalOutput = (text, langId, isErrorStatus = false) => {
 
     const isPointerLine = /^\s*[\^~]+\s*$/.test(line);
     const isFileLine = /File\s+"[^"]+",\s+line\s+\d+|:\d+:\d+:\s+error/i.test(line);
-    const isErrorLine = /(SyntaxError|IndentationError|NameError|TypeError|ValueError|ZeroDivisionError|IndexError|KeyError|AttributeError|Exception|Error|error:|fatal error:)/i.test(line);
+    const isTimeout = /time limit exceeded/i.test(line);
+    const isSegfault = /segmentation fault|core dumped/i.test(line);
+    const isErrorLine = /(SyntaxError|IndentationError|NameError|TypeError|ValueError|ZeroDivisionError|IndexError|KeyError|AttributeError|Exception|Error|error:|fatal error:|Time Limit Exceeded|Segmentation fault|File size limit)/i.test(line);
     const isWarningLine = /warning:/i.test(line);
+
+    if (isTimeout) {
+      return (
+        <div key={idx} style={{ marginTop: 4, marginBottom: 6 }}>
+          <span style={{ display: 'block', color: '#ff7b72', fontWeight: 700 }}>
+            ⏱️ {line}
+          </span>
+          <span style={{ display: 'block', color: '#8b949e', fontSize: 12, marginTop: 3 }}>
+            💡 Tip: If your program uses an infinite loop (e.g. while(1)) or expects user input, check your exit conditions or provide input in the terminal.
+          </span>
+        </div>
+      );
+    }
+
+    if (isSegfault) {
+      return (
+        <div key={idx} style={{ marginTop: 4, marginBottom: 6 }}>
+          <span style={{ display: 'block', color: '#ff7b72', fontWeight: 700 }}>
+            ⚠️ {line}
+          </span>
+          <span style={{ display: 'block', color: '#8b949e', fontSize: 12, marginTop: 3 }}>
+            💡 Tip: Segmentation fault means accessing invalid memory. Check array boundaries and make sure input variables are initialized before use.
+          </span>
+        </div>
+      );
+    }
 
     if (isPointerLine) {
       return (
@@ -843,11 +871,19 @@ const StudentErrorCard = ({ analysis, isCollapsed = false, onToggleCollapse }) =
 };
 
 function preprocessJavaCode(code) {
-  // 1. Escape non-ASCII characters to \uXXXX unicode escapes
+  // 1. Remove package declarations (e.g. package com.college.lab;)
+  let cleanedCode = code.replace(/^\s*package\s+[^;]+;\s*/gm, '');
+
+  // 2. Auto-import java.util.* if common utility classes are used without import
+  if (/\b(Scanner|ArrayList|HashMap|HashSet|LinkedList|Arrays|Collections|PriorityQueue|Stack|Queue|TreeSet|TreeMap)\b/.test(cleanedCode) && !/import\s+java\.util/i.test(cleanedCode)) {
+    cleanedCode = 'import java.util.*;\n' + cleanedCode;
+  }
+
+  // 3. Escape non-ASCII characters to \uXXXX unicode escapes
   let escapedCode = '';
-  for (let i = 0; i < code.length; i++) {
-    const char = code[i];
-    const codePoint = code.charCodeAt(i);
+  for (let i = 0; i < cleanedCode.length; i++) {
+    const char = cleanedCode[i];
+    const codePoint = cleanedCode.charCodeAt(i);
     if (codePoint > 127) {
       const hex = codePoint.toString(16).padStart(4, '0');
       escapedCode += '\\u' + hex;
@@ -855,18 +891,18 @@ function preprocessJavaCode(code) {
       escapedCode += char;
     }
   }
-  code = escapedCode;
+  cleanedCode = escapedCode;
 
-  // 2. Rename class to Main if necessary
-  if (/\bclass\s+Main\b/.test(code)) {
-    return code;
+  // 4. Rename class to Main if necessary
+  if (/\bclass\s+Main\b/.test(cleanedCode)) {
+    return cleanedCode;
   }
-  const publicClassMatch = code.match(/\bpublic\s+class\s+([A-Za-z0-9_]+)\b/);
+  const publicClassMatch = cleanedCode.match(/\bpublic\s+class\s+([A-Za-z0-9_]+)\b/);
   let targetClassName = null;
   if (publicClassMatch) {
     targetClassName = publicClassMatch[1];
   } else {
-    const classMatch = code.match(/\bclass\s+([A-Za-z0-9_]+)\b/);
+    const classMatch = cleanedCode.match(/\bclass\s+([A-Za-z0-9_]+)\b/);
     if (classMatch) {
       targetClassName = classMatch[1];
     }
@@ -874,36 +910,89 @@ function preprocessJavaCode(code) {
   if (targetClassName && targetClassName !== 'Main') {
     const escapedName = targetClassName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
     const replacementRegex = new RegExp('\\b' + escapedName + '\\b', 'g');
-    return code.replace(replacementRegex, 'Main');
+    return cleanedCode.replace(replacementRegex, 'Main');
+  }
+  return cleanedCode;
+}
+
+function preprocessCCode(code) {
+  let res = code;
+
+  // 1. Fix void main() -> int main()
+  res = res.replace(/\bvoid\s+main\s*\(([^)]*)\)/gi, 'int main($1)');
+
+  // 2. Detect conio.h and Turbo C functions
+  const hasConio = /<conio\.h>|"conio\.h"/i.test(res) || /\b(clrscr|getch|getche)\s*\(/i.test(res);
+  if (hasConio) {
+    res = res.replace(/#\s*include\s*[<"]conio\.h[>"]/gi, '/* conio.h polyfilled by Our Compiler */');
+  }
+
+  // 3. Unbuffer stdout in C so prompts like printf("Enter: ") without \n flush immediately
+  if (!res.includes('setbuf(stdout')) {
+    if (/(\bint\s+main\s*\([^)]*\)\s*\{)/i.test(res)) {
+      res = res.replace(/(\bint\s+main\s*\([^)]*\)\s*\{)/i, '$1\n    setbuf(stdout, NULL);');
+    }
+  }
+
+  // 4. Safe scanf, safe gets, and conio polyfill
+  const needsScanf = /scanf\s*\(/i.test(res) && !res.includes('__mana_safe_scanf');
+  const needsGets = /\bgets\s*\(/i.test(res) && !res.includes('__mana_safe_gets');
+
+  if (needsScanf || needsGets || hasConio) {
+    let helpers = `#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <stdarg.h>\n`;
+    if (hasConio) {
+      helpers += `static inline __attribute__((unused)) void clrscr(void) {}\nstatic inline __attribute__((unused)) int getch(void) { return 0; }\nstatic inline __attribute__((unused)) int getche(void) { return 0; }\n`;
+    }
+    if (needsScanf) {
+      helpers += `static inline __attribute__((unused)) int __mana_safe_scanf(const char *fmt, ...) {\n    va_list args;\n    va_start(args, fmt);\n    int r = vscanf(fmt, args);\n    va_end(args);\n    if (r == EOF) exit(0);\n    return r;\n}\n#define scanf(...) __mana_safe_scanf(__VA_ARGS__)\n`;
+    }
+    if (needsGets) {
+      helpers += `static inline __attribute__((unused)) char *__mana_safe_gets(char *str) {\n    if (!fgets(str, 1024, stdin)) exit(0);\n    size_t len = strlen(str);\n    if (len > 0 && str[len - 1] == '\\n') str[len - 1] = '\\0';\n    return str;\n}\n#define gets(x) __mana_safe_gets(x)\n`;
+    }
+    helpers += `#line 1 "main.c"\n`;
+    res = helpers + res;
+  }
+
+  return res;
+}
+
+function preprocessCppCode(code) {
+  let res = code;
+
+  // 1. Fix void main() -> int main()
+  res = res.replace(/\bvoid\s+main\s*\(([^)]*)\)/gi, 'int main($1)');
+
+  // 2. Detect conio.h and Turbo C functions
+  const hasConio = /<conio\.h>|"conio\.h"/i.test(res) || /\b(clrscr|getch|getche)\s*\(/i.test(res);
+  if (hasConio) {
+    res = res.replace(/#\s*include\s*[<"]conio\.h[>"]/gi, '/* conio.h polyfilled by Our Compiler */');
+    const conioHelpers = `static inline void clrscr() {}\nstatic inline int getch() { return 0; }\nstatic inline int getche() { return 0; }\n#line 1 "main.cpp"\n`;
+    res = conioHelpers + res;
+  }
+
+  // 3. Unbuffer stdout in C++
+  if (!res.includes('setbuf(stdout')) {
+    if (/(\bint\s+main\s*\([^)]*\)\s*\{)/i.test(res)) {
+      res = res.replace(/(\bint\s+main\s*\([^)]*\)\s*\{)/i, '$1\n    setbuf(stdout, NULL);');
+    }
+  }
+
+  return res;
+}
+
+function preprocessPythonCode(code) {
+  // If user uses raw_input (Python 2 idiom), alias it to input
+  if (/\braw_input\s*\(/i.test(code) && !code.includes('raw_input = input')) {
+    return `try:\n    raw_input\nexcept NameError:\n    raw_input = input\n` + code;
   }
   return code;
 }
 
 function preprocessCode(code, langId) {
-  if (langId === 'java') {
-    return preprocessJavaCode(code);
-  }
-  if (langId === 'c') {
-    let res = code;
-    if (!res.includes('setbuf(stdout')) {
-      // Unbuffer stdout in C so prompts like printf("Enter: ") without \n flush immediately
-      if (/\bint\s+main\s*\([^)]*\)\s*\{/i.test(res)) {
-        res = res.replace(/(\bint\s+main\s*\([^)]*\)\s*\{)/i, '$1\n    setbuf(stdout, NULL);');
-      }
-    }
-    // Safeguard scanf against infinite loops and EOF crashes in online interactive sandbox
-    if (/scanf\s*\(/i.test(res) && !res.includes('__mana_safe_scanf')) {
-      const safeScanfPrefix = `#include <stdio.h>\n#include <stdlib.h>\n#include <stdarg.h>\nstatic inline __attribute__((unused)) int __mana_safe_scanf(const char *fmt, ...) {\n    va_list args;\n    va_start(args, fmt);\n    int r = vscanf(fmt, args);\n    va_end(args);\n    if (r == EOF) exit(0);\n    return r;\n}\n#define scanf(...) __mana_safe_scanf(__VA_ARGS__)\n#line 1 "main.c"\n`;
-      res = safeScanfPrefix + res;
-    }
-    return res;
-  }
-  if (langId === 'cpp17' && !code.includes('setbuf(stdout')) {
-    // Unbuffer stdout in C++ so prompts flush immediately
-    if (/\bint\s+main\s*\([^)]*\)\s*\{/i.test(code)) {
-      return code.replace(/(\bint\s+main\s*\([^)]*\)\s*\{)/i, '$1\n    setbuf(stdout, NULL);');
-    }
-  }
+  if (langId === 'java') return preprocessJavaCode(code);
+  if (langId === 'c') return preprocessCCode(code);
+  if (langId === 'cpp17') return preprocessCppCode(code);
+  if (langId === 'python3') return preprocessPythonCode(code);
   return code;
 }
 
