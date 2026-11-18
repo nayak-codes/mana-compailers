@@ -542,7 +542,7 @@ const formatTerminalOutput = (text, langId, isErrorStatus = false) => {
 const analyzeStudentError = (rawText, code = '', langId = '') => {
   if (!rawText) return null;
 
-  const isErrorPattern = /error|exception|failed|invalid syntax|traceback|undefined reference|cannot find symbol|fatal error|segmentation fault|core dumped|sigsegv/i.test(rawText);
+  const isErrorPattern = /error|exception|failed|invalid syntax|traceback|undefined reference|cannot find symbol|fatal error|segmentation fault|core dumped|sigsegv|file size limit exceeded|sigxfsz/i.test(rawText);
   if (!isErrorPattern) return null;
 
   // Extract line number if present
@@ -719,6 +719,22 @@ const analyzeStudentError = (rawText, code = '', langId = '') => {
       line: lineNum,
       cause: 'The compiler/interpreter found invalid syntax on this line.',
       fix: 'Check this line for missing punctuation (colons, quotation marks, commas, or parentheses).',
+      snippet: problematicLine,
+      pointer: pointer
+    };
+  }
+
+  // 13. File size limit exceeded (Infinite Loop / Buffer Overflow)
+  if (/file size limit exceeded|sigxfsz/i.test(rawText)) {
+    const hasLoop = /while\s*\(|for\s*\(/i.test(code || '');
+    return {
+      title: 'Output Limit Exceeded (Infinite Loop Detected)',
+      line: lineNum,
+      cause: hasLoop
+        ? 'Your program entered an infinite loop (e.g. while(1)) and flooded the terminal with too much output. When scanf() receives no input, it fails instantly on every iteration, printing millions of lines in milliseconds.'
+        : 'Your program printed too much text exceeding the server output limit.',
+      fix: 'Always check if scanf() succeeded before looping (e.g. if (scanf(...) != 1) break;), or provide the required inputs in the terminal.',
+      fixExample: 'while(1) {\n    if (scanf("%d", &ack) != 1) break; // stops infinite loop!\n}',
       snippet: problematicLine,
       pointer: pointer
     };
