@@ -883,8 +883,23 @@ function preprocessCode(code, langId) {
   if (langId === 'java') {
     return preprocessJavaCode(code);
   }
-  if ((langId === 'c' || langId === 'cpp17') && !code.includes('setbuf(stdout')) {
-    // Unbuffer stdout in C/C++ so prompts like printf("Enter: ") without \n flush immediately
+  if (langId === 'c') {
+    let res = code;
+    if (!res.includes('setbuf(stdout')) {
+      // Unbuffer stdout in C so prompts like printf("Enter: ") without \n flush immediately
+      if (/\bint\s+main\s*\([^)]*\)\s*\{/i.test(res)) {
+        res = res.replace(/(\bint\s+main\s*\([^)]*\)\s*\{)/i, '$1\n    setbuf(stdout, NULL);');
+      }
+    }
+    // Safeguard scanf against infinite loops and EOF crashes in online interactive sandbox
+    if (/scanf\s*\(/i.test(res) && !res.includes('__mana_safe_scanf')) {
+      const safeScanfPrefix = `#include <stdio.h>\n#include <stdlib.h>\n#include <stdarg.h>\nstatic inline __attribute__((unused)) int __mana_safe_scanf(const char *fmt, ...) {\n    va_list args;\n    va_start(args, fmt);\n    int r = vscanf(fmt, args);\n    va_end(args);\n    if (r == EOF) exit(0);\n    return r;\n}\n#define scanf(...) __mana_safe_scanf(__VA_ARGS__)\n#line 1 "main.c"\n`;
+      res = safeScanfPrefix + res;
+    }
+    return res;
+  }
+  if (langId === 'cpp17' && !code.includes('setbuf(stdout')) {
+    // Unbuffer stdout in C++ so prompts flush immediately
     if (/\bint\s+main\s*\([^)]*\)\s*\{/i.test(code)) {
       return code.replace(/(\bint\s+main\s*\([^)]*\)\s*\{)/i, '$1\n    setbuf(stdout, NULL);');
     }
